@@ -26,6 +26,7 @@
 #define CAM_SHRINKWINVAL_MEDIUM (0x2000)
 #define CAM_SHRINKWINVAL_LARGE (0x3000)
 #define CAM_SHRINKWINVAL_PREV (0xF000)
+
 #define CAM_IFACE_ALPHA(alpha) ((alpha) << 8)
 
 #define KEEP4_FLG_1 (1 << 0)
