@@ -745,7 +745,7 @@ s32 Camera_CopyPREGToModeValues(Camera* camera) {
 void Camera_UpdateInterface(s16 flags) {
     s16 interfaceAlpha;
 
-    if ((flags & SHRINKWIN_MASK) != SHRINKWIN_MASK) {
+    if ((flags & SHRINKWIN_MASK) != CAM_SHRINKWINVAL_PREV) {
         switch (flags & SHRINKWINVAL_MASK) {
             case 0x1000:
                 sCameraShrinkWindowVal = 0x1A;
@@ -764,7 +764,7 @@ void Camera_UpdateInterface(s16 flags) {
         if (flags & SHRINKWIN_CURVAL) {
             ShrinkWindow_SetCurrentVal(sCameraShrinkWindowVal);
         } else {
-            ShrinkWindow_SetVal(sCameraShrinkWindowVal);
+            ShrinkWindow_SetTargetVal(sCameraShrinkWindowVal);
         }
     }
 
@@ -3499,7 +3499,7 @@ s32 Camera_KeepOn4(Camera* camera) {
         keep4->unk_0C = NEXTSETTING;
         keep4->unk_10 = NEXTSETTING;
         keep4->unk_18 = NEXTSETTING;
-        keep4->unk_1C = NEXTSETTING;
+        keep4->interfaceFlags = NEXTSETTING;
         keep4->unk_14 = NEXTPCT;
         keep4->unk_1E = NEXTSETTING;
         osSyncPrintf("camera: item: type %d\n", *temp_s0);
@@ -3529,13 +3529,13 @@ s32 Camera_KeepOn4(Camera* camera) {
                 keep4->unk_04 = playerHeight * 0.5f * yNormal;
                 keep4->unk_08 = -20.0f;
                 keep4->unk_0C = 0.0f;
-                keep4->unk_1C = 0x2540;
+                keep4->interfaceFlags = 0x2000 | 0x500 | KEEP4_FLG_40;
                 break;
             case 5:
                 keep4->unk_00 = playerHeight * -0.4f * yNormal;
                 keep4->unk_08 = -10.0f;
                 keep4->unk_0C = 45.0f;
-                keep4->unk_1C = 0x2002;
+                keep4->interfaceFlags = 0x2000 | KEEP4_FLG_2;
                 break;
             case 10:
                 keep4->unk_00 = playerHeight * -0.5f * yNormal;
@@ -3543,7 +3543,7 @@ s32 Camera_KeepOn4(Camera* camera) {
                 keep4->unk_08 = -15.0f;
                 keep4->unk_0C = 175.0f;
                 keep4->unk_18 = 70.0f;
-                keep4->unk_1C = 0x2202;
+                keep4->interfaceFlags = 0x2000 | 0x200 | KEEP4_FLG_2;
                 keep4->unk_1E = 0x3C;
                 break;
             case 12:
@@ -3552,14 +3552,14 @@ s32 Camera_KeepOn4(Camera* camera) {
                 keep4->unk_08 = -2.0f;
                 keep4->unk_0C = 120.0f;
                 keep4->unk_10 = player->stateFlags1 & 0x8000000 ? 0.0f : 20.0f;
-                keep4->unk_1C = 0x3212;
+                keep4->interfaceFlags = 0x3000 | 0x200 | KEEP4_FLG_10 | KEEP4_FLG_2;
                 keep4->unk_1E = 0x1E;
                 keep4->unk_18 = 50.0f;
                 break;
             case 0x5A:
                 keep4->unk_00 = playerHeight * -0.3f * yNormal;
                 keep4->unk_18 = 45.0f;
-                keep4->unk_1C = 0x2F02;
+                keep4->interfaceFlags = 0x2000 | 0xF00 | KEEP4_FLG_2;
                 break;
             case 0x5B:
                 keep4->unk_00 = playerHeight * -0.1f * yNormal;
@@ -3567,7 +3567,7 @@ s32 Camera_KeepOn4(Camera* camera) {
                 keep4->unk_08 = -3.0f;
                 keep4->unk_0C = 10.0f;
                 keep4->unk_18 = 55.0f;
-                keep4->unk_1C = 0x2F08;
+                keep4->interfaceFlags = 0x2000 | 0xF00 | KEEP4_FLG_8;
                 break;
             case 0x51:
                 keep4->unk_00 = playerHeight * -0.3f * yNormal;
@@ -3575,7 +3575,7 @@ s32 Camera_KeepOn4(Camera* camera) {
                 keep4->unk_08 = 2.0f;
                 keep4->unk_0C = 20.0f;
                 keep4->unk_10 = 20.0f;
-                keep4->unk_1C = 0x2280;
+                keep4->interfaceFlags = 0x2000 | 0x200 | KEEP4_FLG_80;
                 keep4->unk_1E = 0x1E;
                 keep4->unk_18 = 45.0f;
                 break;
@@ -3584,7 +3584,7 @@ s32 Camera_KeepOn4(Camera* camera) {
                 keep4->unk_04 = playerHeight * 0.7f * yNormal;
                 keep4->unk_0C = 130.0f;
                 keep4->unk_10 = 10.0f;
-                keep4->unk_1C = 0x2522;
+                keep4->interfaceFlags = 0x2000 | 0x500 | KEEP4_FLG_20 | KEEP4_FLG_2;
                 break;
             default:
                 break;
@@ -3596,7 +3596,7 @@ s32 Camera_KeepOn4(Camera* camera) {
     }
 
     sUpdateCameraDirection = 1;
-    sCameraInterfaceFlags = keep4->unk_1C;
+    sCameraInterfaceFlags = keep4->interfaceFlags;
     OLib_Vec3fDiffToVecSphGeo(&spB0, at, eye);
     OLib_Vec3fDiffToVecSphGeo(&spA8, at, eyeNext);
     D_8015BD50 = playerPosRot->pos;
@@ -3618,15 +3618,15 @@ s32 Camera_KeepOn4(Camera* camera) {
             camera->unk_14C &= ~(0x4 | 0x2);
             unk20->unk_10 = keep4->unk_1E;
             unk20->unk_08 = playerPosRot->pos.y - camera->playerPosDelta.y;
-            if (keep4->unk_1C & 2) {
+            if (keep4->interfaceFlags & KEEP4_FLG_2) {
                 spA2 = DEGF_TO_BINANG(keep4->unk_08);
                 spA0 = BINANG_SUB(BINANG_ROT180(playerPosRot->rot.y), spA8.yaw) > 0
                            ? BINANG_ROT180(playerPosRot->rot.y) + DEGF_TO_BINANG(keep4->unk_0C)
                            : BINANG_ROT180(playerPosRot->rot.y) - DEGF_TO_BINANG(keep4->unk_0C);
-            } else if (keep4->unk_1C & 4) {
+            } else if (keep4->interfaceFlags & KEEP4_FLG_4) {
                 spA2 = DEGF_TO_BINANG(keep4->unk_08);
                 spA0 = DEGF_TO_BINANG(keep4->unk_0C);
-            } else if ((keep4->unk_1C & 8) && camera->target != NULL) {
+            } else if ((keep4->interfaceFlags & KEEP4_FLG_8) && camera->target != NULL) {
                 PosRot sp60;
 
                 Actor_GetWorldPosShapeRot(&sp60, camera->target);
@@ -3636,7 +3636,7 @@ s32 Camera_KeepOn4(Camera* camera) {
                            : BINANG_ROT180(sp60.rot.y) - DEGF_TO_BINANG(keep4->unk_0C);
                 spCC[1] = camera->target;
                 sp9C++;
-            } else if ((keep4->unk_1C & 0x80) && camera->target != NULL) {
+            } else if ((keep4->interfaceFlags & KEEP4_FLG_80) && camera->target != NULL) {
                 PosRot sp4C;
 
                 Actor_GetWorld(&sp4C, camera->target);
@@ -3646,7 +3646,7 @@ s32 Camera_KeepOn4(Camera* camera) {
                                                         : sp9E - DEGF_TO_BINANG(keep4->unk_0C);
                 spCC[1] = camera->target;
                 sp9C++;
-            } else if (keep4->unk_1C & 0x40) {
+            } else if (keep4->interfaceFlags & KEEP4_FLG_40) {
                 spA2 = DEGF_TO_BINANG(keep4->unk_08);
                 spA0 = spA8.yaw;
             } else {
@@ -3658,7 +3658,7 @@ s32 Camera_KeepOn4(Camera* camera) {
             spB8.yaw = spA0;
             spB8.r = keep4->unk_04;
             Camera_Vec3fVecSphGeoAdd(&D_8015BD70, &D_8015BD50, &spB8);
-            if (!(keep4->unk_1C & 1)) {
+            if (!(keep4->interfaceFlags & KEEP4_FLG_1)) {
                 angleCnt = ARRAY_COUNT(D_8011D3B0);
                 for (i = 0; i < angleCnt; i++) {
                     if (!CollisionCheck_LineOCCheck(camera->globalCtx, &camera->globalCtx->colChkCtx, &D_8015BD50,
@@ -3702,7 +3702,7 @@ s32 Camera_KeepOn4(Camera* camera) {
         unk20->unk_0C += (s16)unk20->unk_00;
         unk20->unk_0E += (s16)unk20->unk_04;
         unk20->unk_10--;
-    } else if (keep4->unk_1C & 0x10) {
+    } else if (keep4->interfaceFlags & 0x10) {
         camera->unk_14C |= (0x400 | 0x10);
         camera->unk_14C |= (0x4 | 0x2);
         camera->unk_14C &= ~8;
@@ -3711,7 +3711,7 @@ s32 Camera_KeepOn4(Camera* camera) {
         }
     } else {
         camera->unk_14C |= (0x400 | 0x10);
-        if (camera->unk_14C & 8 || keep4->unk_1C & 0x80) {
+        if (camera->unk_14C & 8 || keep4->interfaceFlags & 0x80) {
             sCameraInterfaceFlags = 0;
             camera->unk_14C |= (0x4 | 0x2);
             camera->unk_14C &= ~8;
@@ -5052,7 +5052,7 @@ s32 Camera_Unique9(Camera* camera) {
                 if ((anim->curKeyFrame->unk_01 & 0xF0) == 0x80) {
                     D_8011D3AC = anim->curKeyFrame->unk_01 & 0xF;
                 } else if ((anim->curKeyFrame->unk_01 & 0xF0) == 0xC0) {
-                    Camera_UpdateInterface(0xF000 | ((anim->curKeyFrame->unk_01 & 0xF) << 8));
+                    Camera_UpdateInterface(CAM_SHRINKWINVAL_PREV | ((anim->curKeyFrame->unk_01 & 0xF) << 8));
                 } else if (camera->player->stateFlags1 & 0x8000000 && player->currentBoots != PLAYER_BOOTS_IRON) {
                     func_8002DF38(camera->globalCtx, camera->target, 8);
                     osSyncPrintf("camera: demo: player demo set WAIT\n");

@@ -791,7 +791,7 @@ void BossMo_Tentacle(BossMo* this, GlobalContext* globalCtx) {
         tent_shake:
         case MO_TENT_SHAKE:
             if (this->timers[0] == 138) {
-                ShrinkWindow_SetVal(0);
+                ShrinkWindow_SetTargetVal(0);
                 Interface_ChangeAlpha(0xB);
             }
             if ((this->timers[0] % 8) == 0) {

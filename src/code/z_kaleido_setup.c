@@ -52,8 +52,8 @@ void KaleidoSetup_Update(GlobalContext* globalCtx) {
             WREG(2) = -6240;
             R_UPDATE_RATE = 2;
 
-            if (ShrinkWindow_GetVal()) {
-                ShrinkWindow_SetVal(0);
+            if (ShrinkWindow_GetTargetVal()) {
+                ShrinkWindow_SetTargetVal(0);
             }
 
             func_800F64E0(1);

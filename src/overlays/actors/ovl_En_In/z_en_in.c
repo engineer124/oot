@@ -464,7 +464,7 @@ void func_80A79C78(EnIn* this, GlobalContext* globalCtx) {
     }
     player->actor.freezeTimer = 10;
     this->actor.flags &= ~1;
-    ShrinkWindow_SetVal(0x20);
+    ShrinkWindow_SetTargetVal(0x20);
     Interface_ChangeAlpha(2);
 }
 
@@ -782,7 +782,7 @@ void func_80A7AA40(EnIn* this, GlobalContext* globalCtx) {
     this->unk_308.unk_00 = 1;
     this->unk_1FC = 0;
     globalCtx->csCtx.frames = 0;
-    ShrinkWindow_SetVal(0x20);
+    ShrinkWindow_SetTargetVal(0x20);
     Interface_ChangeAlpha(2);
     this->actionFunc = func_80A7ABD4;
 }

@@ -2,18 +2,18 @@
 
 s32 D_8012CED0 = 0;
 
-s32 sShrinkWindowVal = 0;
+s32 sShrinkWindowTargetVal = 0;
 s32 sShrinkWindowCurrentVal = 0;
 
-void ShrinkWindow_SetVal(s32 value) {
+void ShrinkWindow_SetTargetVal(s32 value) {
     if (HREG(80) == 0x13 && HREG(81) == 1) {
         osSyncPrintf("shrink_window_setval(%d)\n", value);
     }
-    sShrinkWindowVal = value;
+    sShrinkWindowTargetVal = value;
 }
 
-u32 ShrinkWindow_GetVal(void) {
-    return sShrinkWindowVal;
+u32 ShrinkWindow_GetTargetVal(void) {
+    return sShrinkWindowTargetVal;
 }
 
 void ShrinkWindow_SetCurrentVal(s32 currentVal) {
@@ -32,7 +32,7 @@ void ShrinkWindow_Init(void) {
         osSyncPrintf("shrink_window_init()\n");
     }
     D_8012CED0 = 0;
-    sShrinkWindowVal = 0;
+    sShrinkWindowTargetVal = 0;
     sShrinkWindowCurrentVal = 0;
 }
 
@@ -52,25 +52,25 @@ void ShrinkWindow_Update(s32 updateRate) {
         off = 30 / updateRate;
     }
 
-    if (sShrinkWindowCurrentVal < sShrinkWindowVal) {
+    if (sShrinkWindowCurrentVal < sShrinkWindowTargetVal) {
         if (D_8012CED0 != 1) {
             D_8012CED0 = 1;
         }
 
-        if (sShrinkWindowCurrentVal + off < sShrinkWindowVal) {
+        if (sShrinkWindowCurrentVal + off < sShrinkWindowTargetVal) {
             sShrinkWindowCurrentVal += off;
         } else {
-            sShrinkWindowCurrentVal = sShrinkWindowVal;
+            sShrinkWindowCurrentVal = sShrinkWindowTargetVal;
         }
-    } else if (sShrinkWindowVal < sShrinkWindowCurrentVal) {
+    } else if (sShrinkWindowTargetVal < sShrinkWindowCurrentVal) {
         if (D_8012CED0 != 2) {
             D_8012CED0 = 2;
         }
 
-        if (sShrinkWindowVal < sShrinkWindowCurrentVal - off) {
+        if (sShrinkWindowTargetVal < sShrinkWindowCurrentVal - off) {
             sShrinkWindowCurrentVal -= off;
         } else {
-            sShrinkWindowCurrentVal = sShrinkWindowVal;
+            sShrinkWindowCurrentVal = sShrinkWindowTargetVal;
         }
     } else {
         D_8012CED0 = 0;
@@ -91,7 +91,7 @@ void ShrinkWindow_Update(s32 updateRate) {
         }
         HREG(83) = D_8012CED0;
         HREG(84) = sShrinkWindowCurrentVal;
-        HREG(85) = sShrinkWindowVal;
+        HREG(85) = sShrinkWindowTargetVal;
         HREG(86) = off;
     }
 }

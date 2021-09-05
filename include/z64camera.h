@@ -21,6 +21,22 @@
 #define PARENT_CAM(cam) ((cam)->globalCtx->cameraPtrs[(cam)->parentCamIdx])
 #define CHILD_CAM(cam) ((cam)->globalCtx->cameraPtrs[(cam)->childCamIdx])
 
+#define CAM_SHRINKWINVAL_NONE (0x0000)
+#define CAM_SHRINKWINVAL_SMALL (0x1000)
+#define CAM_SHRINKWINVAL_MEDIUM (0x2000)
+#define CAM_SHRINKWINVAL_LARGE (0x3000)
+#define CAM_SHRINKWINVAL_PREV (0xF000)
+#define CAM_IFACE_ALPHA(alpha) ((alpha) << 8)
+
+#define KEEP4_FLG_1 (1 << 0)
+#define KEEP4_FLG_2 (1 << 1)
+#define KEEP4_FLG_4 (1 << 2)
+#define KEEP4_FLG_8 (1 << 3)
+#define KEEP4_FLG_10 (1 << 4)
+#define KEEP4_FLG_20 (1 << 5)
+#define KEEP4_FLG_40 (1 << 6)
+#define KEEP4_FLG_80 (1 << 7)
+
 typedef enum {
     /* 0x00 */ CAM_SET_NONE,
     /* 0x01 */ CAM_SET_NORMAL0,
@@ -474,7 +490,7 @@ typedef struct {
     /* 0x0010 */ f32 unk_10;
     /* 0x0014 */ f32 unk_14;
     /* 0x0018 */ f32 unk_18;
-    /* 0x001C */ s16 unk_1C;
+    /* 0x001C */ s16 interfaceFlags;
     /* 0x001E */ s16 unk_1E;
     /* 0x0020 */ KeepOn4_Unk20 unk_20;
 } KeepOn4; // size = 0x34

@@ -331,7 +331,7 @@ s32 EnZl4_SetupFromLegendCs(EnZl4* this, GlobalContext* globalCtx) {
     player->linearVelocity = playerx->speedXZ = 0.0f;
 
     EnZl4_SetCsCameraMove(globalCtx, 5);
-    ShrinkWindow_SetVal(0x20);
+    ShrinkWindow_SetTargetVal(0x20);
     Interface_ChangeAlpha(2);
     this->talkTimer2 = 0;
     return true;
@@ -1138,7 +1138,7 @@ void EnZl4_Cutscene(EnZl4* this, GlobalContext* globalCtx) {
             func_800F5C64(0x51);
             EnZl4_SetCsCameraAngle(globalCtx, 0);
             Interface_ChangeAlpha(2);
-            ShrinkWindow_SetVal(0x20);
+            ShrinkWindow_SetTargetVal(0x20);
             this->talkState = 0;
             this->csState++;
             break;

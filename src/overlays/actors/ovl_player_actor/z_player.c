@@ -2829,7 +2829,7 @@ void func_80836448(GlobalContext* globalCtx, Player* this, LinkAnimationHeader* 
         }
 
         OnePointCutscene_Init(globalCtx, 9806, cond ? 120 : 60, &this->actor, MAIN_CAM);
-        ShrinkWindow_SetVal(0x20);
+        ShrinkWindow_SetTargetVal(0x20);
     }
 }
 

@@ -104,7 +104,7 @@ void GameOver_Update(GlobalContext* globalCtx) {
             gameOverCtx->state++;
             D_80153D80 = 0;
             Kankyo_InitGameOverLights(globalCtx);
-            ShrinkWindow_SetVal(0x20);
+            ShrinkWindow_SetTargetVal(0x20);
             return;
 
         case GAMEOVER_REVIVE_RUMBLE:

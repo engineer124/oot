@@ -5244,7 +5244,7 @@ void Fishing_UpdateOwner(Actor* thisx, GlobalContext* globalCtx2) {
         }
 
         case 2:
-            ShrinkWindow_SetVal(0x1B);
+            ShrinkWindow_SetTargetVal(0x1B);
 
             spFC.x = sLurePos.x - player->actor.world.pos.x;
             spFC.z = sLurePos.z - player->actor.world.pos.z;

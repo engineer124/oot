@@ -384,7 +384,7 @@ void func_80B4B010(EnZl1* this, GlobalContext* globalCtx) {
         globalCtx->envCtx.unk_E1 = 1;
         Gameplay_CameraSetAtEye(globalCtx, this->unk_1E8, &vec1, &vec2);
         Gameplay_CameraSetFov(globalCtx, this->unk_1E8, 30.0f);
-        ShrinkWindow_SetVal(0x20);
+        ShrinkWindow_SetTargetVal(0x20);
         Interface_ChangeAlpha(2);
         player->actor.world.pos = playerPos;
         player->actor.speedXZ = 0.0f;

@@ -139,7 +139,7 @@ u32 func_8006472C(GlobalContext* globalCtx, CutsceneContext* csCtx, f32 target) 
 
 void func_80064760(GlobalContext* globalCtx, CutsceneContext* csCtx) {
     Interface_ChangeAlpha(1);
-    ShrinkWindow_SetVal(0x20);
+    ShrinkWindow_SetTargetVal(0x20);
 
     if (func_8006472C(globalCtx, csCtx, 1.0f)) {
         Audio_SetCutsceneFlag(1);
@@ -150,7 +150,7 @@ void func_80064760(GlobalContext* globalCtx, CutsceneContext* csCtx) {
 void func_800647C0(GlobalContext* globalCtx, CutsceneContext* csCtx) {
     func_80068C3C(globalCtx, csCtx);
     Interface_ChangeAlpha(1);
-    ShrinkWindow_SetVal(0x20);
+    ShrinkWindow_SetTargetVal(0x20);
 
     if (func_8006472C(globalCtx, csCtx, 1.0f)) {
         Audio_SetCutsceneFlag(1);
@@ -1962,7 +1962,7 @@ void func_80068ECC(GlobalContext* globalCtx, CutsceneContext* csCtx) {
 
             if (gSaveContext.cutsceneTrigger == 0) {
                 Interface_ChangeAlpha(1);
-                ShrinkWindow_SetVal(0x20);
+                ShrinkWindow_SetTargetVal(0x20);
                 ShrinkWindow_SetCurrentVal(0x20);
                 csCtx->state++;
             }
