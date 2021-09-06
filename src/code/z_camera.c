@@ -2067,7 +2067,8 @@ s32 Camera_Parallel1(Camera* camera) {
     }
 
     if (!(para1->interfaceFlags & PARA1_FLG_80) && !sp6A) {
-        Camera_CalcAtForParallel(camera, &atToEyeNextDir, para1->unk_00, &anim->yTarget, para1->interfaceFlags & PARA1_FLG_1);
+        Camera_CalcAtForParallel(camera, &atToEyeNextDir, para1->unk_00, &anim->yTarget,
+                                 para1->interfaceFlags & PARA1_FLG_1);
     } else {
         func_800458D4(camera, &atToEyeNextDir, para1->unk_18, &anim->yTarget, para1->interfaceFlags & PARA1_FLG_1);
     }
