@@ -657,7 +657,6 @@ CameraModeValue D_8011AA14[] = {
     { 45, 7 },   // fovTarget */
     { 10, 8 },   // atLERPScaleMax */
     { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0), 9 },
-    * /
 };
 
 CameraModeValue D_8011AA30[] = {
@@ -976,7 +975,7 @@ CameraModeValue D_8011AD84[] = {
     { 60, 7 },   // fov */
     { 40, 8 },   // atLERPScaleOnGround (PCT) */
     { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 },
-    * / { -50, 11 }, // yOffsetOffGround (PCT) */
+    { -50, 11 }, // yOffsetOffGround (PCT) */
     { 20, 12 },      // atLERPScaleOffGround (PCT) */
 };
 

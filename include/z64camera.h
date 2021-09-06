@@ -105,6 +105,44 @@
 #define SPEC9_FLG_2 (1 << 1)
 #define SPEC9_FLG_8 (1 << 3)
 
+#define CAM_INFO_FLG_1 (1 << 0)
+#define CAM_INFO_FLG_2 (1 << 1)
+#define CAM_INFO_FLG_4 (1 << 2)
+#define CAM_INFO_FLG_10 (1 << 4)
+#define CAM_INFO_FLG_20 (1 << 5)
+#define CAM_INFO_FLG_40 (1 << 6)
+
+#define CAM_ENGINE_FLG_1 (1 << 0) // Must be set to get bgCamDataId from bg poly
+#define CAM_ENGINE_FLG_2 (1 << 1) // Must be set for Camera_CheckWater to run
+#define CAM_ENGINE_FLG_4 (1 << 2)
+#define CAM_ENGINE_FLG_8 (1 << 3) // Customizable flag for functions (Ex. Finished talking to an NPC)
+#define CAM_ENGINE_FLG_10 (1 << 4)
+#define CAM_ENGINE_FLG_20 (1 << 5)
+#define CAM_ENGINE_FLG_40 (1 << 6)
+#define CAM_ENGINE_FLG_80 (1 << 7) // Set in play, unused
+#define CAM_ENGINE_FLG_100 (1 << 8) // "kankyo changed water, sound on\n"
+#define CAM_ENGINE_FLG_200 (1 << 9)
+#define CAM_ENGINE_FLG_400 (1 << 0xA) // Suppresses getting bgCamDataId from bg poly
+#define CAM_ENGINE_FLG_800 (1 << 0xB) // unused
+#define CAM_ENGINE_FLG_1000 (1 << 0xC) // Set in Camera_Demo7, but Camera_Demo7 is never called
+#define CAM_ENGINE_FLG_2000 (1 << 0xD) // unused
+#define CAM_ENGINE_FLG_4000 (1 << 0xE) // isInitialized. Turned on in Camera Init, never used or changed
+#define CAM_ENGINE_FLG_8000 ((s16)(1 << 0xF))
+
+#define CAM_PARAMS_FLG_1 (1 << 0)
+#define CAM_PARAMS_FLG_2 (1 << 1)
+#define CAM_PARAMS_FLG_4 (1 << 2)
+#define CAM_PARAMS_FLG_8 (1 << 3)
+#define CAM_PARAMS_FLG_10 (1 << 4)
+#define CAM_PARAMS_FLG_20 (1 << 5)
+#define CAM_PARAMS_FLG_40 (1 << 6)
+
+#define CAM_VIEW_FLG_1 (1 << 0)
+#define CAM_VIEW_FLG_2 (1 << 1)
+#define CAM_VIEW_FLG_4 (1 << 2)
+#define CAM_VIEW_FLG_8 (1 << 3)
+#define CAM_VIEW_FLG_10 (1 << 4)
+
 typedef enum {
     /* 0x00 */ CAM_SET_NONE,
     /* 0x01 */ CAM_SET_NORMAL0,
@@ -987,16 +1025,16 @@ typedef struct {
     /* 0x0144 */ s16 mode;
     /* 0x0146 */ s16 bgCheckId;
     /* 0x0148 */ s16 camDataIdx;
-    /* 0x014A */ s16 unk_14A;
-    /* 0x014C */ s16 unk_14C;
+    /* 0x014A */ s16 infoFlags; // flags related to camera status, setting, mode
+    /* 0x014C */ s16 engineFlags; // flags related to camera update and function behaviour
     /* 0x014E */ s16 childCamIdx;
     /* 0x0150 */ s16 unk_150;
-    /* 0x0152 */ s16 unk_152;
+    /* 0x0152 */ s16 viewFlags; // flags related to func_80058E8C
     /* 0x0154 */ s16 prevSetting;
     /* 0x0156 */ s16 nextCamDataIdx;
     /* 0x0158 */ s16 nextBGCheckId;
     /* 0x015A */ s16 roll;
-    /* 0x015C */ s16 paramFlags;
+    /* 0x015C */ s16 paramFlags; // flags related to at/eye/up
     /* 0x015E */ s16 animState;
     /* 0x0160 */ s16 timer;
     /* 0x0162 */ s16 parentCamIdx;

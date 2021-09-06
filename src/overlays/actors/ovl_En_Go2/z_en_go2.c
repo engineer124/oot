@@ -1128,10 +1128,10 @@ s32 EnGo2_IsCameraModified(EnGo2* this, GlobalContext* globalCtx) {
     if ((this->actor.params & 0x1F) == GORON_DMT_BIGGORON) {
         if (EnGo2_IsWakingUp(this)) {
             Camera_ChangeSetting(camera, CAM_SET_TEPPEN);
-            func_8005AD1C(camera, 4);
+            Camera_UnsetEngine(camera, CAM_ENGINE_FLG_4);
         } else if (!EnGo2_IsWakingUp(this) && (camera->setting == CAM_SET_TEPPEN)) {
             Camera_ChangeSetting(camera, CAM_SET_DUNGEON1);
-            func_8005ACFC(camera, 4);
+            Camera_SetEngine(camera, CAM_ENGINE_FLG_4);
         }
     }
 
