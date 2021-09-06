@@ -29,6 +29,51 @@
 
 #define CAM_IFACE_ALPHA(alpha) ((alpha) << 8)
 
+#define NORM1_FLG_1 (1 << 0)
+#define NORM1_FLG_2 (1 << 1)
+#define NORM1_FLG_4 (1 << 2)
+#define NORM1_FLG_10 (1 << 4)
+#define NORM1_FLG_20 (1 << 5)
+#define NORM1_FLG_80 (1 << 7)
+
+#define NORM2_FLG_1 (1 << 0)
+#define NORM2_FLG_4 (1 << 2)
+#define NORM2_FLG_10 (1 << 4)
+#define NORM2_FLG_80 (1 << 7)
+
+#define PARA1_FLG_1 (1 << 0)
+#define PARA1_FLG_2 (1 << 1)
+#define PARA1_FLG_4 (1 << 2)
+#define PARA1_FLG_8 (1 << 3)
+#define PARA1_FLG_10 (1 << 4)
+#define PARA1_FLG_20 (1 << 5)
+#define PARA1_FLG_40 (1 << 6)
+#define PARA1_FLG_80 (1 << 7)
+
+#define PARA3_FLG_1 (1 << 0)
+#define PARA3_FLG_2 (1 << 1)
+
+#define JUMP1_FLG_4 (1 << 2)
+#define JUMP1_FLG_10 (1 << 4)
+
+#define JUMP2_FLG_2 (1 << 1)
+#define JUMP2_FLG_4 (1 << 2)
+
+#define JUMP3_FLG_1 (1 << 0)
+#define JUMP3_FLG_4 (1 << 2)
+#define JUMP3_FLG_10 (1 << 4)
+
+#define BATT1_FLG_1 (1 << 0)
+#define BATT1_FLG_2 (1 << 1)
+#define BATT1_FLG_80 (1 << 7)
+
+#define KEEP1_FLG_1 (1 << 0)
+#define KEEP1_FLG_2 (1 << 1)
+
+#define KEEP3_FLG_10 (1 << 4)
+#define KEEP3_FLG_20 (1 << 5)
+#define KEEP3_FLG_80 (1 << 7)
+
 #define KEEP4_FLG_1 (1 << 0)
 #define KEEP4_FLG_2 (1 << 1)
 #define KEEP4_FLG_4 (1 << 2)
@@ -37,6 +82,28 @@
 #define KEEP4_FLG_20 (1 << 5)
 #define KEEP4_FLG_40 (1 << 6)
 #define KEEP4_FLG_80 (1 << 7)
+
+#define FIXD2_FLG_1 (1 << 0)
+
+#define FIXD4_FLG_4 (1 << 2)
+
+#define UNIQ2_FLG_1 (1 << 0)
+#define UNIQ2_FLG_2 (1 << 1)
+#define UNIQ2_FLG_10 (1 << 4)
+
+#define UNIQ3_FLG_2 (1 << 1)
+#define UNIQ3_FLG_4 (1 << 2)
+
+#define UNIQ0_FLG_1 (1 << 0)
+
+#define UNIQ6_FLG_1 (1 << 0)
+
+#define DEMO9_FLG_2 (1 << 1)
+#define DEMO9_FLG_10 (1 << 4)
+
+#define SPEC9_FLG_1 (1 << 0)
+#define SPEC9_FLG_2 (1 << 1)
+#define SPEC9_FLG_8 (1 << 3)
 
 typedef enum {
     /* 0x00 */ CAM_SET_NONE,

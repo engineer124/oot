@@ -70,7 +70,7 @@ CameraModeValue D_8011A3A0[] = {
     { 35, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 60, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x3, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011A3C8[] = {
@@ -83,7 +83,7 @@ CameraModeValue D_8011A3C8[] = {
     { 5, 5 },      // unk_0C
     { 45, 7 },     // fovTarget
     { 50, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0xA, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 20, 12 }     // unk_1C
 };
@@ -100,7 +100,7 @@ CameraModeValue D_8011A3F4[] = {
     { 15, 17 },    // unk_1C
     { 45, 7 },     // unk_20
     { 50, 8 },     // unk_24
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x1, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | KEEP1_FLG_1, 9 }, // flags
     { -50, 11 },   // unk_28
     { 30, 12 },    // unk_2C
 };
@@ -132,7 +132,7 @@ CameraModeValue D_8011A458[] = {
     { 25, 17 },    // swingPitchAdj (PCT)
     { 50, 7 },     // fov
     { 80, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -40, 11 },   // yOffsetOffGround (PCT)
     { 25, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -237,7 +237,7 @@ CameraModeValue D_8011A580[] = {
     { 5, 5 },      // xzUpdRateTarget
     { 60, 7 },     // fovTarget
     { 40, 8 },     // atLERPStepScale
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x6, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | JUMP2_FLG_4 | JUMP2_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011A5A4[] = {
@@ -308,7 +308,7 @@ CameraModeValue D_8011A638[] = {
     { 100, 6 },    // unk_14
     { 60, 7 },     // fovTarget
     { 5, 8 },      // atLERPScaleMax
-    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | 0x3, 9 }, // flags
+    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011A660[] = {
@@ -321,7 +321,7 @@ CameraModeValue D_8011A660[] = {
     { 5, 5 },      // unk_0C
     { 70, 7 },     // fovTarget
     { 30, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x6A, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_40 | PARA1_FLG_20 | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -20, 11 },   // unk_18
     { 30, 12 },    // unk_1C
 };
@@ -338,7 +338,7 @@ CameraModeValue D_8011A68C[] = {
     { 25, 17 },    // unk_1C
     { 45, 7 },     // unk_20
     { 50, 8 },     // unk_24
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x1, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | KEEP1_FLG_1, 9 }, // flags
     { -15, 11 },   // unk_28
     { 30, 12 },    // unk_2C
 };
@@ -354,7 +354,7 @@ CameraModeValue sSetNorm1ModeNormVals[] = {
     { 40, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 60, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x03, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue sSetNorm1ModeParaVals[] = {
@@ -367,7 +367,7 @@ CameraModeValue sSetNorm1ModeParaVals[] = {
     { 5, 5 },      // unk_0C
     { 45, 7 },     // fovTarget
     { 50, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 20, 12 },    // unk_1C
 };
@@ -384,7 +384,7 @@ CameraModeValue D_8011A714[] = {
     { 15, 17 },    // unk_1C
     { 45, 7 },     // unk_20
     { 50, 8 },     // unk_24
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x1, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | KEEP1_FLG_1, 9 }, // flags
     { -50, 11 },   // unk_28
     { 20, 12 },    // unk_2C
 };
@@ -400,7 +400,7 @@ CameraModeValue D_8011A748[] = {
     { 25, 17 },    // swingPitchAdj (PCT)
     { 50, 7 },     // fov
     { 65, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -40, 11 },   // yOffsetOffGround (PCT)
     { 25, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -464,7 +464,7 @@ CameraModeValue D_8011A7FC[] = {
     { 5, 5 },      // xzUpdRateTarget
     { 60, 7 },     // fovTarget
     { 40, 8 },     // atLERPStepScale
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x6, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | JUMP2_FLG_4 | JUMP2_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011A820[] = {
@@ -511,7 +511,7 @@ CameraModeValue D_8011A874[] = {
     { 100, 6 },    // unk_14
     { 60, 7 },     // fovTarget
     { 5, 8 },      // atLERPScaleMax
-    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | 0x3, 9 }, // flags
+    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011A89C[] = {
@@ -525,7 +525,7 @@ CameraModeValue D_8011A89C[] = {
     { 30, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 60, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x03, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011A8C4[] = {
@@ -538,7 +538,7 @@ CameraModeValue D_8011A8C4[] = {
     { 5, 5 },      // unk_0C
     { 45, 7 },     // fovTarget
     { 50, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0xA, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 20, 12 },    // unk_1C
 };
@@ -555,7 +555,7 @@ CameraModeValue D_8011A8F0[] = {
     { 15, 17 },    // unk_1C
     { 45, 7 },     // unk_20
     { 50, 8 },     // unk_24
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x1, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | KEEP1_FLG_1, 9 }, // flags
     { -40, 11 },   // unk_28
     { 20, 12 },    // unk_2C
 };
@@ -571,7 +571,7 @@ CameraModeValue D_8011A924[] = {
     { 25, 17 },    // swingPitchAdj (PCT)
     { 45, 7 },     // fov
     { 80, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -40, 11 },   // yOffsetOffGround (PCT)
     { 25, 12 },    // atLERPScaleOnGround (PCT)
 };
@@ -623,7 +623,7 @@ CameraModeValue D_8011A9B8[] = {
     { 5, 5 },      // xzUpdRateTarget
     { 60, 7 },     // fovTarget
     { 40, 8 },     // atLERPStepScale
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x6, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | JUMP2_FLG_4 | JUMP2_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011A9DC[] = {
@@ -670,7 +670,7 @@ CameraModeValue D_8011AA30[] = {
     { 100, 6 },    // unk_14
     { 60, 7 },     // fovTarget
     { 5, 8 },      // atLERPScaleMax
-    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | 0x3, 9 }, // flags
+    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011AA58[] = {
@@ -684,7 +684,7 @@ CameraModeValue D_8011AA58[] = {
     { 30, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 60, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x3, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011AA80[] = {
@@ -750,7 +750,7 @@ CameraModeValue D_8011AB14[] = {
     { 5, 5 },      // xzUpdRateTarget
     { 60, 7 },     // fovTarget
     { 40, 8 },     // atLERPStepScale
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x6, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | JUMP2_FLG_4 | JUMP2_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011AB38[] = {
@@ -766,13 +766,13 @@ CameraModeValue D_8011AB38[] = {
 
 CameraModeValue D_8011AB54[] = {
     /* CAM_FUNC_UNIQ1 */
-    { -80, 0 },    // yOffset */
-    { 150, 1 },    // distMin */
-    { 150, 2 },    // distMax */
-    { 40, 3 },     // pitchTarget */
-    { 60, 7 },     // fovTarget */
-    { 10, 8 },     // atLERPScaleMax */
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0), 9 }, // flags */
+    { -80, 0 },    // yOffset
+    { 150, 1 },    // distMin
+    { 150, 2 },    // distMax
+    { 40, 3 },     // pitchTarget
+    { 60, 7 },     // fovTarget
+    { 10, 8 },     // atLERPScaleMax
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0), 9 }, // flags
 };
 
 CameraModeValue D_8011AB70[] = {
@@ -797,7 +797,7 @@ CameraModeValue D_8011AB8C[] = {
     { 100, 6 },    // unk_14
     { 60, 7 },     // fovTarget
     { 5, 8 },      // atLERPScaleMax
-    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | 0x3, 9 }, // flags
+    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011ABB4[] = {
@@ -810,7 +810,7 @@ CameraModeValue D_8011ABB4[] = {
     { 5, 5 },      // unk_0C
     { 60, 7 },     // fovTarget
     { 50, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x6A, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_40 | PARA1_FLG_20 | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -20, 11 },   // unk_18
     { 30, 12 },    // unk_1C
 };
@@ -826,7 +826,7 @@ CameraModeValue sSetNorm3ModeNormVals[] = {
     { 40, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 100, 8 },    // unk_1C
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x04, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | JUMP3_FLG_4, 9 }, // flags
 };
 
 CameraModeValue D_8011AC08[] = {
@@ -839,7 +839,7 @@ CameraModeValue D_8011AC08[] = {
     { 5, 5 },      // unk_0C
     { 60, 7 },     // fovTarget
     { 100, 8 },    // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0xA, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -50, 11 },   // unk_18
     { 20, 12 },    // unk_1C
 };
@@ -874,20 +874,20 @@ CameraModeValue sSetNorm3ModeBoomVals[] = {
     { 60, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 40, 8 },     // unk_1C
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x05, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | JUMP3_FLG_4 | JUMP3_FLG_1, 9 }, // flags
 };
 
 CameraModeValue sSetHrse0ModeNormVals[] = {
     /* CAM_FUNC_NORM3 */
-    { -50, 0 },    // yOffset */
-    { 220, 1 },    // distMin */
-    { 250, 2 },    // distMax */
-    { 10, 3 },     // pitchTarget */
-    { 16, 4 },     // yawUpdateSpeed */
-    { 20, 5 },     // unk_10 */
-    { 60, 7 },     // fovTarget */
-    { 100, 8 },    // maxAtLERPScale */
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(6), 9 }, // flags */
+    { -50, 0 },    // yOffset
+    { 220, 1 },    // distMin
+    { 250, 2 },    // distMax
+    { 10, 3 },     // pitchTarget
+    { 16, 4 },     // yawUpdateSpeed
+    { 20, 5 },     // unk_10
+    { 60, 7 },     // fovTarget
+    { 100, 8 },    // maxAtLERPScale
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(6), 9 }, // flags
 };
 
 CameraModeValue sSetHrse0ModeParaVals[] = {
@@ -928,7 +928,7 @@ CameraModeValue D_8011ACF8[] = {
     { 15, 17 },    // unk_1C
     { 45, 7 },     // unk_20
     { 50, 8 },     // unk_24
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(6) | 0x1, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(6) | KEEP1_FLG_1, 9 }, // flags
     { -60, 11 },   // unk_28
     { 20, 12 },    // unk_2C
 };
@@ -960,7 +960,7 @@ CameraModeValue D_8011AD5C[] = {
     { 40, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 60, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x01, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011AD84[] = {
@@ -974,7 +974,7 @@ CameraModeValue D_8011AD84[] = {
     { 25, 17 },    // swingPitchAdj (PCT) */
     { 60, 7 },     // fov */
     { 40, 8 },     // atLERPScaleOnGround (PCT) */
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags */
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags */
     { -50, 11 },   // yOffsetOffGround (PCT) */
     { 20, 12 },    // atLERPScaleOffGround (PCT) */
 };
@@ -990,7 +990,7 @@ CameraModeValue D_8011ADB4[] = {
     { 70, 6 },     // unk_14
     { 70, 7 },     // fovTarget
     { 40, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x03, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011ADDC[] = {
@@ -1004,7 +1004,7 @@ CameraModeValue D_8011ADDC[] = {
     { 25, 17 },    // swingPitchAdj (PCT)
     { 70, 7 },     // fov
     { 50, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -40, 11 },   // yOffsetOffGround (PCT)
     { 20, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -1020,7 +1020,7 @@ CameraModeValue D_8011AE0C[] = {
     { 40, 6 },     // unk_14
     { 70, 7 },     // fovTarget
     { 70, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x03, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011AE34[] = {
@@ -1034,7 +1034,7 @@ CameraModeValue D_8011AE34[] = {
     { 50, 17 },    // swingPitchAdj (PCT)
     { 60, 7 },     // fov
     { 50, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -50, 11 },   // yOffsetOffGround (PCT)
     { 20, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -1050,7 +1050,7 @@ CameraModeValue D_8011AE64[] = {
     { 40, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 100, 8 },    // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x03, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011AE8C[] = {
@@ -1064,7 +1064,7 @@ CameraModeValue D_8011AE8C[] = {
     { 35, 17 },    // swingPitchAdj (PCT)
     { 60, 7 },     // fov
     { 100, 8 },    // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -40, 11 },   // yOffsetOffGround (PCT)
     { 60, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -1080,7 +1080,7 @@ CameraModeValue D_8011AEBC[] = {
     { 40, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 80, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x03, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011AEE4[] = {
@@ -1094,7 +1094,7 @@ CameraModeValue D_8011AEE4[] = {
     { 15, 17 },    // swingPitchAdj (PCT)
     { 45, 7 },     // fov
     { 50, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -40, 11 },   // yOffsetOffGround (PCT)
     { 20, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -1110,7 +1110,7 @@ CameraModeValue D_8011AF14[] = {
     { 40, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 80, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x83, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_80 | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011AF3C[] = {
@@ -1124,7 +1124,7 @@ CameraModeValue D_8011AF3C[] = {
     { 15, 17 },    // swingPitchAdj (PCT)
     { 45, 7 },     // fov
     { 50, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x82, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_80 | BATT1_FLG_2, 9 }, // flags
     { -40, 11 },   // yOffsetOffGround (PCT)
     { 20, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -1140,7 +1140,7 @@ CameraModeValue D_8011AF6C[] = {
     { 80, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 80, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x83, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_80 | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011AF94[] = {
@@ -1154,7 +1154,7 @@ CameraModeValue D_8011AF94[] = {
     { 40, 6 },     // unk_14
     { 80, 7 },     // fovTarget
     { 60, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x03, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011AFBC[] = {
@@ -1168,7 +1168,7 @@ CameraModeValue D_8011AFBC[] = {
     { 25, 17 },    // swingPitchAdj (PCT)
     { 70, 7 },     // fov
     { 40, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -40, 11 },   // yOffsetOffGround (PCT)
     { 20, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -1184,7 +1184,7 @@ CameraModeValue D_8011AFEC[] = {
     { 40, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 80, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x03, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011B014[] = {
@@ -1198,7 +1198,7 @@ CameraModeValue D_8011B014[] = {
     { 25, 17 },    // swingPitchAdj (PCT)
     { 45, 7 },     // fov
     { 40, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -20, 11 },   // yOffsetOffGround (PCT)
     { 20, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -1214,7 +1214,7 @@ CameraModeValue D_8011B044[] = {
     { 40, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 50, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x03, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011B06C[] = {
@@ -1253,7 +1253,7 @@ CameraModeValue D_8011B0B0[] = {
     { 40, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 80, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x03, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011B0D8[] = {
@@ -1267,7 +1267,7 @@ CameraModeValue D_8011B0D8[] = {
     { 25, 17 },    // swingPitchAdj (PCT)
     { 45, 7 },     // fov
     { 50, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -40, 11 },   // yOffsetOffGround (PCT)
     { 20, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -1295,7 +1295,7 @@ CameraModeValue D_8011B12C[] = {
     { 40, 6 },     // unk_10
     { 60, 7 },     // unk_14
     { 50, 8 },     // unk_18
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x80, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM2_FLG_80, 9 }, // flags
 };
 
 CameraModeValue D_8011B150[] = {
@@ -1362,7 +1362,7 @@ CameraModeValue sSetCirc0ModeNormVals[] = {
     { 50, 4 },     // eyeStepScale
     { 80, 5 },     // posStepScale
     { 60, 7 },     // fov
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x01, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | FIXD2_FLG_1, 9 }, // flags
 };
 
 CameraModeValue sSetCirc2ModeNormVals[] = {
@@ -1378,7 +1378,7 @@ CameraModeValue D_8011B1F8[] = {
     { 50, 4 },     // speedToEyePos
     { 80, 5 },     // followSpeed
     { 60, 7 },     // fov
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x04, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | FIXD4_FLG_4, 9 }, // flags
 };
 
 CameraModeValue D_8011B20C[] = {
@@ -1425,14 +1425,14 @@ CameraModeValue sSetDoorCModeNormVals[] = {
     /* CAM_FUNC_SPEC9 */
     { -5, 0 },     // yOffset
     { 60, 7 },     // unk_04 (unused)
-    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(2) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(2) | SPEC9_FLG_2, 9 }, // flags
 };
 
 CameraModeValue sSetDoorCModeParaVals[] = {
     /* CAM_FUNC_SPEC9 */
     { -5, 0 },     // yOffset
     { 60, 7 },     // unk_04 (unused)
-    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(2) | 0xA, 9 }, // flags
+    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(2) | SPEC9_FLG_8 | SPEC9_FLG_2, 9 }, // flags
 };
 
 CameraModeValue sSetRail3ModeNormVals[] = {
@@ -1448,7 +1448,7 @@ CameraModeValue sSetRail3ModeNormVals[] = {
 
 CameraModeValue D_8011B270[] = {
     /* CAM_FUNC_UNIQ0 */
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x01, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | UNIQ0_FLG_1, 9 }, // flags
 };
 
 CameraModeValue sSetFree0ModeNormVals[] = {
@@ -1458,7 +1458,7 @@ CameraModeValue sSetFree0ModeNormVals[] = {
 
 CameraModeValue sSetFree1ModeNormVals[] = {
     /* CAM_FUNC_UNIQ6  */
-    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0xF) | 0x1, 9 }, // flags
+    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0xF) | UNIQ6_FLG_1, 9 }, // flags
 };
 
 CameraModeValue sSetCirc4ModeNormVals[] = {
@@ -1475,7 +1475,7 @@ CameraModeValue D_8011B290[] = {
     { -40, 0 },    // yOffset
     { 60, 1 },     // distTarget
     { 60, 7 },     // fovTarget
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x02, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | UNIQ2_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B2A0[] = {
@@ -1483,7 +1483,7 @@ CameraModeValue D_8011B2A0[] = {
     { -30, 0 },    // yOffset
     { 45, 1 },     // distTarget
     { 100, 7 },    // fovTarget
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x1, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | UNIQ2_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011B2B0[] = {
@@ -1504,14 +1504,14 @@ CameraModeValue sSetMori1ModeNormVals[] = {
     { 5, 5 },      // unk_0C
     { 70, 7 },     // fovTarget
     { 30, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x0C, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | PARA1_FLG_8 | PARA1_FLG_4, 9 }, // flags
     { -50, 11 },   // unk_18
     { 20, 12 },    // unk_1C
 };
 
 CameraModeValue D_8011B2E0[] = {
     /* CAM_FUNC_PARA3 */
-    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(5) | 0x1, 9 }, // flags
+    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(5) | PARA3_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011B2E4[] = {
@@ -1524,7 +1524,7 @@ CameraModeValue D_8011B2E4[] = {
 
 CameraModeValue sSetDemo3ModeNormVals[] = {
     /* CAM_FUNC_DEMO9 */
-    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(2) | 0x12, 9 }, // flags
+    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(2) | DEMO9_FLG_10 | DEMO9_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B2F4[] = {
@@ -1538,7 +1538,7 @@ CameraModeValue D_8011B2F4[] = {
     { 50, 6 },     // unk_14
     { 70, 7 },     // fovTarget
     { 40, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x02, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B31C[] = {
@@ -1551,7 +1551,7 @@ CameraModeValue D_8011B31C[] = {
     { 5, 5 },      // unk_0C
     { 45, 7 },     // fovTarget
     { 50, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0xA, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 20, 12 },    // unk_1C
 };
@@ -1601,7 +1601,7 @@ CameraModeValue D_8011B3A0[] = {
     { 100, 6 },    // unk_14
     { 70, 7 },     // fovTarget
     { 30, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B3C8[] = {
@@ -1615,7 +1615,7 @@ CameraModeValue D_8011B3C8[] = {
     { 50, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 50, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x02, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B3F0[] = {
@@ -1628,7 +1628,7 @@ CameraModeValue D_8011B3F0[] = {
     { 5, 5 },      // unk_0C
     { 45, 7 },     // fovTarget
     { 50, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0xA, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 20, 12 },    // unk_1C
 };
@@ -1678,14 +1678,14 @@ CameraModeValue D_8011B474[] = {
     { 100, 6 },    // pitchTarget
     { 60, 7 },     // fovTarget
     { 30, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue sSetScn0ModeNormVals[] = {
     /* CAM_FUNC_SPEC9 */
     { -30, 0 },   // yOffset
     { 60, 7 },    // unk_04 (unused)
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(1) | 0xA, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(1) | SPEC9_FLG_8 | SPEC9_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B4A8[] = {
@@ -1693,7 +1693,7 @@ CameraModeValue D_8011B4A8[] = {
     { -20, 0 },    // yOffset
     { 150, 1 },    // distTarget
     { 60, 7 },     // fovTarget
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(2) | 0x10, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(2) | UNIQ2_FLG_10, 9 }, // flags
 };
 
 CameraModeValue D_8011B4B8[] = {
@@ -1707,7 +1707,7 @@ CameraModeValue D_8011B4B8[] = {
     { 20, 6 },     // pitchTarget
     { 60, 7 },     // fovTarget
     { 40, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x12, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_10 | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B4E0[] = {
@@ -1721,7 +1721,7 @@ CameraModeValue D_8011B4E0[] = {
     { 25, 17 },    // swingPitchAdj (PCT)
     { 45, 7 },     // fov
     { 60, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -40, 11 },   // yOffsetOffGround (PCT)
     { 25, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -1737,7 +1737,7 @@ CameraModeValue D_8011B510[] = {
     { 60, 6 },     // pitchTarget
     { 60, 7 },     // fovTarget
     { 30, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x12, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_10 | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B538[] = {
@@ -1751,7 +1751,7 @@ CameraModeValue D_8011B538[] = {
     { 70, 6 },     // pitchTarget
     { 70, 7 },     // fovTarget
     { 80, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x12, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_10 | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B560[] = {
@@ -1764,7 +1764,7 @@ CameraModeValue D_8011B560[] = {
     { 5, 5 },      // unk_0C
     { 70, 7 },     // fovTarget
     { 80, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x1A, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_10 | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 40, 12 },    // unk_1C
 };
@@ -1779,7 +1779,7 @@ CameraModeValue D_8011B58C[] = {
     { 5, 5 },      // unk_0C
     { 60, 7 },     // fovTarget
     { 80, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x1A, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_10 | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 40, 12 },    // unk_1C
 };
@@ -1795,7 +1795,7 @@ CameraModeValue D_8011B5B8[] = {
     { 80, 6 },     // pitchTarget
     { 60, 7 },     // fovTarget
     { 20, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x12, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_10 | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B5E0[] = {
@@ -1809,7 +1809,7 @@ CameraModeValue D_8011B5E0[] = {
     { 70, 6 },     // pitchTarget
     { 70, 7 },     // fovTarget
     { 80, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x12, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_10 | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B608[] = {
@@ -1822,7 +1822,7 @@ CameraModeValue D_8011B608[] = {
     { 5, 5 },      // unk_0C
     { 70, 7 },     // fovTarget
     { 80, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x1A, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_10 | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 40, 12 },    // unk_1C
 };
@@ -1837,7 +1837,7 @@ CameraModeValue D_8011B634[] = {
     { 5, 5 },      // unk_0C
     { 70, 7 },     // fovTarget
     { 80, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0xA, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 40, 12 },    // unk_1C
 };
@@ -1853,7 +1853,7 @@ CameraModeValue D_8011B660[] = {
     { 80, 6 },     // pitchTarget
     { 70, 7 },     // fovTarget
     { 20, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x12, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_10 | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B688[] = {
@@ -1867,7 +1867,7 @@ CameraModeValue D_8011B688[] = {
     { 70, 6 },     // pitchTarget
     { 70, 7 },     // fovTarget
     { 80, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x02, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B6B0[] = {
@@ -1880,7 +1880,7 @@ CameraModeValue D_8011B6B0[] = {
     { 5, 5 },      // unk_0C
     { 70, 7 },     // fovTarget
     { 80, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0xA, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 40, 12 },    // unk_1C
 };
@@ -1895,7 +1895,7 @@ CameraModeValue D_8011B6DC[] = {
     { 5, 5 },      // unk_0C
     { 60, 7 },     // fovTarget
     { 80, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0xA, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 40, 12 },    // unk_1C
 };
@@ -1911,7 +1911,7 @@ CameraModeValue D_8011B708[] = {
     { 80, 6 },     // pitchTarget
     { 60, 7 },     // fovTarget
     { 20, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x02, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B730[] = {
@@ -1944,7 +1944,7 @@ CameraModeValue D_8011B75C[] = {
     { 35, 6 },     // unk_14
     { 60, 7 },     // fovTarget
     { 60, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x02, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B784[] = {
@@ -1958,7 +1958,7 @@ CameraModeValue D_8011B784[] = {
     { 35, 6 },     // pitchTarget
     { 55, 7 },     // fovTarget
     { 60, 8 },     // atLERPScaleMax
-    { CAM_IFACE_ALPHA(0xF) | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_IFACE_ALPHA(0xF) | CAM_IFACE_ALPHA(0) | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011B7AC[] = {
@@ -1971,7 +1971,7 @@ CameraModeValue D_8011B7AC[] = {
     { 5, 5 },      // unk_0C
     { 45, 7 },     // fovTarget
     { 50, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0xF) | 0xA, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0xF) | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 20, 12 },    // unk_1C
 };
@@ -1987,7 +1987,7 @@ CameraModeValue D_8011B7D8[] = {
     { 25, 17 },    // swingPitchAdj (PCT)
     { 55, 7 },     // fov
     { 80, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0xF) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0xF) | BATT1_FLG_2, 9 }, // flags
     { -40, 11 },   // yOffsetOffGround (PCT)
     { 25, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -2005,7 +2005,7 @@ CameraModeValue D_8011B808[] = {
     { 45, 7 },     // fovTarget
     { 50, 8 },     // atLERPScaleMax
     { 10, 4 },     // initTimer
-    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(0xF) | 0x20, 9 }, // flags
+    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(0xF) | KEEP3_FLG_20, 9 }, // flags
 };
 
 CameraModeValue D_8011B838[] = {
@@ -2083,7 +2083,7 @@ CameraModeValue D_8011B8D8[] = {
     { 50, 6 },     // pitchTarget
     { 70, 7 },     // fovTarget
     { 70, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x03, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011B900[] = {
@@ -2097,7 +2097,7 @@ CameraModeValue D_8011B900[] = {
     { 70, 17 },    // swingPitchAdj (PCT)
     { 60, 7 },     // fov
     { 40, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -50, 11 },   // yOffsetOffGround (PCT)
     { 20, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -2113,7 +2113,7 @@ CameraModeValue D_8011B930[] = {
     { 30, 6 },     // pitchTarget
     { 60, 7 },     // fovTarget
     { 60, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x03, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011B958[] = {
@@ -2126,7 +2126,7 @@ CameraModeValue D_8011B958[] = {
     { 5, 5 },      // unk_0C
     { 45, 7 },     // fovTarget
     { 50, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0xA, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -40, 11 },   // unk_18
     { 20, 12 },    // unk_1C
 };
@@ -2142,7 +2142,7 @@ CameraModeValue sSetDung2ModeBattVals[] = {
     { 25, 17 },    // swingPitchAdj (PCT)
     { 45, 7 },     // fov
     { 80, 8 },     // atLERPScaleOnGround (PCT)
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | BATT1_FLG_2, 9 }, // flags
     { -40, 11 },   // yOffsetOffGround (PCT)
     { 25, 12 },    // atLERPScaleOffGround (PCT)
 };
@@ -2194,7 +2194,7 @@ CameraModeValue D_8011BA18[] = {
     { 5, 5 },      // xzUpdRateTarget
     { 60, 7 },     // fovTarget
     { 40, 8 },     // atLERPStepScale
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x6, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | JUMP2_FLG_4 | JUMP2_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011BA3C[] = {
@@ -2230,7 +2230,7 @@ CameraModeValue D_8011BA74[] = {
     { 100, 6 },    // pitchTarget
     { 60, 7 },     // fovTarget
     { 5, 8 },      // atLERPScaleMax
-    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | 0x3, 9 }, // flags
+    { CAM_SHRINKWINVAL_PREV | CAM_IFACE_ALPHA(0) | NORM1_FLG_2 | NORM1_FLG_1, 9 }, // flags
 };
 
 CameraModeValue D_8011BA9C[] = {
@@ -2243,7 +2243,7 @@ CameraModeValue D_8011BA9C[] = {
     { 5, 5 },      // unk_0C
     { 70, 7 },     // fovTarget
     { 30, 8 },     // unk_14
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x6A, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | PARA1_FLG_40 | PARA1_FLG_20 | PARA1_FLG_8 | PARA1_FLG_2, 9 }, // flags
     { -20, 11 },   // unk_18
     { 30, 12 },    // unk_1C
 };
@@ -2259,7 +2259,7 @@ CameraModeValue D_8011BAC8[] = {
     { 80, 6 },     // pitchTarget
     { 60, 7 },     // fovTarget
     { 80, 8 },     // atLERPScaleMax
-    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | 0x2, 9 }, // flags
+    { CAM_SHRINKWINVAL_NONE | CAM_IFACE_ALPHA(0) | NORM1_FLG_2, 9 }, // flags
 };
 
 CameraModeValue D_8011BAF0[] = {
@@ -2274,7 +2274,7 @@ CameraModeValue D_8011BAF0[] = {
     { 20, 17 },    // unk_1C
     { 50, 7 },     // unk_20
     { 50, 8 },     // unk_24
-    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | 0x1, 9 }, // flags
+    { CAM_SHRINKWINVAL_MEDIUM | CAM_IFACE_ALPHA(0) | KEEP1_FLG_1, 9 }, // flags
     { -50, 11 },   // unk_28
     { 30, 12 },    // unk_2C
 };
@@ -2292,7 +2292,7 @@ CameraModeValue D_8011BB24[] = {
     { 50, 7 },     // fovTarget
     { 50, 8 },     // atLERPScaleMax
     { 10, 4 },     // initTimer
-    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(5) | 0x20, 9 }, // flags
+    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(5) | KEEP3_FLG_20, 9 }, // flags
 };
 
 CameraModeValue D_8011BB54[] = {
@@ -2308,7 +2308,7 @@ CameraModeValue D_8011BB54[] = {
     { 45, 7 },     // fovTarget
     { 50, 8 },     // atLERPScaleMax
     { 10, 4 },     // initTimer
-    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(5) | 0xA0, 9 }, // flags
+    { CAM_SHRINKWINVAL_LARGE | CAM_IFACE_ALPHA(5) | KEEP3_FLG_80 | KEEP3_FLG_20, 9 }, // flags
 };
 
 CameraMode sCamSetNorm0Modes[] = {
