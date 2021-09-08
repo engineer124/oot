@@ -6652,8 +6652,8 @@ s32 Camera_Special9(Camera* camera) {
     sCameraInterfaceFlags = params->interfaceFlags;
 
     switch (camera->animState) {
-        do {
-        } while (0);
+        if (1) {}
+
         case 0:
             camera->engineFlags &= ~(CAM_ENGINE_FLG_4 | CAM_ENGINE_FLG_2);
             camera->animState++;
@@ -7024,10 +7024,19 @@ void Camera_PrintSettings(Camera* camera) {
         if (camera->camDataIdx < 0) {
             sp50[i++] = '-';
         }
-        if (camera->camDataIdx / 0xA != 0) {
-            sp50[i++] = i / 0xA + '0';
+
+        //! @bug: this code was clearly meaning to print `abs(camera->camDataIdx)` as a
+        //! one-or-two-digit number, instead of `i`.
+        // "sp50[i++] = ..." matches here, but is undefined behavior due to conflicting
+        // reads/writes between sequence points, triggering warnings. Work around by
+        // putting i++ afterwards while on the same line.
+        // clang-format off
+        if (camera->camDataIdx / 10 != 0) {
+            sp50[i] = i / 10 + '0'; i++;
         }
-        sp50[i++] = i % 10 + '0';
+        sp50[i] = i % 10 + '0'; i++;
+        // clang-format on
+
         sp50[i++] = ' ';
         sp50[i++] = ' ';
         sp50[i++] = ' ';
