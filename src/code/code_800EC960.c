@@ -3812,12 +3812,12 @@ void Audio_ClearSariaBgm2(void) {
     sSariaBgmPtr = NULL;
 }
 
-void func_800F5510(u16 seqId) {
-    func_800F5550(seqId);
+void Audio_PlaySceneSequenceForNewDay(u16 seqId) {
+    Audio_PlaySceneSequence(seqId);
     Audio_PlaySequenceWithPlayerIO(SEQ_PLAYER_BGM_MAIN, seqId, 0, 0, 1);
 }
 
-void func_800F5550(u16 seqId) {
+void Audio_PlaySceneSequence(u16 seqId) {
     u8 fadeTimer = 0;
     u16 val;
 
@@ -3964,9 +3964,9 @@ void func_800F5C2C(void) {
 
 void Audio_PlayFanfare(u16 seqId) {
     u16 prevSeqId = Audio_GetActiveSequence(SEQ_PLAYER_FANFARE);
-    u32 outNumFonts;
-    u8* prevFontId = func_800E5E84(prevSeqId & 0xFF, &outNumFonts);
-    u8* fontId = func_800E5E84(seqId & 0xFF, &outNumFonts);
+    u32 numFonts;
+    u8* prevFontId = func_800E5E84(prevSeqId & 0xFF, &numFonts);
+    u8* fontId = func_800E5E84(seqId & 0xFF, &numFonts);
 
     if ((prevSeqId == NA_BGM_DISABLED) || (*prevFontId == *fontId)) {
         sFanfareState = 1;

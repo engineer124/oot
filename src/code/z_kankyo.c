@@ -1939,11 +1939,11 @@ void func_800758AC(GlobalContext* globalCtx) {
         osSyncPrintf("\n\n\nBGM設定game_play->sound_info.BGM=[%d] old_bgm=[%d]\n\n", globalCtx->sequenceCtx.seqId,
                      ((void)0, gSaveContext.seqId));
         if (((void)0, gSaveContext.seqId) != globalCtx->sequenceCtx.seqId) {
-            func_800F5550(globalCtx->sequenceCtx.seqId);
+            Audio_PlaySceneSequence(globalCtx->sequenceCtx.seqId);
         }
     } else if (((void)0, gSaveContext.dayTime) > 0x4AAA && ((void)0, gSaveContext.dayTime) < 0xB71D) {
         if (((void)0, gSaveContext.seqId) != globalCtx->sequenceCtx.seqId) {
-            func_800F5550(globalCtx->sequenceCtx.seqId);
+            Audio_PlaySceneSequence(globalCtx->sequenceCtx.seqId);
         }
 
         globalCtx->envCtx.unk_E0 = 1;
@@ -1977,7 +1977,7 @@ void func_80075B44(GlobalContext* globalCtx) {
             func_800F6D58(86, 1, 0);
             if (globalCtx->envCtx.unk_EE[0] == 0 && globalCtx->envCtx.unk_F2[0] == 0) {
                 osSyncPrintf("\n\n\nNa_StartMorinigBgm\n\n");
-                func_800F5510(globalCtx->sequenceCtx.seqId);
+                Audio_PlaySceneSequenceForNewDay(globalCtx->sequenceCtx.seqId);
             }
             globalCtx->envCtx.unk_E0++;
             break;
