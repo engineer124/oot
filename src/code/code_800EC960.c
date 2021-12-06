@@ -3812,12 +3812,12 @@ void Audio_ClearSariaBgm2(void) {
     sSariaBgmPtr = NULL;
 }
 
-void Audio_PlaySceneSequenceForNewDay(u16 seqId) {
-    Audio_PlaySceneSequence(seqId);
+void Audio_PlaySceneBgmForNewDay(u16 seqId) {
+    Audio_PlaySceneBgm(seqId);
     Audio_PlaySequenceWithPlayerIO(SEQ_PLAYER_BGM_MAIN, seqId, 0, 0, 1);
 }
 
-void Audio_PlaySceneSequence(u16 seqId) {
+void Audio_PlaySceneBgm(u16 seqId) {
     u8 fadeTimer = 0;
     u16 val;
 
