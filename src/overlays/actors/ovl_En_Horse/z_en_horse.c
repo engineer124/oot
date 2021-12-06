@@ -2494,7 +2494,7 @@ void EnHorse_UpdateHbaAnim(EnHorse* this) {
 
 void EnHorse_UpdateHorsebackArchery(EnHorse* this, GlobalContext* globalCtx) {
     f32 playSpeed;
-    s32 sp20;
+    s32 isHorseGoalPlaying;
 
     if (this->animationIdx == ENHORSE_ANIM_WALK) {
         EnHorse_PlayWalkingSound(this);
@@ -2503,10 +2503,10 @@ void EnHorse_UpdateHorsebackArchery(EnHorse* this, GlobalContext* globalCtx) {
         this->hbaTimer++;
     }
 
-    sp20 = Audio_IsSequencePlaying(NA_BGM_HORSE_GOAL);
+    isHorseGoalPlaying = Audio_IsSequencePlaying(NA_BGM_HORSE_GOAL);
     EnHorse_UpdateHbaRaceInfo(this, globalCtx, &sHbaInfo);
     if (this->hbaFlags & 1 || this->hbaTimer >= 46) {
-        if (sp20 != 1 && gSaveContext.minigameState != 3) {
+        if (isHorseGoalPlaying != true && gSaveContext.minigameState != 3) {
             gSaveContext.cutsceneIndex = 0;
             globalCtx->nextEntranceIndex = 0x3B0;
             globalCtx->sceneLoadFlag = 0x14;
