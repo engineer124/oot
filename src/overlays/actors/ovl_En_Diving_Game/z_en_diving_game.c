@@ -499,7 +499,7 @@ void EnDivingGame_Update(Actor* thisx, GlobalContext* globalCtx2) {
     if (1) {}
 
     if (gSaveContext.timer1Value == 10) {
-        func_800F5918();
+        Audio_IncreaseTempoForMinigame();
     }
     if (this->eyeTimer == 0) {
         this->eyeTimer = 2;

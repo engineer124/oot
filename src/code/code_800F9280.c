@@ -368,7 +368,7 @@ void Audio_ProcessSeqCmds(void) {
     }
 }
 
-u16 func_800FA0B4(u8 playerIdx) {
+u16 Audio_GetActiveSequence(u8 playerIdx) {
     if (!gAudioContext.seqPlayers[playerIdx].enabled) {
         return NA_BGM_DISABLED;
     }
