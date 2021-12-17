@@ -116,7 +116,7 @@ void EnPoDesert_SetupDisappear(EnPoDesert* this) {
     Animation_MorphToPlayOnce(&this->skelAnime, &gPoeFieldDisappearAnim, -6.0f);
     this->actionTimer = 16;
     this->actor.speedXZ = 0.0f;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_DISAPPEAR);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_DISAPPEAR);
     this->actionFunc = EnPoDesert_Disappear;
 }
 
@@ -131,7 +131,7 @@ void EnPoDesert_UpdateSpeedModifier(EnPoDesert* this) {
 }
 
 void EnPoDesert_WaitForPlayer(EnPoDesert* this, GlobalContext* globalCtx) {
-    func_8002F974(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
     if (this->actor.xzDistToPlayer < 200.0f && (this->currentPathPoint != 2 || globalCtx->actorCtx.unk_03)) {
         if (this->currentPathPoint == 2) {
             if (Gameplay_InCsMode(globalCtx)) {
@@ -162,7 +162,7 @@ void EnPoDesert_MoveToNextPoint(EnPoDesert* this, GlobalContext* globalCtx) {
     this->actor.world.rot.y = Actor_WorldYawTowardPoint(&this->actor, &this->actor.home.pos);
     Math_ApproachS(&this->actor.shape.rot.y, this->actor.world.rot.y + 0x8000, 5, 0x400);
     this->actor.speedXZ = sinf(this->speedModifier * (M_PI / 32.0f)) * 2.5f + 5.5f;
-    func_8002F974(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
     this->targetY = this->actor.home.pos.y - ((temp_f20 * this->yDiff) / this->initDistToNextPoint);
     if (temp_f20 < 40.0f) {
         if (this->currentPathPoint != 0) {

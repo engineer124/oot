@@ -384,16 +384,16 @@ void func_809FE798(EnDu* this, GlobalContext* globalCtx) {
     if (phi_v0 != 0) {
         switch (this->unk_1E2) {
             case 0x50:
-                Audio_PlayActorSound2(&this->actor, NA_SE_EV_CHAIN_KEY_UNLOCK_B);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_CHAIN_KEY_UNLOCK_B);
                 break;
             case 0x3C:
-                Audio_PlayActorSound2(&this->actor, NA_SE_EV_SLIDE_DOOR_OPEN);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_SLIDE_DOOR_OPEN);
                 break;
             case 0xF:
-                Audio_PlayActorSound2(&this->actor, NA_SE_EV_SLIDE_DOOR_CLOSE);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_SLIDE_DOOR_CLOSE);
                 break;
             case 5:
-                Audio_PlayActorSound2(&this->actor, NA_SE_EV_STONE_BOUND);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_STONE_BOUND);
                 break;
         }
         if (this->unk_1E2 >= 0x3D) {

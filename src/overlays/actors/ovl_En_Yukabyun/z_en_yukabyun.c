@@ -94,7 +94,7 @@ void func_80B43AD4(EnYukabyun* this, GlobalContext* globalCtx) {
         this->actionfunc = func_80B43B6C;
     }
     Math_StepToF(&this->actor.world.pos.y, this->actor.home.pos.y + 30.0f, 1.0f);
-    func_8002F974(&this->actor, NA_SE_EN_YUKABYUN_FLY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_YUKABYUN_FLY - SFX_FLAG);
 }
 
 void func_80B43B6C(EnYukabyun* this, GlobalContext* globalCtx) {
@@ -103,7 +103,7 @@ void func_80B43B6C(EnYukabyun* this, GlobalContext* globalCtx) {
         Actor_Kill(&this->actor);
         return;
     }
-    func_8002F974(&this->actor, NA_SE_EN_YUKABYUN_FLY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_YUKABYUN_FLY - SFX_FLAG);
 }
 
 void EnYukabyun_Break(EnYukabyun* this, GlobalContext* globalCtx) {

@@ -250,7 +250,7 @@ void EnClearTag_Init(Actor* thisx, GlobalContext* globalCtx) {
 
         func_8002D908(&this->actor);
         Collider_SetCylinder(globalCtx, &this->collider, &this->actor, &sLaserCylinderInit);
-        Audio_PlayActorSound2(&this->actor, NA_SE_IT_SWORD_REFLECT_MG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_SWORD_REFLECT_MG);
     } else { // Initialize the Arwing.
         this->actor.flags |= ACTOR_FLAG_0;
         this->actor.targetMode = 5;
@@ -355,7 +355,7 @@ void EnClearTag_Update(Actor* thisx, GlobalContext* globalCtx2) {
                     this->acceleration.y = Rand_CenteredFloat(15.0f);
                     this->acceleration.z = Rand_CenteredFloat(15.0f);
 
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_FANTOM_THUNDER_GND);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FANTOM_THUNDER_GND);
                     this->actor.colChkInfo.health--;
                     if ((s8)this->actor.colChkInfo.health <= 0) {
                         this->state = CLEAR_TAG_STATE_CRASHING;
@@ -524,7 +524,7 @@ void EnClearTag_Update(Actor* thisx, GlobalContext* globalCtx2) {
                     this->actor.velocity.y -= 0.2f;
                     this->actor.shape.rot.x += 0x10;
 
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_K_BREATH - SFX_FLAG);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DODO_K_BREATH - SFX_FLAG);
 
                     // Check if the Arwing has hit the ground.
                     if (this->actor.bgCheckFlags & 9) {

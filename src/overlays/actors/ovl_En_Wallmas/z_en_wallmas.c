@@ -186,7 +186,7 @@ void EnWallmas_SetupLand(EnWallmas* this, GlobalContext* globalCtx) {
                      ANIMMODE_ONCE, -3.0f);
 
     Actor_SpawnFloorDustRing(globalCtx, &this->actor, &this->actor.world.pos, 15.0f, 6, 20.0f, 0x12C, 0x64, 1);
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_FALL_LAND);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FALL_LAND);
     this->actionFunc = EnWallmas_Land;
 }
 
@@ -284,7 +284,7 @@ void EnWallmas_SetupStun(EnWallmas* this) {
         Actor_SetColorFilter(&this->actor, -0x8000, 0xFF, 0, 0x50);
     } else {
         Actor_SetColorFilter(&this->actor, 0, 0xFF, 0, 0x50);
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
     }
 
     this->timer = 0x50;
@@ -310,7 +310,7 @@ void EnWallmas_WaitToDrop(EnWallmas* this, GlobalContext* globalCtx) {
     }
 
     if (this->timer == 0x50) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_FALL_AIM);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FALL_AIM);
     }
 
     if (this->timer == 0) {
@@ -351,7 +351,7 @@ void EnWallmas_Walk(EnWallmas* this, GlobalContext* globalCtx) {
 
     if (Animation_OnFrame(&this->skelAnime, 0.0f) || Animation_OnFrame(&this->skelAnime, 12.0f) ||
         Animation_OnFrame(&this->skelAnime, 24.0f) || Animation_OnFrame(&this->skelAnime, 36.0f)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_FALL_WALK);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FALL_WALK);
     }
 }
 
@@ -370,7 +370,7 @@ void EnWallmas_ReturnToCeiling(EnWallmas* this, GlobalContext* globalCtx) {
     }
 
     if (Animation_OnFrame(&this->skelAnime, 20.0f) != 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_FALL_UP);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FALL_UP);
     }
 
     if (this->actor.yDistToPlayer < -900.0f) {
@@ -397,7 +397,7 @@ void EnWallmas_TakeDamage(EnWallmas* this, GlobalContext* globalCtx) {
         }
     }
     if (Animation_OnFrame(&this->skelAnime, 13.0f) != 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_M_GND);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DODO_M_GND);
     }
 
     Math_StepToF(&this->actor.speedXZ, 0.0f, 0.2f);
@@ -429,7 +429,7 @@ void EnWallmas_TakePlayer(EnWallmas* this, GlobalContext* globalCtx) {
             func_8002F7DC(&this->actor, NA_SE_VO_LI_DAMAGE_S);
         }
 
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_FALL_CATCH);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FALL_CATCH);
     }
     if (SkelAnime_Update(&this->skelAnime) != 0) {
         player->actor.world.pos.x = this->actor.world.pos.x;
@@ -455,7 +455,7 @@ void EnWallmas_TakePlayer(EnWallmas* this, GlobalContext* globalCtx) {
             }
         }
         if (this->timer == 0) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_FALL_UP);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FALL_UP);
         }
 
         this->timer = this->timer + 2;
@@ -467,7 +467,7 @@ void EnWallmas_TakePlayer(EnWallmas* this, GlobalContext* globalCtx) {
     Math_StepToF(&this->actor.world.pos.z, player->actor.world.pos.z, 3.0f);
 
     if (this->timer == 0x1E) {
-        func_80078884(NA_SE_OC_ABYSS);
+        Lib_PlaySfx1(NA_SE_OC_ABYSS);
         Gameplay_TriggerRespawn(globalCtx);
     }
 }
@@ -508,11 +508,11 @@ void EnWallmas_ColUpdate(EnWallmas* this, GlobalContext* globalCtx) {
         if ((this->actor.colChkInfo.damageEffect != 0) || (this->actor.colChkInfo.damage != 0)) {
             if (Actor_ApplyDamage(&this->actor) == 0) {
                 Enemy_StartFinishingBlow(globalCtx, &this->actor);
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_FALL_DEAD);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FALL_DEAD);
                 this->actor.flags &= ~ACTOR_FLAG_0;
             } else {
                 if (this->actor.colChkInfo.damage != 0) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_FALL_DAMAGE);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FALL_DAMAGE);
                 }
             }
 

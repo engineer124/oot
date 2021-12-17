@@ -821,7 +821,7 @@ void BossVa_BodyIntro(BossVa* this, GlobalContext* globalCtx) {
                 sCsState++;
             }
             if (Rand_ZeroOne() < 0.1f) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
             }
             break;
         case INTRO_CRACKLE:
@@ -936,7 +936,7 @@ void BossVa_BodyIntro(BossVa* this, GlobalContext* globalCtx) {
             for (i = 10; i >= 1; i--) {
                 if (sBodyBari[i - 1]) {
                     if (sBodyBari[i - 1] == 1) {
-                        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_STICK);
+                        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_STICK);
                         BossVa_SetSparkEnv(globalCtx);
                         if (this->onCeiling == 0) {
                             this->onCeiling = 2; // Not used by body
@@ -979,7 +979,7 @@ void BossVa_BodyIntro(BossVa* this, GlobalContext* globalCtx) {
                 }
 
                 if (Rand_ZeroOne() < 0.1f) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
                 }
 
                 this->timer = 40;
@@ -1077,7 +1077,7 @@ void BossVa_BodyPhase1(BossVa* this, GlobalContext* globalCtx) {
     if (sBodyState & 0x7F) {
         this->skelAnime.curFrame = 0.0f;
         Actor_SetColorFilter(&this->actor, 0, 255, 0, 12);
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_DAMAGE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_DAMAGE);
     }
 
     if (SkelAnime_Update(&this->skelAnime) && (sFightPhase >= PHASE_2)) {
@@ -1094,7 +1094,7 @@ void BossVa_BodyPhase1(BossVa* this, GlobalContext* globalCtx) {
     }
 
     if (Rand_ZeroOne() < 0.1f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
     }
 
     Collider_UpdateCylinder(&this->actor, &this->colliderBody);
@@ -1153,7 +1153,7 @@ void BossVa_BodyPhase2(BossVa* this, GlobalContext* globalCtx) {
             Actor_SetColorFilter(&this->actor, 0x4000, 255, 0, 12);
         }
 
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_FAINT);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_FAINT);
     }
 
     if (this->colliderBody.base.atFlags & AT_HIT) {
@@ -1162,7 +1162,7 @@ void BossVa_BodyPhase2(BossVa* this, GlobalContext* globalCtx) {
         sPhase2Timer = (sPhase2Timer + 0x18) & 0xFFF0;
         if (this->colliderBody.base.at == &player->actor) {
             func_8002F71C(globalCtx, &this->actor, 8.0f, this->actor.yawTowardsPlayer, 8.0f);
-            Audio_PlayActorSound2(&player->actor, NA_SE_PL_BODY_HIT);
+            Actor_PlaySfxAtPos1(&player->actor, NA_SE_PL_BODY_HIT);
         }
     }
 
@@ -1175,7 +1175,7 @@ void BossVa_BodyPhase2(BossVa* this, GlobalContext* globalCtx) {
     }
 
     if (Rand_ZeroOne() < 0.1f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
     }
 
     Math_SmoothStepToS(&this->actor.shape.rot.x, this->actor.world.rot.x, 1, 0xC8, 0);
@@ -1238,14 +1238,14 @@ void BossVa_BodyPhase3(BossVa* this, GlobalContext* globalCtx) {
         if (this->colliderBody.base.at == &player->actor) {
             func_8002F71C(globalCtx, &this->actor, 8.0f, this->actor.yawTowardsPlayer, 8.0f);
             this->actor.world.rot.y += (s16)Rand_CenteredFloat(0x2EE0) + 0x8000;
-            Audio_PlayActorSound2(&player->actor, NA_SE_PL_BODY_HIT);
+            Actor_PlaySfxAtPos1(&player->actor, NA_SE_PL_BODY_HIT);
         }
     }
 
     if (this->colliderBody.base.acFlags & AC_HIT) {
         this->skelAnime.curFrame = 0.0f;
         Actor_SetColorFilter(&this->actor, 0, 255, 0, 12);
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_FAINT);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_FAINT);
         sBodyState = 1;
         this->timer = 131;
         this->actor.flags &= ~ACTOR_FLAG_0;
@@ -1317,7 +1317,7 @@ void BossVa_BodyPhase3(BossVa* this, GlobalContext* globalCtx) {
     this->actor.focus.pos = this->actor.world.pos;
     this->actor.focus.pos.y += 20.0f;
     if (Rand_ZeroOne() < 0.1f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
     }
 
     Collider_UpdateCylinder(&this->actor, &this->colliderBody);
@@ -1359,11 +1359,11 @@ void BossVa_BodyPhase4(BossVa* this, GlobalContext* globalCtx) {
         if (this->colliderBody.base.at == &player->actor) {
             func_8002F71C(globalCtx, &this->actor, 8.0f, this->actor.yawTowardsPlayer, 8.0f);
             this->actor.world.rot.y += (s16)Rand_CenteredFloat(0x2EE0) + 0x8000;
-            Audio_PlayActorSound2(&player->actor, NA_SE_PL_BODY_HIT);
+            Actor_PlaySfxAtPos1(&player->actor, NA_SE_PL_BODY_HIT);
         }
     }
     if (Rand_ZeroOne() < 0.1f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
     }
 
     if (this->colliderBody.base.acFlags & AC_HIT) {
@@ -1374,7 +1374,7 @@ void BossVa_BodyPhase4(BossVa* this, GlobalContext* globalCtx) {
                 this->invincibilityTimer = 8;
                 if (this->actor.colChkInfo.damageEffect != 1) {
                     this->actor.world.rot.y = this->actor.yawTowardsPlayer;
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_DAMAGE);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_DAMAGE);
                     Actor_SetColorFilter(&this->actor, 0x4000, 255, 0, 12);
                     sPhase4HP -= this->actor.colChkInfo.damage;
                     if (sPhase4HP <= 0) {
@@ -1394,7 +1394,7 @@ void BossVa_BodyPhase4(BossVa* this, GlobalContext* globalCtx) {
                     this->vaBodySpinRate = 0;
                     this->actor.speedXZ = 0.0f;
                     Actor_SetColorFilter(&this->actor, 0, 125, 0, 255);
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_FAINT);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_FAINT);
                 }
             }
         } else if (this->colliderBody.base.ac->id == ACTOR_EN_BOOM) {
@@ -1402,7 +1402,7 @@ void BossVa_BodyPhase4(BossVa* this, GlobalContext* globalCtx) {
             boomerang->returnTimer = 0;
             boomerang->moveTo = &player->actor;
             boomerang->actor.world.rot.y = boomerang->actor.yawTowardsPlayer;
-            Audio_PlayActorSound2(&this->actor, NA_SE_IT_SHIELD_REFLECT_SW);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_SHIELD_REFLECT_SW);
         }
     } else if ((this->timer2 == 0) && (this->actor.shape.yOffset == 0.0f)) {
         this->timer = -220 - (s16)(Rand_ZeroOne() * 200.0f);
@@ -1704,7 +1704,7 @@ void BossVa_SupportIntro(BossVa* this, GlobalContext* globalCtx) {
         SkelAnime_Update(&this->skelAnime);
         Math_SmoothStepToF(&this->skelAnime.playSpeed, 1.0f, 1.0f, 0.05f, 0.0f);
         if (Rand_ZeroOne() < 0.1f) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
         }
     }
 }
@@ -1736,7 +1736,7 @@ void BossVa_SupportAttached(BossVa* this, GlobalContext* globalCtx) {
 
     BossVa_AttachToBody(this);
     if (Rand_ZeroOne() < 0.1f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
     }
 
     if (this->colliderSph.base.acFlags & AC_HIT) {
@@ -1836,7 +1836,7 @@ void BossVa_SupportCut(BossVa* this, GlobalContext* globalCtx) {
                 if (this->timer2 >= 32) {
                     this->burst++;
                     this->isDead = true;
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BREAK2);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BREAK2);
                     if (this->actor.params == BOSSVA_SUPPORT_3) {
                         sCsState++;
                     }
@@ -2047,7 +2047,7 @@ void BossVa_ZapperAttack(BossVa* this, GlobalContext* globalCtx) {
                 }
 
                 if (Rand_ZeroOne() < 0.1f) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
                 }
             }
         }
@@ -2055,7 +2055,7 @@ void BossVa_ZapperAttack(BossVa* this, GlobalContext* globalCtx) {
         if (this->burst || (this->timer2 < 0)) {
             if (this->colliderLightning.base.atFlags & AT_HIT) {
                 if (this->timer2 > 0) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_HIT_RINK);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_HIT_RINK);
                     BossVa_SetSparkEnv(globalCtx);
                     this->timer2 = -1;
                     GET_BODY(this)->onCeiling = 6; // not used by body
@@ -2081,7 +2081,7 @@ void BossVa_ZapperAttack(BossVa* this, GlobalContext* globalCtx) {
     if (this->burst && (this->burst != 2)) { // burst can never be 2
         if (this->timer2 >= 32) {
             if (this->timer2 == 32) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_THUNDER);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_THUNDER);
             }
             BossVa_Spark(globalCtx, this, 2, 110, 15.0f, 15.0f, SPARK_BLAST, 5.0f, true);
             BossVa_Spark(globalCtx, this, 2, 110, 15.0f, 15.0f, SPARK_BLAST, 6.0f, true);
@@ -2197,7 +2197,7 @@ void BossVa_ZapperDeath(BossVa* this, GlobalContext* globalCtx) {
                         this->burst++;
                         this->isDead = true;
                         BossVa_SetDeathEnv(globalCtx);
-                        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BREAK2);
+                        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BREAK2);
                     }
                 } else {
                     this->burst++;
@@ -2305,7 +2305,7 @@ void BossVa_ZapperEnraged(BossVa* this, GlobalContext* globalCtx) {
                 this->burst++;
                 this->unk_1D8 = sp54;
                 if (Rand_ZeroOne() < 0.1f) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
                 }
             }
         }
@@ -2313,7 +2313,7 @@ void BossVa_ZapperEnraged(BossVa* this, GlobalContext* globalCtx) {
         if (this->burst || (this->timer2 < 0)) {
             if (this->colliderLightning.base.atFlags & AT_HIT) {
                 if (this->timer2 > 0) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_HIT_RINK);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_HIT_RINK);
                     BossVa_SetSparkEnv(globalCtx);
                     this->timer2 = -1;
                     GET_BODY(this)->onCeiling = 6; // not used by body
@@ -2339,7 +2339,7 @@ void BossVa_ZapperEnraged(BossVa* this, GlobalContext* globalCtx) {
     if (this->burst && (this->burst != 2)) { // burst can never be 2
         if (this->timer2 >= 16) {
             if (this->timer2 == 18) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_THUNDER);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_THUNDER);
             }
 
             BossVa_Spark(globalCtx, this, 2, 110, 15.0f, 15.0f, SPARK_BLAST, 5.0f, true);
@@ -2509,7 +2509,7 @@ void BossVa_BariIntro(BossVa* this, GlobalContext* globalCtx) {
     }
 
     if (Rand_ZeroOne() < 0.1f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
     }
 }
 
@@ -2543,7 +2543,7 @@ void BossVa_BariPhase3Attack(BossVa* this, GlobalContext* globalCtx) {
     if ((this->colliderLightning.base.atFlags & AT_HIT) || (this->colliderSph.base.atFlags & AT_HIT)) {
         if ((this->colliderLightning.base.at == &player->actor) || (this->colliderSph.base.at == &player->actor)) {
             func_8002F71C(globalCtx, &this->actor, 8.0f, GET_BODY(this)->actor.yawTowardsPlayer, 8.0f);
-            Audio_PlayActorSound2(&player->actor, NA_SE_PL_BODY_HIT);
+            Actor_PlaySfxAtPos1(&player->actor, NA_SE_PL_BODY_HIT);
             this->colliderSph.base.at = NULL;
             this->colliderLightning.base.at = NULL;
         }
@@ -2559,7 +2559,7 @@ void BossVa_BariPhase3Attack(BossVa* this, GlobalContext* globalCtx) {
             boomerang->returnTimer = 0;
             boomerang->moveTo = &player->actor;
             boomerang->actor.world.rot.y = boomerang->actor.yawTowardsPlayer;
-            Audio_PlayActorSound2(&this->actor, NA_SE_IT_SHIELD_REFLECT_SW);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_SHIELD_REFLECT_SW);
         }
     }
 
@@ -2591,7 +2591,7 @@ void BossVa_BariPhase3Attack(BossVa* this, GlobalContext* globalCtx) {
     }
 
     if (Rand_ZeroOne() < 0.1f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
     }
 
     this->actor.world.rot.y += this->unk_1AC;
@@ -2638,7 +2638,7 @@ void BossVa_BariPhase2Attack(BossVa* this, GlobalContext* globalCtx) {
     if ((this->colliderLightning.base.atFlags & AT_HIT) || (this->colliderSph.base.atFlags & AT_HIT)) {
         if ((this->colliderLightning.base.at == &player->actor) || (this->colliderSph.base.at == &player->actor)) {
             func_8002F71C(globalCtx, &this->actor, 8.0f, GET_BODY(this)->actor.yawTowardsPlayer, 8.0f);
-            Audio_PlayActorSound2(&player->actor, NA_SE_PL_BODY_HIT);
+            Actor_PlaySfxAtPos1(&player->actor, NA_SE_PL_BODY_HIT);
             this->colliderSph.base.at = NULL;
             this->colliderLightning.base.at = NULL;
         }
@@ -2673,7 +2673,7 @@ void BossVa_BariPhase2Attack(BossVa* this, GlobalContext* globalCtx) {
                 boomerang->returnTimer = 0;
                 boomerang->moveTo = &player->actor;
                 boomerang->actor.world.rot.y = boomerang->actor.yawTowardsPlayer;
-                Audio_PlayActorSound2(&this->actor, NA_SE_IT_SHIELD_REFLECT_SW);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_SHIELD_REFLECT_SW);
             }
         }
 
@@ -2704,7 +2704,7 @@ void BossVa_BariPhase2Attack(BossVa* this, GlobalContext* globalCtx) {
     }
 
     if (Rand_ZeroOne() < 0.1f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_SPARK - SFX_FLAG);
     }
 
     if (GET_BODY(this)->actor.colorFilterTimer == 0) {
@@ -2764,7 +2764,7 @@ void BossVa_BariPhase3Stunned(BossVa* this, GlobalContext* globalCtx) {
 void BossVa_SetupBariDeath(BossVa* this) {
     this->actor.flags &= ~ACTOR_FLAG_0;
     this->timer = 30;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_BL_DEAD);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_BL_DEAD);
     this->isDead++;
     BossVa_SetupAction(this, BossVa_BariDeath);
 }
@@ -2786,7 +2786,7 @@ void BossVa_SetupDoor(BossVa* this, GlobalContext* globalCtx) {
 
 void BossVa_Door(BossVa* this, GlobalContext* globalCtx) {
     if (sDoorState == 29) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_BUYODOOR_CLOSE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_BUYODOOR_CLOSE);
     }
 
     if (sCsState <= INTRO_DOOR_SHUT) {

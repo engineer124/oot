@@ -569,7 +569,7 @@ void EnDaiku_Update(Actor* thisx, GlobalContext* globalCtx) {
     if (this->currentAnimIndex == ENDAIKU_ANIM_RUN) {
         curFrame = this->skelAnime.curFrame;
         if (curFrame == 6 || curFrame == 15) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_MORIBLIN_WALK);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MORIBLIN_WALK);
         }
     }
 

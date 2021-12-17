@@ -363,11 +363,11 @@ void EnAttackNiw_Update(Actor* thisx, GlobalContext* globalCtx) {
     }
     if (this->unk_25E == 0) {
         this->unk_25E = 30;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_CHICKEN_CRY_A);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_CHICKEN_CRY_A);
     }
     if (this->unk_260 == 0) {
         this->unk_260 = 7;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEKU_WAKEUP);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEKU_WAKEUP);
     }
 }
 

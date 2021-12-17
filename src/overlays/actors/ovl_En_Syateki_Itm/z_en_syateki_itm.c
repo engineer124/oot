@@ -158,7 +158,7 @@ void EnSyatekiItm_StartRound(EnSyatekiItm* this, GlobalContext* globalCtx) {
 
         this->timer = (this->roundNum == 1) ? 50 : 30;
 
-        func_80078884(NA_SE_SY_FOUND);
+        Lib_PlaySfx1(NA_SE_SY_FOUND);
         this->actionFunc = EnSyatekiItm_SpawnTargets;
     }
 }

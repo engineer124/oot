@@ -353,13 +353,13 @@ void DoorKiller_FallOver(DoorKiller* this, GlobalContext* globalCtx) {
             (playerPosRelToDoor.z < 100.0f) && (playerPosRelToDoor.z > 0.0f)) {
             this->hasHitPlayerOrGround |= 1;
             func_8002F6D4(globalCtx, &this->actor, 6.0f, this->actor.yawTowardsPlayer, 6.0f, 16);
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_KDOOR_HIT);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_KDOOR_HIT);
             func_8002F7DC(&player->actor, NA_SE_PL_BODY_HIT);
         }
     }
     if (!(this->hasHitPlayerOrGround & 1) && (this->timer == 2)) {
         this->hasHitPlayerOrGround |= 1;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_KDOOR_HIT_GND);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_KDOOR_HIT_GND);
     }
 }
 
@@ -371,7 +371,7 @@ void DoorKiller_Wobble(DoorKiller* this, GlobalContext* globalCtx) {
     s32 i;
 
     if ((this->timer == 16) || (this->timer == 8)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_KDOOR_WAVE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_KDOOR_WAVE);
     }
 
     if (this->timer > 0) {

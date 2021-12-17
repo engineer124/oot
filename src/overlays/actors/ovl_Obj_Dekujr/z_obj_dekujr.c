@@ -96,7 +96,7 @@ void ObjDekujr_ComeUp(ObjDekujr* this, GlobalContext* globalCtx) {
         this->unk_19B = 0;
     } else {
         if (globalCtx->csCtx.frames == 351) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_COME_UP_DEKU_JR);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_COME_UP_DEKU_JR);
         }
         csCmdNPCAction = globalCtx->csCtx.npcActions[1];
         if (csCmdNPCAction != NULL) {

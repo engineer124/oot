@@ -188,7 +188,7 @@ void BgHeavyBlock_MovePiece(BgHeavyBlock* this, GlobalContext* globalCtx) {
             thisx->velocity.x = Rand_CenteredFloat(8.0f);
             thisx->velocity.z = Rand_CenteredFloat(8.0f);
             BgHeavyBlock_SetPieceRandRot(this, 1.0f);
-            Audio_PlayActorSound2(thisx, NA_SE_EV_ROCK_BROKEN);
+            Actor_PlaySfxAtPos1(thisx, NA_SE_EV_ROCK_BROKEN);
             func_800AA000(thisx->xzDistToPlayer, 0x96, 0xA, 8);
         }
     }
@@ -370,7 +370,7 @@ void BgHeavyBlock_LiftedUp(BgHeavyBlock* this, GlobalContext* globalCtx) {
 
     // if parent is NULL, link threw it
     if (Actor_HasNoParent(&this->dyna.actor, globalCtx)) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_HEAVY_THROW);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_HEAVY_THROW);
         this->actionFunc = BgHeavyBlock_Fly;
     }
 }
@@ -411,7 +411,7 @@ void BgHeavyBlock_Fly(BgHeavyBlock* this, GlobalContext* globalCtx) {
                 Audio_PlaySoundAtPosition(globalCtx, &this->dyna.actor.world.pos, 30, NA_SE_EV_ELECTRIC_EXPLOSION);
                 return;
             case HEAVYBLOCK_UNBREAKABLE_OUTSIDE_CASTLE:
-                Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
+                Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
 
                 quakeIndex = Quake_Add(GET_ACTIVE_CAM(globalCtx), 3);
                 Quake_SetSpeed(quakeIndex, 28000);
@@ -422,7 +422,7 @@ void BgHeavyBlock_Fly(BgHeavyBlock* this, GlobalContext* globalCtx) {
                 Flags_SetSwitch(globalCtx, (this->dyna.actor.params >> 8) & 0x3F);
                 break;
             case HEAVYBLOCK_UNBREAKABLE:
-                Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BUYOSTAND_STOP_U);
+                Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BUYOSTAND_STOP_U);
 
                 quakeIndex = Quake_Add(GET_ACTIVE_CAM(globalCtx), 3);
                 Quake_SetSpeed(quakeIndex, 28000);

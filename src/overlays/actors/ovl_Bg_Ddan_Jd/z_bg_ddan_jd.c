@@ -146,7 +146,7 @@ void BgDdanJd_MoveEffects(BgDdanJd* this, GlobalContext* globalCtx) {
         func_80033480(globalCtx, &dustPos, 5.0f, 1, 20, 60, 1);
     }
     if (this->ySpeed == SHORTCUT_Y_SPEED) {
-        func_8002F974(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
     }
 }
 
@@ -162,7 +162,7 @@ void BgDdanJd_Move(BgDdanJd* this, GlobalContext* globalCtx) {
         this->actionFunc = BgDdanJd_Idle;
         OnePointCutscene_Init(globalCtx, 3060, -99, &this->dyna.actor, MAIN_CAM);
     } else if (Math_StepToF(&this->dyna.actor.world.pos.y, this->targetY, this->ySpeed)) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_PILLAR_MOVE_STOP);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_PILLAR_MOVE_STOP);
         this->actionFunc = BgDdanJd_Idle;
     }
     BgDdanJd_MoveEffects(this, globalCtx);

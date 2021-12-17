@@ -875,7 +875,7 @@ s32 func_80A44AB0(EnGo2* this, GlobalContext* globalCtx) {
 
                 globalCtx->damagePlayer(globalCtx, -4);
                 func_8002F71C(globalCtx, &this->actor, arg2, this->actor.yawTowardsPlayer, 6.0f);
-                Audio_PlayActorSound2(&player->actor, NA_SE_PL_BODY_HIT);
+                Actor_PlaySfxAtPos1(&player->actor, NA_SE_PL_BODY_HIT);
                 this->collider.base.ocFlags1 &= ~0x8;
             }
         }
@@ -963,13 +963,13 @@ s32 EnGo2_IsRollingOnGround(EnGo2* this, s16 arg1, f32 arg2, s16 arg3) {
         } else {
             this->actor.world.pos.y =
                 (this->unk_590 & 1) ? this->actor.world.pos.y + 1.5f : this->actor.world.pos.y - 1.5f;
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_BIGBALL_ROLL - SFX_FLAG);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_BIGBALL_ROLL - SFX_FLAG);
             return true;
         }
     }
 
     if (this->unk_59C >= 2) {
-        Audio_PlayActorSound2(&this->actor, (this->actor.params & 0x1F) == GORON_CITY_ROLLING_BIG
+        Actor_PlaySfxAtPos1(&this->actor, (this->actor.params & 0x1F) == GORON_CITY_ROLLING_BIG
                                                 ? NA_SE_EN_GOLON_LAND_BIG
                                                 : NA_SE_EN_DODO_M_GND);
     }
@@ -1238,17 +1238,17 @@ void EnGo2_SitDownAnimation(EnGo2* this) {
     if ((this->skelAnime.playSpeed != 0.0f) && (this->skelAnime.animation == &gGoronAnim_004930)) {
         if (this->skelAnime.playSpeed > 0.0f && this->skelAnime.curFrame == 14.0f) {
             if ((this->actor.params & 0x1F) != GORON_DMT_BIGGORON) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOLON_SIT_DOWN);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOLON_SIT_DOWN);
             } else {
                 func_800F4524(&D_801333D4, NA_SE_EN_GOLON_SIT_DOWN, 60);
             }
         }
         if (this->skelAnime.playSpeed < 0.0f) {
             if (this->skelAnime.curFrame == 1.0f) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_M_GND);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DODO_M_GND);
             }
             if (this->skelAnime.curFrame == 40.0f) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOLON_SIT_DOWN);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOLON_SIT_DOWN);
             }
         }
     }
@@ -1281,7 +1281,7 @@ void EnGo2_RollingAnimation(EnGo2* this, GlobalContext* globalCtx) {
 void EnGo2_WakeUp(EnGo2* this, GlobalContext* globalCtx) {
     if (this->skelAnime.playSpeed == 0.0f) {
         if ((this->actor.params & 0x1F) != GORON_DMT_BIGGORON) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOLON_WAKE_UP);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOLON_WAKE_UP);
         } else {
             func_800F4524(&D_801333D4, NA_SE_EN_GOLON_WAKE_UP, 60);
         }
@@ -1430,7 +1430,7 @@ void EnGo2_GoronLinkAnimation(EnGo2* this, GlobalContext* globalCtx) {
 
         if (this->skelAnime.animation == &gGoronAnim_000750) {
             if (this->skelAnime.curFrame == 20.0f) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOLON_CRY);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOLON_CRY);
             }
         }
 
@@ -1890,7 +1890,7 @@ void EnGo2_GoronFireGenericAction(EnGo2* this, GlobalContext* globalCtx) {
         case 2: // Walking away
             if (DECR(this->animTimer)) {
                 if (!(this->animTimer % 8)) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_MORIBLIN_WALK);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MORIBLIN_WALK);
                 }
                 Actor_MoveForward(&this->actor);
             } else {
@@ -1907,10 +1907,10 @@ void EnGo2_GoronFireGenericAction(EnGo2* this, GlobalContext* globalCtx) {
         case 3: // Walking away
             this->animTimer++;
             if (!(this->animTimer % 8) && (this->animTimer < 10)) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_MORIBLIN_WALK);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MORIBLIN_WALK);
             }
             if (this->animTimer == 10) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EV_IRON_DOOR_OPEN);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_IRON_DOOR_OPEN);
             }
             if (this->animTimer > 44) {
                 Audio_PlaySoundAtPosition(globalCtx, &this->actor.world.pos, 20, NA_SE_EV_IRON_DOOR_CLOSE);

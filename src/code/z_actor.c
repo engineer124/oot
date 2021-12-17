@@ -486,7 +486,7 @@ void func_8002C7BC(TargetContext* targetCtx, Player* player, Actor* actorArg, Gl
 
             lockOnSfxId = CHECK_FLAG_ALL(actorArg->flags, ACTOR_FLAG_0 | ACTOR_FLAG_2) ? NA_SE_SY_LOCK_ON
                                                                                        : NA_SE_SY_LOCK_ON_HUMAN;
-            func_80078884(lockOnSfxId);
+            Lib_PlaySfx1(lockOnSfxId);
         }
 
         targetCtx->targetCenterPos.x = actorArg->world.pos.x;
@@ -1686,8 +1686,8 @@ void func_8002F7DC(Actor* actor, u16 sfxId) {
     Audio_PlaySoundGeneral(sfxId, &actor->projectedPos, 4, &D_801333E0, &D_801333E0, &D_801333E8);
 }
 
-void Audio_PlayActorSound2(Actor* actor, u16 sfxId) {
-    func_80078914(&actor->projectedPos, sfxId);
+void Actor_PlaySfxAtPos1(Actor* actor, u16 sfxId) {
+    Lib_PlaySfxAtPos(&actor->projectedPos, sfxId);
 }
 
 void func_8002F850(GlobalContext* globalCtx, Actor* actor) {
@@ -1703,42 +1703,42 @@ void func_8002F850(GlobalContext* globalCtx, Actor* actor) {
         sfxId = SurfaceType_GetSfx(&globalCtx->colCtx, actor->floorPoly, actor->floorBgId);
     }
 
-    func_80078914(&actor->projectedPos, NA_SE_EV_BOMB_BOUND);
-    func_80078914(&actor->projectedPos, sfxId + SFX_FLAG);
+    Lib_PlaySfxAtPos(&actor->projectedPos, NA_SE_EV_BOMB_BOUND);
+    Lib_PlaySfxAtPos(&actor->projectedPos, sfxId + SFX_FLAG);
 }
 
-void func_8002F8F0(Actor* actor, u16 sfxId) {
+void Actor_PlaySfxAtPos2(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
-    actor->flags |= ACTOR_FLAG_19;
-    actor->flags &= ~(ACTOR_FLAG_20 | ACTOR_FLAG_21 | ACTOR_FLAG_28);
+    actor->flags |= ACTOR_FLAG_SFX_POS;
+    actor->flags &= ~(ACTOR_FLAG_SFX_LIB1 | ACTOR_FLAG_SFX_LIB2 | ACTOR_FLAG_SFX_TIMER);
 }
 
-void func_8002F91C(Actor* actor, u16 sfxId) {
+void Actor_PlaySfx1(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
-    actor->flags |= ACTOR_FLAG_20;
-    actor->flags &= ~(ACTOR_FLAG_19 | ACTOR_FLAG_21 | ACTOR_FLAG_28);
+    actor->flags |= ACTOR_FLAG_SFX_LIB1;
+    actor->flags &= ~(ACTOR_FLAG_SFX_POS | ACTOR_FLAG_SFX_LIB2 | ACTOR_FLAG_SFX_TIMER);
 }
 
-void func_8002F948(Actor* actor, u16 sfxId) {
+void Actor_PlaySfx2(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
-    actor->flags |= ACTOR_FLAG_21;
-    actor->flags &= ~(ACTOR_FLAG_19 | ACTOR_FLAG_20 | ACTOR_FLAG_28);
+    actor->flags |= ACTOR_FLAG_SFX_LIB2;
+    actor->flags &= ~(ACTOR_FLAG_SFX_POS | ACTOR_FLAG_SFX_LIB1 | ACTOR_FLAG_SFX_TIMER);
 }
 
-void func_8002F974(Actor* actor, u16 sfxId) {
-    actor->flags &= ~(ACTOR_FLAG_19 | ACTOR_FLAG_20 | ACTOR_FLAG_21 | ACTOR_FLAG_28);
+void Actor_PlaySfxAtPos3(Actor* actor, u16 sfxId) {
+    actor->flags &= ~(ACTOR_FLAG_SFX_POS | ACTOR_FLAG_SFX_LIB1 | ACTOR_FLAG_SFX_LIB2 | ACTOR_FLAG_SFX_TIMER);
     actor->sfx = sfxId;
 }
 
-void func_8002F994(Actor* actor, s32 arg1) {
-    actor->flags |= ACTOR_FLAG_28;
-    actor->flags &= ~(ACTOR_FLAG_19 | ACTOR_FLAG_20 | ACTOR_FLAG_21);
-    if (arg1 < 40) {
-        actor->sfx = NA_SE_PL_WALK_DIRT - SFX_FLAG;
-    } else if (arg1 < 100) {
-        actor->sfx = NA_SE_PL_WALK_CONCRETE - SFX_FLAG;
+void Actor_UpdateTimerSfxState(Actor* actor, s32 timer) {
+    actor->flags |= ACTOR_FLAG_SFX_TIMER;
+    actor->flags &= ~(ACTOR_FLAG_SFX_POS | ACTOR_FLAG_SFX_LIB1 | ACTOR_FLAG_SFX_LIB2);
+    if (timer < 40) {
+        actor->sfx = 3;
+    } else if (timer < 100) {
+        actor->sfx = 2;
     } else {
-        actor->sfx = NA_SE_PL_WALK_SAND - SFX_FLAG;
+        actor->sfx = 1;
     }
 }
 
@@ -1747,7 +1747,7 @@ s32 func_8002F9EC(GlobalContext* globalCtx, Actor* actor, CollisionPoly* poly, s
     if (func_80041D4C(&globalCtx->colCtx, poly, bgId) == 8) {
         globalCtx->roomCtx.unk_74[0] = 1;
         CollisionCheck_BlueBlood(globalCtx, NULL, pos);
-        Audio_PlayActorSound2(actor, NA_SE_IT_WALL_HIT_BUYO);
+        Actor_PlaySfxAtPos1(actor, NA_SE_IT_WALL_HIT_BUYO);
         return true;
     }
 
@@ -2120,7 +2120,7 @@ void Actor_UpdateAll(GlobalContext* globalCtx, ActorContext* actorCtx) {
         actor = NULL;
         if (actorCtx->targetCtx.unk_4B != 0) {
             actorCtx->targetCtx.unk_4B = 0;
-            func_80078884(NA_SE_SY_LOCK_OFF);
+            Lib_PlaySfx1(NA_SE_SY_LOCK_OFF);
         }
     }
 
@@ -2217,17 +2217,17 @@ void Actor_Draw(GlobalContext* globalCtx, Actor* actor) {
     Fault_RemoveClient(&faultClient);
 }
 
-void func_80030ED8(Actor* actor) {
-    if (actor->flags & ACTOR_FLAG_19) {
+void Actor_PlaySfxFromFlag(Actor* actor) {
+    if (actor->flags & ACTOR_FLAG_SFX_POS) {
         Audio_PlaySoundGeneral(actor->sfx, &actor->projectedPos, 4, &D_801333E0, &D_801333E0, &D_801333E8);
-    } else if (actor->flags & ACTOR_FLAG_20) {
-        func_80078884(actor->sfx);
-    } else if (actor->flags & ACTOR_FLAG_21) {
-        func_800788CC(actor->sfx);
-    } else if (actor->flags & ACTOR_FLAG_28) {
+    } else if (actor->flags & ACTOR_FLAG_SFX_LIB1) {
+        Lib_PlaySfx1(actor->sfx);
+    } else if (actor->flags & ACTOR_FLAG_SFX_LIB2) {
+        Lib_PlaySfx2(actor->sfx);
+    } else if (actor->flags & ACTOR_FLAG_SFX_TIMER) {
         func_800F4C58(&D_801333D4, NA_SE_SY_TIMER - SFX_FLAG, (s8)(actor->sfx - 1));
     } else {
-        func_80078914(&actor->projectedPos, actor->sfx);
+        Lib_PlaySfxAtPos(&actor->projectedPos, actor->sfx);
     }
 }
 
@@ -2367,7 +2367,7 @@ void func_800315AC(GlobalContext* globalCtx, ActorContext* actorCtx) {
 
             if ((HREG(64) != 1) || ((HREG(65) != -1) && (HREG(65) != HREG(66))) || (HREG(69) == 0)) {
                 if (actor->sfx != 0) {
-                    func_80030ED8(actor);
+                    Actor_PlaySfxFromFlag(actor);
                 }
             }
 
@@ -3572,7 +3572,7 @@ void func_8003424C(GlobalContext* globalCtx, Vec3f* arg1) {
 
 void Actor_SetColorFilter(Actor* actor, s16 colorFlag, s16 colorIntensityMax, s16 xluFlag, s16 duration) {
     if ((colorFlag == 0x8000) && !(colorIntensityMax & 0x8000)) {
-        Audio_PlayActorSound2(actor, NA_SE_EN_LIGHT_ARROW_HIT);
+        Actor_PlaySfxAtPos1(actor, NA_SE_EN_LIGHT_ARROW_HIT);
     }
 
     actor->colorFilterParams = colorFlag | xluFlag | ((colorIntensityMax & 0xF8) << 5) | duration;

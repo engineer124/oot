@@ -73,7 +73,7 @@ void EnTrap_Init(Actor* thisx, GlobalContext* globalCtx) {
     thisx->gravity = -2.0f;
     if (thisx->params & SPIKETRAP_MODE_LINEAR) {
         thisx->speedXZ = this->moveSpeedForwardBack.z = this->upperParams & 0xF;
-        Audio_PlayActorSound2(thisx, NA_SE_EV_SPINE_TRAP_MOVE);
+        Actor_PlaySfxAtPos1(thisx, NA_SE_EV_SPINE_TRAP_MOVE);
     } else if (thisx->params & SPIKETRAP_MODE_CIRCULAR) {
         this->vRadius = (this->upperParams & 0xF) * 40.0f;
         this->vAngularVel = ((this->upperParams & 0xF0) + 0x10) << 5;
@@ -204,14 +204,14 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
             // If any of the above three conditions are met, turn around
             if (this->vContinue == 0.0f) {
                 thisx->world.rot.y += 0x8000;
-                Audio_PlayActorSound2(thisx, NA_SE_EV_SPINE_TRAP_MOVE);
+                Actor_PlaySfxAtPos1(thisx, NA_SE_EV_SPINE_TRAP_MOVE);
             }
         } else if (thisx->params & SPIKETRAP_MODE_CIRCULAR) {
             temp_cond = Math_SinS(this->vAngularPos);
             this->vAngularPos += this->vAngularVel;
             // Every full circle make a sound:
             if ((temp_cond < 0.0f) && (Math_SinS(this->vAngularPos) >= 0.0f)) {
-                Audio_PlayActorSound2(thisx, NA_SE_EV_ROUND_TRAP_MOVE);
+                Actor_PlaySfxAtPos1(thisx, NA_SE_EV_ROUND_TRAP_MOVE);
             }
             thisx->world.pos.x = (this->vRadius * Math_SinS(this->vAngularPos)) + thisx->home.pos.x;
             thisx->world.pos.z = (this->vRadius * Math_CosS(this->vAngularPos)) + thisx->home.pos.z;
@@ -232,7 +232,7 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                         }
                         if (this->vMovementMetric != 0.0f) {
                             if (this->vMovementMetric == BEGIN_MOVE_OUT) {
-                                Audio_PlayActorSound2(thisx, NA_SE_EV_SPINE_TRAP_MOVE);
+                                Actor_PlaySfxAtPos1(thisx, NA_SE_EV_SPINE_TRAP_MOVE);
                             }
                             this->vMovementMetric = Math_SmoothStepToF(&thisx->world.pos.z, this->targetPosFwd.z, 1.0f,
                                                                        this->moveSpeedForwardBack.z, 0.0f);
@@ -254,7 +254,7 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                         }
                         if (this->vMovementMetric != 0.0f) {
                             if (this->vMovementMetric == BEGIN_MOVE_OUT) {
-                                Audio_PlayActorSound2(thisx, NA_SE_EV_SPINE_TRAP_MOVE);
+                                Actor_PlaySfxAtPos1(thisx, NA_SE_EV_SPINE_TRAP_MOVE);
                             }
                             this->vMovementMetric = Math_SmoothStepToF(&thisx->world.pos.x, this->targetPosLeft.x, 1.0f,
                                                                        this->moveSpeedLeftRight.x, 0.0f);
@@ -275,7 +275,7 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                         }
                         if (this->vMovementMetric != 0.0f) {
                             if (this->vMovementMetric == BEGIN_MOVE_OUT) {
-                                Audio_PlayActorSound2(thisx, NA_SE_EV_SPINE_TRAP_MOVE);
+                                Actor_PlaySfxAtPos1(thisx, NA_SE_EV_SPINE_TRAP_MOVE);
                             }
                             this->vMovementMetric = Math_SmoothStepToF(&thisx->world.pos.z, this->targetPosBack.z, 1.0f,
                                                                        this->moveSpeedForwardBack.z, 0.0f);
@@ -297,7 +297,7 @@ void EnTrap_Update(Actor* thisx, GlobalContext* globalCtx) {
                         }
                         if (this->vMovementMetric != 0.0f) {
                             if (this->vMovementMetric == BEGIN_MOVE_OUT) {
-                                Audio_PlayActorSound2(thisx, NA_SE_EV_SPINE_TRAP_MOVE);
+                                Actor_PlaySfxAtPos1(thisx, NA_SE_EV_SPINE_TRAP_MOVE);
                             }
                             this->vMovementMetric = Math_SmoothStepToF(&thisx->world.pos.x, this->targetPosRight.x,
                                                                        1.0f, this->moveSpeedLeftRight.x, 0.0f);

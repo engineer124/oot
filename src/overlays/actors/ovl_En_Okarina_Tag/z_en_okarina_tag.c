@@ -154,7 +154,7 @@ void func_80ABF0CC(EnOkarinaTag* this, GlobalContext* globalCtx) {
             if ((globalCtx->sceneNum != SCENE_DAIYOUSEI_IZUMI) && (globalCtx->sceneNum != SCENE_YOUSEI_IZUMI_YOKO)) {
                 globalCtx->msgCtx.ocarinaMode = OCARINA_MODE_04;
             }
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
             this->actionFunc = func_80ABEF2C;
             return;
         }
@@ -170,7 +170,7 @@ void func_80ABF0CC(EnOkarinaTag* this, GlobalContext* globalCtx) {
                     Flags_SetSwitch(globalCtx, this->switchFlag);
                 }
                 globalCtx->msgCtx.ocarinaMode = OCARINA_MODE_04;
-                func_80078884(NA_SE_SY_CORRECT_CHIME);
+                Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
                 this->actionFunc = func_80ABEF2C;
                 return;
             }
@@ -233,7 +233,7 @@ void func_80ABF4C8(EnOkarinaTag* this, GlobalContext* globalCtx) {
     if (globalCtx->msgCtx.ocarinaMode == OCARINA_MODE_04) {
         this->actionFunc = func_80ABF28C;
     } else if (globalCtx->msgCtx.ocarinaMode == OCARINA_MODE_03) {
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
         if (this->switchFlag >= 0) {
             Flags_SetSwitch(globalCtx, this->switchFlag);
         }
@@ -256,7 +256,7 @@ void func_80ABF4C8(EnOkarinaTag* this, GlobalContext* globalCtx) {
                                                          : SEGMENTED_TO_VIRTUAL(&spot02_scene_Cs_005020);
                 gSaveContext.cutsceneTrigger = 1;
                 gSaveContext.eventChkInf[1] |= 0x2000;
-                func_80078884(NA_SE_SY_CORRECT_CHIME);
+                Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
                 break;
             default:
                 break;

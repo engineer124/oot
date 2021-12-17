@@ -473,7 +473,7 @@ void BgMizuBwall_Idle(BgMizuBwall* this, GlobalContext* globalCtx) {
         func_8003EBF8(globalCtx, &globalCtx->colCtx.dyna, this->dyna.bgId);
         this->dList = NULL;
         BgMizuBwall_SpawnDebris(this, globalCtx);
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_WALL_BROKEN);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_WALL_BROKEN);
         Audio_PlaySoundGeneral(NA_SE_SY_CORRECT_CHIME, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
         this->actionFunc = BgMizuBwall_Break;
     } else if (this->dyna.actor.xzDistToPlayer < 600.0f) {

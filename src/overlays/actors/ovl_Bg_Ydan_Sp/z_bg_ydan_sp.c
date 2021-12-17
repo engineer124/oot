@@ -171,7 +171,7 @@ void BgYdanSp_UpdateFloorWebCollision(BgYdanSp* this) {
 void BgYdanSp_BurnWeb(BgYdanSp* this, GlobalContext* globalCtx) {
     this->timer = 30;
     this = this;
-    func_80078884(NA_SE_SY_CORRECT_CHIME);
+    Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
     Flags_SetSwitch(globalCtx, this->isDestroyedSwitchFlag);
     if (this->dyna.actor.params == WEB_FLOOR) {
         this->actionFunc = BgYdanSp_BurnFloorWeb;
@@ -254,7 +254,7 @@ void BgYdanSp_FloorWebBreaking(BgYdanSp* this, GlobalContext* globalCtx) {
     if (this->dyna.actor.home.pos.y - this->dyna.actor.world.pos.y > 190.0f) {
         func_8003EBF8(globalCtx, &globalCtx->colCtx.dyna, this->dyna.bgId);
         this->timer = 40;
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
         Flags_SetSwitch(globalCtx, this->isDestroyedSwitchFlag);
         this->actionFunc = BgYdanSp_FloorWebBroken;
         pos.y = this->dyna.actor.world.pos.y - 60.0f;
@@ -298,7 +298,7 @@ void BgYdanSp_FloorWebIdle(BgYdanSp* this, GlobalContext* globalCtx) {
                 this->dyna.actor.room = -1;
                 this->dyna.actor.flags |= ACTOR_FLAG_4;
                 this->timer = 40;
-                Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_WEB_BROKEN);
+                Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_WEB_BROKEN);
                 this->actionFunc = BgYdanSp_FloorWebBreaking;
                 return;
             }
@@ -331,7 +331,7 @@ void BgYdanSp_FloorWebIdle(BgYdanSp* this, GlobalContext* globalCtx) {
     Math_ApproachZeroF(&this->unk16C, 1.0f, 0.8f);
     if (this->timer == 13) {
         if (this->unk16C > 3.0f) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_WEB_VIBRATION);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_WEB_VIBRATION);
         } else {
             Audio_StopSfxById(NA_SE_EV_WEB_VIBRATION);
         }

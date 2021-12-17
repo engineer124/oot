@@ -215,7 +215,7 @@ void BgHakaGate_StatueTurn(BgHakaGate* this, GlobalContext* globalCtx) {
         this->actionFunc = BgHakaGate_StatueIdle;
         this->dyna.unk_150 = 0.0f;
     }
-    func_8002F974(&this->dyna.actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
 }
 
 void BgHakaGate_FloorClosed(BgHakaGate* this, GlobalContext* globalCtx) {
@@ -240,8 +240,8 @@ void BgHakaGate_FloorClosed(BgHakaGate* this, GlobalContext* globalCtx) {
                 sPuzzleState = SKULL_OF_TRUTH_FOUND;
                 this->actionFunc = BgHakaGate_DoNothing;
             } else {
-                func_80078884(NA_SE_SY_ERROR);
-                Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_GROUND_GATE_OPEN);
+                Lib_PlaySfx1(NA_SE_SY_ERROR);
+                Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_GROUND_GATE_OPEN);
                 func_8003EBF8(globalCtx, &globalCtx->colCtx.dyna, this->dyna.bgId);
                 this->vTimer = 60;
                 this->actionFunc = BgHakaGate_FloorOpen;
@@ -273,11 +273,11 @@ void BgHakaGate_GateWait(BgHakaGate* this, GlobalContext* globalCtx) {
 
 void BgHakaGate_GateOpen(BgHakaGate* this, GlobalContext* globalCtx) {
     if (Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y + 80.0f, 1.0f)) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_METALDOOR_STOP);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_METALDOOR_STOP);
         this->dyna.actor.flags &= ~ACTOR_FLAG_4;
         this->actionFunc = BgHakaGate_DoNothing;
     } else {
-        func_8002F974(&this->dyna.actor, NA_SE_EV_METALDOOR_SLIDE - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_METALDOOR_SLIDE - SFX_FLAG);
     }
 }
 

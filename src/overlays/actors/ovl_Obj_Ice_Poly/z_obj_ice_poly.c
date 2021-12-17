@@ -167,7 +167,7 @@ void ObjIcePoly_Melt(ObjIcePoly* this, GlobalContext* globalCtx) {
         this->meltTimer++;
         if (this->meltTimer == 0) {
             this->meltTimer = 40;
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_ICE_MELT);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_ICE_MELT);
         }
     } else {
         if (this->meltTimer != 0) {

@@ -203,7 +203,7 @@ void func_8086C054(BgBdanObjects* this, GlobalContext* globalCtx) {
 void func_8086C1A0(BgBdanObjects* this, GlobalContext* globalCtx) {
     if (Math_SmoothStepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y + 500.0f, 0.5f, 7.5f, 1.0f) <
         0.1f) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BUYOSTAND_STOP_A);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BUYOSTAND_STOP_A);
         this->actionFunc = func_8086C29C;
         this->timer = 30;
         BgBdanObjects_SetContactRu1(this, 2);
@@ -216,7 +216,7 @@ void func_8086C1A0(BgBdanObjects* this, GlobalContext* globalCtx) {
             func_800AA000(0.0f, 0x78, 0x14, 0xA);
             this->timer = 11;
         }
-        func_8002F974(&this->dyna.actor, NA_SE_EV_BUYOSTAND_RISING - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_BUYOSTAND_RISING - SFX_FLAG);
     }
 }
 
@@ -252,7 +252,7 @@ void func_8086C3D8(BgBdanObjects* this, GlobalContext* globalCtx) {
                      this->dyna.actor.velocity.y)) {
         this->dyna.actor.world.rot.y = 0;
         this->timer = 60;
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BUYOSTAND_STOP_U);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BUYOSTAND_STOP_U);
         this->dyna.actor.child->world.pos.y = this->dyna.actor.world.pos.y + 140.0f;
         this->actionFunc = func_8086C5BC;
         OnePointCutscene_Init(globalCtx, 3080, -99, this->dyna.actor.child, MAIN_CAM);
@@ -263,7 +263,7 @@ void func_8086C3D8(BgBdanObjects* this, GlobalContext* globalCtx) {
         player->actor.world.rot.y = player->actor.shape.rot.y;
         func_800AA000(0.0f, 0xFF, 0x1E, 0x96);
     } else {
-        func_8002F974(&this->dyna.actor, NA_SE_EV_BUYOSTAND_FALL - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_BUYOSTAND_FALL - SFX_FLAG);
         if (this->timer != 0) {
             this->timer--;
         }
@@ -336,10 +336,10 @@ void func_8086C76C(BgBdanObjects* this, GlobalContext* globalCtx) {
 void func_8086C7D0(BgBdanObjects* this, GlobalContext* globalCtx) {
     if (Math_SmoothStepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y + 965.0f, 0.5f, 15.0f, 0.2f) <
         0.01f) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BUYOSTAND_STOP_A);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BUYOSTAND_STOP_A);
         this->actionFunc = BgBdanObjects_DoNothing;
     } else {
-        func_8002F974(&this->dyna.actor, NA_SE_EV_BUYOSTAND_RISING - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_BUYOSTAND_RISING - SFX_FLAG);
     }
 }
 
@@ -390,12 +390,12 @@ void func_8086C9F0(BgBdanObjects* this, GlobalContext* globalCtx) {
             Flags_UnsetSwitch(globalCtx, this->switchFlag);
             this->actionFunc = func_8086C9A8;
         }
-        func_8002F948(&this->dyna.actor, NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
+        Actor_PlaySfx2(&this->dyna.actor, NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
     } else {
         if (Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y + 75.0f, 0.5f)) {
             this->actionFunc = func_8086CABC;
         }
-        func_8002F948(&this->dyna.actor, NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
+        Actor_PlaySfx2(&this->dyna.actor, NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
     }
     globalCtx->colCtx.colHeader->waterBoxes[7].ySurface = this->dyna.actor.world.pos.y;
 }
@@ -404,7 +404,7 @@ void func_8086CABC(BgBdanObjects* this, GlobalContext* globalCtx) {
     if (this->timer != 0) {
         this->timer--;
     }
-    func_8002F994(&this->dyna.actor, this->timer);
+    Actor_UpdateTimerSfxState(&this->dyna.actor, this->timer);
     if (this->timer == 0) {
         this->actionFunc = func_8086C9F0;
     }
@@ -428,11 +428,11 @@ void func_8086CB8C(BgBdanObjects* this, GlobalContext* globalCtx) {
     this->dyna.actor.world.pos.y = this->dyna.actor.home.pos.y - (cosf(this->timer * (M_PI / 50.0f)) * 200.0f);
 
     if (this->timer == 0) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BUYOSTAND_STOP_U);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BUYOSTAND_STOP_U);
         this->actionFunc = BgBdanObjects_DoNothing;
         Gameplay_CopyCamera(globalCtx, MAIN_CAM, SUBCAM_ACTIVE);
     } else {
-        func_8002F974(&this->dyna.actor, NA_SE_EV_BUYOSTAND_FALL - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_BUYOSTAND_FALL - SFX_FLAG);
     }
 }
 

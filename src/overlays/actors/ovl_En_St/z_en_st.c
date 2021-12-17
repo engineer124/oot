@@ -238,7 +238,7 @@ void EnSt_SetWaitingAnimation(EnSt* this) {
 }
 
 void EnSt_SetReturnToCeilingAnimation(EnSt* this) {
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_UP);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_UP);
     func_80034EC0(&this->skelAnime, sAnimations, 2);
 }
 
@@ -381,12 +381,12 @@ s32 EnSt_CheckHitLink(EnSt* this, GlobalContext* globalCtx) {
     }
 
     if (this->swayTimer == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_ROLL);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_ROLL);
     }
 
     this->gaveDamageSpinTimer = 30;
     globalCtx->damagePlayer(globalCtx, -8);
-    Audio_PlayActorSound2(&player->actor, NA_SE_PL_BODY_HIT);
+    Actor_PlaySfxAtPos1(&player->actor, NA_SE_PL_BODY_HIT);
     func_8002F71C(globalCtx, &this->actor, 4.0f, this->actor.yawTowardsPlayer, 6.0f);
     return true;
 }
@@ -431,7 +431,7 @@ s32 EnSt_CheckHitBackside(EnSt* this, GlobalContext* globalCtx) {
     this->invulnerableTimer = 8;
     if (this->actor.colChkInfo.damageEffect == 1) {
         if (this->stunTimer == 0) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
             this->stunTimer = 120;
             Actor_SetColorFilter(&this->actor, 0, 0xC8, 0, this->stunTimer);
         }
@@ -444,7 +444,7 @@ s32 EnSt_CheckHitBackside(EnSt* this, GlobalContext* globalCtx) {
     this->takeDamageSpinTimer = this->skelAnime.animLength;
     Actor_SetColorFilter(&this->actor, 0x4000, 0xC8, 0, this->takeDamageSpinTimer);
     if (Actor_ApplyDamage(&this->actor)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_DAMAGE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_DAMAGE);
         return false;
     }
     Enemy_StartFinishingBlow(globalCtx, &this->actor);
@@ -452,7 +452,7 @@ s32 EnSt_CheckHitBackside(EnSt* this, GlobalContext* globalCtx) {
     this->groundBounces = 3;
     this->deathTimer = 20;
     this->actor.gravity = -1.0f;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALWALL_DEAD);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALWALL_DEAD);
 
     if (flags & 0x1F820) {
         // arrow, fire arrow, ice arrow, light arrow,
@@ -591,14 +591,14 @@ void EnSt_UpdateYaw(EnSt* this, GlobalContext* globalCtx) {
             // turn away from the player
             this->rotAwayTimer--;
             if (this->rotAwayTimer == 0) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_ROLL);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_ROLL);
                 this->rotTowardsTimer = 30;
             }
         } else if (this->rotTowardsTimer != 0) {
             // turn towards the player
             this->rotTowardsTimer--;
             if (this->rotTowardsTimer == 0) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_ROLL);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_ROLL);
                 this->rotAwayTimer = 30;
             }
             yawDir = 0x8000;
@@ -648,7 +648,7 @@ s32 EnSt_IsDoneBouncing(EnSt* this, GlobalContext* globalCtx) {
         return false;
     }
 
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_M_GND);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DODO_M_GND);
     EnSt_SpawnDust(this, globalCtx, 10);
     // creates an elastic bouncing effect, boucing up less for each hit on the ground.
     this->actor.velocity.y = 6.0f / (4 - this->groundBounces);
@@ -740,7 +740,7 @@ void EnSt_Sway(EnSt* this) {
         rotAngle = Math_SinS(this->swayAngle) * (swayAmt * (65536.0f / 360.0f));
 
         if (this->absPrevSwayAngle >= ABS(rotAngle) && this->playSwayFlag == 0) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_WAVE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_WAVE);
             this->playSwayFlag = 1;
         }
 
@@ -837,7 +837,7 @@ void EnSt_WaitOnGround(EnSt* this, GlobalContext* globalCtx) {
 
     if (DECR(this->sfxTimer) == 0) {
         // play the "laugh" sfx every 64 frames.
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_LAUGH);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_LAUGH);
         this->sfxTimer = 64;
     }
 
@@ -863,7 +863,7 @@ void EnSt_LandOnGround(EnSt* this, GlobalContext* globalCtx) {
     this->sfxTimer++;
     if (this->sfxTimer == 14) {
         // play the sound effect of the Skulltula hitting the ground.
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_DOWN_SET);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_DOWN_SET);
     }
 
     if ((this->actor.floorHeight + this->floorHeightOffset) < this->actor.world.pos.y) {
@@ -893,7 +893,7 @@ void EnSt_MoveToGround(EnSt* this, GlobalContext* globalCtx) {
         EnSt_SetLandAnimation(this);
         EnSt_SetupAction(this, EnSt_LandOnGround);
     } else if (DECR(this->sfxTimer) == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_DOWN);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_DOWN);
         this->sfxTimer = 3;
     }
 }

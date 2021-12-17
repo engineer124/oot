@@ -271,9 +271,9 @@ void func_8089E318(BgMizuMovebg* this, GlobalContext* globalCtx) {
                 }
                 if (this->sfxFlags & 2) {
                     if (this->dyna.actor.room == 0) {
-                        func_8002F974(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
+                        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
                     } else {
-                        func_8002F948(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
+                        Actor_PlaySfx2(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
                     }
                 }
             }
@@ -292,7 +292,7 @@ void func_8089E318(BgMizuMovebg* this, GlobalContext* globalCtx) {
                     this->sfxFlags |= 2;
                 }
                 if (this->sfxFlags & 2) {
-                    func_8002F948(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
+                    Actor_PlaySfx2(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
                 }
             }
             break;
@@ -347,7 +347,7 @@ void func_8089E650(BgMizuMovebg* this, GlobalContext* globalCtx) {
         this->sfxFlags |= 1;
     }
     if (this->sfxFlags & 1) {
-        func_8002F948(&this->dyna.actor, NA_SE_EV_ROLL_STAND_2 - SFX_FLAG);
+        Actor_PlaySfx2(&this->dyna.actor, NA_SE_EV_ROLL_STAND_2 - SFX_FLAG);
     }
 }
 

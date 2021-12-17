@@ -726,7 +726,7 @@ void func_80A03610(EnElf* this, GlobalContext* globalCtx) {
 
     this->unk_2BC = Math_Atan2S(this->actor.velocity.z, this->actor.velocity.x);
     EnElf_SpawnSparkles(this, globalCtx, 32);
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_FIATY_HEAL - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_FIATY_HEAL - SFX_FLAG);
 }
 
 void func_80A03814(EnElf* this, GlobalContext* globalCtx) {
@@ -761,7 +761,7 @@ void func_80A03814(EnElf* this, GlobalContext* globalCtx) {
     func_80A02E30(this, &player->bodyPartsPos[0]);
     this->unk_2BC = Math_Atan2S(this->actor.velocity.z, this->actor.velocity.x);
     EnElf_SpawnSparkles(this, globalCtx, 32);
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_FIATY_HEAL - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_FIATY_HEAL - SFX_FLAG);
 }
 
 void func_80A03990(EnElf* this, GlobalContext* globalCtx) {
@@ -786,7 +786,7 @@ void func_80A03990(EnElf* this, GlobalContext* globalCtx) {
     Actor_SetScale(&this->actor, (1.0f - (SQ(this->unk_2B4) * SQ(1.0f / 9.0f))) * 0.008f);
     this->unk_2BC = Math_Atan2S(this->actor.velocity.z, this->actor.velocity.x);
     EnElf_SpawnSparkles(this, globalCtx, 32);
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_FIATY_HEAL - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_FIATY_HEAL - SFX_FLAG);
 }
 
 void func_80A03AB0(EnElf* this, GlobalContext* globalCtx) {
@@ -864,7 +864,7 @@ void func_80A03CF8(EnElf* this, GlobalContext* globalCtx) {
             // play dash sound as Navi enters Links house in the intro
             if (1) {}
             if (globalCtx->csCtx.frames == 55) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EV_FAIRY_DASH);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_FAIRY_DASH);
             }
 
             // play dash sound in intervals as Navi is waking up Link in the intro
@@ -876,7 +876,7 @@ void func_80A03CF8(EnElf* this, GlobalContext* globalCtx) {
                 } else {
                     if (this->actor.world.pos.y < prevPos.y) {
                         this->fairyFlags |= 0x40;
-                        Audio_PlayActorSound2(&this->actor, NA_SE_EV_FAIRY_DASH);
+                        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_FAIRY_DASH);
                     }
                 }
             }
@@ -959,7 +959,7 @@ void func_80A03CF8(EnElf* this, GlobalContext* globalCtx) {
                             this->fairyFlags |= 2;
 
                             if (this->unk_2C7 == 0) {
-                                Audio_PlayActorSound2(&this->actor, NA_SE_EV_FAIRY_DASH);
+                                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_FAIRY_DASH);
                             }
 
                             this->unk_2C0 = 0x64;
@@ -1007,7 +1007,7 @@ void func_80A04414(EnElf* this, GlobalContext* globalCtx) {
         this->unk_29C = 1.0f;
 
         if (this->unk_2C7 == 0) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_FAIRY_DASH);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_FAIRY_DASH);
         }
 
     } else {
@@ -1044,7 +1044,7 @@ void func_80A04414(EnElf* this, GlobalContext* globalCtx) {
             }
 
             if (this->unk_2C7 == 0) {
-                Audio_PlayActorSound2(&this->actor, targetSound);
+                Actor_PlaySfxAtPos1(&this->actor, targetSound);
             }
 
             this->fairyFlags |= 1;
@@ -1097,7 +1097,7 @@ void func_80A0461C(EnElf* this, GlobalContext* globalCtx) {
                             temp = 0;
                         } else {
                             if (this->unk_2C7 == 0) {
-                                Audio_PlayActorSound2(&this->actor, NA_SE_EV_NAVY_VANISH);
+                                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_NAVY_VANISH);
                             }
                             temp = 7;
                         }
@@ -1141,7 +1141,7 @@ void func_80A0461C(EnElf* this, GlobalContext* globalCtx) {
                 if (!(player->stateFlags2 & 0x100000)) {
                     temp = 7;
                     if (this->unk_2C7 == 0) {
-                        Audio_PlayActorSound2(&this->actor, NA_SE_EV_NAVY_VANISH);
+                        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_NAVY_VANISH);
                     }
                 }
                 break;
@@ -1151,7 +1151,7 @@ void func_80A0461C(EnElf* this, GlobalContext* globalCtx) {
                     this->unk_2C0 = 42;
                     temp = 11;
                     if (this->unk_2C7 == 0) {
-                        Audio_PlayActorSound2(&this->actor, NA_SE_EV_FAIRY_DASH);
+                        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_FAIRY_DASH);
                     }
                 }
                 break;

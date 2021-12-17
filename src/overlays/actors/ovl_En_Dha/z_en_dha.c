@@ -221,7 +221,7 @@ void EnDha_Wait(EnDha* this, GlobalContext* globalCtx) {
                         this->actor.parent->params = ENDH_START_ATTACK_GRAB;
                     }
 
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEADHAND_GRIP);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEADHAND_GRIP);
                 }
             } else {
                 this->timer += 0x1194;
@@ -234,7 +234,7 @@ void EnDha_Wait(EnDha* this, GlobalContext* globalCtx) {
                 }
 
                 if (this->timer < -0x6E6B) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEADHAND_GRIP);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEADHAND_GRIP);
                 }
             }
 
@@ -249,7 +249,7 @@ void EnDha_Wait(EnDha* this, GlobalContext* globalCtx) {
             }
 
             if (this->actor.home.rot.z != 0) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEADHAND_HAND_AT);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEADHAND_HAND_AT);
                 this->actor.home.rot.z = 0;
             }
         }
@@ -326,7 +326,7 @@ void EnDha_SetupDeath(EnDha* this) {
 
     if (this->actor.parent != NULL) {
         if (this->actor.parent->params != ENDH_DEATH) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEADHAND_HAND_DEAD);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEADHAND_HAND_DEAD);
         }
         if (this->actor.parent->params <= ENDH_WAIT_UNDERGROUND) {
             this->actor.parent->params--;
@@ -389,7 +389,7 @@ void EnDha_UpdateHealth(EnDha* this, GlobalContext* globalCtx) {
                 this->actor.colChkInfo.health = 8;
                 Item_DropCollectibleRandom(globalCtx, &this->actor, &this->actor.world.pos, 0xE0);
             } else {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEADHAND_DAMAGE);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEADHAND_DAMAGE);
                 this->unk_1C0 = 9;
                 EnDha_SetupTakeDamage(this);
             }

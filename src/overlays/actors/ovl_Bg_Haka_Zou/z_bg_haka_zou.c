@@ -278,12 +278,12 @@ void func_80883000(BgHakaZou* this, GlobalContext* globalCtx) {
             func_80882E54(this, globalCtx);
             this->dyna.actor.draw = NULL;
             this->timer = 1;
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_EXPLOSION);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_EXPLOSION);
             this->actionFunc = func_80883104;
         } else {
             func_80882CC4(this, globalCtx);
             this->timer = 1;
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_WALL_BROKEN);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_WALL_BROKEN);
             this->actionFunc = func_80883104;
         }
     } else {
@@ -314,7 +314,7 @@ void func_80883144(BgHakaZou* this, GlobalContext* globalCtx) {
         explosionPos.z = Rand_CenteredFloat(200.0f) + (this->dyna.actor.world.pos.z + 56.0f);
 
         EffectSsBomb2_SpawnLayered(globalCtx, &explosionPos, &sZeroVec, &sZeroVec, 150, 70);
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_IT_BOMB_EXPLOSION);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_IT_BOMB_EXPLOSION);
     }
 
     if (this->timer == 0) {
@@ -365,7 +365,7 @@ void func_80883328(BgHakaZou* this, GlobalContext* globalCtx) {
             effectPos.x -= 112.0f;
         }
 
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
         this->timer = 25;
         this->actionFunc = func_808834D8;
     }

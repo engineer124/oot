@@ -164,7 +164,7 @@ void BgHakaShip_CrashShake(BgHakaShip* this, GlobalContext* globalCtx) {
         this->dyna.actor.gravity = -1.0f;
         this->actionFunc = BgHakaShip_CrashFall;
     }
-    func_8002F974(&this->dyna.actor, NA_SE_EV_BLOCKSINK - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_BLOCKSINK - SFX_FLAG);
 }
 
 void BgHakaShip_CrashFall(BgHakaShip* this, GlobalContext* globalCtx) {
@@ -177,7 +177,7 @@ void BgHakaShip_CrashFall(BgHakaShip* this, GlobalContext* globalCtx) {
             Actor_Kill(child);
         }
     } else {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BLOCKSINK - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BLOCKSINK - SFX_FLAG);
         if ((this->dyna.actor.home.pos.y - this->dyna.actor.world.pos.y > 500.0f) && func_8004356C(&this->dyna)) {
             Gameplay_TriggerVoidOut(globalCtx);
         }
@@ -229,6 +229,6 @@ void BgHakaShip_Draw(Actor* thisx, GlobalContext* globalCtx) {
         sp2C.z = this->dyna.actor.world.pos.z;
 
         SkinMatrix_Vec3fMtxFMultXYZ(&globalCtx->viewProjectionMtxF, &sp2C, &this->bellSoundPos);
-        func_80078914(&this->bellSoundPos, NA_SE_EV_SHIP_BELL - SFX_FLAG);
+        Lib_PlaySfxAtPos(&this->bellSoundPos, NA_SE_EV_SHIP_BELL - SFX_FLAG);
     }
 }

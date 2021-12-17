@@ -406,10 +406,10 @@ void DemoKankyo_UpdateClouds(DemoKankyo* this, GlobalContext* globalCtx) {
 }
 
 void DemoKankyo_UpdateDoorOfTime(DemoKankyo* this, GlobalContext* globalCtx) {
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_STONE_STATUE_OPEN - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_STONE_STATUE_OPEN - SFX_FLAG);
     this->unk_150[0].unk_18 += 1.0f;
     if (this->unk_150[0].unk_18 >= 102.0f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_STONEDOOR_STOP);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_STONEDOOR_STOP);
         gSaveContext.eventChkInf[4] |= 0x800;
         Actor_Kill(this->actor.child);
         DemoKankyo_SetupAction(this, DemoKankyo_KillDoorOfTimeCollision);

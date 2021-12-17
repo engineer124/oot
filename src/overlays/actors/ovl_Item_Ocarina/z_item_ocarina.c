@@ -108,7 +108,7 @@ void ItemOcarina_Fly(ItemOcarina* this, GlobalContext* globalCtx) {
         this->actor.gravity = -0.1f;
         this->actor.minVelocityY = -0.5f;
         this->spinRotOffset = 0;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_BOMB_DROP_WATER);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_BOMB_DROP_WATER);
     }
 
     // landed in water

@@ -377,9 +377,9 @@ void BossGoma_PlayEffectsAndSfx(BossGoma* this, GlobalContext* globalCtx, s16 ar
     }
 
     if (arg2 == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_DOWN);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_DOWN);
     } else {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_WALK);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_WALK);
     }
 }
 
@@ -406,7 +406,7 @@ void BossGoma_SetupDefeated(BossGoma* this, GlobalContext* globalCtx) {
     this->actor.speedXZ = 0.0f;
     this->actor.shape.shadowScale = 0.0f;
     Audio_QueueSeqCmd(0x1 << 28 | SEQ_PLAYER_BGM_MAIN << 24 | 0x100FF);
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_DEAD);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_DEAD);
 }
 
 /**
@@ -615,7 +615,7 @@ void BossGoma_UpdateCeilingMovement(BossGoma* this, GlobalContext* globalCtx, f3
             pos.z = Rand_CenteredFloat(70.0f) + basePos->z;
             EffectSsHahen_Spawn(globalCtx, &pos, &vel, &accel, 0, (s16)(Rand_ZeroOne() * 5.0f) + 10, -1, 10, NULL);
         }
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_HIGH);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_HIGH);
     }
 }
 
@@ -793,7 +793,7 @@ void BossGoma_Encounter(BossGoma* this, GlobalContext* globalCtx) {
 
         case 4: // focus Gohma on the ceiling
             if (Animation_OnFrame(&this->skelanime, 15.0f)) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_DEMO_EYE);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_DEMO_EYE);
             }
 
             if (this->framesUntilNextAction <= 40) {
@@ -917,7 +917,7 @@ void BossGoma_Encounter(BossGoma* this, GlobalContext* globalCtx) {
             }
 
             if (Animation_OnFrame(&this->skelanime, 40.0f)) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_CRY1);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_CRY1);
 
                 if (!(gSaveContext.eventChkInf[7] & 1)) {
                     TitleCard_InitBossName(globalCtx, &globalCtx->actorCtx.titleCtx,
@@ -1021,7 +1021,7 @@ void BossGoma_Defeated(BossGoma* this, GlobalContext* globalCtx) {
 
     if (this->framesUntilNextAction < 1080 && this->actionState < 3) {
         if (this->framesUntilNextAction < 1070) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_LAST - SFX_FLAG);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_LAST - SFX_FLAG);
         }
 
         for (i = 0; i < 4; i++) {
@@ -1283,7 +1283,7 @@ void BossGoma_FloorPrepareAttack(BossGoma* this, GlobalContext* globalCtx) {
 
     if (this->framesUntilNextAction == 0) {
         BossGoma_SetupFloorAttack(this);
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_CRY1);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_CRY1);
     }
 
     this->eyeState = EYESTATE_IRIS_FOLLOW_NO_IFRAMES;
@@ -1326,7 +1326,7 @@ void BossGoma_FloorAttack(BossGoma* this, GlobalContext* globalCtx) {
 
         case 1:
             if (Animation_OnFrame(&this->skelanime, 3.0f)) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_UNARI2);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_UNARI2);
             }
 
             if (this->timer == 0) {
@@ -1399,7 +1399,7 @@ void BossGoma_FloorLand(BossGoma* this, GlobalContext* globalCtx) {
  */
 void BossGoma_FloorStunned(BossGoma* this, GlobalContext* globalCtx) {
     if (this->sfxFaintTimer <= 90) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_FAINT - 0x800);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_FAINT - 0x800);
     }
     SkelAnime_Update(&this->skelanime);
 
@@ -1453,7 +1453,7 @@ void BossGoma_FallStruckDown(BossGoma* this, GlobalContext* globalCtx) {
         this->actor.velocity.y = 0.0f;
         BossGoma_PlayEffectsAndSfx(this, globalCtx, 0, 8);
         func_80033E88(&this->actor, globalCtx, 0xA, 0xF);
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_DAM1);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_DAM1);
     }
 }
 
@@ -1466,7 +1466,7 @@ void BossGoma_CeilingSpawnGohmas(BossGoma* this, GlobalContext* globalCtx) {
     SkelAnime_Update(&this->skelanime);
 
     if (this->frameCount % 16 == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_UNARI);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_UNARI);
     }
 
     Math_ApproachZeroF(&this->actor.speedXZ, 0.5f, 2.0f);
@@ -1601,7 +1601,7 @@ void BossGoma_FloorMain(BossGoma* this, GlobalContext* globalCtx) {
     }
 
     if (this->frameCount % 64 == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_CRY2);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_CRY2);
     }
 
     if (!this->doNotMoveThisFrame) {
@@ -1655,7 +1655,7 @@ void BossGoma_WallClimb(BossGoma* this, GlobalContext* globalCtx) {
     SkelAnime_Update(&this->skelanime);
 
     if (this->frameCount % 8 == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_CLIM);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_CLIM);
     }
 
     Math_ApproachF(&this->actor.velocity.y, 5.0f, 0.5f, 2.0f);
@@ -1680,7 +1680,7 @@ void BossGoma_CeilingMoveToCenter(BossGoma* this, GlobalContext* globalCtx) {
     BossGoma_UpdateCeilingMovement(this, globalCtx, 0.0f, -5.0f, true);
 
     if (this->frameCount % 64 == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_CRY2);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_CRY2);
     }
 
     Math_ApproachS(&this->actor.shape.rot.x, -0x8000, 3, 0x3E8);
@@ -1818,13 +1818,13 @@ void BossGoma_UpdateHit(BossGoma* this, GlobalContext* globalCtx) {
             if (this->actionFunc == BossGoma_CeilingMoveToCenter || this->actionFunc == BossGoma_CeilingIdle ||
                 this->actionFunc == BossGoma_CeilingPrepareSpawnGohmas) {
                 BossGoma_SetupFallStruckDown(this);
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_DAM2);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_DAM2);
             } else if (this->actionFunc == BossGoma_FloorStunned &&
                        (damage = CollisionCheck_GetSwordDamage(acHitInfo->toucher.dmgFlags)) != 0) {
                 this->actor.colChkInfo.health -= damage;
 
                 if ((s8)this->actor.colChkInfo.health > 0) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_DAM1);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_DAM1);
                     BossGoma_SetupFloorDamaged(this);
                     EffectSsSibuki_SpawnBurst(globalCtx, &this->actor.focus.pos);
                 } else {
@@ -1835,7 +1835,7 @@ void BossGoma_UpdateHit(BossGoma* this, GlobalContext* globalCtx) {
                 this->invincibilityFrames = 10;
             } else if (this->actionFunc != BossGoma_FloorStunned && this->patienceTimer != 0 &&
                        (acHitInfo->toucher.dmgFlags & 0x00000005)) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_DAM2);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_DAM2);
                 Audio_StopSfxById(NA_SE_EN_GOMA_CRY1);
                 this->invincibilityFrames = 10;
                 BossGoma_SetupFloorStunned(this);

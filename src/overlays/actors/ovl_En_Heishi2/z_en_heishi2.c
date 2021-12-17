@@ -284,7 +284,7 @@ void func_80A53638(EnHeishi2* this, GlobalContext* globalCtx) {
 
     SkelAnime_Update(&this->skelAnime);
     if ((frameCount >= 12.0f) && (!this->audioFlag)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_SPEAR_HIT);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_SPEAR_HIT);
         this->audioFlag = 1;
     }
     if (this->unk_2EC <= frameCount) {
@@ -404,7 +404,7 @@ void func_80A53AD4(EnHeishi2* this, GlobalContext* globalCtx) {
     if (Actor_ProcessTalkRequest(&this->actor, globalCtx)) {
         exchangeItemId = func_8002F368(globalCtx);
         if (exchangeItemId == EXCH_ITEM_LETTER_ZELDA) {
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
             player->actor.textId = 0x2010;
             this->unk_300 = TEXT_STATE_EVENT;
             this->actionFunc = func_80A53C0C;
@@ -447,7 +447,7 @@ void func_80A53D0C(EnHeishi2* this, GlobalContext* globalCtx) {
     SkelAnime_Update(&this->skelAnime);
     if (12.0f <= frameCount) {
         if (this->audioFlag == 0) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_SPEAR_HIT);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_SPEAR_HIT);
             this->audioFlag = 1;
         }
     }
@@ -605,7 +605,7 @@ void func_80A543A0(EnHeishi2* this, GlobalContext* globalCtx) {
     SkelAnime_Update(&this->skelAnime);
 
     if ((frameCount >= 12.0f) && (!this->audioFlag)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_SPEAR_HIT);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_SPEAR_HIT);
         this->audioFlag = 1;
     }
 
@@ -725,7 +725,7 @@ void func_80A5475C(EnHeishi2* this, GlobalContext* globalCtx) {
 
             if (this->unk_300 == TEXT_STATE_CHOICE) {
                 this->unk_309 = 1;
-                func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                Lib_PlaySfx1(NA_SE_SY_TRE_BOX_APPEAR);
                 this->actionFunc = func_80A540C0;
             }
             return;

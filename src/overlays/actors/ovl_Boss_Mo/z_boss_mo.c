@@ -594,7 +594,7 @@ void BossMo_Tentacle(BossMo* this, GlobalContext* globalCtx) {
         case MO_TENT_READY:
         case MO_TENT_SWING:
             if (sMorphaCore->csState == MO_BATTLE) {
-                func_80078914(&this->tentTipPos, NA_SE_EN_MOFER_APPEAR - SFX_FLAG);
+                Lib_PlaySfxAtPos(&this->tentTipPos, NA_SE_EN_MOFER_APPEAR - SFX_FLAG);
             }
             Math_ApproachF(&this->waterLevelMod, -5.0f, 0.1f, 0.4f);
             for (indS1 = 0; indS1 < 41; indS1++) {
@@ -647,7 +647,7 @@ void BossMo_Tentacle(BossMo* this, GlobalContext* globalCtx) {
             break;
         case MO_TENT_ATTACK:
             this->actor.flags |= ACTOR_FLAG_24;
-            func_80078914(&this->tentTipPos, NA_SE_EN_MOFER_ATTACK - SFX_FLAG);
+            Lib_PlaySfxAtPos(&this->tentTipPos, NA_SE_EN_MOFER_ATTACK - SFX_FLAG);
             Math_ApproachF(&this->waterLevelMod, -5.0f, 0.1f, 0.4f);
             for (indS1 = 0; indS1 < 41; indS1++) {
                 Math_ApproachF(&this->tentStretch[indS1].y,
@@ -729,7 +729,7 @@ void BossMo_Tentacle(BossMo* this, GlobalContext* globalCtx) {
                     if (globalCtx->grabPlayer(globalCtx, player)) {
                         player->actor.parent = &this->actor;
                         this->work[MO_TENT_ACTION_STATE] = MO_TENT_GRAB;
-                        func_80078914(&this->tentTipPos, NA_SE_EN_MOFER_CATCH);
+                        Lib_PlaySfxAtPos(&this->tentTipPos, NA_SE_EN_MOFER_CATCH);
                         Audio_PlaySoundGeneral(NA_SE_VO_LI_DAMAGE_S, &player->actor.projectedPos, 4, &D_801333E0,
                                                &D_801333E0, &D_801333E8);
                     } else {
@@ -860,7 +860,7 @@ void BossMo_Tentacle(BossMo* this, GlobalContext* globalCtx) {
             }
             break;
         case MO_TENT_CUT:
-            func_80078914(&this->tentTipPos, NA_SE_EV_WATER_WALL - SFX_FLAG);
+            Lib_PlaySfxAtPos(&this->tentTipPos, NA_SE_EV_WATER_WALL - SFX_FLAG);
             if (&this->actor == player->actor.parent) {
                 player->unk_850 = 0x65;
                 player->actor.parent = NULL;
@@ -1078,7 +1078,7 @@ void BossMo_Tentacle(BossMo* this, GlobalContext* globalCtx) {
                     this->drawActor = false;
                     this->work[MO_TENT_ACTION_STATE] = MO_TENT_DEATH_6;
                     this->timers[0] = 60;
-                    func_80078914(&this->tentTipPos, NA_SE_EN_MOFER_CORE_JUMP);
+                    Lib_PlaySfxAtPos(&this->tentTipPos, NA_SE_EN_MOFER_CORE_JUMP);
                     for (indS1 = 0; indS1 < 300; indS1++) {
                         spC8.x = 0.0;
                         spC8.y = 0.0;
@@ -1150,7 +1150,7 @@ void BossMo_TentCollisionCheck(BossMo* this, GlobalContext* globalCtx) {
             hurtbox = this->tentCollider.elements[i1].info.acHitInfo;
             this->work[MO_TENT_INVINC_TIMER] = 5;
             if (hurtbox->toucher.dmgFlags & 0x00020000) {
-                func_80078914(&this->tentTipPos, NA_SE_EN_MOFER_CUT);
+                Lib_PlaySfxAtPos(&this->tentTipPos, NA_SE_EN_MOFER_CUT);
                 this->cutIndex = 15;
                 this->meltIndex = this->cutIndex + 1;
                 this->work[MO_TENT_ACTION_STATE] = MO_TENT_CUT;
@@ -1261,7 +1261,7 @@ void BossMo_IntroCs(BossMo* this, GlobalContext* globalCtx) {
                 EffectSsBubble_Spawn(globalCtx, &bubblePos, 0.0f, 10.0f, 50.0f, Rand_ZeroFloat(0.05f) + 0.13f);
             }
             if (this->timers[2] == 40) {
-                func_80078914(&sAudioZeroVec, NA_SE_EN_MOFER_BUBLE_DEMO);
+                Lib_PlaySfxAtPos(&sAudioZeroVec, NA_SE_EN_MOFER_BUBLE_DEMO);
             }
             break;
         case MO_INTRO_SWIM:
@@ -1294,7 +1294,7 @@ void BossMo_IntroCs(BossMo* this, GlobalContext* globalCtx) {
                 Math_ApproachF(&this->cameraSpeedMod, 0.02f, 1.0f, 0.001f);
             }
             if (this->work[MO_TENT_MOVE_TIMER] == 190) {
-                func_80078914(&sAudioZeroVec, NA_SE_EN_MOFER_BUBLE_DEMO);
+                Lib_PlaySfxAtPos(&sAudioZeroVec, NA_SE_EN_MOFER_BUBLE_DEMO);
             }
             if ((this->work[MO_TENT_MOVE_TIMER] > 150) && (this->work[MO_TENT_MOVE_TIMER] < 180)) {
                 bubblePos2.x = (this->cameraEye.x + 20.0f) + 10.0f;
@@ -1487,9 +1487,9 @@ void BossMo_IntroCs(BossMo* this, GlobalContext* globalCtx) {
     }
 
     if ((this->csState > MO_INTRO_START) && (this->work[MO_TENT_MOVE_TIMER] > 540)) {
-        func_80078914(&sMorphaTent1->tentTipPos, NA_SE_EN_MOFER_APPEAR - SFX_FLAG);
+        Lib_PlaySfxAtPos(&sMorphaTent1->tentTipPos, NA_SE_EN_MOFER_APPEAR - SFX_FLAG);
     } else if (this->csState >= MO_INTRO_START) {
-        func_80078914(&sAudioZeroVec, NA_SE_EN_MOFER_MOVE_DEMO - SFX_FLAG);
+        Lib_PlaySfxAtPos(&sAudioZeroVec, NA_SE_EN_MOFER_MOVE_DEMO - SFX_FLAG);
     }
 }
 
@@ -1543,7 +1543,7 @@ void BossMo_DeathCs(BossMo* this, GlobalContext* globalCtx) {
             Math_ApproachF(&this->cameraEye.y, 100.0f, 0.05f, 2.0f);
             this->cameraAt = this->cameraNextAt = this->actor.world.pos;
             if (this->timers[0] > 20) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_MOFER_DEAD - SFX_FLAG);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MOFER_DEAD - SFX_FLAG);
             }
             if (this->timers[0] == 20) {
                 for (i = 0; i < 300; i++) {
@@ -1559,7 +1559,7 @@ void BossMo_DeathCs(BossMo* this, GlobalContext* globalCtx) {
                 }
                 this->drawActor = false;
                 this->actor.flags &= ~ACTOR_FLAG_0;
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_MOFER_CORE_JUMP);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MOFER_CORE_JUMP);
                 Audio_PlaySoundAtPosition(globalCtx, &this->actor.world.pos, 70, NA_SE_EN_MOFER_LASTVOICE);
             }
             if (this->timers[0] == 0) {
@@ -1689,13 +1689,13 @@ void BossMo_DeathCs(BossMo* this, GlobalContext* globalCtx) {
     }
     if ((this->csState > MO_DEATH_START) && (this->csState < MO_DEATH_FINISH)) {
         if (this->work[MO_TENT_MOVE_TIMER] < 500) {
-            func_80078914(&sAudioZeroVec, NA_SE_EN_MOFER_APPEAR - SFX_FLAG);
+            Lib_PlaySfxAtPos(&sAudioZeroVec, NA_SE_EN_MOFER_APPEAR - SFX_FLAG);
         }
         if ((this->work[MO_TENT_MOVE_TIMER] < 490) && (this->work[MO_TENT_MOVE_TIMER] > 230)) {
-            func_80078914(&sAudioZeroVec, NA_SE_EV_DROP_FALL - SFX_FLAG);
+            Lib_PlaySfxAtPos(&sAudioZeroVec, NA_SE_EV_DROP_FALL - SFX_FLAG);
         }
         if (this->work[MO_TENT_MOVE_TIMER] < 220) {
-            func_80078914(&sAudioZeroVec, NA_SE_EV_SCOOPUP_WATER - SFX_FLAG);
+            Lib_PlaySfxAtPos(&sAudioZeroVec, NA_SE_EV_SCOOPUP_WATER - SFX_FLAG);
         }
     }
     if (sMorphaCore->waterLevel < -200.0f) {
@@ -1763,7 +1763,7 @@ void BossMo_CoreCollisionCheck(BossMo* this, GlobalContext* globalCtx) {
 
                 this->actor.world.rot.y = this->actor.yawTowardsPlayer + 0x8000;
                 this->work[MO_CORE_DMG_FLASH_TIMER] = 15;
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_MOFER_CORE_DAMAGE);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MOFER_CORE_DAMAGE);
                 this->actor.colChkInfo.health -= damage;
                 this->hitCount++;
                 if ((s8)this->actor.colChkInfo.health <= 0) {
@@ -1790,7 +1790,7 @@ void BossMo_CoreCollisionCheck(BossMo* this, GlobalContext* globalCtx) {
                 this->work[MO_TENT_INVINC_TIMER] = 10;
             } else if (!(hurtbox->toucher.dmgFlags & 0x00100000) && (hurtbox->toucher.dmgFlags & 0x80)) {
                 if (this->work[MO_TENT_ACTION_STATE] >= MO_CORE_ATTACK) {
-                    func_80078914(&sMorphaTent1->tentTipPos, NA_SE_EN_MOFER_CUT);
+                    Lib_PlaySfxAtPos(&sMorphaTent1->tentTipPos, NA_SE_EN_MOFER_CUT);
                     sMorphaTent1->cutIndex = this->work[MO_CORE_POS_IN_TENT];
                     sMorphaTent1->meltIndex = sMorphaTent1->cutIndex + 1;
                     sMorphaTent1->cutScale = 1.0f;
@@ -2062,7 +2062,7 @@ void BossMo_Core(BossMo* this, GlobalContext* globalCtx) {
                         }
                     } else {
                         this->timers[1] = 2;
-                        Audio_PlayActorSound2(&this->actor, NA_SE_EN_MOFER_CORE_LAND);
+                        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MOFER_CORE_LAND);
                         for (i = 0; i < 10; i++) {
                             effectVelocity.x = Rand_CenteredFloat(4.0f);
                             effectVelocity.y = Rand_ZeroFloat(2.0f) + 3.0f;
@@ -2083,7 +2083,7 @@ void BossMo_Core(BossMo* this, GlobalContext* globalCtx) {
             } else if (this->actor.world.pos.y < MO_WATER_LEVEL(globalCtx)) {
                 this->actor.velocity.y = BossMo_NearLand(&this->actor.world.pos, 40.0f) ? 15.0f : 6.0f;
                 if ((this->actor.world.pos.y + 15.0f) >= MO_WATER_LEVEL(globalCtx)) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_MOFER_CORE_JUMP);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MOFER_CORE_JUMP);
                 }
             }
         } else if (this->work[MO_TENT_ACTION_STATE] >= MO_CORE_MOVE) {
@@ -2117,7 +2117,7 @@ void BossMo_Core(BossMo* this, GlobalContext* globalCtx) {
                             if (this->timers[0] == 0) {
                                 this->work[MO_CORE_WAIT_IN_WATER] = false;
                                 this->timers[0] = (s16)Rand_ZeroFloat(20.0f) + 20;
-                                Audio_PlayActorSound2(&this->actor, NA_SE_EN_MOFER_CORE_MOVE_WT);
+                                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MOFER_CORE_MOVE_WT);
                             }
                             break;
                     }
@@ -2148,9 +2148,9 @@ void BossMo_Core(BossMo* this, GlobalContext* globalCtx) {
     }
     if ((this->actor.world.pos.y < MO_WATER_LEVEL(globalCtx)) && (MO_WATER_LEVEL(globalCtx) <= this->actor.prevPos.y)) {
         if (this->actor.velocity.y < -5.0f) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_MOFER_CORE_JUMP);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MOFER_CORE_JUMP);
         } else {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_MOFER_CORE_SMJUMP);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MOFER_CORE_SMJUMP);
         }
         if ((this->timers[3] != 0) || ((sMorphaTent1->fwork[MO_TENT_MAX_STRETCH] > 0.2f) &&
                                        (fabsf(this->actor.world.pos.x - sMorphaTent1->actor.world.pos.x) < 30.0f) &&
@@ -2356,7 +2356,7 @@ void BossMo_UpdateTent(Actor* thisx, GlobalContext* globalCtx) {
         } else {
             i = 0;
             if (this->work[MO_TENT_ACTION_STATE] < MO_TENT_CUT) {
-                func_80078914(&this->tentTipPos, NA_SE_EN_MOFER_CORE_ROLL - SFX_FLAG);
+                Lib_PlaySfxAtPos(&this->tentTipPos, NA_SE_EN_MOFER_CORE_ROLL - SFX_FLAG);
             }
         }
         bubblePos.x = this->tentPos[i].x + sp7C.x;
@@ -3572,7 +3572,7 @@ void BossMo_Unknown(void) {
     if (BREG(32) != 0) {
         BREG(32)--;
         Audio_QueueSeqCmd(0x1 << 28 | SEQ_PLAYER_BGM_MAIN << 24 | 0x100FF);
-        func_80078914(&zeroVec, unkSfx[BREG(33)]);
+        Lib_PlaySfxAtPos(&zeroVec, unkSfx[BREG(33)]);
     }
     if (BREG(34) != 0) {
         BREG(34) = 0;

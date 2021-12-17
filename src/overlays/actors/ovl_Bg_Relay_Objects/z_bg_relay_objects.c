@@ -116,7 +116,7 @@ void BgRelayObjects_Destroy(Actor* thisx, GlobalContext* globalCtx) {
 void func_808A90F4(BgRelayObjects* this, GlobalContext* globalCtx) {
     if (Flags_GetSwitch(globalCtx, this->switchFlag)) {
         if (this->timer != 0) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_SLIDE_DOOR_OPEN);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_SLIDE_DOOR_OPEN);
             if (INV_CONTENT(ITEM_HOOKSHOT) != ITEM_NONE) {
                 this->timer = 120;
             } else {
@@ -134,10 +134,10 @@ void func_808A91AC(BgRelayObjects* this, GlobalContext* globalCtx) {
         if (this->timer != 0) {
             this->timer--;
         }
-        func_8002F994(&this->dyna.actor, this->timer);
+        Actor_UpdateTimerSfxState(&this->dyna.actor, this->timer);
     }
     if ((this->timer == 0) || (this->unk_169 == globalCtx->roomCtx.curRoom.num)) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_SLIDE_DOOR_CLOSE);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_SLIDE_DOOR_CLOSE);
         this->actionFunc = func_808A9234;
     }
 }
@@ -146,9 +146,9 @@ void func_808A9234(BgRelayObjects* this, GlobalContext* globalCtx) {
     this->dyna.actor.velocity.y += this->dyna.actor.gravity;
     if (Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y, this->dyna.actor.velocity.y)) {
         func_800AA000(this->dyna.actor.xyzDistToPlayerSq, 180, 20, 100);
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
         if (this->unk_169 != globalCtx->roomCtx.curRoom.num) {
-            func_800788CC(NA_SE_EN_PO_LAUGH);
+            Lib_PlaySfx2(NA_SE_EN_PO_LAUGH);
             this->timer = 5;
             this->actionFunc = func_808A932C;
             return;
@@ -171,7 +171,7 @@ void func_808A932C(BgRelayObjects* this, GlobalContext* globalCtx) {
     }
     if (this->timer == 0) {
         if (!Player_InCsMode(globalCtx)) {
-            func_80078884(NA_SE_OC_ABYSS);
+            Lib_PlaySfx1(NA_SE_OC_ABYSS);
             Gameplay_TriggerRespawn(globalCtx);
             this->actionFunc = BgRelayObjects_DoNothing;
         }

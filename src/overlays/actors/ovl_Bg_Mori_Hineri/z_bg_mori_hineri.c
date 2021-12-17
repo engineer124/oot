@@ -206,7 +206,7 @@ void func_808A3E54(BgMoriHineri* this, GlobalContext* globalCtx) {
             this->moriHineriObjIdx = objBankIndex;
             this->dyna.actor.params ^= 1;
             sNextCamIdx = MAIN_CAM;
-            func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+            Lib_PlaySfx1(NA_SE_SY_TRE_BOX_APPEAR);
         } else {
             this->dyna.actor.draw = NULL;
             this->actionFunc = func_808A3D58;
@@ -215,7 +215,7 @@ void func_808A3E54(BgMoriHineri* this, GlobalContext* globalCtx) {
     }
     if ((sNextCamIdx >= SUBCAM_FIRST) &&
         ((GET_ACTIVE_CAM(globalCtx)->eye.z - this->dyna.actor.world.pos.z) < 1100.0f)) {
-        func_8002F948(&this->dyna.actor, NA_SE_EV_FLOOR_ROLLING - SFX_FLAG);
+        Actor_PlaySfx2(&this->dyna.actor, NA_SE_EV_FLOOR_ROLLING - SFX_FLAG);
     }
 }
 

@@ -103,7 +103,7 @@ void func_8087B938(BgHaka* this, GlobalContext* globalCtx) {
         this->dyna.unk_150 = 0.0f;
         player->stateFlags2 &= ~0x10;
         if (this->dyna.actor.params == 1) {
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
         } else if (!IS_DAY && globalCtx->sceneNum == SCENE_SPOT02) {
             Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_EN_POH, this->dyna.actor.home.pos.x,
                         this->dyna.actor.home.pos.y, this->dyna.actor.home.pos.z, 0, this->dyna.actor.shape.rot.y, 0,
@@ -111,7 +111,7 @@ void func_8087B938(BgHaka* this, GlobalContext* globalCtx) {
         }
         this->actionFunc = func_8087BAAC;
     }
-    func_8002F974(&this->dyna.actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
 }
 
 void func_8087BAAC(BgHaka* this, GlobalContext* globalCtx) {

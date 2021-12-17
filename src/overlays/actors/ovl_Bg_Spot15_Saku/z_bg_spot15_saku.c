@@ -66,10 +66,10 @@ void func_808B4930(BgSpot15Saku* this, GlobalContext* globalCtx) {
 
 void func_808B4978(BgSpot15Saku* this, GlobalContext* globalCtx) {
     if (this->timer == 0) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_METALGATE_OPEN - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_METALGATE_OPEN - SFX_FLAG);
         this->dyna.actor.world.pos.z -= 2.0f;
         if (this->dyna.actor.world.pos.z < 2660.0f) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BRIDGE_OPEN_STOP);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BRIDGE_OPEN_STOP);
             this->timer = 30;
             this->actionFunc = func_808B4A04;
         }

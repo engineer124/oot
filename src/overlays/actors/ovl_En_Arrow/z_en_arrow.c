@@ -307,7 +307,7 @@ void EnArrow_Fly(EnArrow* this, GlobalContext* globalCtx) {
                     }
 
                     func_809B3CEC(globalCtx, this);
-                    Audio_PlayActorSound2(&this->actor, NA_SE_IT_ARROW_STICK_CRE);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_ARROW_STICK_CRE);
                 }
             } else if (this->touchedPoly) {
                 EnArrow_SetupAction(this, func_809B45E0);
@@ -319,7 +319,7 @@ void EnArrow_Fly(EnArrow* this, GlobalContext* globalCtx) {
                     this->timer = 20;
                 }
 
-                Audio_PlayActorSound2(&this->actor, NA_SE_IT_ARROW_STICK_OBJ);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_ARROW_STICK_OBJ);
                 this->hitFlags |= 1;
             }
         }

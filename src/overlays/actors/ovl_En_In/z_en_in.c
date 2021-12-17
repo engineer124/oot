@@ -602,7 +602,7 @@ void func_80A7A304(EnIn* this, GlobalContext* globalCtx) {
         }
     }
     if (this->skelAnime.animation == &object_in_Anim_018C38 && this->skelAnime.curFrame == 20.0f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_VO_IN_CRY_0);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_IN_CRY_0);
     }
     if (SkelAnime_Update(&this->skelAnime) != 0) {
         this->animationIdx %= 8;
@@ -725,7 +725,7 @@ void func_80A7A940(EnIn* this, GlobalContext* globalCtx) {
     if (this->unk_1EC != 0) {
         this->unk_1EC--;
         if (this->unk_1EC == 0) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_VO_IN_LOST);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_IN_LOST);
         }
     }
     if (this->unk_308.unk_00 == 2) {
@@ -792,7 +792,7 @@ void func_80A7ABD4(EnIn* this, GlobalContext* globalCtx) {
         if (this->unk_1EC != 0) {
             this->unk_1EC--;
             if (this->unk_1EC == 0) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_VO_IN_LOST);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_IN_LOST);
             }
         }
     }
@@ -814,7 +814,7 @@ void func_80A7ABD4(EnIn* this, GlobalContext* globalCtx) {
             return;
         }
         if (globalCtx->csCtx.frames == 44) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_RONRON_DOOR_CLOSE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_RONRON_DOOR_CLOSE);
         }
         Math_SmoothStepToF(&this->unk_2F0, 0.0f, 0.06f, 10000.0f, 0.0f);
         Math_SmoothStepToF(&this->unk_2F4, 50.0f, 0.06f, 10000.0f, 0.0f);

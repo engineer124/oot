@@ -124,7 +124,7 @@ void EnStream_Update(Actor* thisx, GlobalContext* globalCtx) {
     EnStream* this = (EnStream*)thisx;
 
     this->actionFunc(this, globalCtx);
-    func_8002F948(thisx, NA_SE_EV_WHIRLPOOL - SFX_FLAG);
+    Actor_PlaySfx2(thisx, NA_SE_EV_WHIRLPOOL - SFX_FLAG);
 }
 
 void EnStream_Draw(Actor* thisx, GlobalContext* globalCtx) {

@@ -303,7 +303,7 @@ void func_80AADCD0(EnMm* this, GlobalContext* globalCtx) {
             if (this->curAnimIndex != 5) {
                 if ((this->actor.textId == 0x202A) || (this->actor.textId == 0x202B)) {
                     EnMm_ChangeAnimation(this, RM_ANIM_EXCITED, &this->curAnimIndex);
-                    func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                    Lib_PlaySfx1(NA_SE_SY_TRE_BOX_APPEAR);
                 }
             }
         } else {
@@ -424,7 +424,7 @@ void func_80AAE294(EnMm* this, GlobalContext* globalCtx) {
 
         if (this->curAnimIndex == 0) {
             if (((s32)this->skelAnime.curFrame == 1) || ((s32)this->skelAnime.curFrame == 6)) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_PL_WALK_GROUND);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_PL_WALK_GROUND);
             }
         }
 
@@ -432,7 +432,7 @@ void func_80AAE294(EnMm* this, GlobalContext* globalCtx) {
             if (((this->skelAnime.curFrame - this->skelAnime.playSpeed < 9.0f) && (this->skelAnime.curFrame >= 9.0f)) ||
                 ((this->skelAnime.curFrame - this->skelAnime.playSpeed < 19.0f) &&
                  (this->skelAnime.curFrame >= 19.0f))) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_MORIBLIN_WALK);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MORIBLIN_WALK);
             }
         }
 

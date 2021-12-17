@@ -256,7 +256,7 @@ void MirRay_Update(Actor* thisx, GlobalContext* globalCtx) {
         MirRay_MakeShieldLight(this, globalCtx);
 
         if (this->reflectIntensity > 0.0f) {
-            func_8002F8F0(&player->actor, NA_SE_IT_SHIELD_BEAM - SFX_FLAG);
+            Actor_PlaySfxAtPos2(&player->actor, NA_SE_IT_SHIELD_BEAM - SFX_FLAG);
         }
     }
 }

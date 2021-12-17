@@ -576,7 +576,7 @@ void ObjOshihiki_Push(ObjOshihiki* this, GlobalContext* globalCtx) {
     } else if (stopFlag) {
         player = GET_PLAYER(globalCtx);
         if (ObjOshihiki_CheckWall(globalCtx, this->dyna.unk_158, this->dyna.unk_150, this)) {
-            Audio_PlayActorSound2(thisx, NA_SE_EV_BLOCK_BOUND);
+            Actor_PlaySfxAtPos1(thisx, NA_SE_EV_BLOCK_BOUND);
         }
 
         thisx->home.pos.x = thisx->world.pos.x;
@@ -592,7 +592,7 @@ void ObjOshihiki_Push(ObjOshihiki* this, GlobalContext* globalCtx) {
             ObjOshihiki_SetupOnActor(this, globalCtx);
         }
     }
-    Audio_PlayActorSound2(thisx, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
+    Actor_PlaySfxAtPos1(thisx, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
 }
 
 void ObjOshihiki_SetupFall(ObjOshihiki* this, GlobalContext* globalCtx) {
@@ -618,8 +618,8 @@ void ObjOshihiki_Fall(ObjOshihiki* this, GlobalContext* globalCtx) {
         } else {
             ObjOshihiki_SetupOnActor(this, globalCtx);
         }
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
-        Audio_PlayActorSound2(&this->dyna.actor,
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
+        Actor_PlaySfxAtPos1(&this->dyna.actor,
                               SurfaceType_GetSfx(&globalCtx->colCtx, this->floorPolys[this->highestFloor],
                                                  this->floorBgIds[this->highestFloor]) +
                                   SFX_FLAG);

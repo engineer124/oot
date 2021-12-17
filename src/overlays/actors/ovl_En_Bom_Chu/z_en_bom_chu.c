@@ -342,7 +342,7 @@ void EnBomChu_Move(EnBomChu* this, GlobalContext* globalCtx) {
     Math_ScaledStepToS(&this->actor.shape.rot.y, this->actor.world.rot.y, 0x800);
     Math_ScaledStepToS(&this->actor.shape.rot.z, this->actor.world.rot.z, 0x800);
 
-    func_8002F8F0(&this->actor, NA_SE_IT_BOMBCHU_MOVE - SFX_FLAG);
+    Actor_PlaySfxAtPos2(&this->actor, NA_SE_IT_BOMBCHU_MOVE - SFX_FLAG);
 }
 
 void EnBomChu_WaitForKill(EnBomChu* this, GlobalContext* globalCtx) {

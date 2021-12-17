@@ -88,7 +88,7 @@ void EnWallTubo_DetectChu(EnWallTubo* this, GlobalContext* globalCtx) {
                     (fabsf(chuPosDiff.z) < 40.0f || (BREG(2)))) {
                     this->chuGirl->wallStatus[this->actor.params] = 1;
                     chu->timer = 2;
-                    func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                    Lib_PlaySfx1(NA_SE_SY_TRE_BOX_APPEAR);
                     this->timer = 60;
                     EffectSsBomb2_SpawnLayered(globalCtx, &this->explosionCenter, &effVelocity, &effAccel, 200, 40);
                     quakeIndex = Quake_Add(GET_ACTIVE_CAM(globalCtx), 1);
@@ -117,7 +117,7 @@ void EnWallTubo_SetWallFall(EnWallTubo* this, GlobalContext* globalCtx) {
         effPos.z = this->explosionCenter.z;
         EffectSsBomb2_SpawnLayered(globalCtx, &effPos, &effVelocity, &effAccel, 100, 30);
         EffectSsHahen_SpawnBurst(globalCtx, &effPos, 10.0f, 0, 50, 15, 3, HAHEN_OBJECT_DEFAULT, 10, NULL);
-        Audio_PlayActorSound2(&this->actor, NA_SE_IT_BOMB_EXPLOSION);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_BOMB_EXPLOSION);
     }
 
     if (this->timer == 0) {

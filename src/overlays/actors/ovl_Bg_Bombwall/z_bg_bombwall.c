@@ -233,7 +233,7 @@ void func_8086EE40(BgBombwall* this, GlobalContext* globalCtx) {
         func_8086EE94(this, globalCtx);
 
         if (((this->dyna.actor.params >> 0xF) & 1) != 0) {
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
         }
     }
 }

@@ -104,7 +104,7 @@ void BgMizuShutter_WaitForSwitch(BgMizuShutter* this, GlobalContext* globalCtx) 
 
 void BgMizuShutter_WaitForCutscene(BgMizuShutter* this, GlobalContext* globalCtx) {
     if (this->timer-- == 0) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_METALDOOR_OPEN);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_METALDOOR_OPEN);
         this->actionFunc = BgMizuShutter_Move;
     }
 }
@@ -128,7 +128,7 @@ void BgMizuShutter_Move(BgMizuShutter* this, GlobalContext* globalCtx) {
             (this->dyna.actor.world.pos.y == this->closedPos.y) &&
             (this->dyna.actor.world.pos.z == this->closedPos.z)) {
             func_800AA000(this->dyna.actor.xyzDistToPlayerSq, 0x78, 0x14, 0xA);
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
             this->actionFunc = BgMizuShutter_WaitForSwitch;
         }
     }
@@ -137,9 +137,9 @@ void BgMizuShutter_Move(BgMizuShutter* this, GlobalContext* globalCtx) {
 void BgMizuShutter_WaitForTimer(BgMizuShutter* this, GlobalContext* globalCtx) {
     if (this->timerMax != 0x3F * 20) {
         this->timer--;
-        func_8002F994(&this->dyna.actor, this->timer);
+        Actor_UpdateTimerSfxState(&this->dyna.actor, this->timer);
         if (this->timer == 0) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_METALDOOR_CLOSE);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_METALDOOR_CLOSE);
             Flags_UnsetSwitch(globalCtx, (u16)this->dyna.actor.params & 0x3F);
             this->actionFunc = BgMizuShutter_Move;
         }

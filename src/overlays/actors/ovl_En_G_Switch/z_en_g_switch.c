@@ -225,10 +225,10 @@ void EnGSwitch_SilverRupeeTracker(EnGSwitch* this, GlobalContext* globalCtx) {
         if ((globalCtx->sceneNum == SCENE_MEN) && (this->actor.room == 2)) {
             Flags_SetTempClear(globalCtx, this->actor.room);
         } else {
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
             Flags_SetSwitch(globalCtx, this->switchFlag);
         }
-        func_80078884(NA_SE_SY_GET_RUPY);
+        Lib_PlaySfx1(NA_SE_SY_GET_RUPY);
         Actor_Kill(&this->actor);
     }
 }
@@ -240,7 +240,7 @@ void EnGSwitch_SilverRupeeIdle(EnGSwitch* this, GlobalContext* globalCtx) {
     if (this->actor.xyzDistToPlayerSq < 900.0f) {
         Rupees_ChangeBy(5);
         sCollectedCount++;
-        func_80078884(NA_SE_SY_GET_RUPY);
+        Lib_PlaySfx1(NA_SE_SY_GET_RUPY);
         this->actor.world.pos = player->actor.world.pos;
         this->actor.world.pos.y += 40.0f;
         if (LINK_IS_ADULT) {
@@ -342,8 +342,8 @@ void EnGSwitch_GalleryRupee(EnGSwitch* this, GlobalContext* globalCtx) {
             if (gallery->actor.update != NULL) {
                 gallery->hitCount++;
                 gallery->targetState[this->index] = ENSYATEKIHIT_HIT;
-                func_80078884(NA_SE_EV_HIT_SOUND);
-                func_80078884(NA_SE_SY_GET_RUPY);
+                Lib_PlaySfx1(NA_SE_EV_HIT_SOUND);
+                Lib_PlaySfx1(NA_SE_SY_GET_RUPY);
                 // "Yeah !"
                 osSyncPrintf(VT_FGCOL(YELLOW) "☆☆☆☆☆ いぇぇーす！ＨＩＴ！！ ☆☆☆☆☆ %d\n" VT_RST, gallery->hitCount);
                 EnGSwitch_Break(this, globalCtx);

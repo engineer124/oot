@@ -145,7 +145,7 @@ void BgHidanDalm_Wait(BgHidanDalm* this, GlobalContext* globalCtx) {
         this->dyna.actor.speedXZ = 10.0f;
         Flags_SetSwitch(globalCtx, this->switchFlag);
         func_8002F7DC(&GET_PLAYER(globalCtx)->actor, NA_SE_IT_HAMMER_HIT);
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_DARUMA_VANISH);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_DARUMA_VANISH);
     } else {
         CollisionCheck_SetAC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
     }

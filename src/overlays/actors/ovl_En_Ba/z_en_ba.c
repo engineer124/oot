@@ -237,7 +237,7 @@ void EnBa_SwingAtPlayer(EnBa* this, GlobalContext* globalCtx) {
     Math_SmoothStepToF(&this->actor.world.pos.y, this->actor.home.pos.y + 60.0f, 1.0f, 10.0f, 0.0f);
     if ((this->actor.xzDistToPlayer <= 175.0f) || (this->unk31A != 0)) {
         if (this->unk318 == 20) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_HAND_UP);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_HAND_UP);
             this->unk31C = 1500;
         }
         if (this->unk318 != 0) {
@@ -267,7 +267,7 @@ void EnBa_SwingAtPlayer(EnBa* this, GlobalContext* globalCtx) {
             }
         } else {
             if (this->unk31A == 10) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_HAND_DOWN);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_HAND_DOWN);
             }
             if (this->unk31A != 0) {
                 this->unk31C = 8000;
@@ -324,7 +324,7 @@ void func_809B7174(EnBa* this) {
     this->unk318 = 20;
     this->actor.colChkInfo.mass = MASS_IMMOVABLE;
     this->actor.speedXZ = 10.0f;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_BALINADE_HAND_DAMAGE);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BALINADE_HAND_DAMAGE);
     Actor_SetColorFilter(&this->actor, 0x4000, 255, 0, 12);
     EnBa_SetupAction(this, EnBa_RecoilFromDamage);
 }

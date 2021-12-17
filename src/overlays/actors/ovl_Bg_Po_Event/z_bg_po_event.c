@@ -258,7 +258,7 @@ void BgPoEvent_BlockShake(BgPoEvent* this, GlobalContext* globalCtx) {
     if (this->timer < 15) {
         this->dyna.actor.world.pos.x = this->dyna.actor.home.pos.x + 2.0f * ((this->timer % 3) - 1);
         if (!(this->timer % 4)) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BLOCK_SHAKE);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BLOCK_SHAKE);
         }
     }
     if (this->timer == 0) {
@@ -314,7 +314,7 @@ void BgPoEvent_BlockFall(BgPoEvent* this, GlobalContext* globalCtx) {
         if (this->type != 1) {
             BgPoEvent_CheckBlock(this);
         } else {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
             func_80033E88(&this->dyna.actor, globalCtx, 5, 5);
             func_80088B34(this->timer);
             if (firstFall == 0) {
@@ -342,7 +342,7 @@ void BgPoEvent_BlockIdle(BgPoEvent* this, GlobalContext* globalCtx) {
             if (amy != NULL) {
                 OnePointCutscene_Init(globalCtx, 3170, 30, amy, MAIN_CAM);
             }
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
             gSaveContext.timer1State = 0xA;
         }
     } else {
@@ -356,7 +356,7 @@ void BgPoEvent_BlockIdle(BgPoEvent* this, GlobalContext* globalCtx) {
             this->actionFunc = BgPoEvent_BlockReset;
             if (sPuzzleState == 0x10) {
                 sPuzzleState = 0x40;
-                Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BLOCK_RISING);
+                Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BLOCK_RISING);
                 func_8002DF54(globalCtx, &player->actor, 8);
             }
         } else if (this->dyna.unk_150 != 0.0f) {
@@ -395,7 +395,7 @@ void BgPoEvent_BlockPush(BgPoEvent* this, GlobalContext* globalCtx) {
     if (blockStop) {
         player->stateFlags2 &= ~0x10;
         if ((this->dyna.unk_150 > 0.0f) && (func_800435D8(globalCtx, &this->dyna, 0x1E, 0x32, -0x14) == 0)) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
         }
         this->dyna.unk_150 = 0.0f;
         this->dyna.actor.home.pos.x = this->dyna.actor.world.pos.x;
@@ -411,7 +411,7 @@ void BgPoEvent_BlockPush(BgPoEvent* this, GlobalContext* globalCtx) {
         BgPoEvent_CheckBlock(this);
         BgPoEvent_CheckBlock((BgPoEvent*)this->dyna.actor.parent);
     }
-    func_8002F974(&this->dyna.actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
 }
 
 void BgPoEvent_BlockReset(BgPoEvent* this, GlobalContext* globalCtx) {
@@ -451,7 +451,7 @@ void BgPoEvent_AmyWait(BgPoEvent* this, GlobalContext* globalCtx) {
         sPuzzleState |= 0x20;
         this->timer = 5;
         Actor_SetColorFilter(&this->dyna.actor, 0x4000, 0xFF, 0, 5);
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EN_PO_LAUGH2);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EN_PO_LAUGH2);
         this->actionFunc = BgPoEvent_AmyPuzzle;
     }
 }
@@ -529,7 +529,7 @@ void BgPoEvent_PaintingPresent(BgPoEvent* this, GlobalContext* globalCtx) {
                under the balcony allows him to be closer.
             4) Link is within 45 degrees of facing the painting. */
         this->timer = 0;
-        Audio_PlayActorSound2(thisx, NA_SE_EN_PO_LAUGH);
+        Actor_PlaySfxAtPos1(thisx, NA_SE_EN_PO_LAUGH);
         this->actionFunc = BgPoEvent_PaintingVanish;
     } else if (this->collider.base.acFlags & AC_HIT) {
         if (!BgPoEvent_NextPainting(this)) {
@@ -537,10 +537,10 @@ void BgPoEvent_PaintingPresent(BgPoEvent* this, GlobalContext* globalCtx) {
                         thisx->world.pos.y - 40.0f, thisx->world.pos.z, 0, thisx->shape.rot.y, 0,
                         thisx->params + ((this->type - 1) << 8));
             OnePointCutscene_Init(globalCtx, 3160, 80, thisx, MAIN_CAM);
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
 
         } else {
-            Audio_PlayActorSound2(thisx, NA_SE_EN_PO_LAUGH2);
+            Actor_PlaySfxAtPos1(thisx, NA_SE_EN_PO_LAUGH2);
             OnePointCutscene_Init(globalCtx, 3160, 35, thisx, MAIN_CAM);
         }
         if (thisx->parent != NULL) {

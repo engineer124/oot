@@ -142,7 +142,7 @@ void EnPoRelay_SetupRace(EnPoRelay* this) {
     this->hookshotSlotFull = INV_CONTENT(ITEM_HOOKSHOT) != ITEM_NONE;
     this->unk_19A = Actor_WorldYawTowardPoint(&this->actor, &vec);
     this->actor.flags |= ACTOR_FLAG_27;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_LAUGH);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_LAUGH);
     this->actionFunc = EnPoRelay_Race;
 }
 
@@ -168,7 +168,7 @@ void EnPoRelay_Idle(EnPoRelay* this, GlobalContext* globalCtx) {
         this->actor.textId = this->textId;
         func_8002F2CC(&this->actor, globalCtx, 250.0f);
     }
-    func_8002F974(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
 }
 
 void EnPoRelay_Talk(EnPoRelay* this, GlobalContext* globalCtx) {
@@ -178,7 +178,7 @@ void EnPoRelay_Talk(EnPoRelay* this, GlobalContext* globalCtx) {
         this->textId = this->actor.textId;
         EnPoRelay_SetupRace(this);
     }
-    func_8002F974(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
 }
 
 void EnPoRelay_Race(EnPoRelay* this, GlobalContext* globalCtx) {
@@ -250,7 +250,7 @@ void EnPoRelay_Race(EnPoRelay* this, GlobalContext* globalCtx) {
         }
     }
     this->unk_19A = Actor_WorldYawTowardPoint(&this->actor, &vec);
-    func_8002F974(&this->actor, NA_SE_EN_PO_AWAY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_PO_AWAY - SFX_FLAG);
 }
 
 void EnPoRelay_EndRace(EnPoRelay* this, GlobalContext* globalCtx) {
@@ -264,7 +264,7 @@ void EnPoRelay_EndRace(EnPoRelay* this, GlobalContext* globalCtx) {
         this->actor.textId = this->textId;
         func_8002F2CC(&this->actor, globalCtx, 250.0f);
     }
-    func_8002F974(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
 }
 
 void EnPoRelay_Talk2(EnPoRelay* this, GlobalContext* globalCtx) {
@@ -284,7 +284,7 @@ void EnPoRelay_Talk2(EnPoRelay* this, GlobalContext* globalCtx) {
         this->actionTimer = 0;
         this->actionFunc = EnPoRelay_DisappearAndReward;
     }
-    func_8002F974(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
 }
 
 void EnPoRelay_DisappearAndReward(EnPoRelay* this, GlobalContext* globalCtx) {
@@ -321,7 +321,7 @@ void EnPoRelay_DisappearAndReward(EnPoRelay* this, GlobalContext* globalCtx) {
         EffectSsDeadDb_Spawn(globalCtx, &vec, &D_80AD8D30, &D_80AD8D3C, this->actionTimer * 10 + 80, 0, 255, 255, 255,
                              255, 0, 0, 255, 1, 9, true);
         if (this->actionTimer == 1) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_EXTINCT);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_EXTINCT);
         }
     }
     if (Math_StepToF(&this->actor.scale.x, 0.0f, 0.001f) != 0) {

@@ -132,7 +132,7 @@ void BgMoriRakkatenjo_Wait(BgMoriRakkatenjo* this, GlobalContext* globalCtx) {
         }
     }
     if (this->timer < 20) {
-        func_800788CC(NA_SE_EV_BLOCKSINK - SFX_FLAG);
+        Lib_PlaySfx2(NA_SE_EV_BLOCKSINK - SFX_FLAG);
     }
 }
 
@@ -155,7 +155,7 @@ void BgMoriRakkatenjo_Fall(BgMoriRakkatenjo* this, GlobalContext* globalCtx) {
         } else {
             if (this->bounceCount == 0) {
                 this->fallCount++;
-                func_800788CC(NA_SE_EV_STONE_BOUND);
+                Lib_PlaySfx2(NA_SE_EV_STONE_BOUND);
                 func_800AA000(SQ(thisx->yDistToPlayer), 0xFF, 0x14, 0x96);
             }
             thisx->world.pos.y =

@@ -453,7 +453,7 @@ void func_80AB6450(EnNiw* this, GlobalContext* globalCtx) {
         this->actionFunc = func_80AB7290;
     } else if (Actor_HasParent(&this->actor, globalCtx)) {
         this->actor.gravity = -2.0f;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_CHICKEN_CRY_M);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_CHICKEN_CRY_M);
         this->sfxTimer1 = 30;
         this->path = 0;
         this->timer4 = 30;
@@ -475,7 +475,7 @@ void func_80AB6570(EnNiw* this, GlobalContext* globalCtx) {
 
     if (this->actor.params != 0xA) {
         if (Actor_HasParent(&this->actor, globalCtx)) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_CHICKEN_CRY_M);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_CHICKEN_CRY_M);
             this->sfxTimer1 = 30;
             this->path = 0;
             this->timer4 = 30;
@@ -489,7 +489,7 @@ void func_80AB6570(EnNiw* this, GlobalContext* globalCtx) {
         if (this->path != 0) {
             this->unk_2A6 = 1;
             if (this->sfxTimer3 == 0) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EV_CHICKEN_CRY_M);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_CHICKEN_CRY_M);
                 this->sfxTimer3 = 100;
             }
             this->unk_2A0 = Rand_ZeroFloat(1.99f);
@@ -684,7 +684,7 @@ void func_80AB6D08(EnNiw* this, GlobalContext* globalCtx) {
     }
 
     if (Actor_HasParent(&this->actor, globalCtx)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_CHICKEN_CRY_M);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_CHICKEN_CRY_M);
         this->sfxTimer1 = 30;
         this->path = 0;
         this->timer4 = 30;
@@ -790,7 +790,7 @@ void func_80AB714C(EnNiw* this, GlobalContext* globalCtx) {
         this->unk_26C[1] = 0.0f;
         this->unk_26C[2] = 0.0f;
         this->timer1 = 10;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_CHICKEN_CRY_M);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_CHICKEN_CRY_M);
     }
     if (this->timer5 == 0) {
         this->timer7 = 10;
@@ -863,7 +863,7 @@ void func_80AB747C(EnNiw* this, GlobalContext* globalCtx) {
             this->unk_2A4--;
         }
         this->unk_2A6 = 1;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_CHICKEN_CRY_M);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_CHICKEN_CRY_M);
         this->timer6 = 100;
         this->path = 0;
         this->actionFunc = func_80AB7290;
@@ -1080,15 +1080,15 @@ void EnNiw_Update(Actor* thisx, GlobalContext* globalCtx) {
 
     if (this->sfxTimer2 == 0 && this->actionFunc == func_80AB6BF8) {
         this->sfxTimer2 = 7;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEKU_WAKEUP);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEKU_WAKEUP);
     }
     if (this->sfxTimer1 == 0) {
         if (this->actionFunc != func_80AB6570) {
             this->sfxTimer1 = 30;
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_CHICKEN_CRY_A);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_CHICKEN_CRY_A);
         } else {
             this->sfxTimer1 = 300;
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_CHICKEN_CRY_N);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_CHICKEN_CRY_N);
         }
     }
     if (this->unk_2A8 == 0) {

@@ -105,7 +105,7 @@ void EnBomBowlPit_DetectHit(EnBomBowlPit* this, GlobalContext* globalCtx) {
                 this->actor.textId = 0xF;
                 Message_StartTextbox(globalCtx, this->actor.textId, NULL);
                 this->unk_154 = TEXT_STATE_EVENT;
-                func_80078884(NA_SE_EV_HIT_SOUND);
+                Lib_PlaySfx1(NA_SE_EV_HIT_SOUND);
                 func_8002DF54(globalCtx, NULL, 8);
                 this->status = 1;
                 this->actionFunc = EnBomBowlPit_CameraDollyIn;

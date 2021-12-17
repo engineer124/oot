@@ -110,7 +110,7 @@ void func_809B27D8(EnAnubiceFire* this, GlobalContext* globalCtx) {
         Actor_Kill(&this->actor);
     } else if ((this->actor.params == 0) && (this->cylinder.base.atFlags & 4)) {
         if (Player_HasMirrorShieldEquipped(globalCtx)) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_IT_SHIELD_REFLECT_SW);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_SHIELD_REFLECT_SW);
             this->cylinder.base.atFlags &= 0xFFE9;
             this->cylinder.base.atFlags |= 8;
             this->cylinder.info.toucher.dmgFlags = 2;
@@ -123,7 +123,7 @@ void func_809B27D8(EnAnubiceFire* this, GlobalContext* globalCtx) {
             this->unk_15A = 0;
             EffectSsBomb2_SpawnLayered(globalCtx, &this->actor.world.pos, &sp78, &sp84, 10, 5);
             this->actor.velocity.x = this->actor.velocity.y = this->actor.velocity.z = 0.0f;
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_ANUBIS_FIREBOMB);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_ANUBIS_FIREBOMB);
             this->actionFunc = func_809B2B48;
         }
     } else if (!(this->scale < .4f)) {
@@ -137,7 +137,7 @@ void func_809B27D8(EnAnubiceFire* this, GlobalContext* globalCtx) {
             pos.z = this->actor.world.pos.z;
             EffectSsKiraKira_SpawnDispersed(globalCtx, &pos, &velocity, &accel, &primColor, &envColor, scale, life);
         }
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_ANUBIS_FIRE - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_ANUBIS_FIRE - SFX_FLAG);
     }
 }
 
@@ -207,7 +207,7 @@ void EnAnubiceFire_Update(Actor* thisx, GlobalContext* globalCtx) {
 
         if (BgCheck_SphVsFirstPoly(&globalCtx->colCtx, &this->actor.world.pos, 30.0f)) {
             this->actor.velocity.x = this->actor.velocity.y = this->actor.velocity.z = 0.0f;
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_ANUBIS_FIREBOMB);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_ANUBIS_FIREBOMB);
             this->actionFunc = func_809B2B48;
         }
     }

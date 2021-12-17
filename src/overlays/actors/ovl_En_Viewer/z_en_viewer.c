@@ -201,9 +201,9 @@ void EnViewer_UpdateImpl(EnViewer* this, GlobalContext* globalCtx) {
         if (gSaveContext.sceneSetupIndex == 5) {
             csFrames = globalCtx->csCtx.frames;
             if (csFrames == 792) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_VO_Z0_SURPRISE);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_Z0_SURPRISE);
             } else if (csFrames == 845) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_VO_Z0_THROW);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_Z0_THROW);
             }
         }
     } else if (type == ENVIEWER_TYPE_7_GANONDORF) {
@@ -231,7 +231,7 @@ void EnViewer_UpdateImpl(EnViewer* this, GlobalContext* globalCtx) {
         }
         if (gSaveContext.sceneSetupIndex == 5) {
             if (globalCtx->csCtx.frames == 1508) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_FANTOM_ST_LAUGH);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FANTOM_ST_LAUGH);
             }
             if (globalCtx->csCtx.frames == 1545) {
                 Actor_SpawnAsChild(&globalCtx->actorCtx, &this->actor, globalCtx, ACTOR_DEMO_6K, 32.0f, 101.0f, 1226.0f,
@@ -247,24 +247,24 @@ void EnViewer_UpdateImpl(EnViewer* this, GlobalContext* globalCtx) {
         }
     } else if (type == ENVIEWER_TYPE_6_HORSE_GANONDORF) {
         if (gSaveContext.sceneSetupIndex == 5 || gSaveContext.sceneSetupIndex == 10) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_HORSE_RUN_LEVEL - SFX_FLAG);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_HORSE_RUN_LEVEL - SFX_FLAG);
         }
     } else if (type == ENVIEWER_TYPE_4_HORSE_GANONDORF) {
         s16 curFrame = this->skin.skelAnime.curFrame;
 
         if (this->skin.skelAnime.animation == &gHorseGanonRearingAnim) {
             if (curFrame == 8) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EV_GANON_HORSE_NEIGH);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_GANON_HORSE_NEIGH);
             }
             if (curFrame == 30) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EV_HORSE_LAND2);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_HORSE_LAND2);
             }
         } else if (this->skin.skelAnime.animation == &gHorseGanonIdleAnim) {
             if (curFrame == 25) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EV_HORSE_SANDDUST);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_HORSE_SANDDUST);
             }
         } else if (this->skin.skelAnime.animation == &gHorseGanonGallopingAnim) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_HORSE_RUN_LEVEL - SFX_FLAG);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_HORSE_RUN_LEVEL - SFX_FLAG);
         }
     }
 
@@ -335,7 +335,7 @@ void EnViewer_UpdateImpl(EnViewer* this, GlobalContext* globalCtx) {
                         break;
                     case 6:
                         if (globalCtx->csCtx.npcActions[1]->action == 12) {
-                            Audio_PlayActorSound2(&this->actor, NA_SE_EN_GANON_VOICE_DEMO);
+                            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GANON_VOICE_DEMO);
                             Animation_PlayLoopSetSpeed(&this->skin.skelAnime, &object_gndd_Anim_0005B4, 3.0f);
                             this->state++;
                         }
@@ -727,7 +727,7 @@ void EnViewer_UpdatePosition(EnViewer* this, GlobalContext* globalCtx) {
                     Audio_PlaySoundGeneral(NA_SE_EV_HORSE_NEIGH, &this->actor.projectedPos, 4, &D_801333E0, &D_801333E0,
                                            &D_801333E8);
                 }
-                Audio_PlayActorSound2(&this->actor, NA_SE_EV_HORSE_RUN_LEVEL - SFX_FLAG);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_HORSE_RUN_LEVEL - SFX_FLAG);
             }
 
             startPos.x = globalCtx->csCtx.npcActions[0]->startPos.x;

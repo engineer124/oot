@@ -328,7 +328,7 @@ void EnDekubaba_SetupGrow(EnDekubaba* this) {
 
     this->collider.base.colType = COLTYPE_HIT6;
     this->collider.base.acFlags &= ~AC_HARD;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_DUMMY482);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DUMMY482);
     this->actionFunc = EnDekubaba_Grow;
 }
 
@@ -623,9 +623,9 @@ void EnDekubaba_DecideLunge(EnDekubaba* this, GlobalContext* globalCtx) {
     SkelAnime_Update(&this->skelAnime);
     if (Animation_OnFrame(&this->skelAnime, 0.0f) || Animation_OnFrame(&this->skelAnime, 12.0f)) {
         if (this->actor.params == DEKUBABA_BIG) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEKU_MOUTH);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEKU_MOUTH);
         } else {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEKU_JR_MOUTH);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEKU_JR_MOUTH);
         }
     }
 
@@ -675,9 +675,9 @@ void EnDekubaba_Lunge(EnDekubaba* this, GlobalContext* globalCtx) {
     if (this->timer == 0) {
         if (Animation_OnFrame(&this->skelAnime, 1.0f)) {
             if (this->actor.params == DEKUBABA_BIG) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEKU_ATTACK);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEKU_ATTACK);
             } else {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEKU_JR_ATTACK);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEKU_JR_ATTACK);
             }
         }
 
@@ -712,9 +712,9 @@ void EnDekubaba_Lunge(EnDekubaba* this, GlobalContext* globalCtx) {
 
         if (Animation_OnFrame(&this->skelAnime, 0.0f) || Animation_OnFrame(&this->skelAnime, 12.0f)) {
             if (this->actor.params == DEKUBABA_BIG) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEKU_MOUTH);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEKU_MOUTH);
             } else {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEKU_JR_MOUTH);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEKU_JR_MOUTH);
             }
         }
     }
@@ -816,7 +816,7 @@ void EnDekubaba_PullBack(EnDekubaba* this, GlobalContext* globalCtx) {
         this->timer++;
 
         if (this->timer == 10) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEKU_SCRAPE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEKU_SCRAPE);
         }
 
         if (this->timer >= 12) {
@@ -960,7 +960,7 @@ void EnDekubaba_PrunedSomersault(EnDekubaba* this, GlobalContext* globalCtx) {
         }
 
         if (this->actor.bgCheckFlags & 2) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_M_GND);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DODO_M_GND);
             this->timer = 1;
         }
     } else if (this->timer == 1) {
@@ -1093,16 +1093,16 @@ void EnDekubaba_UpdateDamage(EnDekubaba* this, GlobalContext* globalCtx) {
 
     if (this->actor.colChkInfo.health != 0) {
         if (this->timer == 2) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
         } else {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEKU_DAMAGE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEKU_DAMAGE);
         }
     } else {
         Enemy_StartFinishingBlow(globalCtx, &this->actor);
         if (this->actor.params == DEKUBABA_BIG) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEKU_DEAD);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEKU_DEAD);
         } else {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_DEKU_JR_DEAD);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DEKU_JR_DEAD);
         }
     }
 }

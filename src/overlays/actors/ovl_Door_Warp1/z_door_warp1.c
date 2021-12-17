@@ -269,7 +269,7 @@ void DoorWarp1_SetupPurpleCrystal(DoorWarp1* this, GlobalContext* globalCtx) {
         this->actor.scale.z = 0.09f;
         this->crystalAlpha = 255.0f;
     } else {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_SHUT_BY_CRYSTAL);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_SHUT_BY_CRYSTAL);
     }
     DoorWarp1_SetupAction(this, DoorWarp1_PurpleCrystal);
 }
@@ -402,7 +402,7 @@ void func_809995D4(DoorWarp1* this, GlobalContext* globalCtx) {
 }
 
 void DoorWarp1_WarpAppear(DoorWarp1* this, GlobalContext* globalCtx) {
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
     Math_SmoothStepToF(&this->lightRayAlpha, 255.0f, 0.4f, 10.0f, 0.01f);
     Math_SmoothStepToF(&this->warpAlpha, 255.0f, 0.4f, 10.0f, 0.01f);
 
@@ -437,7 +437,7 @@ void DoorWarp1_WarpAppear(DoorWarp1* this, GlobalContext* globalCtx) {
 
 void func_809998A4(DoorWarp1* this, GlobalContext* globalCtx) {
     if (this->lightRayAlpha != 0.0f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
     }
     Math_SmoothStepToF(&this->lightRayAlpha, 0.0f, 0.1f, 2.0f, 0.01f);
     Math_SmoothStepToF(&this->warpAlpha, 0.0f, 0.1f, 2.0f, 0.01f);
@@ -460,7 +460,7 @@ s32 DoorWarp1_PlayerInRange(DoorWarp1* this, GlobalContext* globalCtx) {
 void DoorWarp1_ChildWarpIdle(DoorWarp1* this, GlobalContext* globalCtx) {
     Player* player;
 
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
 
     if (DoorWarp1_PlayerInRange(this, globalCtx)) {
         player = GET_PLAYER(globalCtx);
@@ -539,7 +539,7 @@ void DoorWarp1_ChildWarpOut(DoorWarp1* this, GlobalContext* globalCtx) {
 }
 
 void DoorWarp1_RutoWarpIdle(DoorWarp1* this, GlobalContext* globalCtx) {
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
 
     if (this->rutoWarpState != WARP_BLUE_RUTO_STATE_INITIAL && DoorWarp1_PlayerInRange(this, globalCtx)) {
         this->rutoWarpState = WARP_BLUE_RUTO_STATE_ENTERED;
@@ -623,7 +623,7 @@ void DoorWarp1_RutoWarpOut(DoorWarp1* this, GlobalContext* globalCtx) {
 }
 
 void func_8099A3A4(DoorWarp1* this, GlobalContext* globalCtx) {
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
     Math_SmoothStepToF(&this->lightRayAlpha, 255.0f, 0.2f, 2.0f, 0.1f);
     Math_SmoothStepToF(&this->warpAlpha, 255.0f, 0.2f, 2.0f, 0.1f);
 
@@ -643,7 +643,7 @@ void func_8099A3A4(DoorWarp1* this, GlobalContext* globalCtx) {
 void DoorWarp1_AdultWarpIdle(DoorWarp1* this, GlobalContext* globalCtx) {
     Player* player;
 
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
 
     if (DoorWarp1_PlayerInRange(this, globalCtx)) {
         player = GET_PLAYER(globalCtx);
@@ -847,7 +847,7 @@ void DoorWarp1_Destination(DoorWarp1* this, GlobalContext* globalCtx) {
         this->warpAlpha = 0.0f;
         DoorWarp1_SetupAction(this, DoorWarp1_DoNothing);
     }
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
 }
 
 void DoorWarp1_DoNothing(DoorWarp1* this, GlobalContext* globalCtx) {
@@ -861,7 +861,7 @@ void func_8099B020(DoorWarp1* this, GlobalContext* globalCtx) {
         Math_StepToF(&this->unk_194, 2.0f, 0.01f);
         Math_StepToF(&this->unk_198, 10.0f, 0.02f);
     }
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
 }
 
 void DoorWarp1_Update(Actor* thisx, GlobalContext* globalCtx) {

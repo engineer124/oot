@@ -951,7 +951,7 @@ void func_80ACC00C(EnOwl* this, GlobalContext* globalCtx) {
                     break;
             }
 
-            func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+            Lib_PlaySfx1(NA_SE_SY_TRE_BOX_APPEAR);
             gSaveContext.cutsceneTrigger = 1;
             func_800F44EC(0x14, 0xA);
             this->actionFunc = EnOwl_WaitDefault;
@@ -1098,7 +1098,7 @@ void EnOwl_Update(Actor* thisx, GlobalContext* globalCtx) {
               this->skelAnime.curFrame == 23.0f || this->skelAnime.curFrame == 40.0f ||
               this->skelAnime.curFrame == 58.0f)) ||
             (this->skelAnime.animation == &gOwlFlyAnim && this->skelAnime.curFrame == 4.0f)) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_OWL_FLUTTER);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_OWL_FLUTTER);
         }
     }
 

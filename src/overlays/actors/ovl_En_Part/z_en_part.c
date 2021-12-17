@@ -200,7 +200,7 @@ void func_80ACE5C8(EnPart* this, GlobalContext* globalCtx) {
         velocity.x = Rand_CenteredFloat(16.0f);
         EffectSsHahen_Spawn(globalCtx, &this->actor.world.pos, &velocity, &accel, 20,
                             (s32)((Rand_ZeroOne() * 5.0f + 12.0f) * 2), -1, 10, NULL);
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_MONBLIN_GNDWAVE - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MONBLIN_GNDWAVE - SFX_FLAG);
     }
 }
 
@@ -223,7 +223,7 @@ void func_80ACE7E8(EnPart* this, GlobalContext* globalCtx) {
         if (diffsSum == 0.0f) {
             this->actor.parent->home.rot.x--;
             this->timer--;
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_STAL_DAMAGE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STAL_DAMAGE);
         }
     } else if (this->timer > 0) {
         this->timer--;

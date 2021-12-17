@@ -170,7 +170,7 @@ void BgHidanFwbig_WaitForTimer(BgHidanFwbig* this, GlobalContext* globalCtx) {
     if (this->timer == 0) {
         this->actionFunc = BgHidanFwbig_Rise;
     }
-    func_8002F994(&this->actor, this->timer);
+    Actor_UpdateTimerSfxState(&this->actor, this->timer);
 }
 
 void BgHidanFwbig_WaitForPlayer(BgHidanFwbig* this, GlobalContext* globalCtx) {
@@ -236,9 +236,9 @@ void BgHidanFwbig_Update(Actor* thisx, GlobalContext* globalCtx) {
 
     if ((this->actor.home.pos.y - 200.0f) < this->actor.world.pos.y) {
         if (gSaveContext.sceneSetupIndex < 4) {
-            func_8002F974(&this->actor, NA_SE_EV_BURNING - SFX_FLAG);
+            Actor_PlaySfxAtPos3(&this->actor, NA_SE_EV_BURNING - SFX_FLAG);
         } else if ((s16)this->actor.world.pos.x == -513) {
-            func_8002F974(&this->actor, NA_SE_EV_FLAME_OF_FIRE - SFX_FLAG);
+            Actor_PlaySfxAtPos3(&this->actor, NA_SE_EV_FLAME_OF_FIRE - SFX_FLAG);
         }
         BgHidanFwbig_MoveCollider(this, globalCtx);
         CollisionCheck_SetAT(globalCtx, &globalCtx->colChkCtx, &this->collider.base);

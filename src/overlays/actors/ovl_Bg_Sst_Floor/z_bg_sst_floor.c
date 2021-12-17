@@ -68,7 +68,7 @@ void BgSstFloor_Update(BgSstFloor* thisx, GlobalContext* globalCtx) {
 
     if (func_8004356C(&this->dyna) && (player->fallDistance > 1000.0f)) {
         this->dyna.actor.params = 1;
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EN_SHADEST_TAIKO_HIGH);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EN_SHADEST_TAIKO_HIGH);
     }
 
     if (this->dyna.actor.params == BONGOFLOOR_HIT) {

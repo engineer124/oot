@@ -75,7 +75,7 @@ void ArrowIce_Charge(ArrowIce* this, GlobalContext* globalCtx) {
     this->actor.world.pos = arrow->actor.world.pos;
     this->actor.shape.rot = arrow->actor.shape.rot;
 
-    func_8002F974(&this->actor, NA_SE_PL_ARROW_CHARGE_ICE - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_PL_ARROW_CHARGE_ICE - SFX_FLAG);
 
     // if arrow has no parent, player has fired the arrow
     if (arrow->actor.parent == NULL) {
@@ -165,7 +165,7 @@ void ArrowIce_Fly(ArrowIce* this, GlobalContext* globalCtx) {
     func_80867E8C(&this->unkPos, &this->actor.world.pos, 0.05f);
 
     if (arrow->hitFlags & 1) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_IT_EXPLOSION_ICE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_EXPLOSION_ICE);
         ArrowIce_SetupAction(this, ArrowIce_Hit);
         this->timer = 32;
         this->alpha = 255;

@@ -130,7 +130,7 @@ void func_808AC908(BgSpot02Objects* this, GlobalContext* globalCtx) {
 
     if (globalCtx->csCtx.state != 0) {
         if (globalCtx->csCtx.npcActions[3] != NULL && globalCtx->csCtx.npcActions[3]->action == 2) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_GRAVE_EXPLOSION);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_GRAVE_EXPLOSION);
             gSaveContext.eventChkInf[1] |= 0x2000;
             this->timer = 25;
             pos.x = (Math_SinS(this->dyna.actor.shape.rot.y) * 50.0f) + this->dyna.actor.world.pos.x;
@@ -176,10 +176,10 @@ void func_808ACAFC(BgSpot02Objects* this, GlobalContext* globalCtx) {
 
 void func_808ACB58(BgSpot02Objects* this, GlobalContext* globalCtx) {
     if (Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y + 255.0f, 1.0f)) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_STONEDOOR_STOP);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_STONEDOOR_STOP);
         this->actionFunc = func_808AC8FC;
     } else {
-        func_8002F974(&this->dyna.actor, NA_SE_EV_WALL_MOVE_SP - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_WALL_MOVE_SP - SFX_FLAG);
     }
 }
 
@@ -210,7 +210,7 @@ void func_808ACC34(BgSpot02Objects* this, GlobalContext* globalCtx) {
     }
 
     if (globalCtx->csCtx.frames == 245 || globalCtx->csCtx.frames == 351) {
-        func_800788CC(NA_SE_EV_LIGHTNING);
+        Lib_PlaySfx2(NA_SE_EV_LIGHTNING);
     }
 }
 
@@ -271,7 +271,7 @@ void func_808AD3D4(BgSpot02Objects* this, GlobalContext* globalCtx) {
     if (globalCtx->csCtx.state != 0 && globalCtx->csCtx.npcActions[2] != NULL &&
         globalCtx->csCtx.npcActions[2]->action == 2) {
         if (this->timer == 2) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_IT_EXPLOSION_ICE);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_IT_EXPLOSION_ICE);
         }
 
         if (this->timer < 32) {

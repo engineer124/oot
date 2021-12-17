@@ -79,7 +79,7 @@ s32 EnFw_DoBounce(EnFw* this, s32 totalBounces, f32 yVelocity) {
         return false;
     }
 
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_M_GND);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DODO_M_GND);
     this->bounceCnt--;
     if (this->bounceCnt <= 0) {
         if (this->bounceCnt == 0) {
@@ -230,10 +230,10 @@ void EnFw_Run(EnFw* this, GlobalContext* globalCtx) {
             if (!this->lastDmgHook) {
                 this->actor.velocity.y = 6.0f;
             }
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_FLAME_MAN_DAMAGE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FLAME_MAN_DAMAGE);
             this->damageTimer = 20;
         } else {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_FLAME_MAN_DAMAGE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FLAME_MAN_DAMAGE);
             this->explosionTimer = 6;
         }
         this->actor.speedXZ = 0.0f;
@@ -296,14 +296,14 @@ void EnFw_Run(EnFw* this, GlobalContext* globalCtx) {
         this->actor.world.rot = this->actor.shape.rot;
 
         if (this->slideTimer == 0 && EnFw_PlayerInRange(this, globalCtx)) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_FLAME_MAN_SURP);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FLAME_MAN_SURP);
             this->slideSfxTimer = 8;
             this->slideTimer = 8;
         }
 
         if (this->slideTimer != 0) {
             if (DECR(this->slideSfxTimer) == 0) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_FLAME_MAN_SLIDE);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FLAME_MAN_SLIDE);
                 this->slideSfxTimer = 4;
             }
             Math_SmoothStepToF(&this->actor.speedXZ, 0.0f, 0.1f, 1.0f, 0.0f);
@@ -318,7 +318,7 @@ void EnFw_Run(EnFw* this, GlobalContext* globalCtx) {
             Math_SmoothStepToF(&this->actor.speedXZ, 6.0f, 0.1f, 1.0f, 0.0f);
             phi_v0 = this->skelAnime.curFrame;
             if (phi_v0 == 1 || phi_v0 == 4) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_FLAME_MAN_RUN);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FLAME_MAN_RUN);
                 EnFw_SpawnDust(this, 8, 0.16f, 0.1f, 1, 0.0f, 20.0f, 0.0f);
             }
         }
@@ -335,7 +335,7 @@ void EnFw_TurnToParentInitPos(EnFw* this, GlobalContext* globalCtx) {
         this->actor.world.rot = this->actor.shape.rot;
         this->actor.velocity.y = 14.0f;
         this->actor.home.pos = this->actor.world.pos;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_STAL_JUMP);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STAL_JUMP);
         func_80034EC0(&this->skelAnime, D_80A1FBA0, 1);
         this->actionFunc = EnFw_JumpToParentInitPos;
     }

@@ -231,7 +231,7 @@ void func_808B7BCC(BgSpot18Basket* this, GlobalContext* globalCtx) {
             }
         }
     }
-    func_8002F974(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
 }
 
 void func_808B7D38(BgSpot18Basket* this) {
@@ -416,9 +416,9 @@ void func_808B81A0(BgSpot18Basket* this, GlobalContext* globalCtx) {
         }
     } else if (this->unk_216 == 2) {
         if (this->unk_218 == 2) {
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
         } else {
-            func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+            Lib_PlaySfx1(NA_SE_SY_TRE_BOX_APPEAR);
         }
     } else if (this->unk_216 == 200) {
         func_808B7BB0(this);

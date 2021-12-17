@@ -396,7 +396,7 @@ void EnKz_Mweep(EnKz* this, GlobalContext* globalCtx) {
         this->actionFunc = EnKz_StopMweep;
     }
     if (this->skelanime.curFrame == 13.0f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_VO_KZ_MOVE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_KZ_MOVE);
     }
 }
 

@@ -628,7 +628,7 @@ void EnZo_Submerged(EnZo* this, GlobalContext* globalCtx) {
 
 void EnZo_Surface(EnZo* this, GlobalContext* globalCtx) {
     if (this->actor.yDistToWater < 54.0f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_OUT_OF_WATER);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_OUT_OF_WATER);
         EnZo_SpawnSplashes(this);
         func_80034EC0(&this->skelAnime, sAnimations, 3);
         this->actor.flags |= ACTOR_FLAG_0;
@@ -679,7 +679,7 @@ void EnZo_TreadWater(EnZo* this, GlobalContext* globalCtx) {
 
 void EnZo_Dive(EnZo* this, GlobalContext* globalCtx) {
     if (Animation_OnFrame(&this->skelAnime, this->skelAnime.endFrame)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_DIVE_WATER);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_DIVE_WATER);
         EnZo_SpawnSplashes(this);
         this->actor.flags &= ~ACTOR_FLAG_0;
         this->actor.velocity.y = -4.0f;

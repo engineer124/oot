@@ -156,7 +156,7 @@ void EnBombf_GrowBomb(EnBombf* this, GlobalContext* globalCtx) {
                 func_8002F5C4(&this->actor, &bombFlower->actor, globalCtx);
                 this->timer = 180;
                 this->flowerBombScale = 0.0f;
-                Audio_PlayActorSound2(&this->actor, NA_SE_PL_PULL_UP_ROCK);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_PL_PULL_UP_ROCK);
                 this->actor.flags &= ~ACTOR_FLAG_0;
             } else {
                 player->actor.child = NULL;
@@ -356,7 +356,7 @@ void EnBombf_Update(Actor* thisx, GlobalContext* globalCtx) {
                 if (1) {}
                 thisx->world.rot.y = ((thisx->wallYaw - thisx->world.rot.y) + thisx->wallYaw) - 0x8000;
             }
-            Audio_PlayActorSound2(thisx, NA_SE_EV_BOMB_BOUND);
+            Actor_PlaySfxAtPos1(thisx, NA_SE_EV_BOMB_BOUND);
             Actor_MoveForward(thisx);
             DREG(6) = 1;
             Actor_UpdateBgCheckInfo(globalCtx, thisx, 5.0f, 10.0f, 0.0f, 0x1F);
@@ -385,7 +385,7 @@ void EnBombf_Update(Actor* thisx, GlobalContext* globalCtx) {
                 if ((globalCtx->gameplayFrames % 2) == 0) {
                     EffectSsGSpk_SpawnFuse(globalCtx, thisx, &effPos, &effVelocity, &effAccel);
                 }
-                Audio_PlayActorSound2(thisx, NA_SE_IT_BOMB_IGNIT - SFX_FLAG);
+                Actor_PlaySfxAtPos1(thisx, NA_SE_IT_BOMB_IGNIT - SFX_FLAG);
 
                 effPos.y += 3.0f;
                 func_8002829C(globalCtx, &effPos, &effVelocity, &dustAccel, &dustColor, &dustColor, 50, 5);
@@ -422,7 +422,7 @@ void EnBombf_Update(Actor* thisx, GlobalContext* globalCtx) {
                     EffectSsBlast_SpawnWhiteShockwave(globalCtx, &effPos, &effVelocity, &effAccel);
                 }
 
-                Audio_PlayActorSound2(thisx, NA_SE_IT_BOMB_EXPLOSION);
+                Actor_PlaySfxAtPos1(thisx, NA_SE_IT_BOMB_EXPLOSION);
                 globalCtx->envCtx.adjLight1Color[0] = globalCtx->envCtx.adjLight1Color[1] =
                     globalCtx->envCtx.adjLight1Color[2] = 250;
                 globalCtx->envCtx.adjAmbientColor[0] = globalCtx->envCtx.adjAmbientColor[1] =
@@ -459,7 +459,7 @@ void EnBombf_Update(Actor* thisx, GlobalContext* globalCtx) {
         }
         if (thisx->bgCheckFlags & 0x40) {
             thisx->bgCheckFlags &= ~0x40;
-            Audio_PlayActorSound2(thisx, NA_SE_EV_BOMB_DROP_WATER);
+            Actor_PlaySfxAtPos1(thisx, NA_SE_EV_BOMB_DROP_WATER);
         }
     }
 }

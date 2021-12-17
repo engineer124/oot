@@ -168,7 +168,7 @@ void func_808FD4D4(BossGanon2* this, GlobalContext* globalCtx, s16 arg2, s16 arg
         Actor_SpawnFloorDustRing(globalCtx, &this->actor, &this->unk_1DC, 25.0f, arg3, 8.0f, 0x1F4, 0xA, 1);
     }
 
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_WALK);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_WALK);
     func_80033E88(&this->actor, globalCtx, 2, 0xA);
 }
 
@@ -292,7 +292,7 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
             Math_ApproachF(&this->unk_3B0.y, player->actor.world.pos.y + 47.0f + 7.0f, 0.1f, 2.0f);
             this->unk_339 = 4;
             if (this->unk_398 == 10) {
-                func_80078914(&D_80906D6C, NA_SE_EV_STONE_BOUND);
+                Lib_PlaySfxAtPos(&D_80906D6C, NA_SE_EV_STONE_BOUND);
                 Audio_QueueSeqCmd(SEQ_PLAYER_BGM_MAIN << 24 | NA_BGM_STOP);
             }
             if (this->unk_398 == 20) {
@@ -355,7 +355,7 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
             this->unk_3B0.y = (player->actor.world.pos.y + 200.0f) - 160.0f;
             this->unk_3B0.z = player->actor.world.pos.z;
             if (this->unk_398 >= 20) {
-                func_80078884(NA_SE_EN_GOMA_LAST - SFX_FLAG);
+                Lib_PlaySfx1(NA_SE_EN_GOMA_LAST - SFX_FLAG);
                 Math_ApproachF(&this->unk_324, 255.0f, 1.0f, 10.0f);
                 this->unk_339 = 5;
                 if (this->unk_398 == 20) {
@@ -376,7 +376,7 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
             break;
         case 11:
             this->unk_339 = 5;
-            func_80078884(NA_SE_EN_GOMA_LAST - SFX_FLAG);
+            Lib_PlaySfx1(NA_SE_EN_GOMA_LAST - SFX_FLAG);
             player->actor.world.pos.x = 490.0f;
             player->actor.world.pos.y = 1086.0f;
             player->actor.world.pos.z = -166.0f;
@@ -392,10 +392,10 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
             this->unk_3B0.y = ((player->actor.world.pos.y + 200.0f) - 151.0f) - 2.0f;
             this->unk_3B0.z = player->actor.world.pos.z + 2.0f;
             if (this->unk_398 == 10) {
-                func_80078914(&D_80906D6C, NA_SE_EV_STONE_BOUND);
+                Lib_PlaySfxAtPos(&D_80906D6C, NA_SE_EV_STONE_BOUND);
             }
             if (this->unk_398 == 20) {
-                func_80078884(NA_SE_EV_STONE_BOUND);
+                Lib_PlaySfx1(NA_SE_EV_STONE_BOUND);
             }
             if (this->unk_398 == 30) {
                 func_8002DF54(globalCtx, &this->actor, 0x52);
@@ -429,7 +429,7 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
                 func_800A9F6C(0.0f, 0xC8, 0x14, 0x14);
             }
             if (this->unk_398 == 30) {
-                func_80078884(NA_SE_EV_GRAVE_EXPLOSION);
+                Lib_PlaySfx1(NA_SE_EV_GRAVE_EXPLOSION);
             }
             if (this->unk_398 >= 30) {
                 Math_ApproachF(&this->actor.world.pos.y, 1289.0f, 0.1f, 10.0f);
@@ -477,12 +477,12 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
                 this->unk_3B0.x = this->actor.world.pos.x;
             }
             if ((globalCtx->gameplayFrames % 32) == 0) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GANON_BREATH);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GANON_BREATH);
             }
             break;
         case 15:
             if (((globalCtx->gameplayFrames % 32) == 0) && (this->unk_398 < 100)) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GANON_BREATH);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GANON_BREATH);
             }
             SkelAnime_Update(&this->skelAnime);
             Math_ApproachF(&this->unk_3B0.y, this->actor.world.pos.y + 77.0f, 0.05f, 5.0f);
@@ -507,7 +507,7 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
                 this->unk_194 = Animation_GetLastFrame(&object_ganon_anime3_Anim_003754);
                 this->unk_339 = 55;
                 globalCtx->envCtx.unk_D8 = 1.0f;
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GANON_CASBREAK);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GANON_CASBREAK);
             } else {
                 break;
             }
@@ -532,8 +532,8 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
             Math_ApproachF(&this->unk_3A4.y, ((this->actor.world.pos.y + 60.0f) - 60.0f) - 70.0f, 0.1f, 13.0f);
             Math_ApproachF(&this->unk_3B0.y, this->actor.world.pos.y + 40.0f, 0.1f, 3.6999998f);
             if (this->unk_398 == 30) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GANON_BIGMASIC);
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GANON_THROW_BIG);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GANON_BIGMASIC);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GANON_THROW_BIG);
             }
             if (this->unk_398 <= 50) {
                 sp8D = true;
@@ -685,8 +685,8 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
                 this->unk_312 = 2;
             }
             if ((this->unk_398 == 166) || (this->unk_398 == 185) || (this->unk_398 == 200)) {
-                func_80078884(NA_SE_EN_MGANON_SWORD);
-                func_80078884(NA_SE_EN_MGANON_ROAR);
+                Lib_PlaySfx1(NA_SE_EN_MGANON_SWORD);
+                Lib_PlaySfx1(NA_SE_EN_MGANON_ROAR);
             }
             if (this->unk_398 == 215) {
                 this->unk_39C = 23;
@@ -700,8 +700,8 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
                 this->unk_312 = 2;
             }
             if (this->unk_398 == 222) {
-                func_80078884(NA_SE_EN_MGANON_SWORD);
-                func_80078884(NA_SE_EN_MGANON_ROAR);
+                Lib_PlaySfx1(NA_SE_EN_MGANON_SWORD);
+                Lib_PlaySfx1(NA_SE_EN_MGANON_ROAR);
             }
             this->unk_3A4.x = (player->actor.world.pos.x - 40.0f) + 6.0f;
             this->unk_3A4.y = player->actor.world.pos.y + 40.0f;
@@ -710,7 +710,7 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
             this->unk_3B0.y = ((player->actor.world.pos.y + 10.0f + 60.0f) - 20.0f) - 2.0f;
             this->unk_3B0.z = player->actor.world.pos.z;
             if (this->unk_398 == 228) {
-                func_80078884(NA_SE_IT_SHIELD_REFLECT_SW);
+                Lib_PlaySfx1(NA_SE_IT_SHIELD_REFLECT_SW);
                 func_8002DF54(globalCtx, &this->actor, 0x56);
                 func_800A9F6C(0.0f, 0xFF, 0xA, 0x32);
             }
@@ -745,7 +745,7 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
                 this->unk_3A4.z = effect->position.z + 70.0f;
             }
             if ((this->unk_398 & 3) == 0) {
-                func_80078884(NA_SE_IT_SWORD_SWING);
+                Lib_PlaySfx1(NA_SE_IT_SWORD_SWING);
             }
             if (this->unk_398 == 25) {
                 func_8002DF54(globalCtx, &this->actor, 0x57);
@@ -857,7 +857,7 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
             player->actor.world.pos.x = 140.0f;
             player->actor.world.pos.z = -196.0f;
             if (this->unk_398 == 50) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_ROAR);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_ROAR);
             }
             if (Animation_OnFrame(&this->skelAnime, this->unk_194)) {
                 Camera* camera = Gameplay_GetCamera(globalCtx, MAIN_CAM);
@@ -880,7 +880,7 @@ void func_808FD5F4(BossGanon2* this, GlobalContext* globalCtx) {
     }
 
     if ((this->unk_30C > 4.0f) && !sp8D) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GANON_BODY_SPARK - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GANON_BODY_SPARK - SFX_FLAG);
     }
 
     if (this->unk_39E != 0) {
@@ -925,11 +925,11 @@ void func_808FF898(BossGanon2* this, GlobalContext* globalCtx) {
         }
 
         if (this->unk_392 == 4) {
-            func_80078884(NA_SE_EV_GRAVE_EXPLOSION);
+            Lib_PlaySfx1(NA_SE_EV_GRAVE_EXPLOSION);
         }
 
         if (this->unk_392 == 3) {
-            func_80078884(NA_SE_EN_MGANON_SWDIMP);
+            Lib_PlaySfx1(NA_SE_EN_MGANON_SWDIMP);
         }
     }
 }
@@ -1055,7 +1055,7 @@ void func_808FFDB0(BossGanon2* this, GlobalContext* globalCtx) {
 void func_808FFEBC(BossGanon2* this, GlobalContext* globalCtx) {
     if (this->unk_390 == 0) {
         this->unk_390 = (s16)Rand_ZeroFloat(50.0f) + 30;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_UNARI);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_UNARI);
     }
 
     SkelAnime_Update(&this->skelAnime);
@@ -1158,7 +1158,7 @@ void func_80900344(BossGanon2* this, GlobalContext* globalCtx) {
 
     if (this->unk_390 == 0) {
         this->unk_390 = (s16)Rand_ZeroFloat(50.0f) + 30;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_UNARI);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_UNARI);
     }
 
     Math_ApproachF(&this->unk_324, 255.0f, 1.0f, 10.0f);
@@ -1221,8 +1221,8 @@ void func_80900650(BossGanon2* this, GlobalContext* globalCtx) {
     SkelAnime_Update(&this->skelAnime);
 
     if (Animation_OnFrame(&this->skelAnime, this->unk_198)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_SWORD);
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_ROAR);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_SWORD);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_ROAR);
     }
 
     if (this->unk_311 == 0) {
@@ -1262,7 +1262,7 @@ void func_80900818(BossGanon2* this, GlobalContext* globalCtx) {
     this->actionFunc = func_80900890;
     this->unk_1AC = 0;
     this->unk_39C = 0;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_DEAD1);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_DEAD1);
     this->unk_336 = 0;
 }
 
@@ -1298,7 +1298,7 @@ void func_80900890(BossGanon2* this, GlobalContext* globalCtx) {
             globalCtx->envCtx.unk_D8 = 0.0f;
         case 1:
             if (this->unk_1A2[1] == 50) {
-                func_80078884(NA_SE_EN_MGANON_WALK);
+                Lib_PlaySfx1(NA_SE_EN_MGANON_WALK);
             }
             Matrix_RotateY(((this->actor.shape.rot.y / (f32)0x8000) * M_PI) + 0.3f, MTXMODE_NEW);
             sp5C.x = 0.0f;
@@ -1387,7 +1387,7 @@ void func_80900890(BossGanon2* this, GlobalContext* globalCtx) {
             break;
         case 1:
             if ((globalCtx->gameplayFrames % 32) == 0) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_BREATH);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_BREATH);
             }
 
             if ((this->unk_1A2[0] == 0) || (this->unk_334 != 0)) {
@@ -1399,7 +1399,7 @@ void func_80900890(BossGanon2* this, GlobalContext* globalCtx) {
                     this->unk_194 = Animation_GetLastFrame(&object_ganon2_Anim_0334F8);
                     this->unk_1AC = 2;
                     this->unk_1A2[0] = 40;
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_ROAR);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_ROAR);
                 }
             }
             break;
@@ -1425,7 +1425,7 @@ void func_80901020(BossGanon2* this, GlobalContext* globalCtx) {
     this->actionFunc = func_8090120C;
     this->unk_1AC = 0;
     this->unk_39C = 0;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_DEAD1);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_DEAD1);
     this->unk_314 = 4;
 }
 
@@ -1494,17 +1494,17 @@ void func_8090120C(BossGanon2* this, GlobalContext* globalCtx) {
                 Math_ApproachZeroF(&globalCtx->envCtx.unk_D8, 1.0f, 0.08f);
             }
             if (this->unk_398 == 50) {
-                func_80078884(NA_SE_EN_MGANON_WALK);
+                Lib_PlaySfx1(NA_SE_EN_MGANON_WALK);
             }
             if (this->unk_398 > 90) {
                 Math_ApproachF(&this->unk_380, 0.25f, 1.0f, 0.0125f);
                 this->unk_37C = 200.0f;
-                func_80078884(NA_SE_EV_TIMETRIP_LIGHT - SFX_FLAG);
+                Lib_PlaySfx1(NA_SE_EV_TIMETRIP_LIGHT - SFX_FLAG);
             }
             if (this->unk_398 >= 110) {
                 if (this->unk_398 == 110) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_GANON_HIT_THUNDER);
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_DAMAGE);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GANON_HIT_THUNDER);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_DAMAGE);
                 }
                 Math_ApproachF(&this->unk_30C, 10.0f, 0.2f, 5.0f);
                 this->skelAnime.playSpeed = 3.0f;
@@ -1534,7 +1534,7 @@ void func_8090120C(BossGanon2* this, GlobalContext* globalCtx) {
         case 2:
             this->unk_339 = 22;
             Math_ApproachF(&globalCtx->envCtx.unk_D8, 1.0f, 1.0f, 0.1f);
-            func_80078884(NA_SE_EV_TIMETRIP_LIGHT - SFX_FLAG);
+            Lib_PlaySfx1(NA_SE_EV_TIMETRIP_LIGHT - SFX_FLAG);
             this->unk_3A4.x = 250;
             this->unk_3A4.y = 1150.0f;
             this->unk_3A4.z = 0.0f;
@@ -1548,7 +1548,7 @@ void func_8090120C(BossGanon2* this, GlobalContext* globalCtx) {
             break;
         case 3:
             this->unk_339 = 22;
-            func_80078884(NA_SE_EV_TIMETRIP_LIGHT - SFX_FLAG);
+            Lib_PlaySfx1(NA_SE_EV_TIMETRIP_LIGHT - SFX_FLAG);
             this->unk_3A4.x = 330.0f;
             this->unk_3A4.y = 1120.0f;
             this->unk_3A4.z = -150.0f;
@@ -1585,7 +1585,7 @@ void func_8090120C(BossGanon2* this, GlobalContext* globalCtx) {
             this->unk_339 = 23;
             if ((this->unk_398 >= 60) && (this->unk_398 <= 90)) {
                 if (this->unk_398 == 62) {
-                    func_80078884(NA_SE_EV_TRIFORCE_FLASH);
+                    Lib_PlaySfx1(NA_SE_EV_TRIFORCE_FLASH);
                 }
                 Math_ApproachF(&this->unk_38C, 200.0f, 1.0f, 8.0f);
             } else {
@@ -1644,12 +1644,12 @@ void func_8090120C(BossGanon2* this, GlobalContext* globalCtx) {
             player->actor.shape.rot.y = -0x4000;
             player->actor.world.pos.z = 30.0f;
             if ((this->unk_398 == 20) || (this->unk_398 == 30) || (this->unk_398 == 65) || (this->unk_398 == 40)) {
-                func_80078884(NA_SE_VO_LI_SWORD_N);
-                func_80078884(NA_SE_IT_SWORD_SWING_HARD);
+                Lib_PlaySfx1(NA_SE_VO_LI_SWORD_N);
+                Lib_PlaySfx1(NA_SE_IT_SWORD_SWING_HARD);
             }
             if ((this->unk_398 == 22) || (this->unk_398 == 35) || (this->unk_398 == 72) || (this->unk_398 == 45)) {
-                func_80078884(NA_SE_EN_MGANON_DAMAGE);
-                func_80078884(NA_SE_IT_SHIELD_BOUND);
+                Lib_PlaySfx1(NA_SE_EN_MGANON_DAMAGE);
+                Lib_PlaySfx1(NA_SE_IT_SHIELD_BOUND);
                 globalCtx->envCtx.unk_D8 = 1.0f;
             }
             if ((this->unk_398 == 22) || (this->unk_398 == 35) || (this->unk_398 == 72) || (this->unk_398 == 45)) {
@@ -1706,7 +1706,7 @@ void func_8090120C(BossGanon2* this, GlobalContext* globalCtx) {
             break;
         case 8:
             if (this->unk_398 == 1025) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_STAND);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_STAND);
             }
             if (this->unk_398 >= 1000) {
                 if (this->unk_398 < 1040) {
@@ -1715,7 +1715,7 @@ void func_8090120C(BossGanon2* this, GlobalContext* globalCtx) {
                 }
             }
             if (this->unk_398 == 1040) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_DEAD2);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_DEAD2);
                 this->unk_336 = 2;
                 this->unk_339 = 0;
                 globalCtx->envCtx.unk_BE = 0;
@@ -1733,7 +1733,7 @@ void func_8090120C(BossGanon2* this, GlobalContext* globalCtx) {
             this->unk_3B0.y = this->unk_1B8.y;
             this->unk_3B0.z = this->unk_1B8.z;
             if ((this->unk_398 < 1000) && ((this->unk_398 % 16) == 0)) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_SWORD);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_SWORD);
             }
             if (this->unk_398 == 40) {
                 this->unk_39C = 9;
@@ -1766,7 +1766,7 @@ void func_8090120C(BossGanon2* this, GlobalContext* globalCtx) {
             if ((this->unk_398 >= 40) && (this->unk_398 <= 110)) {
                 Math_ApproachF(&globalCtx->envCtx.unk_D8, 1.0f, 1.0f, 0.02f);
                 Math_ApproachF(&this->unk_384, 10.0f, 0.1f, 0.2f);
-                Audio_PlayActorSound2(&sZelda->actor, NA_SE_EV_GOD_LIGHTBALL_2 - SFX_FLAG);
+                Actor_PlaySfxAtPos1(&sZelda->actor, NA_SE_EV_GOD_LIGHTBALL_2 - SFX_FLAG);
             } else {
                 Math_ApproachZeroF(&this->unk_384, 1.0f, 0.2f);
             }
@@ -1785,7 +1785,7 @@ void func_8090120C(BossGanon2* this, GlobalContext* globalCtx) {
                 sZelda->unk_3C8 = 13;
             }
             if (this->unk_398 == 140) {
-                Audio_PlayActorSound2(&sZelda->actor, NA_SE_EV_HUMAN_BOUND);
+                Actor_PlaySfxAtPos1(&sZelda->actor, NA_SE_EV_HUMAN_BOUND);
             }
             if (this->unk_398 < 160) {
                 break;
@@ -1812,7 +1812,7 @@ void func_8090120C(BossGanon2* this, GlobalContext* globalCtx) {
             break;
         case 1:
             if ((this->unk_39C < 7) && ((globalCtx->gameplayFrames % 32) == 0)) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_BREATH);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_BREATH);
             }
             break;
     }
@@ -1885,13 +1885,13 @@ void func_80902524(BossGanon2* this, GlobalContext* globalCtx) {
                 acHitInfo = this->unk_424.elements[0].info.acHitInfo;
                 if ((acHitInfo->toucher.dmgFlags & 0x2000) && (this->actionFunc != func_80900890)) {
                     func_809000A0(this, globalCtx);
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_FANTOM_HIT_THUNDER);
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_DAMAGE);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FANTOM_HIT_THUNDER);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_DAMAGE);
                     Audio_StopSfxById(NA_SE_EN_MGANON_UNARI);
                 } else if ((this->actionFunc == func_80900890) && (acHitInfo->toucher.dmgFlags & 0x9000200)) {
                     this->unk_316 = 60;
                     this->unk_342 = 5;
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_DAMAGE);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_DAMAGE);
                     Audio_StopSfxById(NA_SE_EN_MGANON_UNARI);
                     this->actor.colChkInfo.health -= 2;
                     temp_v0_4 = this->actor.colChkInfo.health;
@@ -1906,7 +1906,7 @@ void func_80902524(BossGanon2* this, GlobalContext* globalCtx) {
                     }
                 } else if (this->actionFunc != func_80900890) {
                     func_808FFF90(this, globalCtx);
-                    Audio_PlayActorSound2(&this->actor, NA_SE_IT_HOOKSHOT_REFLECT);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_HOOKSHOT_REFLECT);
                 }
             }
         }
@@ -1917,7 +1917,7 @@ void func_80902524(BossGanon2* this, GlobalContext* globalCtx) {
             this->unk_316 = 60;
             this->unk_344 = 0x32;
             this->unk_342 = 5;
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_MGANON_DAMAGE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MGANON_DAMAGE);
             Audio_StopSfxById(NA_SE_EN_MGANON_UNARI);
             phi_v1_2 = 1;
             if (acHitInfo->toucher.dmgFlags & 0x9000200) {
@@ -1989,7 +1989,7 @@ void BossGanon2_Update(Actor* thisx, GlobalContext* globalCtx) {
         if (this->actor.bgCheckFlags & 1) {
             if (this->actor.velocity.y < -5.0f) {
                 func_80033E88(&this->actor, globalCtx, 5, 20);
-                func_80078884(NA_SE_IT_BOMB_EXPLOSION);
+                Lib_PlaySfx1(NA_SE_IT_BOMB_EXPLOSION);
             }
             this->actor.velocity.y = 0.0f;
         }
@@ -2075,7 +2075,7 @@ void BossGanon2_Update(Actor* thisx, GlobalContext* globalCtx) {
         if (Rand_ZeroOne() < 0.5f) {
             D_8090EB20.z = Rand_ZeroFloat(1000.0f);
         }
-        func_80078914(&D_8090EB20, NA_SE_EV_LIGHTNING);
+        Lib_PlaySfxAtPos(&D_8090EB20, NA_SE_EV_LIGHTNING);
         this->unk_328 = 0xFF;
         this->unk_330 = 5;
         this->unk_32C = 0.0f;
@@ -2842,7 +2842,7 @@ void func_80905DA8(BossGanon2* this, GlobalContext* globalCtx) {
                         if (effect->velocity.y < -10.0f) {
                             sp78 = effect->position;
                             sp78.y = 1086.0f;
-                            func_80078884(NA_SE_IT_SHIELD_REFLECT_SW);
+                            Lib_PlaySfx1(NA_SE_IT_SHIELD_REFLECT_SW);
                             CollisionCheck_SpawnShieldParticlesMetal(globalCtx, &sp78);
                         }
                         effect->velocity.y = 0.0f;

@@ -499,7 +499,7 @@ void HealthMeter_HandleCriticalAlarm(GlobalContext* globalCtx) {
             interfaceCtx->unk_22C = 0;
             if (!Player_InCsMode(globalCtx) && (globalCtx->pauseCtx.state == 0) &&
                 (globalCtx->pauseCtx.debugState == 0) && HealthMeter_IsCritical() && !Gameplay_InCsMode(globalCtx)) {
-                func_80078884(NA_SE_SY_HITPOINT_ALARM);
+                Lib_PlaySfx1(NA_SE_SY_HITPOINT_ALARM);
             }
         }
     } else {

@@ -101,7 +101,7 @@ void func_80899950(BgJyaKanaami* this, GlobalContext* globalCtx) {
     this->unk_168 += 0x20;
     if (Math_ScaledStepToS(&this->dyna.actor.world.rot.x, 0x4000, this->unk_168)) {
         func_80899A08(this);
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_TRAP_BOUND);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_TRAP_BOUND);
         quakeId = Quake_Add(GET_ACTIVE_CAM(globalCtx), 3);
         Quake_SetSpeed(quakeId, 25000);
         Quake_SetQuakeValues(quakeId, 2, 0, 0, 0);

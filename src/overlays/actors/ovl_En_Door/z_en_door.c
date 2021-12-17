@@ -196,7 +196,7 @@ void EnDoor_Idle(EnDoor* this, GlobalContext* globalCtx) {
         if (this->lockTimer != 0) {
             gSaveContext.inventory.dungeonKeys[gSaveContext.mapIndex]--;
             Flags_SetSwitch(globalCtx, this->actor.params & 0x3F);
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_CHAIN_KEY_UNLOCK);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_CHAIN_KEY_UNLOCK);
         }
     } else if (!Player_InCsMode(globalCtx)) {
         if (fabsf(playerPosRelToDoor.y) < 20.0f && fabsf(playerPosRelToDoor.x) < 20.0f &&
@@ -269,7 +269,7 @@ void EnDoor_Open(EnDoor* this, GlobalContext* globalCtx) {
             this->actionFunc = EnDoor_Idle;
             this->playerIsOpening = 0;
         } else if (Animation_OnFrame(&this->skelAnime, sDoorAnimOpenFrames[this->animStyle])) {
-            Audio_PlayActorSound2(&this->actor,
+            Actor_PlaySfxAtPos1(&this->actor,
                                   (globalCtx->sceneNum == SCENE_HAKADAN || globalCtx->sceneNum == SCENE_HAKADANCH ||
                                    globalCtx->sceneNum == SCENE_HIDAN)
                                       ? NA_SE_EV_IRON_DOOR_OPEN
@@ -281,7 +281,7 @@ void EnDoor_Open(EnDoor* this, GlobalContext* globalCtx) {
                 }
             }
         } else if (Animation_OnFrame(&this->skelAnime, sDoorAnimCloseFrames[this->animStyle])) {
-            Audio_PlayActorSound2(&this->actor,
+            Actor_PlaySfxAtPos1(&this->actor,
                                   (globalCtx->sceneNum == SCENE_HAKADAN || globalCtx->sceneNum == SCENE_HAKADANCH ||
                                    globalCtx->sceneNum == SCENE_HIDAN)
                                       ? NA_SE_EV_IRON_DOOR_CLOSE

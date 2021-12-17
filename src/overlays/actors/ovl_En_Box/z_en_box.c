@@ -484,7 +484,7 @@ void EnBox_SpawnIceSmoke(EnBox* this, GlobalContext* globalCtx) {
     f32 f0;
 
     this->iceSmokeTimer++;
-    func_8002F974(&this->dyna.actor, NA_SE_EN_MIMICK_BREATH - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EN_MIMICK_BREATH - SFX_FLAG);
     if (Rand_ZeroOne() < 0.3f) {
         f0 = 2.0f * Rand_ZeroOne() - 1.0f;
         pos = this->dyna.actor.world.pos;

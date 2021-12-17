@@ -2012,7 +2012,7 @@ s32 func_8083442C(Player* this, GlobalContext* globalCtx) {
 
     if ((this->heldItemActionParam >= PLAYER_AP_BOW_FIRE) && (this->heldItemActionParam <= PLAYER_AP_BOW_0E) &&
         (gSaveContext.unk_13F0 != 0)) {
-        func_80078884(NA_SE_SY_ERROR);
+        Lib_PlaySfx1(NA_SE_SY_ERROR);
     } else {
         func_80833638(this, func_808351D4);
 
@@ -2713,7 +2713,7 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
                  (temp = Player_ActionToExplosive(this, actionParam),
                   ((temp >= 0) && ((AMMO(sExplosiveInfos[temp].itemId) == 0) ||
                                    (globalCtx->actorCtx.actorLists[ACTORCAT_EXPLOSIVE].length >= 3)))))) {
-                func_80078884(NA_SE_SY_ERROR);
+                Lib_PlaySfx1(NA_SE_SY_ERROR);
                 return;
             }
 
@@ -2724,9 +2724,9 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
                     } else {
                         globalCtx->actorCtx.unk_03 = 1;
                     }
-                    func_80078884((globalCtx->actorCtx.unk_03 != 0) ? NA_SE_SY_GLASSMODE_ON : NA_SE_SY_GLASSMODE_OFF);
+                    Lib_PlaySfx1((globalCtx->actorCtx.unk_03 != 0) ? NA_SE_SY_GLASSMODE_ON : NA_SE_SY_GLASSMODE_OFF);
                 } else {
-                    func_80078884(NA_SE_SY_ERROR);
+                    Lib_PlaySfx1(NA_SE_SY_ERROR);
                 }
                 return;
             }
@@ -2735,7 +2735,7 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
                 if (AMMO(ITEM_NUT) != 0) {
                     func_8083C61C(globalCtx, this);
                 } else {
-                    func_80078884(NA_SE_SY_ERROR);
+                    Lib_PlaySfx1(NA_SE_SY_ERROR);
                 }
                 return;
             }
@@ -2748,7 +2748,7 @@ void func_80835F44(GlobalContext* globalCtx, Player* this, s32 item) {
                     this->itemActionParam = actionParam;
                     this->unk_6AD = 4;
                 } else {
-                    func_80078884(NA_SE_SY_ERROR);
+                    Lib_PlaySfx1(NA_SE_SY_ERROR);
                 }
                 return;
             }
@@ -3642,7 +3642,7 @@ s32 func_808382DC(Player* this, GlobalContext* globalCtx) {
 
             func_80832698(this, NA_SE_VO_LI_TAKEN_AWAY);
             globalCtx->unk_11DE9 = 1;
-            func_80078884(NA_SE_OC_ABYSS);
+            Lib_PlaySfx1(NA_SE_OC_ABYSS);
         } else if ((this->unk_8A1 != 0) && ((this->unk_8A1 >= 2) || (this->invincibilityTimer == 0))) {
             u8 sp5C[] = { 2, 1, 1 };
 
@@ -3903,7 +3903,7 @@ s32 func_80838FB8(GlobalContext* globalCtx, Player* this) {
         func_80838F5C(globalCtx, this);
         func_80832284(globalCtx, this, &gPlayerAnim_003040);
         func_80832698(this, NA_SE_VO_LI_FALL_S);
-        func_800788CC(NA_SE_OC_SECRET_WARP_IN);
+        Lib_PlaySfx2(NA_SE_OC_SECRET_WARP_IN);
         return 1;
     }
 
@@ -3982,7 +3982,7 @@ s32 func_80839034(GlobalContext* globalCtx, Player* this, CollisionPoly* poly, u
                 ((sp34 < 100) || (this->actor.bgCheckFlags & 1))) {
 
                 if (temp == 11) {
-                    func_800788CC(NA_SE_OC_SECRET_HOLE_OUT);
+                    Lib_PlaySfx2(NA_SE_OC_SECRET_HOLE_OUT);
                     func_800F6964(5);
                     gSaveContext.seqId = (u8)NA_BGM_DISABLED;
                     gSaveContext.natureAmbienceId = 0xFF;
@@ -4034,7 +4034,7 @@ s32 func_80839034(GlobalContext* globalCtx, Player* this, CollisionPoly* poly, u
                             Gameplay_TriggerVoidOut(globalCtx);
                         }
                         globalCtx->fadeTransition = 4;
-                        func_80078884(NA_SE_OC_ABYSS);
+                        Lib_PlaySfx1(NA_SE_OC_ABYSS);
                     } else {
                         func_80838F5C(globalCtx, this);
                         this->unk_850 = 9999;
@@ -4818,12 +4818,12 @@ s32 func_8083B040(Player* this, GlobalContext* globalCtx) {
                     func_8083B010(this);
                 }
                 this->stateFlags1 |= 0x100000;
-                func_80078884(NA_SE_SY_CAMERA_ZOOM_UP);
+                Lib_PlaySfx1(NA_SE_SY_CAMERA_ZOOM_UP);
                 func_80832210(this);
                 return 1;
             } else {
                 this->unk_6AD = 0;
-                func_80078884(NA_SE_SY_ERROR);
+                Lib_PlaySfx1(NA_SE_SY_ERROR);
                 return 0;
             }
 
@@ -4935,7 +4935,7 @@ s32 func_8083B998(Player* this, GlobalContext* globalCtx) {
         this->stateFlags2 |= 0x200000;
     } else if ((this->naviTextId == 0) && !func_8008E9C4(this) && CHECK_BTN_ALL(sControlInput->press.button, BTN_CUP) &&
                (YREG(15) != 0x10) && (YREG(15) != 0x20) && !func_8083B8F4(this, globalCtx)) {
-        func_80078884(NA_SE_SY_ERROR);
+        Lib_PlaySfx1(NA_SE_SY_ERROR);
     }
 
     return 0;
@@ -5239,7 +5239,7 @@ s32 func_8083C6B8(GlobalContext* globalCtx, Player* this) {
 
             if (!(this->actor.bgCheckFlags & 1) || (this->actor.world.pos.z > 1300.0f) ||
                 BgCheck_SphVsFirstPoly(&globalCtx->colCtx, &sp24, 20.0f)) {
-                func_80078884(NA_SE_SY_ERROR);
+                Lib_PlaySfx1(NA_SE_SY_ERROR);
                 return 0;
             }
 
@@ -5873,7 +5873,7 @@ void func_8083E4C4(GlobalContext* globalCtx, Player* this, GetItemEntry* giEntry
         Item_Give(globalCtx, giEntry->itemId);
     }
 
-    func_80078884((this->getItemId < 0) ? NA_SE_SY_GET_BOXITEM : NA_SE_SY_GET_ITEM);
+    Lib_PlaySfx1((this->getItemId < 0) ? NA_SE_SY_GET_BOXITEM : NA_SE_SY_GET_ITEM);
 }
 
 s32 func_8083E5A8(Player* this, GlobalContext* globalCtx) {
@@ -6532,7 +6532,7 @@ void func_8084029C(Player* this, f32 arg1) {
     if (1) {}
 
     if ((this->currentBoots == PLAYER_BOOTS_HOVER) && !(this->actor.bgCheckFlags & 1) && (this->hoverBootsTimer != 0)) {
-        func_8002F8F0(&this->actor, NA_SE_PL_HOBBERBOOTS_LV - SFX_FLAG);
+        Actor_PlaySfxAtPos2(&this->actor, NA_SE_PL_HOBBERBOOTS_LV - SFX_FLAG);
     } else if (func_8084021C(this->unk_868, arg1, 29.0f, 10.0f) || func_8084021C(this->unk_868, arg1, 29.0f, 24.0f)) {
         func_808327F8(this, this->linearVelocity);
         if (this->linearVelocity > 4.0f) {
@@ -7887,7 +7887,7 @@ void func_80843E14(Player* this, u16 sfxId) {
     func_80832698(this, sfxId);
 
     if ((this->heldActor != NULL) && (this->heldActor->id == ACTOR_EN_RU1)) {
-        Audio_PlayActorSound2(this->heldActor, NA_SE_VO_RT_FALL);
+        Actor_PlaySfxAtPos1(this->heldActor, NA_SE_VO_RT_FALL);
     }
 }
 
@@ -8153,7 +8153,7 @@ void func_80844708(Player* this, GlobalContext* globalCtx) {
                 func_8083DF68(this, sp38, this->actor.shape.rot.y);
 
                 if (func_8084269C(globalCtx, this)) {
-                    func_8002F8F0(&this->actor, NA_SE_PL_ROLL_DUST - SFX_FLAG);
+                    Actor_PlaySfxAtPos2(&this->actor, NA_SE_PL_ROLL_DUST - SFX_FLAG);
                 }
 
                 func_80832924(this, D_8085460C);
@@ -9152,7 +9152,7 @@ void Player_Init(Actor* thisx, GlobalContext* globalCtx2) {
     }
 
     if (gSaveContext.entranceSound != 0) {
-        Audio_PlayActorSound2(&this->actor, ((void)0, gSaveContext.entranceSound));
+        Actor_PlaySfxAtPos1(&this->actor, ((void)0, gSaveContext.entranceSound));
         gSaveContext.entranceSound = 0;
     }
 
@@ -9766,7 +9766,7 @@ void func_80848B44(GlobalContext* globalCtx, Player* this) {
         shockPos.z = (Rand_CenteredFloat(5.0f) + randBodyPart->z) - this->actor.world.pos.z;
 
         EffectSsFhgFlash_SpawnShock(globalCtx, &this->actor, &shockPos, shockScale, FHGFLASH_SHOCK_PLAYER);
-        func_8002F8F0(&this->actor, NA_SE_PL_SPARK - SFX_FLAG);
+        Actor_PlaySfxAtPos2(&this->actor, NA_SE_PL_SPARK - SFX_FLAG);
     }
 }
 
@@ -9873,7 +9873,7 @@ void Player_UpdateCommon(Player* this, GlobalContext* globalCtx, Input* input) {
         this->unk_A86++;
         if (this->unk_A86 == 0) {
             this->unk_A86 = 1;
-            func_80078884(NA_SE_OC_REVENGE);
+            Lib_PlaySfx1(NA_SE_OC_REVENGE);
         }
     }
 
@@ -10644,7 +10644,7 @@ void func_8084B1D8(Player* this, GlobalContext* globalCtx) {
           CHECK_BTN_ANY(sControlInput->press.button,
                         BTN_A | BTN_B | BTN_R | BTN_CUP | BTN_CLEFT | BTN_CRIGHT | BTN_CDOWN)))) {
         func_8083C148(this, globalCtx);
-        func_80078884(NA_SE_SY_CAMERA_ZOOM_UP);
+        Lib_PlaySfx1(NA_SE_SY_CAMERA_ZOOM_UP);
     } else if ((DECR(this->unk_850) == 0) || (this->unk_6AD != 2)) {
         if (func_8008F128(this)) {
             this->unk_6AE |= 0x43;
@@ -12436,7 +12436,7 @@ void func_8084F88C(Player* this, GlobalContext* globalCtx) {
             }
 
             globalCtx->fadeTransition = 4;
-            func_80078884(NA_SE_OC_ABYSS);
+            Lib_PlaySfx1(NA_SE_OC_ABYSS);
         } else {
             globalCtx->fadeTransition = 2;
             gSaveContext.nextTransition = 2;
@@ -12518,7 +12518,7 @@ void func_8084FBF4(Player* this, GlobalContext* globalCtx) {
     }
 
     this->shockTimer = 40;
-    func_8002F8F0(&this->actor, NA_SE_VO_LI_TAKEN_AWAY - SFX_FLAG + this->ageProperties->unk_92);
+    Actor_PlaySfxAtPos2(&this->actor, NA_SE_VO_LI_TAKEN_AWAY - SFX_FLAG + this->ageProperties->unk_92);
 }
 
 s32 func_8084FCAC(Player* this, GlobalContext* globalCtx) {
@@ -12770,7 +12770,7 @@ void func_8085063C(Player* this, GlobalContext* globalCtx) {
         if (globalCtx->msgCtx.choiceIndex == 1) {
             gSaveContext.respawn[RESPAWN_MODE_TOP].data = -respawnData;
             gSaveContext.fw.set = 0;
-            func_80078914(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, NA_SE_PL_MAGIC_WIND_VANISH);
+            Lib_PlaySfxAtPos(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, NA_SE_PL_MAGIC_WIND_VANISH);
         }
 
         func_80853080(this, globalCtx);
@@ -12790,7 +12790,7 @@ void func_8085076C(Player* this, GlobalContext* globalCtx) {
 
     if (this->unk_850++ == 20) {
         gSaveContext.respawn[RESPAWN_MODE_TOP].data = respawnData + 1;
-        func_80078914(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, NA_SE_PL_MAGIC_WIND_WARP);
+        Lib_PlaySfxAtPos(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, NA_SE_PL_MAGIC_WIND_WARP);
     }
 }
 

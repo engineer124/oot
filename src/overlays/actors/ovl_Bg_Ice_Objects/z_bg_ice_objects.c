@@ -173,7 +173,7 @@ void BgIceObjects_Slide(BgIceObjects* this, GlobalContext* globalCtx) {
         }
         thisx->params = 0;
         func_8002DF54(globalCtx, thisx, 7);
-        Audio_PlayActorSound2(thisx, NA_SE_EV_BLOCK_BOUND);
+        Actor_PlaySfxAtPos1(thisx, NA_SE_EV_BLOCK_BOUND);
         if ((fabsf(thisx->world.pos.x + 1387.0f) < 1.0f) && (fabsf(thisx->world.pos.z + 260.0f) < 1.0f)) {
             this->actionFunc = BgIceObjects_Stuck;
         } else {
@@ -192,7 +192,7 @@ void BgIceObjects_Slide(BgIceObjects* this, GlobalContext* globalCtx) {
         pos.x = thisx->world.pos.x - (60.0f * Math_SinS(this->dyna.unk_158)) + (Math_CosS(this->dyna.unk_158) * spread);
         pos.z = thisx->world.pos.z - (60.0f * Math_CosS(this->dyna.unk_158)) - (Math_SinS(this->dyna.unk_158) * spread);
         func_8002829C(globalCtx, &pos, &velocity, &sZeroVec, &sWhite, &sGray, 250, Rand_S16Offset(40, 15));
-        func_8002F974(thisx, NA_SE_PL_SLIP_ICE_LEVEL - SFX_FLAG);
+        Actor_PlaySfxAtPos3(thisx, NA_SE_PL_SLIP_ICE_LEVEL - SFX_FLAG);
     }
     BgIceObjects_CheckPits(this, globalCtx);
 }

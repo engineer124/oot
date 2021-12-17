@@ -282,10 +282,10 @@ void func_808B4194(BgSpot15Rrbox* this, GlobalContext* globalCtx) {
     } else if (approxFResult) {
         player = GET_PLAYER(globalCtx);
         if (func_808B4010(this, globalCtx)) {
-            Audio_PlayActorSound2(actor, NA_SE_EV_WOOD_BOUND);
+            Actor_PlaySfxAtPos1(actor, NA_SE_EV_WOOD_BOUND);
         }
         if (func_808B3A40(this, globalCtx)) {
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
         }
         actor->home.pos.x = actor->world.pos.x;
         actor->home.pos.z = actor->world.pos.z;
@@ -296,7 +296,7 @@ void func_808B4194(BgSpot15Rrbox* this, GlobalContext* globalCtx) {
         this->unk_168 = 10;
         func_808B4084(this, globalCtx);
     }
-    Audio_PlayActorSound2(actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
+    Actor_PlaySfxAtPos1(actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
 }
 
 void func_808B4380(BgSpot15Rrbox* this, GlobalContext* globalCtx) {
@@ -335,7 +335,7 @@ void func_808B43D0(BgSpot15Rrbox* this, GlobalContext* globalCtx) {
     if ((floorHeight - actor->world.pos.y) >= -0.001f) {
         actor->world.pos.y = floorHeight;
         func_808B4084(this, globalCtx);
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_WOOD_BOUND);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_WOOD_BOUND);
     }
 }
 

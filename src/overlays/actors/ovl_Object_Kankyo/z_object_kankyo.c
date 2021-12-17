@@ -205,7 +205,7 @@ void ObjectKankyo_Fairies(ObjectKankyo* this, GlobalContext* globalCtx) {
         func_800F436C(&sSoundPos, NA_SE_EV_NAVY_FLY - SFX_FLAG, (0.4f * dist) + 0.6f);
         switch (globalCtx->csCtx.frames) {
             case 473:
-                func_800788CC(NA_SE_VO_NA_HELLO_3);
+                Lib_PlaySfx2(NA_SE_VO_NA_HELLO_3);
                 break;
 
             case 583:
@@ -213,11 +213,11 @@ void ObjectKankyo_Fairies(ObjectKankyo* this, GlobalContext* globalCtx) {
                 break;
 
             case 763:
-                func_80078884(NA_SE_EV_NAVY_CRASH - SFX_FLAG);
+                Lib_PlaySfx1(NA_SE_EV_NAVY_CRASH - SFX_FLAG);
                 break;
 
             case 771:
-                func_80078884(NA_SE_VO_RT_THROW);
+                Lib_PlaySfx1(NA_SE_VO_RT_THROW);
                 break;
         }
     }
@@ -782,7 +782,7 @@ void ObjectKankyo_WaitForSunGraveSparkObject(ObjectKankyo* this, GlobalContext* 
 void ObjectKankyo_SunGraveSpark(ObjectKankyo* this, GlobalContext* globalCtx) {
     if (globalCtx->csCtx.state != 0) {
         if (globalCtx->csCtx.npcActions[1] != NULL && globalCtx->csCtx.npcActions[1]->action == 2) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_BIRI_SPARK - SFX_FLAG);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BIRI_SPARK - SFX_FLAG);
             if ((s16)this->effects[0].alpha + 20 > 255) {
                 this->effects[0].alpha = 255;
             } else {

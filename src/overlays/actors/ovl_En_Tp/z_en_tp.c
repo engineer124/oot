@@ -284,7 +284,7 @@ void EnTp_SetupDie(EnTp* this) {
         }
 
         this->timer = 13;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_TAIL_DEAD);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_TAIL_DEAD);
     }
     this->actionIndex = TAILPASARAN_ACTION_DIE;
     EnTp_SetupAction(this, EnTp_Die);
@@ -603,7 +603,7 @@ void EnTp_UpdateDamage(EnTp* this, GlobalContext* globalCtx) {
             } else {
                 if (phi_s4 != 0) {
                     this->actor.freezeTimer = 80;
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
                     if (phi_s2 != 0) {
                         Actor_SetColorFilter(&this->actor, 0, 0xFF, 0, 0x50);
                     } else {
@@ -616,7 +616,7 @@ void EnTp_UpdateDamage(EnTp* this, GlobalContext* globalCtx) {
 
                     if (phi_s4 != 0) {
                         now->actor.freezeTimer = 80;
-                        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
+                        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
 
                         if (phi_s2 != 0) {
                             Actor_SetColorFilter(&now->actor, 0, 0xFF, 0, 0x50);

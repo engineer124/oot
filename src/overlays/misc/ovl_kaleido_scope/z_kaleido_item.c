@@ -1,13 +1,20 @@
 #include "z_kaleido_scope.h"
 #include "textures/parameter_static/parameter_static.h"
 
+typedef enum {
+    /* 0 */ EQUIP_STATE_GROWING_SPHERE,
+    /* 1 */ EQUIP_STATE_LERP_TO_BOW,
+    /* 2 */ EQUIP_STATE_HOVER_OVER_BOW,
+    /* 3 */ EQUIP_STATE_LERP_TO_C_BUTTON
+} EquipState;
+
 u8 gAmmoItems[] = {
     ITEM_STICK,   ITEM_NUT,  ITEM_BOMB, ITEM_BOW,  ITEM_NONE, ITEM_NONE, ITEM_SLINGSHOT, ITEM_NONE,
     ITEM_BOMBCHU, ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_BEAN,      ITEM_NONE,
 };
 
 static s16 sEquipState = 0;
-static s16 sEquipAnimTimer = 0;
+static s16 sEquipHoldTimer = 0; // Number of frames before lerping item
 static s16 sEquipMoveTimer = 10;
 
 static s16 sAmmoVtxOffset[] = {
@@ -361,8 +368,8 @@ void KaleidoScope_DrawItemSelect(GlobalContext* globalCtx) {
                             pauseCtx->equipAnimX = pauseCtx->itemVtx[index].v.ob[0] * 10;
                             pauseCtx->equipAnimY = pauseCtx->itemVtx[index].v.ob[1] * 10;
                             pauseCtx->equipAnimAlpha = 255;
-                            sEquipAnimTimer = 0;
-                            sEquipState = 3;
+                            sEquipHoldTimer = 0;
+                            sEquipState = EQUIP_STATE_LERP_TO_C_BUTTON;
                             sEquipMoveTimer = 10;
                             if ((pauseCtx->equipTargetItem == ITEM_ARROW_FIRE) ||
                                 (pauseCtx->equipTargetItem == ITEM_ARROW_ICE) ||
@@ -377,7 +384,7 @@ void KaleidoScope_DrawItemSelect(GlobalContext* globalCtx) {
                                 Audio_PlaySoundGeneral(NA_SE_SY_SET_FIRE_ARROW + index, &D_801333D4, 4, &D_801333E0,
                                                        &D_801333E0, &D_801333E8);
                                 pauseCtx->equipTargetItem = 0xBF + index;
-                                sEquipState = 0;
+                                sEquipState = EQUIP_STATE_GROWING_SPHERE;
                                 pauseCtx->equipAnimAlpha = 0;
                                 sEquipMoveTimer = 6;
                             } else {
@@ -430,7 +437,7 @@ void KaleidoScope_DrawItemSelect(GlobalContext* globalCtx) {
         if (gSaveContext.inventory.items[i] != ITEM_NONE) {
             if ((pauseCtx->unk_1E4 == 0) && (pauseCtx->pageIndex == PAUSE_ITEM) && (pauseCtx->cursorSpecialPos == 0)) {
                 if ((gSlotAgeReqs[i] == 9) || (gSlotAgeReqs[i] == ((void)0, gSaveContext.linkAge))) {
-                    if ((sEquipState == 2) && (i == 3)) {
+                    if ((sEquipState == EQUIP_STATE_HOVER_OVER_BOW) && (i == 3)) {
                         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, magicArrowEffectsR[pauseCtx->equipTargetItem - 0xBF],
                                         magicArrowEffectsG[pauseCtx->equipTargetItem - 0xBF],
                                         magicArrowEffectsB[pauseCtx->equipTargetItem - 0xBF], pauseCtx->alpha);
@@ -489,26 +496,26 @@ static s16 sCButtonPosX[] = { 660, 900, 1140 };
 static s16 sCButtonPosY[] = { 1100, 920, 1100 };
 
 void KaleidoScope_UpdateItemEquip(GlobalContext* globalCtx) {
-    static s16 D_8082A488 = 0;
+    static s16 hoverOverBowTimer = 0;
     PauseContext* pauseCtx = &globalCtx->pauseCtx;
     Vtx* bowItemVtx;
     u16 offsetX;
     u16 offsetY;
 
-    if (sEquipState == 0) {
+    if (sEquipState == EQUIP_STATE_GROWING_SPHERE) {
         pauseCtx->equipAnimAlpha += 14;
         if (pauseCtx->equipAnimAlpha > 255) {
             pauseCtx->equipAnimAlpha = 254;
             sEquipState++;
         }
-        sEquipAnimTimer = 5;
+        sEquipHoldTimer = 5;
         return;
     }
 
-    if (sEquipState == 2) {
-        D_8082A488--;
+    if (sEquipState == EQUIP_STATE_HOVER_OVER_BOW) {
+        hoverOverBowTimer--;
 
-        if (D_8082A488 == 0) {
+        if (hoverOverBowTimer == 0) {
             pauseCtx->equipTargetItem -= 0xBF - ITEM_BOW_ARROW_FIRE;
             pauseCtx->equipTargetSlot = SLOT_BOW;
             sEquipMoveTimer = 6;
@@ -520,29 +527,32 @@ void KaleidoScope_UpdateItemEquip(GlobalContext* globalCtx) {
         return;
     }
 
-    if (sEquipState == 1) {
+    if (sEquipState == EQUIP_STATE_LERP_TO_BOW) {
+        // Lerp to Bow setup
         bowItemVtx = &pauseCtx->itemVtx[12];
         offsetX = ABS(pauseCtx->equipAnimX - bowItemVtx->v.ob[0] * 10) / sEquipMoveTimer;
         offsetY = ABS(pauseCtx->equipAnimY - bowItemVtx->v.ob[1] * 10) / sEquipMoveTimer;
     } else {
+        // Lerp to C-Button setup
         offsetX = ABS(pauseCtx->equipAnimX - sCButtonPosX[pauseCtx->equipTargetCBtn]) / sEquipMoveTimer;
         offsetY = ABS(pauseCtx->equipAnimY - sCButtonPosY[pauseCtx->equipTargetCBtn]) / sEquipMoveTimer;
     }
 
+    // This block of code never runs
     if ((pauseCtx->equipTargetItem >= 0xBF) && (pauseCtx->equipAnimAlpha < 254)) {
         pauseCtx->equipAnimAlpha += 14;
         if (pauseCtx->equipAnimAlpha > 255) {
             pauseCtx->equipAnimAlpha = 254;
         }
-        sEquipAnimTimer = 5;
+        sEquipHoldTimer = 5;
         return;
     }
 
-    if (sEquipAnimTimer == 0) {
+    if (sEquipHoldTimer == 0) {
         WREG(90) -= WREG(87) / sEquipMoveTimer;
         WREG(87) -= WREG(87) / sEquipMoveTimer;
 
-        if (sEquipState == 1) {
+        if (sEquipState == EQUIP_STATE_LERP_TO_BOW) {
             if (pauseCtx->equipAnimX >= (pauseCtx->itemVtx[12].v.ob[0] * 10)) {
                 pauseCtx->equipAnimX -= offsetX;
             } else {
@@ -571,9 +581,9 @@ void KaleidoScope_UpdateItemEquip(GlobalContext* globalCtx) {
         sEquipMoveTimer--;
 
         if (sEquipMoveTimer == 0) {
-            if (sEquipState == 1) {
+            if (sEquipState == EQUIP_STATE_LERP_TO_BOW) {
                 sEquipState++;
-                D_8082A488 = 4;
+                hoverOverBowTimer = 4;
                 return;
             }
 
@@ -802,8 +812,8 @@ void KaleidoScope_UpdateItemEquip(GlobalContext* globalCtx) {
             WREG(87) = WREG(91);
         }
     } else {
-        sEquipAnimTimer--;
-        if (sEquipAnimTimer == 0) {
+        sEquipHoldTimer--;
+        if (sEquipHoldTimer == 0) {
             pauseCtx->equipAnimAlpha = 255;
         }
     }

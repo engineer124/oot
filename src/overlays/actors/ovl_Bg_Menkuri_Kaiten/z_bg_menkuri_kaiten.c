@@ -51,7 +51,7 @@ void BgMenkuriKaiten_Update(Actor* thisx, GlobalContext* globalCtx) {
     BgMenkuriKaiten* this = (BgMenkuriKaiten*)thisx;
 
     if (!Flags_GetSwitch(globalCtx, this->dyna.actor.params) && func_80043590(&this->dyna)) {
-        func_8002F974(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
         this->dyna.actor.shape.rot.y += 0x80;
     }
 }

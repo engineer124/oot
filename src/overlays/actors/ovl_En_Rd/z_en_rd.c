@@ -255,7 +255,7 @@ void func_80AE2744(EnRd* this, GlobalContext* globalCtx) {
     }
 
     if ((globalCtx->gameplayFrames & 0x5F) == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_REDEAD_CRY);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_REDEAD_CRY);
     }
 }
 
@@ -281,7 +281,7 @@ void func_80AE2A10(EnRd* this, GlobalContext* globalCtx) {
         }
     } else {
         if (this->actor.world.pos.y == this->actor.home.pos.y) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_REDEAD_CRY);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_REDEAD_CRY);
         }
         if (Math_SmoothStepToF(&this->actor.world.pos.y, this->actor.home.pos.y + 50.0f, 0.3f, 2.0f, 0.3f) == 0.0f) {
             if (this->unk_30C != 0) {
@@ -331,7 +331,7 @@ void func_80AE2C1C(EnRd* this, GlobalContext* globalCtx) {
                     func_800AA000(this->actor.xzDistToPlayer, 0xFF, 0x14, 0x96);
                 }
                 this->unk_306 = 0x3C;
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_REDEAD_AIM);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_REDEAD_AIM);
             }
         } else {
             func_80AE2F50(this, globalCtx);
@@ -358,9 +358,9 @@ void func_80AE2C1C(EnRd* this, GlobalContext* globalCtx) {
     }
 
     if ((this->skelAnime.curFrame == 10.0f) || (this->skelAnime.curFrame == 22.0f)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_RIZA_WALK);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_RIZA_WALK);
     } else if ((globalCtx->gameplayFrames & 0x5F) == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_REDEAD_CRY);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_REDEAD_CRY);
     }
 }
 
@@ -407,9 +407,9 @@ void func_80AE2FD0(EnRd* this, GlobalContext* globalCtx) {
     }
 
     if (this->skelAnime.curFrame == 10.0f || this->skelAnime.curFrame == 22.0f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_RIZA_WALK);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_RIZA_WALK);
     } else if ((globalCtx->gameplayFrames & 0x5F) == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_REDEAD_CRY);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_REDEAD_CRY);
     }
 }
 
@@ -453,9 +453,9 @@ void func_80AE3260(EnRd* this, GlobalContext* globalCtx) {
     SkelAnime_Update(&this->skelAnime);
 
     if (this->skelAnime.curFrame == 10.0f || this->skelAnime.curFrame == 22.0f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_RIZA_WALK);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_RIZA_WALK);
     } else if ((globalCtx->gameplayFrames & 0x5F) == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_REDEAD_CRY);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_REDEAD_CRY);
     }
 }
 
@@ -509,7 +509,7 @@ void func_80AE3454(EnRd* this, GlobalContext* globalCtx) {
             Math_SmoothStepToS(&this->actor.shape.rot.y, player->actor.shape.rot.y, 1, 0x1770, 0);
 
             if (this->skelAnime.curFrame == 0.0f) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_REDEAD_ATTACK);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_REDEAD_ATTACK);
             }
             this->unk_319--;
 
@@ -558,7 +558,7 @@ void func_80AE3834(EnRd* this, GlobalContext* globalCtx) {
             func_800AA000(this->actor.xzDistToPlayer, 0xFF, 0x14, 0x96);
             func_8008EEAC(globalCtx, &this->actor);
         }
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_REDEAD_AIM);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_REDEAD_AIM);
         func_80AE2B90(this, globalCtx);
     }
 }
@@ -600,7 +600,7 @@ void func_80AE3A8C(EnRd* this) {
     }
 
     this->actor.flags |= ACTOR_FLAG_0;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_REDEAD_DAMAGE);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_REDEAD_DAMAGE);
     this->unk_31B = 9;
     EnRd_SetupAction(this, func_80AE3B18);
 }
@@ -636,7 +636,7 @@ void func_80AE3C20(EnRd* this) {
     this->unk_30C = 300;
     this->actor.flags &= ~ACTOR_FLAG_0;
     this->actor.speedXZ = 0.0f;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_REDEAD_DEAD);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_REDEAD_DEAD);
     EnRd_SetupAction(this, func_80AE3C98);
 }
 
@@ -666,7 +666,7 @@ void func_80AE3C98(EnRd* this, GlobalContext* globalCtx) {
             this->unk_30C--;
         }
     } else if (((s32)this->skelAnime.curFrame == 33) || ((s32)this->skelAnime.curFrame == 40)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_RIZA_DOWN);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_RIZA_DOWN);
     }
 }
 
@@ -677,12 +677,12 @@ void func_80AE3DE4(EnRd* this) {
     if (gSaveContext.sunsSongState != SUNSSONG_INACTIVE) {
         this->unk_318 = 1;
         this->unk_316 = 0x258;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_LIGHT_ARROW_HIT);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_LIGHT_ARROW_HIT);
         Actor_SetColorFilter(&this->actor, -0x8000, -0x7F38, 0, 0xFF);
     } else if (this->unk_31C == 1) {
         Actor_SetColorFilter(&this->actor, 0, 0xC8, 0, 0x50);
     } else {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_LIGHT_ARROW_HIT);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_LIGHT_ARROW_HIT);
         Actor_SetColorFilter(&this->actor, -0x8000, 0xC8, 0, 0x50);
     }
     EnRd_SetupAction(this, func_80AE3ECC);

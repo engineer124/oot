@@ -279,7 +279,7 @@ void func_80888734(BgHidanHamstep* this) {
 void func_808887C4(BgHidanHamstep* this, GlobalContext* globalCtx) {
     if (this->collider.base.acFlags & AC_HIT) {
         OnePointCutscene_Init(globalCtx, 3310, 100, &this->dyna.actor, MAIN_CAM);
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_HAMMER_SWITCH);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_HAMMER_SWITCH);
         this->collider.base.acFlags = AC_NONE;
         BgHidanHamstep_SetupAction(this, 1);
         Flags_SetSwitch(globalCtx, (this->dyna.actor.params >> 8) & 0xFF);
@@ -312,7 +312,7 @@ void func_80888860(BgHidanHamstep* this, GlobalContext* globalCtx) {
                 Quake_SetSpeed(quakeIndex, -15536);
                 Quake_SetQuakeValues(quakeIndex, 0, 0, 500, 0);
                 Quake_SetCountdown(quakeIndex, 20);
-                Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
+                Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
                 func_800AA000(this->dyna.actor.xyzDistToPlayerSq, 255, 20, 150);
                 func_80888638(this, globalCtx);
                 osSyncPrintf("A(%d)\n", this->dyna.actor.params);
@@ -372,12 +372,12 @@ void func_80888A58(BgHidanHamstep* this, GlobalContext* globalCtx) {
                 Quake_SetQuakeValues(quakeIndex, 20, 1, 0, 0);
                 Quake_SetCountdown(quakeIndex, 7);
 
-                Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
+                Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
                 func_800AA000(10000.0f, 255, 20, 150);
                 func_808884C8(this, globalCtx);
 
                 if ((this->dyna.actor.params & 0xFF) == 5) {
-                    func_80078884(NA_SE_SY_CORRECT_CHIME);
+                    Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
                 }
 
                 osSyncPrintf("B(%d)\n", this->dyna.actor.params);

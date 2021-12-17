@@ -244,9 +244,9 @@ void BgBreakwall_Wait(BgBreakwall* this, GlobalContext* globalCtx) {
         Flags_SetSwitch(globalCtx, this->dyna.actor.params & 0x3F);
 
         if (wallType == BWALL_KD_FLOOR) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_EXPLOSION);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_EXPLOSION);
         } else {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_WALL_BROKEN);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_WALL_BROKEN);
         }
 
         if ((wallType == BWALL_DC_ENTRANCE) && (!(Flags_GetEventChkInf(0xB0)))) {

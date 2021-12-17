@@ -313,7 +313,7 @@ void func_80B14570(EnTa* this, GlobalContext* globalCtx) {
         this->unk_2CC = 60;
         Animation_PlayOnce(&this->skelAnime, &gTalonWakeUpAnim);
         this->currentAnimation = &gTalonStandAnim;
-        Audio_PlayActorSound2(&this->actor, NA_SE_VO_TA_SURPRISE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_TA_SURPRISE);
     }
 }
 
@@ -385,7 +385,7 @@ void func_80B14818(EnTa* this, GlobalContext* globalCtx) {
     s32 framesMod12 = (s32)globalCtx->state.frames % 12;
 
     if (framesMod12 == 0 || framesMod12 == 6) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_PL_WALK_GROUND);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_PL_WALK_GROUND);
     }
     if (this->actor.speedXZ < 6.0f) {
         this->actor.speedXZ += 0.4f;
@@ -450,7 +450,7 @@ void func_80B14AF4(EnTa* this, GlobalContext* globalCtx) {
     this->actor.shape.rot.y -= 0xC00;
 
     if (this->unk_2CC == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_VO_TA_CRY_1);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_TA_CRY_1);
         func_80B13AA0(this, func_80B14A54, func_80B167C0);
         this->unk_2CC = 65;
         this->actor.flags |= ACTOR_FLAG_4;
@@ -715,11 +715,11 @@ void func_80B154FC(EnTa* this, GlobalContext* globalCtx) {
                             return;
                         case 2:
                             this->actor.textId = 0x2083;
-                            Audio_PlayActorSound2(&this->actor, NA_SE_VO_TA_CRY_1);
+                            Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_TA_CRY_1);
                             break;
                         case 3:
                             this->actor.textId = 0x2082;
-                            Audio_PlayActorSound2(&this->actor, NA_SE_VO_TA_SURPRISE);
+                            Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_TA_SURPRISE);
                             break;
                     }
                     this->actionFunc = func_80B15260;
@@ -740,7 +740,7 @@ void func_80B154FC(EnTa* this, GlobalContext* globalCtx) {
     if (gSaveContext.timer1Value == 0 && !Gameplay_InCsMode(globalCtx)) {
         Audio_QueueSeqCmd(SEQ_PLAYER_BGM_MAIN << 24 | NA_BGM_STOP);
         this->unk_2E0 &= ~0x200;
-        func_80078884(NA_SE_SY_FOUND);
+        Lib_PlaySfx1(NA_SE_SY_FOUND);
         gSaveContext.timer1State = 0;
         func_8002DF54(globalCtx, &this->actor, 1);
         Message_StartTextbox(globalCtx, 0x2081, &this->actor);
@@ -1008,7 +1008,7 @@ void func_80B16504(EnTa* this, GlobalContext* globalCtx) {
     func_80B13AAC(this, globalCtx);
 
     if (func_80B142F4(this, globalCtx, this->actor.textId)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_VO_TA_SURPRISE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_TA_SURPRISE);
 
         if (faceReaction != 0) {
             func_80B14FAC(this, func_80B15E28);
@@ -1098,7 +1098,7 @@ void func_80B167C0(EnTa* this) {
 void func_80B167FC(EnTa* this) {
     if (SkelAnime_Update(&this->skelAnime)) {
         Animation_PlayOnce(&this->skelAnime, this->currentAnimation);
-        Audio_PlayActorSound2(&this->actor, NA_SE_VO_TA_SLEEP);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_TA_SLEEP);
     }
     this->unk_2E0 |= 0xC;
 }

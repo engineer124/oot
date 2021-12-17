@@ -142,7 +142,7 @@ void Demo6K_Init(Actor* thisx, GlobalContext* globalCtx) {
             Actor_SetScale(&this->actor, 0.0f);
             this->initActionFunc = func_8096784C;
             this->actor.velocity.x = this->actor.velocity.y = this->actor.velocity.z = 0.0f;
-            Audio_PlayActorSound2(&this->actor, NA_SE_EV_NABALL_VANISH);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_NABALL_VANISH);
             break;
         case 12:
             Actor_SetScale(&this->actor, 0.0f);
@@ -207,11 +207,11 @@ void func_80966DB0(Demo6K* this, GlobalContext* globalCtx) {
 
 void func_80966E04(Demo6K* this, GlobalContext* globalCtx) {
     if (globalCtx->csCtx.frames > 214) {
-        func_8002F948(&this->actor, NA_SE_EV_LIGHT_GATHER - SFX_FLAG);
+        Actor_PlaySfx2(&this->actor, NA_SE_EV_LIGHT_GATHER - SFX_FLAG);
     }
 
     if (globalCtx->csCtx.frames > 264) {
-        func_8002F948(&this->actor, NA_SE_EV_GOD_LIGHTBALL_2 - SFX_FLAG);
+        Actor_PlaySfx2(&this->actor, NA_SE_EV_GOD_LIGHTBALL_2 - SFX_FLAG);
     }
 
     if ((globalCtx->csCtx.state != CS_STATE_IDLE) && (globalCtx->csCtx.npcActions[6] != NULL) &&
@@ -222,8 +222,8 @@ void func_80966E04(Demo6K* this, GlobalContext* globalCtx) {
 
 void func_80966E98(Demo6K* this, GlobalContext* globalCtx) {
     if (globalCtx->csCtx.frames < 353) {
-        func_8002F948(&this->actor, NA_SE_EV_LIGHT_GATHER - SFX_FLAG);
-        func_8002F948(&this->actor, NA_SE_EV_GOD_LIGHTBALL_2 - SFX_FLAG);
+        Actor_PlaySfx2(&this->actor, NA_SE_EV_LIGHT_GATHER - SFX_FLAG);
+        Actor_PlaySfx2(&this->actor, NA_SE_EV_GOD_LIGHTBALL_2 - SFX_FLAG);
     }
 
     if (globalCtx->csCtx.frames == 342) {
@@ -231,7 +231,7 @@ void func_80966E98(Demo6K* this, GlobalContext* globalCtx) {
     }
 
     if (this->timer1 == 39) {
-        func_800788CC(NA_SE_EV_CONSENTRATION);
+        Lib_PlaySfx2(NA_SE_EV_CONSENTRATION);
         Actor_Spawn(&globalCtx->actorCtx, globalCtx, ACTOR_DEMO_6K, this->actor.world.pos.x,
                     this->actor.world.pos.y + 10.0f, this->actor.world.pos.z, 0, 0, 0, 2);
     }
@@ -300,7 +300,7 @@ void func_8096712C(Demo6K* this, GlobalContext* globalCtx) {
     this->timer2++;
 
     if ((globalCtx->sceneNum == SCENE_GANONTIKA) && (globalCtx->csCtx.frames < D_8096932C[this->actor.params - 3])) {
-        func_8002F974(&this->actor, NA_SE_EV_LIGHT_GATHER - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->actor, NA_SE_EV_LIGHT_GATHER - SFX_FLAG);
     }
 }
 
@@ -388,7 +388,7 @@ void func_809674E0(Demo6K* this, GlobalContext* globalCtx) {
         this->actor.world.pos.y += (19.0f - this->actor.world.pos.y) * temp;
         this->actor.world.pos.z += (1613.0f - this->actor.world.pos.z) * temp;
 
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_FANTOM_FIRE - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FANTOM_FIRE - SFX_FLAG);
     }
 
     Lights_PointNoGlowSetInfo(&this->lightInfo, this->actor.world.pos.x, this->actor.world.pos.y,
@@ -465,7 +465,7 @@ void func_80967AD0(Demo6K* this, GlobalContext* globalCtx) {
     if ((globalCtx->csCtx.state != CS_STATE_IDLE) && (globalCtx->csCtx.npcActions[1] != NULL)) {
         if (globalCtx->csCtx.npcActions[1]->action == 2) {
             this->unk_170++;
-            func_8002F948(&this->actor, NA_SE_EV_RAINBOW_SHOWER - SFX_FLAG);
+            Actor_PlaySfx2(&this->actor, NA_SE_EV_RAINBOW_SHOWER - SFX_FLAG);
         }
 
         func_809691BC(this, globalCtx, 1);
@@ -506,7 +506,7 @@ void func_80967BF8(Player* player, GlobalContext* globalCtx) {
 }
 
 void func_80967DBC(Demo6K* this, GlobalContext* globalCtx) {
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_GANON_ATTACK_DEMO - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GANON_ATTACK_DEMO - SFX_FLAG);
 
     this->timer2++;
 
@@ -520,13 +520,13 @@ void func_80967DBC(Demo6K* this, GlobalContext* globalCtx) {
         if (this->timer2 > 104) {
             func_80967BF8(GET_PLAYER(globalCtx), globalCtx);
             Actor_Kill(&this->actor);
-            Audio_PlayActorSound2(&GET_PLAYER(globalCtx)->actor, NA_SE_EN_FANTOM_HIT_THUNDER);
+            Actor_PlaySfxAtPos1(&GET_PLAYER(globalCtx)->actor, NA_SE_EN_FANTOM_HIT_THUNDER);
         } else if (this->timer2 > 94) {
             Actor_SetScale(&this->actor, this->actor.scale.x + 0.03f);
 
             if (this->timer2 == 95) {
                 osSyncPrintf(VT_FGCOL(CYAN) "  NA_SE_EN_GANON_FIRE_DEMO\n" VT_RST);
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_GANON_FIRE_DEMO);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GANON_FIRE_DEMO);
             }
         }
 

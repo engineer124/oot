@@ -472,7 +472,7 @@ void func_808B5A94(BgSpot16Bombstone* this, GlobalContext* globalCtx) {
     func_808B5240(this, globalCtx);
 
     if (this->unk_154 == 56) {
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
     }
 
     if (this->unk_154 > 60) {

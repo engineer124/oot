@@ -220,7 +220,7 @@ void EnJj_BeginCutscene(EnJj* this, GlobalContext* globalCtx) {
         func_8003EBF8(globalCtx, &globalCtx->colCtx.dyna, bodyCollisionActor->bgId);
         func_8005B1A4(GET_ACTIVE_CAM(globalCtx));
         gSaveContext.eventChkInf[3] |= 0x400;
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
     }
 }
 
@@ -258,7 +258,7 @@ void EnJj_CutsceneUpdate(EnJj* this, GlobalContext* globalCtx) {
     }
 
     if (this->unk_30A & 1) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_JABJAB_BREATHE - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_JABJAB_BREATHE - SFX_FLAG);
 
         if (this->mouthOpenAngle >= -5200) {
             this->mouthOpenAngle -= 102;
@@ -292,7 +292,7 @@ void EnJj_Update(Actor* thisx, GlobalContext* globalCtx) {
         this->actionFunc(this, globalCtx);
 
         if (this->skelAnime.curFrame == 41.0f) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_JABJAB_GROAN);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_JABJAB_GROAN);
         }
     }
 

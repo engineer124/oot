@@ -367,7 +367,7 @@ void EnBomBowMan_SetupChooseShowPrize(EnBomBowlMan* this, GlobalContext* globalC
         pos.y = 40.0f;
         pos.z = 300.0f;
         EffectSsBomb2_SpawnLayered(globalCtx, &pos, &velocity, &accel, 50, 15);
-        Audio_PlayActorSound2(&this->actor, NA_SE_IT_GOODS_APPEAR);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_GOODS_APPEAR);
         this->prizeRevealTimer = 10;
         this->actionFunc = EnBomBowMan_ChooseShowPrize;
     }

@@ -177,7 +177,7 @@ void func_80ABCDBC(EnNy* this) {
 }
 
 void EnNy_SetupTurnToStone(EnNy* this) {
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_NYU_HIT_STOP);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_NYU_HIT_STOP);
     this->actionFunc = EnNy_TurnToStone;
     this->unk_1E8 = 0.0f;
 }
@@ -225,7 +225,7 @@ void EnNy_Move(EnNy* this, GlobalContext* globalCtx) {
     s32 stoneTimer;
 
     if (!(this->unk_1F0 < this->actor.yDistToWater)) {
-        func_8002F974(&this->actor, NA_SE_EN_NYU_MOVE - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_NYU_MOVE - SFX_FLAG);
     }
     func_80ABCD40(this);
     stoneTimer = this->stoneTimer;
@@ -253,7 +253,7 @@ void EnNy_TurnToStone(EnNy* this, GlobalContext* globalCtx) {
         phi_f0 = 0.25f;
         if (this->actor.bgCheckFlags & 2) {
             if (!(this->unk_1F0 < this->actor.yDistToWater)) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_M_GND);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DODO_M_GND);
             }
             this->actor.bgCheckFlags &= ~2;
             this->actor.speedXZ = 0.0f;
@@ -442,7 +442,7 @@ void EnNy_SetupDie(EnNy* this, GlobalContext* globalCtx) {
         } else {
             Item_DropCollectible(globalCtx, &this->actor.world.pos, 8);
         }
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_NYU_DEAD);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_NYU_DEAD);
         this->actionFunc = EnNy_Die;
     }
 }

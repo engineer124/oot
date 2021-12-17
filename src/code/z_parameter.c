@@ -1140,7 +1140,9 @@ void Inventory_SwapAgeEquipment(void) {
     u16 temp;
 
     if (LINK_AGE_IN_YEARS == YEARS_CHILD) {
+        // child -> adult
         for (i = 0; i < 4; i++) {
+            // Saving child equips
             if (i != 0) {
                 gSaveContext.childEquips.buttonItems[i] = gSaveContext.equips.buttonItems[i];
             } else {
@@ -1155,6 +1157,7 @@ void Inventory_SwapAgeEquipment(void) {
         gSaveContext.childEquips.equipment = gSaveContext.equips.equipment;
 
         if (gSaveContext.adultEquips.buttonItems[0] == ITEM_NONE) {
+            // First time going adult
             gSaveContext.equips.buttonItems[0] = ITEM_SWORD_MASTER;
 
             if (gSaveContext.inventory.items[SLOT_NUT] != ITEM_NONE) {
@@ -1170,6 +1173,7 @@ void Inventory_SwapAgeEquipment(void) {
             gSaveContext.equips.cButtonSlots[2] = SLOT_OCARINA;
             gSaveContext.equips.equipment = 0x1122;
         } else {
+            // Returning to adult again
             for (i = 0; i < 4; i++) {
                 gSaveContext.equips.buttonItems[i] = gSaveContext.adultEquips.buttonItems[i];
 
@@ -1190,7 +1194,9 @@ void Inventory_SwapAgeEquipment(void) {
             gSaveContext.equips.equipment = gSaveContext.adultEquips.equipment;
         }
     } else {
+        // adult -> child
         for (i = 0; i < 4; i++) {
+            // Saving adult equips
             gSaveContext.adultEquips.buttonItems[i] = gSaveContext.equips.buttonItems[i];
 
             if (i != 0) {
@@ -1219,8 +1225,8 @@ void Inventory_SwapAgeEquipment(void) {
             }
 
             gSaveContext.equips.equipment = gSaveContext.childEquips.equipment;
-            gSaveContext.equips.equipment &= 0xFFF0;
-            gSaveContext.equips.equipment |= 0x0001;
+            gSaveContext.equips.equipment &= ~0xF; // Turn off all sword values
+            gSaveContext.equips.equipment |= 1; // Turn on kokiri sword
         }
     }
 

@@ -437,7 +437,7 @@ void EnDns_SetupBurrow(EnDns* this, GlobalContext* globalCtx) {
     f32 frameCount = Animation_GetLastFrame(&gBusinessScrubAnim_4404);
 
     if (this->skelAnime.curFrame == frameCount) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_AKINDONUTS_HIDE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_AKINDONUTS_HIDE);
         this->actionFunc = EnDns_Burrow;
         this->standOnGround = 0;
         this->yInitPos = this->actor.world.pos.y;

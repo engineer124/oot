@@ -321,7 +321,7 @@ s32 func_80B0C9F0(EnSw* this, GlobalContext* globalCtx) {
             this->unk_392 = 0x10;
             Actor_SetColorFilter(&this->actor, 0x4000, 0xC8, 0, this->unk_392);
             if (Actor_ApplyDamage(&this->actor) != 0) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_DAMAGE);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_DAMAGE);
                 return true;
             }
             Enemy_StartFinishingBlow(globalCtx, &this->actor);
@@ -346,7 +346,7 @@ s32 func_80B0C9F0(EnSw* this, GlobalContext* globalCtx) {
                 this->actionFunc = func_80B0DB00;
             }
 
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALWALL_DEAD);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALWALL_DEAD);
             return true;
         }
     }
@@ -427,7 +427,7 @@ void func_80B0CEA8(EnSw* this, GlobalContext* globalCtx) {
         Camera* activeCam = GET_ACTIVE_CAM(globalCtx);
 
         if (!(Math_Vec3f_DistXYZ(&this->actor.world.pos, &activeCam->eye) >= 380.0f)) {
-            Audio_PlayActorSound2(&this->actor, ((this->actor.params & 0xE000) >> 0xD) > 0 ? NA_SE_EN_STALGOLD_ROLL
+            Actor_PlaySfxAtPos1(&this->actor, ((this->actor.params & 0xE000) >> 0xD) > 0 ? NA_SE_EN_STALGOLD_ROLL
                                                                                            : NA_SE_EN_STALWALL_ROLL);
         }
     }
@@ -511,7 +511,7 @@ void func_80B0D3AC(EnSw* this, GlobalContext* globalCtx) {
     }
 
     if (func_80B0C0CC(this, globalCtx, 1) == 1) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_M_GND);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DODO_M_GND);
         func_80B0D14C(this, globalCtx, 8);
         this->actor.scale.x = 0.02f;
         Actor_SetScale(&this->actor, 0.02f);
@@ -647,7 +647,7 @@ void func_80B0DB00(EnSw* this, GlobalContext* globalCtx) {
             this->actor.velocity.y = ((this->unk_38A--) * 8.0f) * 0.5f;
         }
 
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_M_GND);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DODO_M_GND);
         Actor_SpawnFloorDustRing(globalCtx, &this->actor, &this->actor.world.pos, 16.0f, 0xC, 2.0f, 0x78, 0xA, 0);
     }
 }
@@ -792,7 +792,7 @@ s32 func_80B0E430(EnSw* this, f32 arg1, s16 arg2, s32 arg3, GlobalContext* globa
 
     if (Math_Vec3f_DistXYZ(&this->actor.world.pos, &activeCam->eye) < 380.0f) {
         if (DECR(this->unk_440) == 0) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALWALL_ROLL);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALWALL_ROLL);
             this->unk_440 = 4;
         }
     } else {
@@ -818,7 +818,7 @@ void func_80B0E5E0(EnSw* this, GlobalContext* globalCtx) {
     }
 
     if ((DECR(this->unk_442) == 0) && (func_80B0DEA8(this, globalCtx, 1))) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALWALL_LAUGH);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALWALL_LAUGH);
         this->unk_442 = 20;
         this->actionFunc = func_80B0E728;
     }
@@ -847,7 +847,7 @@ void func_80B0E728(EnSw* this, GlobalContext* globalCtx) {
             func_80B0E314(this, this->unk_448, 8.0f);
 
             if (DECR(this->unk_440) == 0) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALWALL_DASH);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALWALL_DASH);
                 this->unk_440 = 4;
             }
 

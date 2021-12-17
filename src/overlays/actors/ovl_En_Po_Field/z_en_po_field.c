@@ -211,7 +211,7 @@ void EnPoField_SetupAppear(EnPoField* this) {
     this->lightColor.a = 0;
     this->actor.shape.shadowAlpha = 0;
     this->actor.shape.yOffset = 0.0f;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_APPEAR);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_APPEAR);
     this->actor.home.pos.y = this->actor.world.pos.y;
     if (this->actor.params == EN_PO_FIELD_BIG) {
         this->actor.speedXZ = 12.0f;
@@ -292,8 +292,8 @@ void EnPoField_SetupDisappear(EnPoField* this) {
     this->actionTimer = 16;
     this->collider.base.acFlags &= ~(AC_HIT | AC_ON);
     this->actor.speedXZ = 0.0f;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_LAUGH);
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_DISAPPEAR);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_LAUGH);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_DISAPPEAR);
     this->actionFunc = EnPoField_Disappear;
 }
 
@@ -323,9 +323,9 @@ void func_80AD42B0(EnPoField* this) {
     this->actor.home.pos.y = this->actor.world.pos.y;
     this->actor.scale.x = 0.0f;
     this->actor.scale.y = 0.0f;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_METAL_BOX_BOUND);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_METAL_BOX_BOUND);
     if (this->actor.params == EN_PO_FIELD_BIG) {
-        func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+        Lib_PlaySfx1(NA_SE_SY_TRE_BOX_APPEAR);
     }
     this->actionFunc = func_80AD587C;
 }
@@ -494,7 +494,7 @@ void EnPoField_CirclePlayer(EnPoField* this, GlobalContext* globalCtx) {
         EnPoField_SpawnFlame(this);
     }
     EnPoField_CorrectYPos(this, globalCtx);
-    func_8002F974(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_PO_FLY - SFX_FLAG);
 }
 
 void EnPoField_Flee(EnPoField* this, GlobalContext* globalCtx) {
@@ -522,7 +522,7 @@ void EnPoField_Flee(EnPoField* this, GlobalContext* globalCtx) {
     } else {
         EnPoField_CorrectYPos(this, globalCtx);
     }
-    func_8002F974(&this->actor, NA_SE_EN_PO_AWAY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_PO_AWAY - SFX_FLAG);
 }
 
 void EnPoField_Damage(EnPoField* this, GlobalContext* globalCtx) {
@@ -572,7 +572,7 @@ void EnPoField_Death(EnPoField* this, GlobalContext* globalCtx) {
         EffectSsDeadDb_Spawn(globalCtx, &sp6C, &D_80AD7114, &D_80AD7120, this->actionTimer * 10 + 80, 0, 255, 255, 255,
                              255, 0, 0, 255, 1, 9, 1);
         if (this->actionTimer == 1) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_EXTINCT);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_EXTINCT);
         }
     } else if (this->actionTimer == 28) {
         EnPoField_SetupSoulIdle(this, globalCtx);
@@ -584,7 +584,7 @@ void EnPoField_Death(EnPoField* this, GlobalContext* globalCtx) {
         this->actor.scale.x = temp_f0;
     }
     if (this->actionTimer == 18) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_DEAD2);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_DEAD2);
     }
 }
 
@@ -655,7 +655,7 @@ void func_80AD58D4(EnPoField* this, GlobalContext* globalCtx) {
         return;
     }
     if (this->actionTimer == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_LAUGH);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_LAUGH);
         this->actor.flags &= ~ACTOR_FLAG_16;
         EnPoField_SetupSoulDisappear(this);
         return;
@@ -693,14 +693,14 @@ void EnPoField_SoulInteract(EnPoField* this, GlobalContext* globalCtx) {
     if (this->actor.textId != 0x5005) {
         EnPoField_SoulUpdateProperties(this, -13);
     } else {
-        func_8002F974(&this->actor, NA_SE_EN_PO_BIG_CRY - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_PO_BIG_CRY - SFX_FLAG);
     }
     if (Message_GetState(&globalCtx->msgCtx) == TEXT_STATE_CHOICE) {
         if (Message_ShouldAdvance(globalCtx)) {
             Audio_StopSfxByPosAndId(&this->actor.projectedPos, NA_SE_EN_PO_BIG_CRY - SFX_FLAG);
             if (globalCtx->msgCtx.choiceIndex == 0) {
                 if (Inventory_HasEmptyBottle()) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_BIG_GET);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_BIG_GET);
                     if (this->actor.params == 0) {
                         Item_Give(globalCtx, ITEM_POE);
                         this->actor.textId = 0x5008;
@@ -710,12 +710,12 @@ void EnPoField_SoulInteract(EnPoField* this, GlobalContext* globalCtx) {
                         Flags_SetSwitch(globalCtx, sSpawnSwitchFlags[this->spawnFlagIndex]);
                     }
                 } else {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_LAUGH);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_LAUGH);
                     this->actor.textId = 0x5006;
                 }
             } else {
                 this->actor.textId = 0x5007;
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_LAUGH);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_LAUGH);
             }
             Message_ContinueTextbox(globalCtx, this->actor.textId);
             return;
@@ -731,9 +731,9 @@ void EnPoField_TestForDamage(EnPoField* this, GlobalContext* globalCtx) {
         if (this->actor.colChkInfo.damageEffect != 0 || this->actor.colChkInfo.damage != 0) {
             if (Actor_ApplyDamage(&this->actor) == 0) {
                 Enemy_StartFinishingBlow(globalCtx, &this->actor);
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_DEAD);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_DEAD);
             } else {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_DAMAGE);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_DAMAGE);
             }
             EnPoField_SetupDamage(this);
         }

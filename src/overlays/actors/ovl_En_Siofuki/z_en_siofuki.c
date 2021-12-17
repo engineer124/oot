@@ -201,7 +201,7 @@ void func_80AFC218(EnSiofuki* this, GlobalContext* globalCtx) {
                 break;
         }
     } else {
-        func_8002F994(&this->dyna.actor, this->timer);
+        Actor_UpdateTimerSfxState(&this->dyna.actor, this->timer);
     }
 
     if (((((u16)this->dyna.actor.params >> 0xC) & 0xF) == EN_SIOFUKI_LOWERING) &&

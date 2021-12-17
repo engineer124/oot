@@ -245,7 +245,7 @@ void EnGe1_SpotPlayer(EnGe1* this, GlobalContext* globalCtx) {
     this->cutsceneTimer = 30;
     this->actionFunc = EnGe1_KickPlayer;
     func_8002DF54(globalCtx, &this->actor, 0x5F);
-    func_80078884(NA_SE_SY_FOUND);
+    Lib_PlaySfx1(NA_SE_SY_FOUND);
     Message_StartTextbox(globalCtx, 0x6000, &this->actor);
 }
 
@@ -335,7 +335,7 @@ void EnGe1_Open_GTGGuard(EnGe1* this, GlobalContext* globalCtx) {
         this->cutsceneTimer = 50;
         Message_CloseTextbox(globalCtx);
     } else if ((this->skelAnime.curFrame == 15.0f) || (this->skelAnime.curFrame == 19.0f)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_IT_HAND_CLAP);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_HAND_CLAP);
     }
 }
 
@@ -428,7 +428,7 @@ void EnGe1_OpenGate_GateOp(EnGe1* this, GlobalContext* globalCtx) {
         this->cutsceneTimer = 50;
         Message_CloseTextbox(globalCtx);
     } else if ((this->skelAnime.curFrame == 15.0f) || (this->skelAnime.curFrame == 19.0f)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_IT_HAND_CLAP);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_HAND_CLAP);
     }
 }
 

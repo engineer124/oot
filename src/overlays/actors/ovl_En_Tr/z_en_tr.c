@@ -135,7 +135,7 @@ void EnTr_CrySpellcast(EnTr* this, GlobalContext* globalCtx) {
     } else if (this->actor.child != NULL) {
         this->actor.child = NULL;
     }
-    func_8002F974(&this->actor, NA_SE_EN_TWINROBA_FLY_DEMO - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_TWINROBA_FLY_DEMO - SFX_FLAG);
 }
 
 void EnTr_DoNothing(EnTr* this, GlobalContext* globalCtx) {
@@ -150,7 +150,7 @@ void EnTr_ChooseAction2(EnTr* this, GlobalContext* globalCtx) {
                     Actor_SetScale(&this->actor, 0.01f);
                     EnTr_SetupAction(this, EnTr_ShrinkVanish);
                     this->timer = 24;
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_PO_DEAD2);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_PO_DEAD2);
                     break;
 
                 case 6:
@@ -162,7 +162,7 @@ void EnTr_ChooseAction2(EnTr* this, GlobalContext* globalCtx) {
                     Actor_SpawnAsChild(&globalCtx->actorCtx, &this->actor, globalCtx, ACTOR_DEMO_6K,
                                        this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z, 0, 0,
                                        0, this->actor.params + 9);
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_FANTOM_MASIC1);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FANTOM_MASIC1);
                     break;
 
                 default:
@@ -170,7 +170,7 @@ void EnTr_ChooseAction2(EnTr* this, GlobalContext* globalCtx) {
                     EnTr_UpdateRotation(this, globalCtx, this->actionIndex);
                     break;
             }
-            func_8002F974(&this->actor, NA_SE_EN_TWINROBA_FLY_DEMO - SFX_FLAG);
+            Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_TWINROBA_FLY_DEMO - SFX_FLAG);
         }
     }
 }
@@ -200,7 +200,7 @@ void EnTr_FlyKidnapCutscene(EnTr* this, GlobalContext* globalCtx) {
             }
 
             if (globalCtx->csCtx.frames < 670) {
-                func_8002F974(&this->actor, NA_SE_EN_TWINROBA_FLY_DEMO - SFX_FLAG);
+                Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_TWINROBA_FLY_DEMO - SFX_FLAG);
             }
         }
     }
@@ -261,7 +261,7 @@ void EnTr_ShrinkVanish(EnTr* this, GlobalContext* globalCtx) {
     }
 
     if (this->timer == 4) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_BUBLE_DOWN);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_BUBLE_DOWN);
     }
 
     if (this->timer > 0) {
@@ -289,7 +289,7 @@ void EnTr_Reappear(EnTr* this, GlobalContext* globalCtx) {
     if (this->timer > 0) {
         this->timer--;
     }
-    func_8002F974(&this->actor, NA_SE_EN_TWINROBA_FLY_DEMO - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_TWINROBA_FLY_DEMO - SFX_FLAG);
 }
 
 void EnTr_WaitToReappear(EnTr* this, GlobalContext* globalCtx) {
@@ -297,7 +297,7 @@ void EnTr_WaitToReappear(EnTr* this, GlobalContext* globalCtx) {
         if ((globalCtx->csCtx.npcActions[this->actionIndex] != NULL) &&
             ((globalCtx->csCtx.npcActions[this->actionIndex]->action == 3) ||
              (globalCtx->csCtx.npcActions[this->actionIndex]->action == 5))) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_TWINROBA_TRANSFORM);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_TWINROBA_TRANSFORM);
             this->timer = 34;
             EnTr_SetStartPosRot(this, globalCtx, this->actionIndex);
             EnTr_SetupAction(this, EnTr_Reappear);
@@ -382,9 +382,9 @@ void EnTr_Update(Actor* thisx, GlobalContext* globalCtx) {
         if (this->animation != NULL) {
             if ((this->animation == &object_tr_Anim_0035CC) || (this->animation == &object_tr_Anim_0013CC)) {
                 if (this->actor.params != TR_KOUME) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_TWINROBA_LAUGH2);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_TWINROBA_LAUGH2);
                 } else {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_TWINROBA_LAUGH);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_TWINROBA_LAUGH);
                 }
                 Animation_PlayLoop(&this->skelAnime, this->animation);
             } else if (this->animation == &object_tr_Anim_0049C8) {

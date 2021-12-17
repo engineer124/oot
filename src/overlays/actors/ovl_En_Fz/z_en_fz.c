@@ -347,15 +347,15 @@ void EnFz_ApplyDamage(EnFz* this, GlobalContext* globalCtx) {
                     Actor_ApplyDamage(&this->actor);
                     Actor_SetColorFilter(&this->actor, 0x4000, 0xFF, 0x2000, 8);
                     if (this->actor.colChkInfo.health) {
-                        Audio_PlayActorSound2(&this->actor, NA_SE_EN_FREEZAD_DAMAGE);
+                        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FREEZAD_DAMAGE);
                         vec.x = this->actor.world.pos.x;
                         vec.y = this->actor.world.pos.y;
                         vec.z = this->actor.world.pos.z;
                         EnFz_Damaged(this, globalCtx, &vec, 10, 0.0f);
                         this->unusedCounter++;
                     } else {
-                        Audio_PlayActorSound2(&this->actor, NA_SE_EN_FREEZAD_DEAD);
-                        Audio_PlayActorSound2(&this->actor, NA_SE_EV_ICE_BROKEN);
+                        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FREEZAD_DEAD);
+                        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_ICE_BROKEN);
                         vec.x = this->actor.world.pos.x;
                         vec.y = this->actor.world.pos.y;
                         vec.z = this->actor.world.pos.z;
@@ -367,10 +367,10 @@ void EnFz_ApplyDamage(EnFz* this, GlobalContext* globalCtx) {
                 Actor_ApplyDamage(&this->actor);
                 Actor_SetColorFilter(&this->actor, 0x4000, 0xFF, 0x2000, 8);
                 if (this->actor.colChkInfo.health == 0) {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_FREEZAD_DEAD);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FREEZAD_DEAD);
                     EnFz_SetupMelt(this);
                 } else {
-                    Audio_PlayActorSound2(&this->actor, NA_SE_EN_FREEZAD_DAMAGE);
+                    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FREEZAD_DAMAGE);
                 }
             }
         }
@@ -506,7 +506,7 @@ void EnFz_BlowSmoke(EnFz* this, GlobalContext* globalCtx) {
     } else if (this->timer >= 11) {
         isTimerMod8 = false;
         primAlpha = 150;
-        func_8002F974(&this->actor, NA_SE_EN_FREEZAD_BREATH - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_FREEZAD_BREATH - SFX_FLAG);
 
         if ((this->timer - 10) < 16) { // t < 26
             primAlpha = (this->timer * 10) - 100;
@@ -618,7 +618,7 @@ void EnFz_BlowSmokeStationary(EnFz* this, GlobalContext* globalCtx) {
     } else {
         isTimerMod8 = false;
         primAlpha = 150;
-        func_8002F974(&this->actor, NA_SE_EN_FREEZAD_BREATH - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_FREEZAD_BREATH - SFX_FLAG);
 
         if ((this->counter & 0x3F) >= 48) {
             primAlpha = 630 - ((this->counter & 0x3F) * 10);

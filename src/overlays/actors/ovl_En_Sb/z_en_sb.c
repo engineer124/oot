@@ -154,7 +154,7 @@ void EnSb_SetupOpen(EnSb* this) {
                      ANIMMODE_ONCE, 0.0f);
     this->behavior = SHELLBLADE_OPEN;
     this->actionFunc = EnSb_Open;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_SHELL_MOUTH);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_SHELL_MOUTH);
 }
 
 void EnSb_SetupWaitOpen(EnSb* this) {
@@ -171,7 +171,7 @@ void EnSb_SetupLunge(EnSb* this) {
     Animation_Change(&this->skelAnime, &object_sb_Anim_000124, playbackSpeed, 0.0f, frameCount, ANIMMODE_ONCE, 0);
     this->behavior = SHELLBLADE_LUNGE;
     this->actionFunc = EnSb_Lunge;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_SHELL_MOUTH);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_SHELL_MOUTH);
 }
 
 void EnSb_SetupBounce(EnSb* this) {
@@ -275,7 +275,7 @@ void EnSb_Lunge(EnSb* this, GlobalContext* globalCtx) {
     Math_StepToF(&this->actor.speedXZ, 0.0f, 0.2f);
     if ((this->actor.velocity.y <= -0.1f) || ((this->actor.bgCheckFlags & 2))) {
         if (!(this->actor.yDistToWater > 0.0f)) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_M_GND);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DODO_M_GND);
         }
         this->actor.bgCheckFlags = this->actor.bgCheckFlags & ~2;
         EnSb_SetupBounce(this);

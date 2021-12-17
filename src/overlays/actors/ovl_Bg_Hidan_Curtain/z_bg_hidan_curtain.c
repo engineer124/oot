@@ -195,7 +195,7 @@ void BgHidanCurtain_WaitForTimer(BgHidanCurtain* this, GlobalContext* globalCtx)
         this->actionFunc = BgHidanCurtain_TurnOn;
     }
     if ((this->type == 1) || (this->type == 3)) {
-        func_8002F994(&this->actor, this->timer);
+        Actor_UpdateTimerSfxState(&this->actor, this->timer);
     }
 }
 
@@ -229,7 +229,7 @@ void BgHidanCurtain_Update(Actor* thisx, GlobalContext* globalCtx2) {
             CollisionCheck_SetAT(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
             CollisionCheck_SetOC(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
             if (gSaveContext.sceneSetupIndex <= 3) {
-                func_8002F974(&this->actor, NA_SE_EV_FIRE_PILLAR_S - SFX_FLAG);
+                Actor_PlaySfxAtPos3(&this->actor, NA_SE_EV_FIRE_PILLAR_S - SFX_FLAG);
             }
         } else if ((this->type == 1) && Flags_GetTreasure(globalCtx, this->treasureFlag)) {
             Actor_Kill(&this->actor);

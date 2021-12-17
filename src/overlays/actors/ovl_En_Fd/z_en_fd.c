@@ -285,7 +285,7 @@ s32 EnFd_ColliderCheck(EnFd* this, GlobalContext* globalCtx) {
         }
         this->invincibilityTimer = 30;
         this->actor.flags &= ~ACTOR_FLAG_0;
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_FLAME_DAMAGE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FLAME_DAMAGE);
         Enemy_StartFinishingBlow(globalCtx, &this->actor);
         return true;
     } else if (DECR(this->attackTimer) == 0 && this->collider.base.atFlags & AT_HIT) {
@@ -298,7 +298,7 @@ s32 EnFd_ColliderCheck(EnFd* this, GlobalContext* globalCtx) {
             return false;
         }
         this->attackTimer = 30;
-        Audio_PlayActorSound2(&player->actor, NA_SE_PL_BODY_HIT);
+        Actor_PlaySfxAtPos1(&player->actor, NA_SE_PL_BODY_HIT);
         func_8002F71C(globalCtx, &this->actor, this->actor.speedXZ + 2.0f, this->actor.yawTowardsPlayer, 6.0f);
     }
     return false;
@@ -472,7 +472,7 @@ void EnFd_Reappear(EnFd* this, GlobalContext* globalCtx) {
     this->actor.scale.y = 0.0f;
     this->fadeAlpha = 255.0f;
     func_80034EC0(&this->skelAnime, sAnimations, 0);
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_FLAME_LAUGH);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FLAME_LAUGH);
     this->actionFunc = EnFd_SpinAndGrow;
 }
 
@@ -522,9 +522,9 @@ void EnFd_SpinAndSpawnFire(EnFd* this, GlobalContext* globalCtx) {
     f32 rotSpeed;
 
     if ((this->spinTimer < 31) && (this->invincibilityTimer == 0)) {
-        func_8002F974(&this->actor, NA_SE_EN_FLAME_FIRE_ATTACK - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_FLAME_FIRE_ATTACK - SFX_FLAG);
     } else {
-        func_8002F974(&this->actor, NA_SE_EN_FLAME_ROLL - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_FLAME_ROLL - SFX_FLAG);
     }
 
     if (DECR(this->spinTimer) != 0) {
@@ -613,9 +613,9 @@ void EnFd_Run(EnFd* this, GlobalContext* globalCtx) {
     EnFd_GetPosAdjAroundCircle(&adjPos, this, this->runRadius, this->runDir);
     Math_SmoothStepToS(&this->actor.shape.rot.y, Math_FAtan2F(adjPos.x, adjPos.z) * (0x8000 / M_PI), 4, 0xFA0, 1);
     this->actor.world.rot = this->actor.shape.rot;
-    func_8002F974(&this->actor, NA_SE_EN_FLAME_RUN - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_FLAME_RUN - SFX_FLAG);
     if (this->skelAnime.curFrame == 6.0f || this->skelAnime.curFrame == 13.0f || this->skelAnime.curFrame == 28.0f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_FLAME_KICK);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FLAME_KICK);
     }
     Math_SmoothStepToF(&this->actor.speedXZ, 8.0f, 0.1f, 1.0f, 0.0f);
 }
@@ -658,7 +658,7 @@ void EnFd_Update(Actor* thisx, GlobalContext* globalCtx) {
         if (EnFd_SpawnCore(this, globalCtx)) {
             this->actor.flags &= ~ACTOR_FLAG_0;
             this->invincibilityTimer = 30;
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_FLAME_DAMAGE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_FLAME_DAMAGE);
             Enemy_StartFinishingBlow(globalCtx, &this->actor);
         } else {
             this->actor.flags &= ~ACTOR_FLAG_13;

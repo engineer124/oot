@@ -161,7 +161,7 @@ void BgMoriBigst_Fall(BgMoriBigst* this, GlobalContext* globalCtx) {
     if (this->dyna.actor.world.pos.y <= this->dyna.actor.home.pos.y) {
         this->dyna.actor.world.pos.y = this->dyna.actor.home.pos.y;
         BgMoriBigst_SetupLanding(this, globalCtx);
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
         OnePointCutscene_Init(globalCtx, 1020, 8, &this->dyna.actor, MAIN_CAM);
         func_8002DF38(globalCtx, NULL, 0x3C);
     }

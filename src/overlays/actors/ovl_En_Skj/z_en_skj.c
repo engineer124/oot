@@ -922,7 +922,7 @@ void EnSkj_WaitInRange(EnSkj* this, GlobalContext* globalCtx) {
         player->actor.world.pos.y = sSmallStumpSkullKid.skullkid->actor.world.pos.y;
         player->actor.world.pos.z = sSmallStumpSkullKid.skullkid->actor.world.pos.z;
         if ((Player_GetMask(globalCtx) == PLAYER_MASK_SKULL) && !(gSaveContext.itemGetInf[3] & 0x200)) {
-            func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+            Lib_PlaySfx1(NA_SE_SY_TRE_BOX_APPEAR);
             EnSkj_SetupMaskTrade(this);
         } else {
             EnSkj_SetupTalk(this);
@@ -982,7 +982,7 @@ void EnSkj_WaitForSong(EnSkj* this, GlobalContext* globalCtx) {
             if (!(gSaveContext.itemGetInf[1] & 0x40)) {
                 // Saria's song has been played for the first titme
                 globalCtx->msgCtx.ocarinaMode = OCARINA_MODE_04;
-                func_80078884(NA_SE_SY_CORRECT_CHIME);
+                Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
                 player->unk_6A8 = &this->actor;
                 func_8002F2CC(&this->actor, globalCtx, EnSkj_GetItemXzRange(this));
                 this->textId = 0x10BB;
@@ -1427,7 +1427,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, GlobalContext* globalCtx) {
         this->textId = 0x102D;
         this->actionFunc = EnSkj_FailedMiniGame;
     } else if (globalCtx->msgCtx.ocarinaMode == OCARINA_MODE_0F) { // completed the game
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
         Message_CloseTextbox(globalCtx);
         globalCtx->msgCtx.ocarinaMode = OCARINA_MODE_04;
         player->unk_6A8 = &this->actor;
@@ -1461,7 +1461,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, GlobalContext* globalCtx) {
                 if (this->songFailTimer != 0) {
                     this->songFailTimer--;
                 } else { // took too long, game failed
-                    func_80078884(NA_SE_SY_OCARINA_ERROR);
+                    Lib_PlaySfx1(NA_SE_SY_OCARINA_ERROR);
                     Message_CloseTextbox(globalCtx);
                     globalCtx->msgCtx.ocarinaMode = OCARINA_MODE_04;
                     player->unk_6A8 = &this->actor;

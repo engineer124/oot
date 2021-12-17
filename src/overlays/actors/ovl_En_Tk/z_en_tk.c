@@ -277,7 +277,7 @@ f32 EnTk_Step(EnTk* this, GlobalContext* globalCtx) {
     s32 i;
 
     if (this->skelAnime.curFrame == 0.0f || this->skelAnime.curFrame == 25.0f) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_MORIBLIN_WALK);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_MORIBLIN_WALK);
     }
 
     if (this->skelAnime.animation != &gDampeWalkAnim) {
@@ -588,7 +588,7 @@ void EnTk_Dig(EnTk* this, GlobalContext* globalCtx) {
 
     if (this->skelAnime.curFrame == 32.0f) {
         /* What's gonna come out? */
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_DIG_UP);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_DIG_UP);
 
         this->rewardTimer = 0;
 
@@ -624,13 +624,13 @@ void EnTk_Dig(EnTk* this, GlobalContext* globalCtx) {
         /* Play a reward sound shortly after digging */
         if (this->validDigHere == 0) {
             /* Bad dig spot */
-            Audio_PlayActorSound2(&this->actor, NA_SE_SY_ERROR);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_SY_ERROR);
         } else if (this->currentReward == 4) {
             /* Heart piece */
             Audio_PlaySoundGeneral(NA_SE_SY_CORRECT_CHIME, &D_801333D4, 4, &D_801333E0, &D_801333E0, &D_801333E8);
         } else {
             /* Rupee */
-            Audio_PlayActorSound2(&this->actor, NA_SE_SY_TRE_BOX_APPEAR);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_SY_TRE_BOX_APPEAR);
         }
     }
     this->rewardTimer++;

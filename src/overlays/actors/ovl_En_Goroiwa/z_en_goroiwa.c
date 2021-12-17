@@ -628,7 +628,7 @@ void EnGoroiwa_Roll(EnGoroiwa* this, GlobalContext* globalCtx) {
             EnGoroiwa_SetupRoll(this);
         }
     }
-    Audio_PlayActorSound2(&this->actor, NA_SE_EV_BIGBALL_ROLL - SFX_FLAG);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_BIGBALL_ROLL - SFX_FLAG);
 }
 
 void EnGoroiwa_SetupMoveAndFallToGround(EnGoroiwa* this) {

@@ -236,7 +236,7 @@ void EnEiyer_SetupAmbush(EnEiyer* this, GlobalContext* globalCtx) {
     this->collider.base.acFlags &= ~AC_ON;
     this->actor.shape.shadowScale = 65.0f;
     this->actor.shape.yOffset = 600.0f;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_OCTAROCK_JUMP);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_OCTAROCK_JUMP);
     EffectSsGSplash_Spawn(globalCtx, &this->actor.world.pos, NULL, NULL, 1, 700);
     this->actionFunc = EnEiyer_Ambush;
 }
@@ -320,7 +320,7 @@ void EnEiyer_SetupStunned(EnEiyer* this) {
     this->collider.dim.height = sColCylInit.dim.height + 8;
     Actor_SetColorFilter(&this->actor, 0, 200, 0, 80);
     this->collider.base.atFlags &= ~AT_ON;
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
     this->actionFunc = EnEiyer_Stunned;
 }
 
@@ -446,7 +446,7 @@ void EnEiyer_Glide(EnEiyer* this, GlobalContext* globalCtx) {
         EnEiyer_SetupStartAttack(this);
     }
 
-    func_8002F974(&this->actor, NA_SE_EN_EIER_FLY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_EIER_FLY - SFX_FLAG);
 }
 
 void EnEiyer_StartAttack(EnEiyer* this, GlobalContext* globalCtx) {
@@ -470,7 +470,7 @@ void EnEiyer_StartAttack(EnEiyer* this, GlobalContext* globalCtx) {
     this->actor.world.rot.x = -this->actor.shape.rot.x;
     Math_StepToF(&this->actor.speedXZ, 5.0f, 0.3f);
     Math_ApproachS(&this->actor.world.rot.y, this->actor.yawTowardsPlayer, 2, 0x71C);
-    func_8002F974(&this->actor, NA_SE_EN_EIER_FLY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_EIER_FLY - SFX_FLAG);
 }
 
 void EnEiyer_DiveAttack(EnEiyer* this, GlobalContext* globalCtx) {
@@ -485,7 +485,7 @@ void EnEiyer_DiveAttack(EnEiyer* this, GlobalContext* globalCtx) {
         this->collider.base.atFlags &= ~(AT_ON | AT_HIT);
     }
 
-    func_8002F974(&this->actor, NA_SE_EN_EIER_FLY - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_EN_EIER_FLY - SFX_FLAG);
 }
 
 void EnEiyer_Land(EnEiyer* this, GlobalContext* globalCtx) {
@@ -585,11 +585,11 @@ void EnEiyer_Stunned(EnEiyer* this, GlobalContext* globalCtx) {
     SkelAnime_Update(&this->skelanime);
 
     if (Animation_OnFrame(&this->skelanime, 0.0f)) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_EIER_FLUTTER);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_EIER_FLUTTER);
     }
 
     if (this->actor.bgCheckFlags & 2) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_DODO_M_GND);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_DODO_M_GND);
     }
 
     if (this->timer == 0) {
@@ -608,7 +608,7 @@ void EnEiyer_UpdateDamage(EnEiyer* this, GlobalContext* globalCtx) {
         if (this->actor.colChkInfo.damageEffect != 0 || this->actor.colChkInfo.damage != 0) {
             if (Actor_ApplyDamage(&this->actor) == 0) {
                 Enemy_StartFinishingBlow(globalCtx, &this->actor);
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_EIER_DEAD);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_EIER_DEAD);
                 this->actor.flags &= ~ACTOR_FLAG_0;
             }
 
@@ -624,7 +624,7 @@ void EnEiyer_UpdateDamage(EnEiyer* this, GlobalContext* globalCtx) {
                     EnEiyer_SetupStunned(this);
                 }
             } else if (this->actor.colChkInfo.health != 0) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_EIER_DAMAGE);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_EIER_DAMAGE);
                 EnEiyer_SetupHurt(this);
             } else {
                 this->collider.dim.height = sColCylInit.dim.height;

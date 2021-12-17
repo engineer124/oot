@@ -135,7 +135,7 @@ void EnBom_Move(EnBom* this, GlobalContext* globalCtx) {
         if (ABS((s16)(this->actor.wallYaw - this->actor.world.rot.y)) > 0x4000) {
             this->actor.world.rot.y = ((this->actor.wallYaw - this->actor.world.rot.y) + this->actor.wallYaw) - 0x8000;
         }
-        Audio_PlayActorSound2(&this->actor, NA_SE_EV_BOMB_BOUND);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EV_BOMB_BOUND);
         Actor_MoveForward(&this->actor);
         this->actor.speedXZ *= 0.7f;
         this->actor.bgCheckFlags &= ~8;
@@ -235,7 +235,7 @@ void EnBom_Update(Actor* thisx, GlobalContext* globalCtx2) {
     }
 
     if (this->timer == 67) {
-        Audio_PlayActorSound2(thisx, NA_SE_PL_TAKE_OUT_SHIELD);
+        Actor_PlaySfxAtPos1(thisx, NA_SE_PL_TAKE_OUT_SHIELD);
         Actor_SetScale(thisx, 0.01f);
     }
 
@@ -258,7 +258,7 @@ void EnBom_Update(Actor* thisx, GlobalContext* globalCtx2) {
                 EffectSsGSpk_SpawnFuse(globalCtx, thisx, &effPos, &effVelocity, &effAccel);
             }
 
-            Audio_PlayActorSound2(thisx, NA_SE_IT_BOMB_IGNIT - SFX_FLAG);
+            Actor_PlaySfxAtPos1(thisx, NA_SE_IT_BOMB_IGNIT - SFX_FLAG);
 
             effPos.y += 3.0f;
             func_8002829C(globalCtx, &effPos, &effVelocity, &dustAccel, &dustColor, &dustColor, 50, 5);
@@ -312,7 +312,7 @@ void EnBom_Update(Actor* thisx, GlobalContext* globalCtx2) {
                 EffectSsBlast_SpawnWhiteShockwave(globalCtx, &effPos, &effVelocity, &effAccel);
             }
 
-            Audio_PlayActorSound2(thisx, NA_SE_IT_BOMB_EXPLOSION);
+            Actor_PlaySfxAtPos1(thisx, NA_SE_IT_BOMB_EXPLOSION);
 
             globalCtx->envCtx.adjLight1Color[0] = globalCtx->envCtx.adjLight1Color[1] =
                 globalCtx->envCtx.adjLight1Color[2] = 250;
@@ -350,7 +350,7 @@ void EnBom_Update(Actor* thisx, GlobalContext* globalCtx2) {
         }
         if (thisx->bgCheckFlags & 0x40) {
             thisx->bgCheckFlags &= ~0x40;
-            Audio_PlayActorSound2(thisx, NA_SE_EV_BOMB_DROP_WATER);
+            Actor_PlaySfxAtPos1(thisx, NA_SE_EV_BOMB_DROP_WATER);
         }
     }
 }

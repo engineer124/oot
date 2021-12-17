@@ -71,7 +71,7 @@ void BgGndFiremeiro_Sink(BgGndFiremeiro* this, GlobalContext* globalCtx) {
             this->dyna.actor.world.pos.y = sunkHeight;
         }
 
-        func_8002F948(&this->dyna.actor, NA_SE_EV_ROLL_STAND_2 - SFX_FLAG);
+        Actor_PlaySfx2(&this->dyna.actor, NA_SE_EV_ROLL_STAND_2 - SFX_FLAG);
     }
 
     if (this->timer > 0) {
@@ -97,7 +97,7 @@ void BgGndFiremeiro_Shake(BgGndFiremeiro* this, GlobalContext* globalCtx) {
             this->dyna.actor.world.pos.y += Math_CosS(this->timer * 0x7FFF);
 
             if (!(this->timer % 4)) {
-                Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BLOCK_SHAKE);
+                Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BLOCK_SHAKE);
             }
         } else {
             this->timer = 10;

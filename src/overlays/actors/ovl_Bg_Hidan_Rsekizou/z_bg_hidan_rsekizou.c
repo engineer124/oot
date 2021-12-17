@@ -178,7 +178,7 @@ void BgHidanRsekizou_Update(Actor* thisx, GlobalContext* globalCtx) {
     }
 
     CollisionCheck_SetAT(globalCtx, &globalCtx->colChkCtx, &this->collider.base);
-    func_8002F974(&this->dyna.actor, NA_SE_EV_FIRE_PILLAR - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_FIRE_PILLAR - SFX_FLAG);
 }
 
 Gfx* BgHidanRsekizou_DrawFireball(GlobalContext* globalCtx, BgHidanRsekizou* this, s16 frame, MtxF* mf, s32 a,

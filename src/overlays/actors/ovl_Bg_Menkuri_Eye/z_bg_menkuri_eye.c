@@ -101,14 +101,14 @@ void BgMenkuriEye_Update(Actor* thisx, GlobalContext* globalCtx) {
         (ABS((s16)(this->collider.base.ac->world.rot.y - this->actor.shape.rot.y)) > 0x5000)) {
         this->collider.base.acFlags &= ~AC_HIT;
         if (this->framesUntilDisable == -1) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_AMOS_DAMAGE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_AMOS_DAMAGE);
             D_8089C1A0 += 1;
             D_8089C1A0 = CLAMP_MAX(D_8089C1A0, 4);
         }
         this->framesUntilDisable = 416;
         if (D_8089C1A0 == 4) {
             Flags_SetSwitch(globalCtx, this->actor.params);
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
         }
     }
     if (this->framesUntilDisable == -1) {

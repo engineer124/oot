@@ -74,7 +74,7 @@ void ArrowFire_Charge(ArrowFire* this, GlobalContext* globalCtx) {
     this->actor.world.pos = arrow->actor.world.pos;
     this->actor.shape.rot = arrow->actor.shape.rot;
 
-    func_8002F974(&this->actor, NA_SE_PL_ARROW_CHARGE_FIRE - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->actor, NA_SE_PL_ARROW_CHARGE_FIRE - SFX_FLAG);
 
     // if arrow has no parent, player has fired the arrow
     if (arrow->actor.parent == NULL) {
@@ -164,7 +164,7 @@ void ArrowFire_Fly(ArrowFire* this, GlobalContext* globalCtx) {
     func_80865ECC(&this->unkPos, &this->actor.world.pos, 0.05f);
 
     if (arrow->hitFlags & 1) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_IT_EXPLOSION_FRAME);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_IT_EXPLOSION_FRAME);
         ArrowFire_SetupAction(this, ArrowFire_Hit);
         this->timer = 32;
         this->alpha = 255;

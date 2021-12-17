@@ -303,7 +303,7 @@ void func_8089107C(BgIceShelter* this, GlobalContext* globalCtx) {
             }
 
             func_808911BC(this);
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_ICE_MELT);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_ICE_MELT);
         }
     }
 
@@ -370,7 +370,7 @@ void func_808911D4(BgIceShelter* this, GlobalContext* globalCtx) {
         }
 
         if (type == 4) {
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
         }
 
         Actor_Kill(&this->dyna.actor);

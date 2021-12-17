@@ -162,7 +162,7 @@ void func_808894B0(BgHidanHrock* this, GlobalContext* globalCtx) {
 
     if (!(this->unk_168 % 4)) {
         func_800AA000(this->dyna.actor.xyzDistToPlayerSq, 180, 10, 100);
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BLOCK_SHAKE);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BLOCK_SHAKE);
     }
 
     if (this->unk_168 == 0) {
@@ -185,7 +185,7 @@ void func_8088960C(BgHidanHrock* this, GlobalContext* globalCtx) {
 
     if (Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y, this->dyna.actor.velocity.y)) {
         this->dyna.actor.flags &= ~(ACTOR_FLAG_4 | ACTOR_FLAG_5);
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
 
         if (this->dyna.actor.params == 0) {
             if (globalCtx->roomCtx.curRoom.num == 10) {

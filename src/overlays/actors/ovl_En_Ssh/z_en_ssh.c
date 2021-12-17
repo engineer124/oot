@@ -234,7 +234,7 @@ void EnSsh_SetWaitAnimation(EnSsh* this) {
 }
 
 void EnSsh_SetReturnAnimation(EnSsh* this) {
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_UP);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_UP);
     EnSsh_SetAnimation(this, SSH_ANIM_UP);
 }
 
@@ -299,8 +299,8 @@ s32 EnSsh_Damaged(EnSsh* this) {
         if (this->swayTimer == 0) {
             this->spinTimer = 30;
         }
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_ROLL);
-        Audio_PlayActorSound2(&this->actor, NA_SE_VO_ST_ATTACK);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_ROLL);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_ST_ATTACK);
         return true;
     }
 }
@@ -464,8 +464,8 @@ s32 EnSsh_CheckHitPlayer(EnSsh* this, GlobalContext* globalCtx) {
     if (this->swayTimer == 0) {
         this->spinTimer = this->hitTimer;
     }
-    Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_ROLL);
-    Audio_PlayActorSound2(&this->actor, NA_SE_VO_ST_ATTACK);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_ROLL);
+    Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_ST_ATTACK);
     globalCtx->damagePlayer(globalCtx, -8);
     func_8002F71C(globalCtx, &this->actor, 4.0f, this->actor.yawTowardsPlayer, 6.0f);
     this->hitCount--;
@@ -511,8 +511,8 @@ s32 EnSsh_CheckHitBack(EnSsh* this, GlobalContext* globalCtx) {
         this->hitCount++;
     }
     if (this->stunTimer == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
-        Audio_PlayActorSound2(&this->actor, NA_SE_VO_ST_DAMAGE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_ST_DAMAGE);
     }
     EnSsh_SetStunned(this);
     this->stateFlags |= SSH_STATE_STUNNED;
@@ -528,8 +528,8 @@ s32 EnSsh_CollisionCheck(EnSsh* this, GlobalContext* globalCtx) {
     } else if (globalCtx->actorCtx.unk_02 != 0) {
         this->invincibilityTimer = 8;
         if (this->stunTimer == 0) {
-            Audio_PlayActorSound2(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
-            Audio_PlayActorSound2(&this->actor, NA_SE_VO_ST_DAMAGE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
+            Actor_PlaySfxAtPos1(&this->actor, NA_SE_VO_ST_DAMAGE);
         }
         EnSsh_SetStunned(this);
         this->stateFlags |= SSH_STATE_STUNNED;
@@ -685,7 +685,7 @@ void EnSsh_Idle(EnSsh* this, GlobalContext* globalCtx) {
             EnSsh_SetupAction(this, EnSsh_Return);
         } else {
             if (DECR(this->sfxTimer) == 0) {
-                Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_LAUGH);
+                Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_LAUGH);
                 this->sfxTimer = 64;
             }
             EnSsh_Bob(this, globalCtx);
@@ -744,7 +744,7 @@ void EnSsh_Drop(EnSsh* this, GlobalContext* globalCtx) {
         EnSsh_SetLandAnimation(this);
         EnSsh_SetupAction(this, EnSsh_Land);
     } else if (DECR(this->sfxTimer) == 0) {
-        Audio_PlayActorSound2(&this->actor, NA_SE_EN_STALTU_DOWN);
+        Actor_PlaySfxAtPos1(&this->actor, NA_SE_EN_STALTU_DOWN);
         this->sfxTimer = 3;
     }
 }

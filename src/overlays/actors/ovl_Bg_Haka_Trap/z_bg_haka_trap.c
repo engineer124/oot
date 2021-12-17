@@ -232,7 +232,7 @@ void func_808801B8(BgHakaTrap* this, GlobalContext* globalCtx) {
 
     if ((D_80880F30 == 0) && (!Player_InCsMode(globalCtx))) {
         if (!Math_StepToF(&this->dyna.actor.world.pos.x, this->dyna.actor.home.pos.x, 0.5f)) {
-            func_8002F974(&this->dyna.actor, NA_SE_EV_TRAP_OBJ_SLIDE - SFX_FLAG);
+            Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_TRAP_OBJ_SLIDE - SFX_FLAG);
         } else if (this->dyna.actor.params == HAKA_TRAP_SPIKED_WALL) {
             D_80881018 |= 1;
         } else if (this->dyna.actor.params == HAKA_TRAP_SPIKED_WALL_2) {
@@ -262,7 +262,7 @@ void func_808802D8(BgHakaTrap* this, GlobalContext* globalCtx) {
         this->timer--;
     }
 
-    func_8002F974(&this->dyna.actor, NA_SE_EV_BURN_OUT - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_BURN_OUT - SFX_FLAG);
 
     for (i = 0; i < 2; i++) {
         f32 rand = Rand_ZeroOne();
@@ -302,13 +302,13 @@ void func_80880484(BgHakaTrap* this, GlobalContext* globalCtx) {
     timer = this->timer;
 
     if ((timer == 10 && !this->unk_16A) || (timer == 13 && this->unk_16A)) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_GUILLOTINE_BOUND);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_GUILLOTINE_BOUND);
     }
 
     if (this->timer == 0) {
         this->dyna.actor.velocity.y = 0.0f;
         this->timer = (this->unk_16A) ? 10 : 40;
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_GUILLOTINE_UP);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_GUILLOTINE_UP);
         this->actionFunc = func_808805C0;
     }
 
@@ -334,7 +334,7 @@ void func_808805C0(BgHakaTrap* this, GlobalContext* globalCtx) {
         }
 
         if (this->timer == 20) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_GUILLOTINE_UP);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_GUILLOTINE_UP);
         }
     }
 
@@ -380,13 +380,13 @@ void func_808806BC(BgHakaTrap* this, GlobalContext* globalCtx) {
 
     if (Math_StepToF(&this->dyna.actor.world.pos.y, tempf20, this->dyna.actor.velocity.y)) {
         if (this->dyna.actor.velocity.y > 0.01f) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_TRAP_BOUND);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_TRAP_BOUND);
         }
         this->dyna.actor.velocity.y = 0.0f;
     }
 
     if (this->dyna.actor.velocity.y >= 0.01f) {
-        func_8002F974(&this->dyna.actor, NA_SE_EV_CHINETRAP_DOWN - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_CHINETRAP_DOWN - SFX_FLAG);
     }
 
     if (this->timer == 0) {
@@ -456,7 +456,7 @@ void func_80880AE8(BgHakaTrap* this, GlobalContext* globalCtx) {
 
     this->dyna.actor.shape.rot.z += this->dyna.actor.world.rot.z;
     if (this->dyna.actor.world.rot.z >= 0x1801) {
-        func_8002F974(&this->dyna.actor, NA_SE_EV_WIND_TRAP - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_WIND_TRAP - SFX_FLAG);
     }
 
     func_808809E4(this, globalCtx, this->dyna.actor.world.rot.z);
@@ -467,7 +467,7 @@ void func_80880C0C(BgHakaTrap* this, GlobalContext* globalCtx) {
         this->timer--;
     }
 
-    func_8002F974(&this->dyna.actor, NA_SE_EV_WIND_TRAP - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_WIND_TRAP - SFX_FLAG);
 
     if (this->timer == 0) {
         this->timer = 1;
@@ -544,6 +544,6 @@ void BgHakaTrap_Draw(Actor* thisx, GlobalContext* globalCtx) {
         sp2C.y = this->dyna.actor.world.pos.y + 110.0f;
 
         SkinMatrix_Vec3fMtxFMultXYZ(&globalCtx->viewProjectionMtxF, &sp2C, &this->unk_16C);
-        func_80078914(&this->unk_16C, NA_SE_EV_BRIDGE_CLOSE - SFX_FLAG);
+        Lib_PlaySfxAtPos(&this->unk_16C, NA_SE_EV_BRIDGE_CLOSE - SFX_FLAG);
     }
 }

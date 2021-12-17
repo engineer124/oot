@@ -152,7 +152,7 @@ void func_8087E10C(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
 
     if (!Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y - 640.0f,
                       this->dyna.actor.velocity.y)) {
-        func_8002F974(&this->dyna.actor, NA_SE_EV_CHINETRAP_DOWN - SFX_FLAG);
+        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_CHINETRAP_DOWN - SFX_FLAG);
     }
 
     if (this->unk_16A == 0) {
@@ -164,7 +164,7 @@ void func_8087E10C(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
 
 void func_8087E1E0(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
     Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y, 16.0f / 3.0f);
-    func_8002F974(&this->dyna.actor, NA_SE_EV_BRIDGE_CLOSE - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_BRIDGE_CLOSE - SFX_FLAG);
 
     if (this->unk_16A != 0) {
         this->unk_16A--;
@@ -178,7 +178,7 @@ void func_8087E1E0(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
 
 void func_8087E258(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
     this->dyna.actor.shape.rot.y += 0x180;
-    func_8002F974(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
+    Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
 }
 
 void func_8087E288(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
@@ -195,7 +195,7 @@ void func_8087E2D8(BgHakaMeganeBG* this, GlobalContext* globalCtx) {
         Actor_SetFocus(&this->dyna.actor, 50.0f);
         this->actionFunc = func_8087E34C;
     } else {
-        func_8002F974(&this->dyna.actor, NA_SE_EV_METALDOOR_OPEN);
+        Actor_PlaySfxAtPos3(&this->dyna.actor, NA_SE_EV_METALDOOR_OPEN);
     }
 }
 

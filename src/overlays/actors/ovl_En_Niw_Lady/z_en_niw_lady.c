@@ -257,7 +257,7 @@ void func_80ABA244(EnNiwLady* this, GlobalContext* globalCtx) {
         osSyncPrintf("\n\n");
         if (Text_GetFaceReaction(globalCtx, 8) == 0) {
             if (this->actor.textId == 0x503C) {
-                func_80078884(NA_SE_SY_ERROR);
+                Lib_PlaySfx1(NA_SE_SY_ERROR);
                 this->unk_26C = 2;
                 this->unk_262 = TEXT_STATE_EVENT;
                 this->actionFunc = func_80ABA654;
@@ -265,7 +265,7 @@ void func_80ABA244(EnNiwLady* this, GlobalContext* globalCtx) {
             }
             this->unk_26E = phi_s1 + 1;
             if (phi_s1 == 7) {
-                func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                Lib_PlaySfx1(NA_SE_SY_TRE_BOX_APPEAR);
                 this->unk_26C = 1;
                 this->unk_262 = TEXT_STATE_EVENT;
                 this->unk_26A = this->cuccosInPen;
@@ -278,9 +278,9 @@ void func_80ABA244(EnNiwLady* this, GlobalContext* globalCtx) {
             }
             if (this->unk_26A != this->cuccosInPen) {
                 if (this->cuccosInPen < this->unk_26A) {
-                    func_80078884(NA_SE_SY_ERROR);
+                    Lib_PlaySfx1(NA_SE_SY_ERROR);
                 } else if (phi_s1 + 1 < 9) {
-                    func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                    Lib_PlaySfx1(NA_SE_SY_TRE_BOX_APPEAR);
                 }
             }
             if (this->unk_26A < this->cuccosInPen) {
@@ -361,7 +361,7 @@ void func_80ABA878(EnNiwLady* this, GlobalContext* globalCtx) {
     if (Actor_ProcessTalkRequest(&this->actor, globalCtx)) {
         playerExchangeItemId = func_8002F368(globalCtx);
         if ((playerExchangeItemId == 6) && (gSaveContext.eventChkInf[6] & 0x400)) {
-            func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+            Lib_PlaySfx1(NA_SE_SY_TRE_BOX_APPEAR);
             player->actor.textId = sTradeItemTextIds[5];
             this->unk_26E = this->unk_27A + 21;
             this->unk_262 = TEXT_STATE_CHOICE;

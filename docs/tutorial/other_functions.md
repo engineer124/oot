@@ -382,7 +382,7 @@ void func_80A87CEC(EnJj *this, GlobalContext *globalCtx) {
     func_8003EBF8(globalCtx, &globalCtx->colCtx.dyna, (s32) temp_v1->bgId);
     func_8005B1A4(globalCtx->cameraPtrs[globalCtx->activeCamera]);
     gSaveContext.unkEDA = (u16) (gSaveContext.unkEDA | 0x400);
-    func_80078884((u16)0x4802U);
+    Lib_PlaySfx1((u16)0x4802U);
 }
 ```
 
@@ -420,7 +420,7 @@ void func_80A87CEC(EnJj *this, GlobalContext *globalCtx) {
     func_8003EBF8(globalCtx, &globalCtx->colCtx.dyna, child->bgId);
     func_8005B1A4(GET_ACTIVE_CAM(globalCtx));
     gSaveContext.eventChkInf[3] |= 0x400;
-    func_80078884(NA_SE_SY_CORRECT_CHIME);
+    Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
 }
 ```
 
@@ -439,7 +439,7 @@ void func_80A87CEC(EnJj* this, GlobalContext* globalCtx) {
         func_8003EBF8(globalCtx, &globalCtx->colCtx.dyna, child->bgId);
         func_8005B1A4(GET_ACTIVE_CAM(globalCtx));
         gSaveContext.eventChkInf[3] |= 0x400;
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Lib_PlaySfx1(NA_SE_SY_CORRECT_CHIME);
     }
 }
 ```
@@ -502,7 +502,7 @@ void EnJj_Update(EnJj *this, GlobalContext *globalCtx) {
     } else {
         this->actionFunc(this);
         if (this->skelAnime.curFrame == 41.0f) {
-            Audio_PlayActorSound2((Actor *) this, (u16)0x28B6U);
+            Actor_PlaySfxAtPos1((Actor *) this, (u16)0x28B6U);
         }
     }
     func_80A87B1C(this);
@@ -526,7 +526,7 @@ void EnJj_Update(Actor *thisx, GlobalContext *globalCtx) {
     } else {
         this->actionFunc(this, globalCtx);
         if (this->skelAnime.curFrame == 41.0f) {
-            Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_JABJAB_GROAN);
+            Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_JABJAB_GROAN);
         }
     }
     func_80A87B1C(this);
@@ -687,7 +687,7 @@ void func_80A87D94(EnJj *this, GlobalContext *globalCtx) {
         }
     }
     if ((phi_v1 & 1) != 0) {
-        Audio_PlayActorSound2((Actor *) this, (u16)0x206DU);
+        Actor_PlaySfxAtPos1((Actor *) this, (u16)0x206DU);
         temp_v0_2 = this->unk_308;
         if ((s32) temp_v0_2 >= -0x1450) {
             this->unk_308 = temp_v0_2 - 0x66;
@@ -763,7 +763,7 @@ void func_80A87D94(EnJj *this, GlobalContext *globalCtx) {
 			break;
     }
     if ((phi_v1 & 1) != 0) {
-        Audio_PlayActorSound2((Actor *) this, (u16)0x206DU);
+        Actor_PlaySfxAtPos1((Actor *) this, (u16)0x206DU);
         temp_v0_2 = this->unk_308;
         if ((s32) temp_v0_2 >= -0x1450) {
             this->unk_308 = temp_v0_2 - 0x66;
@@ -771,9 +771,9 @@ void func_80A87D94(EnJj *this, GlobalContext *globalCtx) {
     }
 }
 ```
-(notice that this time we need a `default` to deal with the innermost if contents). If you try to replace `0x206D` in the `Audio_PlayActorSound2`, you will find there is no such sfxId in the list: this is because some sound effects have an extra offset of `0x800` to do with setting flags. Adding `0x800` to the sfxId shows that this sound effect is `NA_SE_EV_JABJAB_BREATHE`. To correct this to the id in the function, we have a macro `SFX_FLAG`, and it should therefore be
+(notice that this time we need a `default` to deal with the innermost if contents). If you try to replace `0x206D` in the `Actor_PlaySfxAtPos1`, you will find there is no such sfxId in the list: this is because some sound effects have an extra offset of `0x800` to do with setting flags. Adding `0x800` to the sfxId shows that this sound effect is `NA_SE_EV_JABJAB_BREATHE`. To correct this to the id in the function, we have a macro `SFX_FLAG`, and it should therefore be
 ```C
-Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_JABJAB_BREATHE - SFX_FLAG);
+Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_JABJAB_BREATHE - SFX_FLAG);
 ```
 
 As usual, most of the remaining temps look fake. The only one that does not is possibly `phi_v1`. However, the way in which they are used here makes it hard to tell if they are fake, and if so, how to replace them. I encourage you to try this yourself, with the aid of the diff script; the final, matching result, with other cleanup, is hidden below
@@ -814,7 +814,7 @@ void func_80A87D94(EnJj* this, GlobalContext* globalCtx) {
             break;
     }
     if ((this->unk_30A & 1) != 0) {
-        Audio_PlayActorSound2(&this->dyna.actor, NA_SE_EV_JABJAB_BREATHE - SFX_FLAG);
+        Actor_PlaySfxAtPos1(&this->dyna.actor, NA_SE_EV_JABJAB_BREATHE - SFX_FLAG);
         if (this->unk_308 >= -5200) {
             this->unk_308 -= 102;
         }

@@ -289,7 +289,7 @@ void func_80BA2610(ObjWarp2block* this, GlobalContext* globalCtx) {
         }
     }
     if (this->unk_16C == 0x32) {
-        func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+        Lib_PlaySfx1(NA_SE_SY_TRE_BOX_APPEAR);
     }
 }
 
