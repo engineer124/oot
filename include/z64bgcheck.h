@@ -44,7 +44,7 @@ typedef struct {
 } ScaleRotPos;
 
 typedef struct {
-    /* 0x00 */ u16 type;
+    /* 0x00 */ u16 surfaceTypeIndex;
     union {
         u16 vtxData[3];
         struct {
@@ -102,44 +102,44 @@ typedef struct {
 
 typedef struct {
     s16 polyId;
-    u16 next; // next SSNode index
+    u16 nextSSId; // next SSNode index
 } SSNode;
 
 typedef struct {
-    u16 head; // first SSNode index
-} SSList;
+    u16 headSSId; // first SSNode index
+} SSHead;
 
 typedef struct {
     /* 0x00 */ u16 max;          // original name: short_slist_node_size
     /* 0x02 */ u16 count;        // original name: short_slist_node_last_index
-    /* 0x04 */ SSNode* tbl;      // original name: short_slist_node_tbl
+    /* 0x04 */ SSNode* ssNodeTable;      // original name: short_slist_node_tbl
     /* 0x08 */ u8* polyCheckTbl; // points to an array of bytes, one per static poly. Zero initialized when starting a
                                  // bg check, and set to 1 if that poly has already been tested.
-} SSNodeList;
+} StaticSSNodeList;
 
 typedef struct {
-    SSNode* tbl;
+    SSNode* ssNodeTable;
     s32 count;
     s32 max;
 } DynaSSNodeList;
 
 typedef struct {
-    SSList floor;
-    SSList wall;
-    SSList ceiling;
-} StaticLookup;
+    SSHead floor;
+    SSHead wall;
+    SSHead ceiling;
+} StaticSSHeads;
 
 typedef struct {
     u16 polyStartIndex;
-    SSList ceiling;
-    SSList wall;
-    SSList floor;
-} DynaLookup;
+    SSHead ceiling;
+    SSHead wall;
+    SSHead floor;
+} DynaSSHeads;
 
 typedef struct {
     /* 0x00 */ struct Actor* actor;
     /* 0x04 */ CollisionHeader* colHeader;
-    /* 0x08 */ DynaLookup dynaLookup;
+    /* 0x08 */ DynaSSHeads dynaSSHeadList;
     /* 0x10 */ u16 vtxStartIndex;
     /* 0x14 */ ScaleRotPos prevTransform;
     /* 0x34 */ ScaleRotPos curTransform;
@@ -154,7 +154,7 @@ typedef struct {
     /* 0x138C */ u16 bgActorFlags[BG_ACTOR_MAX]; // & 0x0008 = no dyna ceiling
     /* 0x13F0 */ CollisionPoly* polyList;
     /* 0x13F4 */ Vec3s* vtxList;
-    /* 0x13F8 */ DynaSSNodeList polyNodes;
+    /* 0x13F8 */ DynaSSNodeList dynaSSNodeList;
     /* 0x1404 */ s32 polyNodesMax;
     /* 0x1408 */ s32 polyListMax;
     /* 0x140C */ s32 vtxListMax;
@@ -167,8 +167,8 @@ typedef struct CollisionContext {
     /* 0x1C */ Vec3i subdivAmount;         // x, y, z subdivisions of the scene's static collision
     /* 0x28 */ Vec3f subdivLength;         // x, y, z subdivision worldspace lengths
     /* 0x34 */ Vec3f subdivLengthInv;      // inverse of subdivision length
-    /* 0x40 */ StaticLookup* lookupTbl;    // 3d array of length subdivAmount
-    /* 0x44 */ SSNodeList polyNodes;
+    /* 0x40 */ StaticSSHeads* staticSSHeadsTable;    // 3d array of length subdivAmount
+    /* 0x44 */ StaticSSNodeList staticSSNodeList;
     /* 0x50 */ DynaCollisionContext dyna;
     /* 0x1460 */ u32 memSize; // Size of all allocated memory plus CollisionContext
 } CollisionContext; // size = 0x1464
@@ -185,14 +185,14 @@ typedef struct {
     /* 0x20 */ u32 unk_20;
     /* 0x24 */ f32 chkDist;
     /* 0x28 */ DynaCollisionContext* dyna;
-    /* 0x2C */ SSList* ssList;
+    /* 0x2C */ SSHead* ssHead;
 } DynaRaycast;
 
 typedef struct {
     /* 0x00 */ struct CollisionContext* colCtx;
     /* 0x04 */ u16 xpFlags;
     /* 0x08 */ DynaCollisionContext* dyna;
-    /* 0x0C */ SSList* ssList;
+    /* 0x0C */ SSHead* ssHead;
     /* 0x10 */ Vec3f* posA;
     /* 0x14 */ Vec3f* posB;
     /* 0x18 */ Vec3f* posResult;

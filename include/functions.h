@@ -541,12 +541,12 @@ u16 DynaSSNodeList_GetNextNodeIdx(DynaSSNodeList*);
 void func_80038A28(CollisionPoly* poly, f32 tx, f32 ty, f32 tz, MtxF* dest);
 f32 CollisionPoly_GetPointDistanceFromPlane(CollisionPoly* poly, Vec3f* point);
 void CollisionPoly_GetVerticesByBgId(CollisionPoly* poly, s32 bgId, CollisionContext* colCtx, Vec3f* dest);
-s32 BgCheck_CheckStaticCeiling(StaticLookup* lookup, u16 xpFlags, CollisionContext* colCtx, f32* outY, Vec3f* pos,
+s32 BgCheck_CheckStaticCeiling(StaticSSHeads* lookup, u16 xpFlags, CollisionContext* colCtx, f32* outY, Vec3f* pos,
                                f32 checkHeight, CollisionPoly** outPoly);
-s32 BgCheck_CheckLineAgainstSSList(SSList* headNodeId, CollisionContext* colCtx, u16 xpFlags1, u16 xpFlags2,
+s32 BgCheck_CheckLineAgainstSSList(SSHead* headNodeId, CollisionContext* colCtx, u16 xpFlags1, u16 xpFlags2,
                                    Vec3f* posA, Vec3f* posB, Vec3f* outPos, CollisionPoly** outPoly, f32* outDistSq,
                                    f32 chkDist, s32 bccFlags);
-void BgCheck_GetStaticLookupIndicesFromPos(CollisionContext* colCtx, Vec3f* pos, Vec3i* arg2);
+void BgCheck_GetSubdivisionIndexFromPos(CollisionContext* colCtx, Vec3f* pos, Vec3i* arg2);
 void BgCheck_Allocate(CollisionContext* colCtx, GlobalContext* globalCtx, CollisionHeader* colHeader);
 s32 BgCheck_PosInStaticBoundingBox(CollisionContext* colCtx, Vec3f* pos);
 f32 BgCheck_EntityRaycastFloor1(CollisionContext* colCtx, CollisionPoly** outPoly, Vec3f* pos);
@@ -603,9 +603,9 @@ s32 BgCheck_AnyLineTest2(CollisionContext* colCtx, Vec3f* posA, Vec3f* posB, Vec
 s32 BgCheck_AnyLineTest3(CollisionContext* colCtx, Vec3f* posA, Vec3f* posB, Vec3f* posResult, CollisionPoly** outPoly,
                          s32 chkWall, s32 chkFloor, s32 chkCeil, s32 chkOneFace, s32* bgId);
 s32 BgCheck_SphVsFirstPoly(CollisionContext* colCtx, Vec3f* center, f32 radius);
-void SSNodeList_Initialize(SSNodeList*);
-void SSNodeList_Alloc(GlobalContext* globalCtx, SSNodeList* this, s32 tblMax, s32 numPolys);
-u16 SSNodeList_GetNextNodeIdx(SSNodeList* this);
+void SSNodeList_Initialize(StaticSSNodeList*);
+void SSNodeList_Alloc(GlobalContext* globalCtx, StaticSSNodeList* this, s32 tblMax, s32 numPolys);
+u16 SSNodeList_GetNextNodeIdx(StaticSSNodeList* this);
 s32 DynaPoly_IsBgIdBgActor(s32 bgId);
 void DynaPoly_Init(GlobalContext* globalCtx, DynaCollisionContext* dyna);
 void DynaPoly_Alloc(GlobalContext* globalCtx, DynaCollisionContext* dyna);
@@ -631,7 +631,7 @@ s32 BgCheck_SphVsFirstDynaPoly(CollisionContext* colCtx, u16 xpFlags, CollisionP
                                Vec3f* center, f32 radius, Actor* actor, u16 bciFlags);
 void CollisionHeader_GetVirtual(void* colHeader, CollisionHeader** dest);
 void func_800418D0(CollisionContext* colCtx, GlobalContext* globalCtx);
-void BgCheck_ResetPolyCheckTbl(SSNodeList* nodeList, s32 numPolys);
+void BgCheck_ResetPolyCheckTbl(StaticSSNodeList* nodeList, s32 numPolys);
 u32 SurfaceType_GetCamDataIndex(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
 u16 func_80041A4C(CollisionContext* colCtx, u32 camId, s32 bgId);
 u16 SurfaceType_GetCameraSType(CollisionContext* colCtx, CollisionPoly* poly, s32 bgId);
@@ -671,7 +671,7 @@ u16 WaterBox_GetCameraSType(CollisionContext* colCtx, WaterBox* waterBox);
 u32 WaterBox_GetLightSettingIndex(CollisionContext* colCtx, WaterBox* waterBox);
 s32 func_80042708(CollisionPoly* polyA, CollisionPoly* polyB, Vec3f* point, Vec3f* closestPoint);
 s32 func_800427B4(CollisionPoly* polyA, CollisionPoly* polyB, Vec3f* pointA, Vec3f* pointB, Vec3f* closestPoint);
-void BgCheck_DrawDynaCollision(GlobalContext*, CollisionContext*);
+void BgCheck_DrawDynamicCollision(GlobalContext*, CollisionContext*);
 void BgCheck_DrawStaticCollision(GlobalContext*, CollisionContext*);
 void func_80043334(CollisionContext* colCtx, Actor* actor, s32 bgId);
 s32 func_800433A4(CollisionContext* colCtx, s32 bgId, Actor* actor);

@@ -481,8 +481,8 @@ static s16 D_808535F8 = 0;
 static s16 D_808535FC = 0;
 static f32 D_80853600 = 0.0f;
 static s32 D_80853604 = 0;
-static s32 D_80853608 = 0;
-static s32 D_8085360C = 0;
+static s32 sShapeYawToWall = 0;
+static s32 sCurrentYawToWall = 0;
 static s16 D_80853610 = 0;
 static s32 D_80853614 = 0;
 static s32 D_80853618 = 0;
@@ -2450,7 +2450,7 @@ s32 func_80835588(Player* this, GlobalContext* globalCtx) {
 void func_808355DC(Player* this) {
     this->stateFlags1 |= 0x20000;
 
-    if (!(this->skelAnime.moveFlags & 0x80) && (this->actor.bgCheckFlags & 0x200) && (D_80853608 < 0x2000)) {
+    if (!(this->skelAnime.moveFlags & 0x80) && (this->actor.bgCheckFlags & 0x200) && (sShapeYawToWall < 0x2000)) {
         this->currentYaw = this->actor.shape.rot.y = this->actor.wallYaw + 0x8000;
     }
 
@@ -3782,8 +3782,8 @@ s32 func_80838A14(Player* this, GlobalContext* globalCtx) {
     LinkAnimationHeader* sp38;
     f32 sp34;
     f32 temp;
-    f32 sp2C;
-    f32 sp28;
+    f32 wallXNorm;
+    f32 wallZNorm;
     f32 sp24;
 
     if (!(this->stateFlags1 & 0x800) && (this->unk_88C >= 2) &&
@@ -3825,8 +3825,8 @@ s32 func_80838A14(Player* this, GlobalContext* globalCtx) {
                 sp38 = &gPlayerAnim_002D48;
                 this->linearVelocity = 1.0f;
             } else {
-                sp2C = COLPOLY_GET_NORMAL(this->actor.wallPoly->normal.x);
-                sp28 = COLPOLY_GET_NORMAL(this->actor.wallPoly->normal.z);
+                wallXNorm = COLPOLY_GET_NORMAL(this->actor.wallPoly->normal.x);
+                wallZNorm = COLPOLY_GET_NORMAL(this->actor.wallPoly->normal.z);
                 sp24 = this->wallDistance + 0.5f;
 
                 this->stateFlags1 |= 0x4000;
@@ -3845,9 +3845,9 @@ s32 func_80838A14(Player* this, GlobalContext* globalCtx) {
 
                 this->actor.shape.yOffset -= sp34 * 100.0f;
 
-                this->actor.world.pos.x -= sp24 * sp2C;
+                this->actor.world.pos.x -= sp24 * wallXNorm;
                 this->actor.world.pos.y += this->wallHeight;
-                this->actor.world.pos.z -= sp24 * sp28;
+                this->actor.world.pos.z -= sp24 * wallZNorm;
 
                 func_80832224(this);
             }
@@ -4444,24 +4444,24 @@ s32 func_8083A4A8(Player* this, GlobalContext* globalCtx) {
     return 1;
 }
 
-void func_8083A5C4(GlobalContext* globalCtx, Player* this, CollisionPoly* arg2, f32 arg3, LinkAnimationHeader* arg4) {
-    f32 sp24 = COLPOLY_GET_NORMAL(arg2->normal.x);
-    f32 sp20 = COLPOLY_GET_NORMAL(arg2->normal.z);
+void func_8083A5C4(GlobalContext* globalCtx, Player* this, CollisionPoly* poly, f32 arg3, LinkAnimationHeader* arg4) {
+    f32 normX = COLPOLY_GET_NORMAL(poly->normal.x);
+    f32 normZ = COLPOLY_GET_NORMAL(poly->normal.z);
 
     func_80835C58(globalCtx, this, func_8084BBE4, 0);
     func_80832564(globalCtx, this);
     func_80832264(globalCtx, this, arg4);
 
-    this->actor.world.pos.x -= (arg3 + 1.0f) * sp24;
-    this->actor.world.pos.z -= (arg3 + 1.0f) * sp20;
-    this->actor.shape.rot.y = this->currentYaw = Math_Atan2S(sp20, sp24);
+    this->actor.world.pos.x -= (arg3 + 1.0f) * normX;
+    this->actor.world.pos.z -= (arg3 + 1.0f) * normZ;
+    this->actor.shape.rot.y = this->currentYaw = Math_Atan2S(normZ, normX);
 
     func_80832224(this);
     func_80832CFC(this);
 }
 
 s32 func_8083A6AC(Player* this, GlobalContext* globalCtx) {
-    CollisionPoly* sp84;
+    CollisionPoly* poly;
     s32 sp80;
     Vec3f sp74;
     Vec3f sp68;
@@ -4482,23 +4482,23 @@ s32 func_8083A6AC(Player* this, GlobalContext* globalCtx) {
         sp74.y = this->actor.world.pos.y;
         sp74.z = this->actor.prevPos.z + (sp74.z * temp1);
 
-        if (BgCheck_EntityLineTest1(&globalCtx->colCtx, &this->actor.world.pos, &sp74, &sp68, &sp84, true, false, false,
+        if (BgCheck_EntityLineTest1(&globalCtx->colCtx, &this->actor.world.pos, &sp74, &sp68, &poly, true, false, false,
                                     true, &sp80) &&
-            (ABS(sp84->normal.y) < 600)) {
-            f32 nx = COLPOLY_GET_NORMAL(sp84->normal.x);
-            f32 ny = COLPOLY_GET_NORMAL(sp84->normal.y);
-            f32 nz = COLPOLY_GET_NORMAL(sp84->normal.z);
+            (ABS(poly->normal.y) < 600)) {
+            f32 nx = COLPOLY_GET_NORMAL(poly->normal.x);
+            f32 ny = COLPOLY_GET_NORMAL(poly->normal.y);
+            f32 nz = COLPOLY_GET_NORMAL(poly->normal.z);
             f32 sp54;
             s32 sp50;
 
-            sp54 = Math3D_UDistPlaneToPos(nx, ny, nz, sp84->dist, &this->actor.world.pos);
+            sp54 = Math3D_UDistPlaneToPos(nx, ny, nz, poly->dist, &this->actor.world.pos);
 
             sp50 = D_80853604 == 6;
-            if (!sp50 && (SurfaceType_GetWallFlags(&globalCtx->colCtx, sp84, sp80) & BGCHECK_WALL_3)) {
+            if (!sp50 && (SurfaceType_GetWallFlags(&globalCtx->colCtx, poly, sp80) & BGCHECK_WALL_3)) {
                 sp50 = 1;
             }
 
-            func_8083A5C4(globalCtx, this, sp84, sp54, sp50 ? &gPlayerAnim_002D88 : &gPlayerAnim_002F10);
+            func_8083A5C4(globalCtx, this, poly, sp54, sp50 ? &gPlayerAnim_002D88 : &gPlayerAnim_002F10);
 
             if (sp50) {
                 func_80836898(globalCtx, this, func_8083A3B0);
@@ -4518,11 +4518,11 @@ s32 func_8083A6AC(Player* this, GlobalContext* globalCtx) {
 
             func_8002F7DC(&this->actor, NA_SE_PL_SLIPDOWN);
             func_80832698(this, NA_SE_VO_LI_HANG);
-            return 1;
+            return true;
         }
     }
 
-    return 0;
+    return false;
 }
 
 void func_8083A9B8(Player* this, LinkAnimationHeader* anim, GlobalContext* globalCtx) {
@@ -5803,12 +5803,12 @@ s32 func_8083E0FC(Player* this, GlobalContext* globalCtx) {
     return 0;
 }
 
-void func_8083E298(CollisionPoly* arg0, Vec3f* arg1, s16* arg2) {
-    arg1->x = COLPOLY_GET_NORMAL(arg0->normal.x);
-    arg1->y = COLPOLY_GET_NORMAL(arg0->normal.y);
-    arg1->z = COLPOLY_GET_NORMAL(arg0->normal.z);
+void func_8083E298(CollisionPoly* poly, Vec3f* norm, s16* arg2) {
+    norm->x = COLPOLY_GET_NORMAL(poly->normal.x);
+    norm->y = COLPOLY_GET_NORMAL(poly->normal.y);
+    norm->z = COLPOLY_GET_NORMAL(poly->normal.z);
 
-    *arg2 = Math_Atan2S(arg1->z, arg1->x);
+    *arg2 = Math_Atan2S(norm->z, norm->x);
 }
 
 static LinkAnimationHeader* D_80854590[] = {
@@ -5816,7 +5816,7 @@ static LinkAnimationHeader* D_80854590[] = {
     &gPlayerAnim_0031D0,
 };
 
-s32 func_8083E318(GlobalContext* globalCtx, Player* this, CollisionPoly* arg2) {
+s32 func_8083E318(GlobalContext* globalCtx, Player* this, CollisionPoly* poly) {
     s32 pad;
     s16 sp4A;
     Vec3f sp3C;
@@ -5826,14 +5826,14 @@ s32 func_8083E318(GlobalContext* globalCtx, Player* this, CollisionPoly* arg2) {
     s16 temp3;
 
     if (!Player_InBlockingCsMode(globalCtx, this) && (func_8084F390 != this->func_674) &&
-        (SurfaceType_GetSlope(&globalCtx->colCtx, arg2, this->actor.floorBgId) == 1)) {
+        (SurfaceType_GetSlope(&globalCtx->colCtx, poly, this->actor.floorBgId) == 1)) {
         sp4A = Math_Atan2S(this->actor.velocity.z, this->actor.velocity.x);
-        func_8083E298(arg2, &sp3C, &sp3A);
+        func_8083E298(poly, &sp3C, &sp3A);
         temp3 = sp3A - sp4A;
 
         if (ABS(temp3) > 16000) {
             temp1 = (1.0f - sp3C.y) * 40.0f;
-            temp2 = (temp1 * temp1) * 0.015f;
+            temp2 = SQ(temp1) * 0.015f;
             if (temp2 < 1.2f) {
                 temp2 = 1.2f;
             }
@@ -5848,11 +5848,11 @@ s32 func_8083E318(GlobalContext* globalCtx, Player* this, CollisionPoly* arg2) {
             func_80832BE8(globalCtx, this, D_80854590[this->unk_84F]);
             this->linearVelocity = sqrtf(SQ(this->actor.velocity.x) + SQ(this->actor.velocity.z));
             this->currentYaw = sp4A;
-            return 1;
+            return true;
         }
     }
 
-    return 0;
+    return false;
 }
 
 // unknown data (unused)
@@ -6081,8 +6081,8 @@ s32 func_8083EC18(Player* this, GlobalContext* globalCtx, u32 wallFlags) {
                 }
 
                 if (phi_f12 < 8.0f) {
-                    f32 sp3C = COLPOLY_GET_NORMAL(wallPoly->normal.x);
-                    f32 sp38 = COLPOLY_GET_NORMAL(wallPoly->normal.z);
+                    f32 wallXNorm = COLPOLY_GET_NORMAL(wallPoly->normal.x);
+                    f32 wallZNorm = COLPOLY_GET_NORMAL(wallPoly->normal.z);
                     f32 sp34 = this->wallDistance;
                     LinkAnimationHeader* sp30;
 
@@ -6111,8 +6111,8 @@ s32 func_8083EC18(Player* this, GlobalContext* globalCtx, u32 wallFlags) {
                         this->actor.shape.rot.y = this->currentYaw = this->actor.wallYaw;
                     }
 
-                    this->actor.world.pos.x = (sp34 * sp3C) + sp80;
-                    this->actor.world.pos.z = (sp34 * sp38) + sp7C;
+                    this->actor.world.pos.x = (sp34 * wallXNorm) + sp80;
+                    this->actor.world.pos.z = (sp34 * wallZNorm) + sp7C;
                     func_80832224(this);
                     Math_Vec3f_Copy(&this->actor.prevPos, &this->actor.world.pos);
                     func_80832264(globalCtx, this, sp30);
@@ -6138,10 +6138,10 @@ void func_8083F070(Player* this, LinkAnimationHeader* anim, GlobalContext* globa
 s32 Player_IsEnteringCrawlspace(Player* this, GlobalContext* globalCtx, u32 wallFlags) {
     CollisionPoly* wallPoly;
     Vec3f wallVertices[3];
-    f32 xTemp1;
-    f32 xTemp2;
-    f32 zTemp1;
-    f32 zTemp2;
+    f32 xVertex1;
+    f32 xVertex2;
+    f32 zVertex1;
+    f32 zVertex2;
     s32 i;
 
     if (!LINK_IS_ADULT && !(this->stateFlags1 & 0x8000000) && (wallFlags & BGCHECK_WALL_CRAWLSPACE)) {
@@ -6149,32 +6149,33 @@ s32 Player_IsEnteringCrawlspace(Player* this, GlobalContext* globalCtx, u32 wall
         CollisionPoly_GetVerticesByBgId(wallPoly, this->actor.wallBgId, &globalCtx->colCtx, wallVertices);
 
         // Determines min and max vertices for x & z (edges of the crawlspace hole)
-        xTemp1 = xTemp2 = wallVertices[0].x;
-        zTemp1 = zTemp2 = wallVertices[0].z;
+        xVertex1 = xVertex2 = wallVertices[0].x;
+        zVertex1 = zVertex2 = wallVertices[0].z;
         for (i = 1; i < 3; i++) {
-            if (xTemp1 > wallVertices[i].x) {
-                xTemp1 = wallVertices[i].x;
-            } else if (xTemp2 < wallVertices[i].x) {
-                xTemp2 = wallVertices[i].x;
+            if (xVertex1 > wallVertices[i].x) {
+                xVertex1 = wallVertices[i].x;
+            } else if (xVertex2 < wallVertices[i].x) {
+                xVertex2 = wallVertices[i].x;
             }
 
-            if (zTemp1 > wallVertices[i].z) {
-                zTemp1 = wallVertices[i].z;
-            } else if (zTemp2 < wallVertices[i].z) {
-                zTemp2 = wallVertices[i].z;
+            if (zVertex1 > wallVertices[i].z) {
+                zVertex1 = wallVertices[i].z;
+            } else if (zVertex2 < wallVertices[i].z) {
+                zVertex2 = wallVertices[i].z;
             }
         }
 
-        // Center of the crawlspace hole
-        xTemp1 = (xTemp1 + xTemp2) * 0.5f;
-        zTemp1 = (zTemp1 + zTemp2) * 0.5f;
+        // XZ Center of the crawlspace hole
+        xVertex1 = (xVertex1 + xVertex2) * 0.5f;
+        zVertex1 = (zVertex1 + zVertex2) * 0.5f;
 
-        // y-component of the cross product
-        xTemp2 = ((this->actor.world.pos.x - xTemp1) * COLPOLY_GET_NORMAL(wallPoly->normal.z)) -
-                 ((this->actor.world.pos.z - zTemp1) * COLPOLY_GET_NORMAL(wallPoly->normal.x));
+        // Perpindicular XZ-Distance from player pos to crawlspace line
+        // Uses y-component of crossproduct formula for the distance from a point to a line
+        xVertex2 = ((this->actor.world.pos.x - xVertex1) * COLPOLY_GET_NORMAL(wallPoly->normal.z)) -
+                 ((this->actor.world.pos.z - zVertex1) * COLPOLY_GET_NORMAL(wallPoly->normal.x));
 
-        if (fabsf(xTemp2) < 8.0f) {
-            // Enter on A (for crawlspace)
+        if (fabsf(xVertex2) < 8.0f) {
+            // Give prompt to "Enter on A" for the crawlspace
             this->stateFlags2 |= 0x10000;
 
             if (CHECK_BTN_ALL(sControlInput->press.button, BTN_A)) {
@@ -6185,8 +6186,8 @@ s32 Player_IsEnteringCrawlspace(Player* this, GlobalContext* globalCtx, u32 wall
                 func_80836898(globalCtx, this, func_8083A40C);
                 this->stateFlags2 |= 0x40000;
                 this->actor.shape.rot.y = this->currentYaw = this->actor.wallYaw + 0x8000;
-                this->actor.world.pos.x = xTemp1 + (wallDistance * wallXNorm);
-                this->actor.world.pos.z = zTemp1 + (wallDistance * wallZNorm);
+                this->actor.world.pos.x = xVertex1 + (wallDistance * wallXNorm);
+                this->actor.world.pos.z = zVertex1 + (wallDistance * wallZNorm);
                 func_80832224(this);
                 this->actor.prevPos = this->actor.world.pos;
                 func_80832264(globalCtx, this, &gPlayerAnim_002708);
@@ -6209,8 +6210,8 @@ s32 func_8083F360(GlobalContext* globalCtx, Player* this, f32 arg1, f32 arg2, f3
     f32 yawCos;
     f32 yawSin;
     s32 temp;
-    f32 temp1;
-    f32 temp2;
+    f32 wallXNorm;
+    f32 wallZNorm;
 
     yawCos = Math_CosS(this->actor.shape.rot.y);
     yawSin = Math_SinS(this->actor.shape.rot.y);
@@ -6230,9 +6231,9 @@ s32 func_8083F360(GlobalContext* globalCtx, Player* this, f32 arg1, f32 arg2, f3
 
         sWallFlags = SurfaceType_GetWallFlags(&globalCtx->colCtx, wallPoly, wallBgId);
 
-        temp1 = COLPOLY_GET_NORMAL(wallPoly->normal.x);
-        temp2 = COLPOLY_GET_NORMAL(wallPoly->normal.z);
-        temp = Math_Atan2S(-temp2, -temp1);
+        wallXNorm = COLPOLY_GET_NORMAL(wallPoly->normal.x);
+        wallZNorm = COLPOLY_GET_NORMAL(wallPoly->normal.z);
+        temp = Math_Atan2S(-wallZNorm, -wallXNorm);
         Math_ScaledStepToS(&this->actor.shape.rot.y, temp, 800);
 
         this->currentYaw = this->actor.shape.rot.y;
@@ -6303,7 +6304,7 @@ void func_8083F72C(Player* this, LinkAnimationHeader* anim, GlobalContext* globa
 s32 func_8083F7BC(Player* this, GlobalContext* globalCtx) {
     DynaPolyActor* wallPolyActor;
 
-    if (!(this->stateFlags1 & 0x800) && (this->actor.bgCheckFlags & 0x200) && (D_80853608 < 0x3000)) {
+    if (!(this->stateFlags1 & 0x800) && (this->actor.bgCheckFlags & 0x200) && (sShapeYawToWall < 0x3000)) {
 
         if (((this->linearVelocity > 0.0f) && func_8083EC18(this, globalCtx, sWallFlags)) ||
             Player_IsEnteringCrawlspace(this, globalCtx, sWallFlags)) {
@@ -8120,7 +8121,7 @@ void func_80844708(Player* this, GlobalContext* globalCtx) {
             }
         } else {
             if (this->linearVelocity >= 7.0f) {
-                if (((this->actor.bgCheckFlags & 0x200) && (D_8085360C < 0x2000)) ||
+                if (((this->actor.bgCheckFlags & 0x200) && (sCurrentYawToWall < 0x2000)) ||
                     ((this->cylinder.base.ocFlags1 & OC1_HIT) &&
                      (cylinderOc = this->cylinder.base.oc,
                       ((cylinderOc->id == ACTOR_EN_WOOD02) &&
@@ -9377,7 +9378,7 @@ static Vec3f D_80854798 = { 0.0f, 18.0f, 0.0f };
 
 void func_80847BA0(GlobalContext* globalCtx, Player* this) {
     u8 spC7 = 0;
-    CollisionPoly* spC0;
+    CollisionPoly* floorPoly;
     Vec3f spB4;
     f32 spB0;
     f32 spAC;
@@ -9431,10 +9432,10 @@ void func_80847BA0(GlobalContext* globalCtx, Player* this) {
     D_80853600 = this->actor.world.pos.y - this->actor.floorHeight;
     D_808535F4 = 0;
 
-    spC0 = this->actor.floorPoly;
+    floorPoly = this->actor.floorPoly;
 
-    if (spC0 != NULL) {
-        this->unk_A7A = func_80041EA4(&globalCtx->colCtx, spC0, this->actor.floorBgId);
+    if (floorPoly != NULL) {
+        this->unk_A7A = func_80041EA4(&globalCtx->colCtx, floorPoly, this->actor.floorBgId);
         this->unk_A82 = this->unk_89E;
 
         if (this->actor.bgCheckFlags & 0x20) {
@@ -9447,42 +9448,42 @@ void func_80847BA0(GlobalContext* globalCtx, Player* this) {
             if (this->stateFlags2 & 0x200) {
                 this->unk_89E = 1;
             } else {
-                this->unk_89E = SurfaceType_GetSfx(&globalCtx->colCtx, spC0, this->actor.floorBgId);
+                this->unk_89E = SurfaceType_GetSfx(&globalCtx->colCtx, floorPoly, this->actor.floorBgId);
             }
         }
 
         if (this->actor.category == ACTORCAT_PLAYER) {
-            Audio_SetCodeReverb(SurfaceType_GetEcho(&globalCtx->colCtx, spC0, this->actor.floorBgId));
+            Audio_SetCodeReverb(SurfaceType_GetEcho(&globalCtx->colCtx, floorPoly, this->actor.floorBgId));
 
             if (this->actor.floorBgId == BGCHECK_SCENE) {
                 func_80074CE8(globalCtx,
-                              SurfaceType_GetLightSettingIndex(&globalCtx->colCtx, spC0, this->actor.floorBgId));
+                              SurfaceType_GetLightSettingIndex(&globalCtx->colCtx, floorPoly, this->actor.floorBgId));
             } else {
                 func_80043508(&globalCtx->colCtx, this->actor.floorBgId);
             }
         }
 
-        D_808535F4 = SurfaceType_GetConveyorSpeed(&globalCtx->colCtx, spC0, this->actor.floorBgId);
+        D_808535F4 = SurfaceType_GetConveyorSpeed(&globalCtx->colCtx, floorPoly, this->actor.floorBgId);
         if (D_808535F4 != 0) {
-            D_808535F8 = SurfaceType_IsConveyor(&globalCtx->colCtx, spC0, this->actor.floorBgId);
+            D_808535F8 = SurfaceType_IsConveyor(&globalCtx->colCtx, floorPoly, this->actor.floorBgId);
             if (((D_808535F8 == 0) && (this->actor.yDistToWater > 20.0f) &&
                  (this->currentBoots != PLAYER_BOOTS_IRON)) ||
                 ((D_808535F8 != 0) && (this->actor.bgCheckFlags & 1))) {
-                D_808535FC = SurfaceType_GetConveyorDirection(&globalCtx->colCtx, spC0, this->actor.floorBgId) << 10;
+                D_808535FC = SurfaceType_GetConveyorDirection(&globalCtx->colCtx, floorPoly, this->actor.floorBgId) << 10;
             } else {
                 D_808535F4 = 0;
             }
         }
     }
 
-    func_80839034(globalCtx, this, spC0, this->actor.floorBgId);
+    func_80839034(globalCtx, this, floorPoly, this->actor.floorBgId);
 
     this->actor.bgCheckFlags &= ~0x200;
 
     if (this->actor.bgCheckFlags & 8) {
         CollisionPoly* wallPoly;
         s32 wallBgId;
-        s16 sp9A;
+        s16 yawToWall;
         s32 pad;
 
         D_80854798.y = 18.0f;
@@ -9498,17 +9499,17 @@ void func_80847BA0(GlobalContext* globalCtx, Player* this) {
             }
         }
 
-        sp9A = this->actor.shape.rot.y - (s16)(this->actor.wallYaw + 0x8000);
+        yawToWall = this->actor.shape.rot.y - (s16)(this->actor.wallYaw + 0x8000);
 
         sWallFlags = SurfaceType_GetWallFlags(&globalCtx->colCtx, this->actor.wallPoly, this->actor.wallBgId);
 
-        D_80853608 = ABS(sp9A);
+        sShapeYawToWall = ABS(yawToWall);
 
-        sp9A = this->currentYaw - (s16)(this->actor.wallYaw + 0x8000);
+        yawToWall = this->currentYaw - (s16)(this->actor.wallYaw + 0x8000);
 
-        D_8085360C = ABS(sp9A);
+        sCurrentYawToWall = ABS(yawToWall);
 
-        spB0 = D_8085360C * 0.00008f;
+        spB0 = sCurrentYawToWall * 0.00008f;
         if (!(this->actor.bgCheckFlags & 1) || spB0 >= 1.0f) {
             this->unk_880 = R_RUN_SPEED_LIMIT / 100.0f;
         } else {
@@ -9519,13 +9520,13 @@ void func_80847BA0(GlobalContext* globalCtx, Player* this) {
             }
         }
 
-        if ((this->actor.bgCheckFlags & 0x200) && (D_80853608 < 0x3000)) {
+        if ((this->actor.bgCheckFlags & 0x200) && (sShapeYawToWall < 0x3000)) {
             CollisionPoly* wallPoly = this->actor.wallPoly;
 
             if (ABS(wallPoly->normal.y) < 600) {
-                f32 sp8C = COLPOLY_GET_NORMAL(wallPoly->normal.x);
-                f32 sp88 = COLPOLY_GET_NORMAL(wallPoly->normal.y);
-                f32 sp84 = COLPOLY_GET_NORMAL(wallPoly->normal.z);
+                f32 wallXNorm = COLPOLY_GET_NORMAL(wallPoly->normal.x);
+                f32 wallYNorm = COLPOLY_GET_NORMAL(wallPoly->normal.y);
+                f32 wallZNorm = COLPOLY_GET_NORMAL(wallPoly->normal.z);
                 f32 wallHeight;
                 CollisionPoly* sp7C;
                 CollisionPoly* sp78;
@@ -9535,11 +9536,11 @@ void func_80847BA0(GlobalContext* globalCtx, Player* this) {
                 f32 sp60;
                 s32 temp3;
 
-                this->wallDistance = Math3D_UDistPlaneToPos(sp8C, sp88, sp84, wallPoly->dist, &this->actor.world.pos);
+                this->wallDistance = Math3D_UDistPlaneToPos(wallXNorm, wallYNorm, wallZNorm, wallPoly->dist, &this->actor.world.pos);
 
                 spB0 = this->wallDistance + 10.0f;
-                sp68.x = this->actor.world.pos.x - (spB0 * sp8C);
-                sp68.z = this->actor.world.pos.z - (spB0 * sp84);
+                sp68.x = this->actor.world.pos.x - (spB0 * wallXNorm);
+                sp68.z = this->actor.world.pos.z - (spB0 * wallZNorm);
                 sp68.y = this->actor.world.pos.y + this->ageProperties->unk_0C;
 
                 sp64 = BgCheck_EntityRaycastFloor1(&globalCtx->colCtx, &sp7C, &sp68);
@@ -9592,12 +9593,12 @@ void func_80847BA0(GlobalContext* globalCtx, Player* this) {
     }
 
     if (this->actor.bgCheckFlags & 1) {
-        D_808535E4 = func_80041D4C(&globalCtx->colCtx, spC0, this->actor.floorBgId);
+        D_808535E4 = func_80041D4C(&globalCtx->colCtx, floorPoly, this->actor.floorBgId);
 
         if (!func_80847A78(this)) {
-            f32 sp58;
-            f32 sp54;
-            f32 sp50;
+            f32 floorXNorm;
+            f32 floorYNormInv;
+            f32 floorZNorm;
             f32 sp4C;
             s32 pad2;
             f32 sp44;
@@ -9607,22 +9608,22 @@ void func_80847BA0(GlobalContext* globalCtx, Player* this) {
                 func_800434C8(&globalCtx->colCtx, this->actor.floorBgId);
             }
 
-            sp58 = COLPOLY_GET_NORMAL(spC0->normal.x);
-            sp54 = 1.0f / COLPOLY_GET_NORMAL(spC0->normal.y);
-            sp50 = COLPOLY_GET_NORMAL(spC0->normal.z);
+            floorXNorm = COLPOLY_GET_NORMAL(floorPoly->normal.x);
+            floorYNormInv = 1.0f / COLPOLY_GET_NORMAL(floorPoly->normal.y);
+            floorZNorm = COLPOLY_GET_NORMAL(floorPoly->normal.z);
 
             sp4C = Math_SinS(this->currentYaw);
             sp44 = Math_CosS(this->currentYaw);
 
-            this->unk_898 = Math_Atan2S(1.0f, (-(sp58 * sp4C) - (sp50 * sp44)) * sp54);
-            this->unk_89A = Math_Atan2S(1.0f, (-(sp58 * sp44) - (sp50 * sp4C)) * sp54);
+            this->unk_898 = Math_Atan2S(1.0f, (-(floorXNorm * sp4C) - (floorZNorm * sp44)) * floorYNormInv);
+            this->unk_89A = Math_Atan2S(1.0f, (-(floorXNorm * sp44) - (floorZNorm * sp4C)) * floorYNormInv);
 
             sp4C = Math_SinS(this->actor.shape.rot.y);
             sp44 = Math_CosS(this->actor.shape.rot.y);
 
-            D_80853610 = Math_Atan2S(1.0f, (-(sp58 * sp4C) - (sp50 * sp44)) * sp54);
+            D_80853610 = Math_Atan2S(1.0f, (-(floorXNorm * sp4C) - (floorZNorm * sp44)) * floorYNormInv);
 
-            func_8083E318(globalCtx, this, spC0);
+            func_8083E318(globalCtx, this, floorPoly);
         }
     } else {
         func_80847A78(this);
@@ -11171,12 +11172,13 @@ void Player_UpdateCrawlspace(Player* this, GlobalContext* globalCtx) {
 
     if (LinkAnimation_Update(globalCtx, &this->skelAnime)) {
         if (!(this->stateFlags1 & 1)) {
-            // While in a crawlspace, Players skeleton does not move
+            // While in a crawlspace, Player's skeleton does not move
             if (this->skelAnime.moveFlags != 0) {
                 this->skelAnime.moveFlags = 0;
                 return;
             }
 
+            // Move forward and back while inside the crawlspace
             if (!Player_IsLeavingCrawlspace(this, globalCtx)) {
                 this->linearVelocity = sControlInput->rel.stick_y * 0.03f;
             }
