@@ -95,8 +95,8 @@ AS         := $(MIPS_BINUTILS_PREFIX)as
 LD         := $(MIPS_BINUTILS_PREFIX)ld
 OBJCOPY    := $(MIPS_BINUTILS_PREFIX)objcopy
 OBJDUMP    := $(MIPS_BINUTILS_PREFIX)objdump
-EMULATOR = mupen64plus
-EMU_FLAGS = --noosd
+EMULATOR = m64p
+EMU_FLAGS =
 
 INC        := -Iinclude -Isrc -Ibuild -I.
 
