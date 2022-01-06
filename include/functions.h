@@ -2042,11 +2042,11 @@ void Audio_PlaySoundIncreasinglyTransposed(Vec3f* pos, s16 sfxId, u8* semitones)
 void Audio_ResetIncreasingTranspose(void);
 void Audio_PlaySoundTransposed(Vec3f* pos, u16 sfxId, s8 semitone);
 void func_800F4C58(Vec3f* pos, u16 sfxId, u8);
-void func_800F4E30(Vec3f* pos, f32);
-void Audio_ClearSariaBgm(void);
-void Audio_ClearSariaBgmAtPos(Vec3f* pos);
-void Audio_PlaySariaBgm(Vec3f* pos, u16 seqId, u16 distMax);
-void Audio_ClearSariaBgm2(void);
+void Audio_PlayMainBgmAtPos(Vec3f* pos, f32);
+void Audio_ClearRiverSoundBgm(void);
+void Audio_ClearRiverSoundBgmAtPos(Vec3f* pos);
+void Audio_PlaySubBgmAtPos(Vec3f* pos, u16 seqId, u16 distMax);
+void Audio_ClearRiverSoundBgm2(void);
 void func_800F5510(u16 seqId);
 void func_800F5550(u16 seqId);
 void func_800F574C(f32 arg0, u8 arg2);
