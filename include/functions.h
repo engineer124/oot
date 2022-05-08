@@ -1436,7 +1436,7 @@ void ShrinkWindow_SetCurrentVal(s32 nowVal);
 u32 ShrinkWindow_GetCurrentVal(void);
 void ShrinkWindow_Init(void);
 void ShrinkWindow_Destroy(void);
-void ShrinkWindow_Update(s32 updateRate);
+void ShrinkWindow_Update(s32 framerateDivisor);
 // ? DbCamera_AddVecSph(?);
 // ? DbCamera_CalcUpFromPitchYawRoll(?);
 // ? DbCamera_SetTextValue(?);

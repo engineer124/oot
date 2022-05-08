@@ -43,22 +43,16 @@ void ShrinkWindow_Destroy(void) {
     sShrinkWindowCurrentVal = 0;
 }
 
-void ShrinkWindow_Update(s32 updateRate) {
-    s32 off;
-
-    if (updateRate == 3) {
-        off = 10;
-    } else {
-        off = 30 / updateRate;
-    }
+void ShrinkWindow_Update(s32 framerateDivisor) {
+    s32 step = ((framerateDivisor == 3) ? 10 : 30 / framerateDivisor);
 
     if (sShrinkWindowCurrentVal < sShrinkWindowVal) {
         if (D_8012CED0 != 1) {
             D_8012CED0 = 1;
         }
 
-        if (sShrinkWindowCurrentVal + off < sShrinkWindowVal) {
-            sShrinkWindowCurrentVal += off;
+        if (sShrinkWindowCurrentVal + step < sShrinkWindowVal) {
+            sShrinkWindowCurrentVal += step;
         } else {
             sShrinkWindowCurrentVal = sShrinkWindowVal;
         }
@@ -67,8 +61,8 @@ void ShrinkWindow_Update(s32 updateRate) {
             D_8012CED0 = 2;
         }
 
-        if (sShrinkWindowVal < sShrinkWindowCurrentVal - off) {
-            sShrinkWindowCurrentVal -= off;
+        if (sShrinkWindowVal < sShrinkWindowCurrentVal - step) {
+            sShrinkWindowCurrentVal -= step;
         } else {
             sShrinkWindowCurrentVal = sShrinkWindowVal;
         }
@@ -92,6 +86,6 @@ void ShrinkWindow_Update(s32 updateRate) {
         HREG(83) = D_8012CED0;
         HREG(84) = sShrinkWindowCurrentVal;
         HREG(85) = sShrinkWindowVal;
-        HREG(86) = off;
+        HREG(86) = step;
     }
 }
