@@ -442,13 +442,13 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ u8 restart;
-    /* 0x01 */ u8 sampleDmaIndex;
+    /* 0x01 */ u8 prevSampleChunkIndex; // stores the sampleChunkIndex of the most recent dma request for sample chunks
     /* 0x02 */ u8 prevHeadsetPanRight;
     /* 0x03 */ u8 prevHeadsetPanLeft;
     /* 0x04 */ u8 reverbVol;
     /* 0x05 */ u8 numParts;
     /* 0x06 */ u16 samplePosFrac;
-    /* 0x08 */ s32 samplePosInt;
+    /* 0x08 */ s32 curSamplePos;
     /* 0x0C */ NoteSynthesisBuffers* synthesisBuffers;
     /* 0x10 */ s16 curVolLeft;
     /* 0x12 */ s16 curVolRight;
@@ -533,7 +533,7 @@ typedef struct Note {
     /* 0x90 */ Portamento portamento;
     /* 0x9C */ VibratoState vibratoState;
     /* 0xB8 */ char unk_B8[0x4];
-    /* 0xBC */ u32 unk_BC;
+    /* 0xBC */ u32 startSamplePos;
     /* 0xC0 */ NoteSubEu noteSubEu;
 } Note; // size = 0xE0
 
@@ -561,8 +561,8 @@ typedef struct {
     /* 0x08 */ u8 unk_08; // unused, set to zero
     /* 0x09 */ u8 numReverbs;
     /* 0x0C */ ReverbSettings* reverbSettings;
-    /* 0x10 */ u16 sampleDmaBufSize1;
-    /* 0x12 */ u16 sampleDmaBufSize2;
+    /* 0x10 */ u16 shortSampleChunkCacheEntrySize; // size of buffer in the audio misc pool to store small snippets of indivisual samples. Stored short-lived.
+    /* 0x12 */ u16 longSampleChunkCacheEntrySize; // size of buffer in the audio misc pool to store small snippets of indivisual samples. Stored long-lived.
     /* 0x14 */ u16 unk_14;
     /* 0x18 */ u32 persistentSeqMem;
     /* 0x1C */ u32 persistentFontMem;
@@ -621,6 +621,19 @@ typedef struct {
     /* 0x010 */ SampleCacheEntry entries[32];
     /* 0x290 */ s32 size;
 } AudioSampleCache; // size = 0x294
+
+/**
+ * MetaData for each of the sample chunk entry
+ */
+typedef struct {
+    /* 0x00 */ u8* ramAddr;
+    /* 0x04 */ u32 devAddr;
+    /* 0x08 */ u16 sizeUnused;
+    /* 0x0A */ u16 size;
+    /* 0x0C */ u8 unused;
+    /* 0x0D */ u8 reuseIndex; // position in SampleChunkReuse Pos, if ttl == 0
+    /* 0x0E */ u8 ttl; // time-to-live: duration after which the DMA can be discarded
+} SampleChunkCacheEntry; // size = 0x10
 
 typedef struct {
     /* 0x00*/ u32 numEntries;
@@ -747,16 +760,6 @@ typedef struct {
 } AudioTask; // size = 0x50
 
 typedef struct {
-    /* 0x00 */ u8* ramAddr;
-    /* 0x04 */ u32 devAddr;
-    /* 0x08 */ u16 sizeUnused;
-    /* 0x0A */ u16 size;
-    /* 0x0C */ u8 unused;
-    /* 0x0D */ u8 reuseIndex; // position in sSampleDmaReuseQueue1/2, if ttl == 0
-    /* 0x0E */ u8 ttl;        // duration after which the DMA can be discarded
-} SampleDma; // size = 0x10
-
-typedef struct {
     /* 0x0000 */ char unk_0000;
     /* 0x0001 */ s8 numSynthesisReverbs;
     /* 0x0002 */ u16 unk_2;
@@ -782,22 +785,22 @@ typedef struct {
     /* 0x1E38 */ OSMesg externalLoadMsgBuf[16];
     /* 0x1E78 */ OSMesgQueue preloadSampleQueue;
     /* 0x1E90 */ OSMesg preloadSampleMsgBuf[16];
-    /* 0x1ED0 */ OSMesgQueue currAudioFrameDmaQueue;
-    /* 0x1EE8 */ OSMesg currAudioFrameDmaMsgBuf[64];
-    /* 0x1FE8 */ OSIoMesg currAudioFrameDmaIoMsgBuf[64];
+    /* 0x1ED0 */ OSMesgQueue SampleChunkCacheMsgQueue;
+    /* 0x1EE8 */ OSMesg SampleChunkCacheMsgBuf[64];
+    /* 0x1FE8 */ OSIoMesg SampleChunkCacheIoMsg[64];
     /* 0x25E8 */ OSMesgQueue syncDmaQueue;
     /* 0x2600 */ OSMesg syncDmaMesg;
     /* 0x2604 */ OSIoMesg syncDmaIoMesg;
-    /* 0x261C */ SampleDma* sampleDmas;
-    /* 0x2620 */ u32 sampleDmaCount;
-    /* 0x2624 */ u32 sampleDmaListSize1;
-    /* 0x2628 */ s32 unused2628;
-    /* 0x262C */ u8 sampleDmaReuseQueue1[0x100]; // read pos <= write pos, wrapping mod 256
-    /* 0x272C */ u8 sampleDmaReuseQueue2[0x100];
-    /* 0x282C */ u8 sampleDmaReuseQueue1RdPos;
-    /* 0x282D */ u8 sampleDmaReuseQueue2RdPos;
-    /* 0x282E */ u8 sampleDmaReuseQueue1WrPos;
-    /* 0x282F */ u8 sampleDmaReuseQueue2WrPos;
+    /* 0x261C */ SampleChunkCacheEntry* sampleChunkEntries;
+    /* 0x2620 */ u32 numSampleChunks;
+    /* 0x2624 */ u32 numShortSampleChunks;
+    /* 0x2628 */ s32 sampleChunkUnused;
+    /* 0x262C */ u8 shortSampleChunkReuseQueue[0x100]; // read pos <= write pos, wrapping mod 256
+    /* 0x272C */ u8 longSampleChunkReuseQueue[0x100];
+    /* 0x282C */ u8 shortSampleChunkReuseRdPos; // Read position for short-lived sampleChunk
+    /* 0x282D */ u8 longSampleChunkReuseRdPos; // Read position for long-lived sampleChunk
+    /* 0x282E */ u8 shortSampleChunkReuseWrPos; // Write position for short-lived sampleChunk
+    /* 0x282F */ u8 longSampleChunkReuseWrPos; // Write position for long-lived sampleChunk
     /* 0x2830 */ AudioTable* sequenceTable;
     /* 0x2834 */ AudioTable* soundFontTable;
     /* 0x2838 */ AudioTable* sampleBankTable;
@@ -806,16 +809,16 @@ typedef struct {
     /* 0x2844 */ SoundFont* soundFonts;
     /* 0x2848 */ AudioBufferParameters audioBufferParameters;
     /* 0x2870 */ f32 unk_2870;
-    /* 0x2874 */ s32 sampleDmaBufSize1;
-    /* 0x2874 */ s32 sampleDmaBufSize2;
+    /* 0x2874 */ s32 shortSampleChunkCacheEntrySize;
+    /* 0x2874 */ s32 longSampleChunkCacheEntrySize;
     /* 0x287C */ char unk_287C[0x10];
-    /* 0x288C */ s32 sampleDmaBufSize;
+    /* 0x288C */ s32 sampleChunkCacheEntrySize;
     /* 0x2890 */ s32 maxAudioCmds;
     /* 0x2894 */ s32 numNotes;
     /* 0x2898 */ s16 tempoInternalToExternal;
     /* 0x289A */ s8 soundMode;
     /* 0x289C */ s32 totalTaskCount;
-    /* 0x28A0 */ s32 curAudioFrameDmaCount;
+    /* 0x28A0 */ s32 sampleChunkCacheCountPerFrame;
     /* 0x28A4 */ s32 rspTaskIdx;
     /* 0x28A8 */ s32 curAIBufIdx;
     /* 0x28AC */ Acmd* abiCmdBufs[2];

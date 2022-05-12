@@ -809,7 +809,7 @@ void AudioHeap_Init(void) {
     AudioSpec* spec;
 
     spec = &gAudioSpecs[gAudioContext.audioResetSpecIdToLoad];
-    gAudioContext.sampleDmaCount = 0;
+    gAudioContext.numSampleChunks = 0;
     gAudioContext.audioBufferParameters.frequency = spec->frequency;
     gAudioContext.audioBufferParameters.aiFrequency = osAiSetFrequency(gAudioContext.audioBufferParameters.frequency);
     gAudioContext.audioBufferParameters.samplesPerFrameTarget =
@@ -830,8 +830,8 @@ void AudioHeap_Init(void) {
         (1.0f / 256.0f) / gAudioContext.audioBufferParameters.updatesPerFrame;
     gAudioContext.audioBufferParameters.unk_24 = gAudioContext.audioBufferParameters.updatesPerFrame * 0.25f;
     gAudioContext.audioBufferParameters.updatesPerFrameInv = 1.0f / gAudioContext.audioBufferParameters.updatesPerFrame;
-    gAudioContext.sampleDmaBufSize1 = spec->sampleDmaBufSize1;
-    gAudioContext.sampleDmaBufSize2 = spec->sampleDmaBufSize2;
+    gAudioContext.shortSampleChunkCacheEntrySize = spec->shortSampleChunkCacheEntrySize;
+    gAudioContext.longSampleChunkCacheEntrySize = spec->longSampleChunkCacheEntrySize;
 
     gAudioContext.numNotes = spec->numNotes;
     gAudioContext.audioBufferParameters.numSequencePlayers = spec->numSequencePlayers;
@@ -982,7 +982,7 @@ void AudioHeap_Init(void) {
     }
 
     AudioHeap_InitSampleCaches(spec->persistentSampleCacheMem, spec->temporarySampleCacheMem);
-    AudioLoad_InitSampleDmaBuffers(gAudioContext.numNotes);
+    AudioLoad_InitSampleChunkCache(gAudioContext.numNotes);
     gAudioContext.preloadSampleStackTop = 0;
     AudioLoad_InitSlowLoads();
     AudioLoad_InitScriptLoads();
