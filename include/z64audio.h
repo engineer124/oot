@@ -616,6 +616,9 @@ typedef struct {
     /* 0x10 */ u32 size;
 } SampleCacheEntry; // size = 0x14
 
+/**
+ * MetaData for the cache that stores entire individual samples
+ */
 typedef struct {
     /* 0x000 */ AudioAllocPool pool;
     /* 0x010 */ SampleCacheEntry entries[32];
@@ -623,7 +626,7 @@ typedef struct {
 } AudioSampleCache; // size = 0x294
 
 /**
- * MetaData for each of the sample chunk entry
+ * MetaData for the cache that stores small chunks of individual samples
  */
 typedef struct {
     /* 0x00 */ u8* ramAddr;
