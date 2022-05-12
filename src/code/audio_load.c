@@ -70,7 +70,7 @@ void* sUnusedHandler = NULL;
 
 s32 gAudioContextInitalized = false;
 
-//==== Sample DMA ====//
+//==== Sample Chunk Cache ====//
 
 /**
  * This system is for loading raw sample data from rom into ram.
