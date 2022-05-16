@@ -2036,6 +2036,8 @@ void Audio_UpdateActiveSequences(void);
 u8 func_800FAD34(void);
 void Audio_ResetSequences(void);
 void Audio_ResetSequencesAndVolume(void);
+void AudioSeqCmdDebug_Update(void);
+void AudioSeqCmdDebug_Draw(GfxPrint* printer);
 void GfxPrint_SetColor(GfxPrint* this, u32 r, u32 g, u32 b, u32 a);
 void GfxPrint_SetPosPx(GfxPrint* this, s32 x, s32 y);
 void GfxPrint_SetPos(GfxPrint* this, s32 x, s32 y);

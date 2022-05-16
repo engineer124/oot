@@ -751,3 +751,518 @@ void Audio_ResetSequencesAndVolume(void) {
     }
     Audio_ResetSequences();
 }
+
+/* ====== CUSTOM DEBUG FOR Audio_QueueSeqCmd COMMANDS ====== */
+
+typedef enum {
+    /* 0x0 */ PAGE_SEQ,
+    /* 0x1 */ PAGE_PLAYER,
+    /* 0x2 */ PAGE_CHANNEL,
+    /* 0x3 */ PAGE_SETUP,
+    /* 0x4 */ PAGE_MISC,
+    /* 0x5 */ PAGE_MAX
+} SeqCmdDebugPage;
+
+typedef enum {
+    /* 0x0 */ PAGE_SEQ_TITLE,
+    /* 0x1 */ PAGE_SEQ_PLAY,
+    /* 0x2 */ PAGE_SEQ_STOP,
+    /* 0x3 */ PAGE_SEQ_QUEUE,
+    /* 0x4 */ PAGE_SEQ_UNQUEUE,
+    /* 0x5 */ PAGE_SEQ_MAX
+} SeqCmdDebugSeqPageCmd;
+
+u32 sSeqCmdDebugInputButtonPress = 0;
+u32 sSeqCmdDebugInputButtonLast = 0;
+s8 sSeqCmdDebugPage = PAGE_SEQ;
+u8 gIsSeqCmdDebugEnabled = false;
+
+// Current command selected
+s8 sSeqCmdDebugSeqCmdSel = PAGE_SEQ_TITLE; // on PAGE_SEQ
+s8 sSeqCmdDebugSeqCmdArgSel = 0;
+s8 sIsSeqCmdDebugSeqCmdArgSel = false;
+s8 sIsSeqCmdDebugSeqCmdArgAdj = false;
+s8 sIsSeqCmdDebugSeqCmdNumArgs[] = {0, 4, 2, 4, 3};
+
+s8 sSeqCmdDebugPlayerCmdSel = 0;  // on PAGE_PLAYER
+s8 sSeqCmdDebugChannelCmdSel = 0; // on PAGE_CHANNEL
+s8 sSeqCmdDebugSetupCmdSel = 0;   // on PAGE_SETUP
+s8 sSeqCmdDebugMiscCmdSel = 0;    // on PAGE_MISC
+
+char sSeqCmdDebugPlayerIndexStr[4][9] = { "MAIN BGM", "FANFARE", "SFX", "SUB BGM" };
+s8 sSeqCmdDebugPlayerIndex = SEQ_PLAYER_BGM_MAIN;
+u8 sSeqCmdDebugFadeTimer = 0;
+u8 sSeqCmdDebugSeqArgs = 0;
+u8 sSeqCmdDebugPriority = 0;
+s8 sSeqCmdDebugSeqId = 0;
+char sSeqNames[109][17] = {
+    "GENERAL_SFX",
+    "NATURE_AMBIENCE",
+    "FIELD_LOGIC",
+    "FIELD_INIT",
+    "FIELD_DEFAULT_1",
+    "FIELD_DEFAULT_2",
+    "FIELD_DEFAULT_3",
+    "FIELD_DEFAULT_4",
+    "FIELD_DEFAULT_5",
+    "FIELD_DEFAULT_6",
+    "FIELD_DEFAULT_7",
+    "FIELD_DEFAULT_8",
+    "FIELD_DEFAULT_9",
+    "FIELD_DEFAULT_A",
+    "FIELD_DEFAULT_B",
+    "FIELD_ENEMY_INIT",
+    "FIELD_ENEMY_1",
+    "FIELD_ENEMY_2",
+    "FIELD_ENEMY_3",
+    "FIELD_ENEMY_4",
+    "FIELD_STILL_1",
+    "FIELD_STILL_2",
+    "FIELD_STILL_3",
+    "FIELD_STILL_4",
+    "DUNGEON",
+    "KAKARIKO_ADULT",
+    "ENEMY",
+    "BOSS",
+    "INSIDE_DEKU_TREE",
+    "MARKET",
+    "TITLE",
+    "LINK_HOUSE",
+    "GAME_OVER",
+    "BOSS_CLEAR",
+    "ITEM_GET",
+    "OPENING_GANON",
+    "HEART_GET",
+    "OCA_LIGHT",
+    "JABU_JABU",
+    "KAKARIKO_KID",
+    "GREAT_FAIRY",
+    "ZELDA_THEME",
+    "FIRE_TEMPLE",
+    "OPEN_TRE_BOX",
+    "FOREST_TEMPLE",
+    "COURTYARD",
+    "GANON_TOWER",
+    "LONLON",
+    "GORON_CITY",
+    "FIELD_MORNING",
+    "SPIRITUAL_STONE",
+    "OCA_BOLERO",
+    "OCA_MINUET",
+    "OCA_SERENADE",
+    "OCA_REQUIEM",
+    "OCA_NOCTURNE",
+    "MINI_BOSS",
+    "SMALL_ITEM_GET",
+    "TEMPLE_OF_TIME",
+    "EVENT_CLEAR",
+    "KOKIRI",
+    "OCA_FAIRY_GET",
+    "SARIA_THEME",
+    "SPIRIT_TEMPLE",
+    "HORSE",
+    "HORSE_GOAL",
+    "INGO",
+    "MEDALLION_GET",
+    "OCA_SARIA",
+    "OCA_EPONA",
+    "OCA_ZELDA",
+    "OCA_SUNS",
+    "OCA_TIME",
+    "OCA_STORM",
+    "NAVI_OPENING",
+    "DEKU_TREE_CS",
+    "WINDMILL",
+    "HYRULE_CS",
+    "MINI_GAME",
+    "SHEIK",
+    "ZORA_DOMAIN",
+    "APPEAR",
+    "ADULT_LINK",
+    "MASTER_SWORD",
+    "INTRO_GANON",
+    "SHOP",
+    "CHAMBER_OF_SAGES",
+    "FILE_SELECT",
+    "ICE_CAVERN",
+    "DOOR_OF_TIME",
+    "OWL",
+    "SHADOW_TEMPLE",
+    "WATER_TEMPLE",
+    "BRIDGE_TO_GANONS",
+    "OCARINA_OF_TIME",
+    "GERUDO_VALLEY",
+    "POTION_SHOP",
+    "KOTAKE_KOUME",
+    "ESCAPE",
+    "UNDERGROUND",
+    "GANONDORF_BOSS",
+    "GANON_BOSS",
+    "END_DEMO",
+    "STAFF_1",
+    "STAFF_2",
+    "STAFF_3",
+    "STAFF_4",
+    "FIRE_BOSS",
+    "TIMED_MINI_GAME"
+};
+
+void AudioSeqCmdDebug_ReadControllerInput(void) {
+    Input inputs[4];
+    Input* input = &inputs[0];
+    u32 btn;
+
+    PadMgr_RequestPadData(&gPadMgr, inputs, 0);
+
+    btn = input->cur.button;
+    sSeqCmdDebugInputButtonPress = (btn ^ sSeqCmdDebugInputButtonLast) & btn;
+    sSeqCmdDebugInputButtonLast = btn;
+}
+
+void AudioSeqCmdDebug_UpdatePageSeq(void) {
+    if (!sIsSeqCmdDebugSeqCmdArgAdj) {
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+            if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_TITLE) {
+                sSeqCmdDebugPage++;
+                if (sSeqCmdDebugPage >= PAGE_MAX) {
+                    sSeqCmdDebugPage = PAGE_SEQ;
+                }
+            } else {
+                sIsSeqCmdDebugSeqCmdArgSel = true;
+                sSeqCmdDebugSeqCmdArgSel = 0;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+            if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_TITLE) {
+                sSeqCmdDebugPage--;
+                if (sSeqCmdDebugPage < 0) {
+                    sSeqCmdDebugPage = PAGE_MAX - 1;
+                }
+            } else {
+                sIsSeqCmdDebugSeqCmdArgSel = false;
+            }
+        }
+    }
+
+    // In left column (commands)
+    if (!sIsSeqCmdDebugSeqCmdArgSel) {
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
+            switch (sSeqCmdDebugSeqCmdSel) {
+                case PAGE_SEQ_PLAY:
+                    AudioSeqCmd_PlaySequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugFadeTimer, sSeqCmdDebugSeqArgs, sSeqCmdDebugSeqId);
+                    break;
+                case PAGE_SEQ_STOP:
+                    AudioSeqCmd_StopSequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugFadeTimer);
+                    break;
+                case PAGE_SEQ_QUEUE:
+                    break;
+                case PAGE_SEQ_UNQUEUE:
+                    break;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+            sSeqCmdDebugSeqCmdSel--;
+            if (sSeqCmdDebugSeqCmdSel < 0) {
+                sSeqCmdDebugSeqCmdSel = PAGE_SEQ_MAX - 1;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+            sSeqCmdDebugSeqCmdSel++;
+            if (sSeqCmdDebugSeqCmdSel >= PAGE_SEQ_MAX) {
+                sSeqCmdDebugSeqCmdSel = 0;
+            }
+        }
+    } else {
+        // In right column (arguments)
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
+            sIsSeqCmdDebugSeqCmdArgAdj ^= 1;
+        }
+        if (!sIsSeqCmdDebugSeqCmdArgAdj) {
+            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                sSeqCmdDebugSeqCmdArgSel--;
+                if (sSeqCmdDebugSeqCmdArgSel < 0) {
+                    sSeqCmdDebugSeqCmdArgSel = sIsSeqCmdDebugSeqCmdNumArgs[sSeqCmdDebugSeqCmdSel] - 1;
+                }
+            }
+            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                sSeqCmdDebugSeqCmdArgSel++;
+                if (sSeqCmdDebugSeqCmdArgSel >= sIsSeqCmdDebugSeqCmdNumArgs[sSeqCmdDebugSeqCmdSel]) {
+                    sSeqCmdDebugSeqCmdArgSel = 0;
+                }
+            }
+        } else {
+            switch (sSeqCmdDebugSeqCmdSel) {
+                case PAGE_SEQ_PLAY:
+                    switch (sSeqCmdDebugSeqCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugFadeTimer++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugFadeTimer--;
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugSeqArgs++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugSeqArgs--;
+                            }
+                            break;
+
+                        case 3:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugSeqId++;
+                                if (sSeqCmdDebugSeqId >= 109) {
+                                    sSeqCmdDebugSeqId = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugSeqId--;
+                                if (sSeqCmdDebugSeqId < 0) {
+                                    sSeqCmdDebugSeqId = 108;
+                                }
+                            }
+                            break;
+                    }
+                    break;
+
+                case PAGE_SEQ_STOP:
+                    break;
+                    
+                case PAGE_SEQ_QUEUE:
+                    break;
+
+                case PAGE_SEQ_UNQUEUE:
+                    break;
+            }
+        }
+    }
+}
+
+void AudioSeqCmdDebug_UpdatePage(void) {
+    switch (sSeqCmdDebugPage) {
+        case PAGE_SEQ:
+            AudioSeqCmdDebug_UpdatePageSeq();
+            break;
+
+        case PAGE_PLAYER:
+            break;
+
+        case PAGE_CHANNEL:
+            break;
+
+        case PAGE_SETUP:
+            break;
+
+        case PAGE_MISC:
+            break;
+    }
+}
+
+void AudioSeqCmdDebug_Update(void) {
+
+    AudioSeqCmdDebug_ReadControllerInput();
+
+    if (CHECK_BTN_ALL(sSeqCmdDebugInputButtonPress, BTN_L | BTN_R)) {
+        gIsSeqCmdDebugEnabled ^= 1;
+    }
+
+    if (gIsSeqCmdDebugEnabled) {
+        AudioSeqCmdDebug_UpdatePage();
+    }
+}
+
+void AudioSeqCmdDebug_DrawPageSeq(GfxPrint* printer) {
+    // Draw Page Title
+    if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_TITLE) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 7);
+    GfxPrint_Printf(printer, "Sequence SeqCmds");
+
+    // Draw Command Options
+    if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_PLAY) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 10);
+    GfxPrint_Printf(printer, "Play Seq");
+
+    if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_STOP) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 12);
+    GfxPrint_Printf(printer, "Stop Seq");
+
+    if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_QUEUE) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 14);
+    GfxPrint_Printf(printer, "Queue Seq");
+
+    if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_UNQUEUE) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 16);
+    GfxPrint_Printf(printer, "Unqueue Seq");
+
+    // Draw Arguments
+    if (sSeqCmdDebugSeqCmdSel != 0) {
+        if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 0)) {
+            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+        } else {
+            GfxPrint_SetColor(printer, 255, 255, 255, 0);
+        }
+        GfxPrint_SetPos(printer, 20, 10);
+        GfxPrint_Printf(printer, "playerIndex:");
+        GfxPrint_SetColor(printer, 200, 200, 200, 0);
+        GfxPrint_SetPos(printer, 23, 12);
+        GfxPrint_Printf(printer, "%s", sSeqCmdDebugPlayerIndexStr[sSeqCmdDebugPlayerIndex]);
+
+        if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 1)) {
+            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+        } else {
+            GfxPrint_SetColor(printer, 255, 255, 255, 0);
+        }
+        GfxPrint_SetPos(printer, 20, 14);
+        GfxPrint_Printf(printer, "fadeTimer: %d", sSeqCmdDebugFadeTimer);
+    }
+    switch (sSeqCmdDebugSeqCmdSel) {
+        case PAGE_SEQ_PLAY:
+            if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 16);
+            GfxPrint_Printf(printer, "seqArgs: %d", sSeqCmdDebugSeqArgs);
+
+            if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 3)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "seqId:");
+            GfxPrint_SetColor(printer, 200, 200, 200, 0);
+            GfxPrint_SetPos(printer, 23, 20);
+            GfxPrint_Printf(printer, "%s", sSeqNames[sSeqCmdDebugSeqId]);
+            break;
+
+        case PAGE_SEQ_STOP:
+            break;
+
+        case PAGE_SEQ_QUEUE:
+            if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 16);
+            GfxPrint_Printf(printer, "priority: %d", sSeqCmdDebugPriority);
+
+            if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 3)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "seqId:");
+            GfxPrint_SetColor(printer, 200, 200, 200, 0);
+            GfxPrint_SetPos(printer, 23, 20);
+            GfxPrint_Printf(printer, "%s", sSeqNames[sSeqCmdDebugSeqId]);
+            break;
+
+        case PAGE_SEQ_UNQUEUE:
+            if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 16);
+            GfxPrint_Printf(printer, "seqId:");
+            GfxPrint_SetColor(printer, 200, 200, 200, 0);
+            GfxPrint_SetPos(printer, 23, 18);
+            GfxPrint_Printf(printer, "%s", sSeqNames[sSeqCmdDebugSeqId]);
+            break;
+    }
+}
+
+void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
+    GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    GfxPrint_SetPos(printer, 2, 3);
+    GfxPrint_Printf(printer, "Player SeqCmds");
+}
+
+void AudioSeqCmdDebug_DrawPageChannel(GfxPrint* printer) {
+    GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    GfxPrint_SetPos(printer, 2, 3);
+    GfxPrint_Printf(printer, "Channel SeqCmds");
+}
+
+void AudioSeqCmdDebug_DrawPageSetup(GfxPrint* printer) {
+    GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    GfxPrint_SetPos(printer, 2, 3);
+    GfxPrint_Printf(printer, "Setup SeqCmds");
+}
+
+void AudioSeqCmdDebug_DrawPageMisc(GfxPrint* printer) {
+    GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    GfxPrint_SetPos(printer, 2, 3);
+    GfxPrint_Printf(printer, "Misc SeqCmds");
+}
+
+void AudioSeqCmdDebug_Draw(GfxPrint* printer) {
+    GfxPrint_SetColor(printer, 0, 255, 0, 255);
+    GfxPrint_SetPos(printer, 17, 0);
+    GfxPrint_Printf(printer, "Audio SeqCmd Debug Mode");
+
+    switch (sSeqCmdDebugPage) {
+        case PAGE_SEQ:
+            AudioSeqCmdDebug_DrawPageSeq(printer);
+            break;
+
+        case PAGE_PLAYER:
+            AudioSeqCmdDebug_DrawPagePlayer(printer);
+            break;
+
+        case PAGE_CHANNEL:
+            AudioSeqCmdDebug_DrawPageChannel(printer);
+            break;
+
+        case PAGE_SETUP:
+            AudioSeqCmdDebug_DrawPageSetup(printer);
+            break;
+
+        case PAGE_MISC:
+            AudioSeqCmdDebug_DrawPageMisc(printer);
+            break;
+    }
+}

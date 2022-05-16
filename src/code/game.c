@@ -168,6 +168,16 @@ void GameState_Draw(GameState* gameState, GraphicsContext* gfxCtx) {
         GfxPrint_Destroy(&printer);
     }
 
+    if (gIsSeqCmdDebugEnabled) {
+        GfxPrint printer;
+
+        GfxPrint_Init(&printer);
+        GfxPrint_Open(&printer, newDList);
+        AudioSeqCmdDebug_Draw(&printer);
+        newDList = GfxPrint_Close(&printer);
+        GfxPrint_Destroy(&printer);
+    }
+
     if (R_ENABLE_ARENA_DBG < 0) {
         s32 pad;
 

@@ -3693,6 +3693,7 @@ void func_800F3054(void) {
         AudioDebug_SetInput();
         AudioDebug_ProcessInput();
         Audio_ScheduleProcessCmds();
+        AudioSeqCmdDebug_Update();
         sAudioUpdateTaskEnd = gAudioContext.totalTaskCount;
         sAudioUpdateEndTime = osGetTime();
     }
@@ -4610,9 +4611,9 @@ void func_800F574C(f32 arg0, u8 arg2) {
     if (arg0 == 1.0f) {
         AudioSeqCmd_ResetTempo(SEQ_PLAYER_BGM_MAIN, arg2);
     } else {
-        AudioSeqCmd_SetupScaleTempo(SEQ_PLAYER_FANFARE, 0, arg2, arg0 * 100.0f);
+        AudioSeqCmd_SetupScaleTempo(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, arg2, arg0 * 100.0f);
     }
-    AudioSeqCmd_SetupSetPlayerFreq(SEQ_PLAYER_FANFARE, 0, arg2, arg0 * 100.0f);
+    AudioSeqCmd_SetupSetPlayerFreq(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, arg2, arg0 * 100.0f);
 }
 
 void func_800F5918(void) {
@@ -4755,15 +4756,15 @@ void func_800F5CF8(void) {
             if (sp26 == NA_BGM_DISABLED) {
                 Audio_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, 1, 0, 5);
                 Audio_SetVolumeScale(SEQ_PLAYER_BGM_SUB, 1, 0, 5);
-                AudioSeqCmd_SetupSetPlayerVolumeWithFade(SEQ_PLAYER_FANFARE, 0, 1, 10);
-                AudioSeqCmd_SetupSetPlayerVolumeWithFade(SEQ_PLAYER_FANFARE, 3, 1, 10);
-                AudioSeqCmd_SetupSetActiveChannels(SEQ_PLAYER_FANFARE, 0, 0);
+                AudioSeqCmd_SetupSetPlayerVolumeWithFade(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, 1, 10);
+                AudioSeqCmd_SetupSetPlayerVolumeWithFade(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_SUB, 1, 10);
+                AudioSeqCmd_SetupSetActiveChannels(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, 0);
                 if (sp22 != NA_BGM_LONLON) {
-                    AudioSeqCmd_SetupSetActiveChannels(SEQ_PLAYER_FANFARE, 3, 0);
+                    AudioSeqCmd_SetupSetActiveChannels(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_SUB, 0);
                 }
             }
             AudioSeqCmd_PlaySequence(SEQ_PLAYER_FANFARE, 1, 0, D_8016B9F6);
-            AudioSeqCmd_SetActiveChannels(0, 0xFFFF);
+            AudioSeqCmd_SetActiveChannels(SEQ_PLAYER_BGM_MAIN, 0xFFFF);
             if (sp22 != NA_BGM_LONLON) {
                 AudioSeqCmd_SetActiveChannels(SEQ_PLAYER_BGM_SUB, 0xFFFF);
             }
