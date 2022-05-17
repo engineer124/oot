@@ -678,7 +678,7 @@ void Audio_UpdateActiveSequences(void) {
 
                     case SETUP_CMD_SEQ_ACTIVE_CHANNELS:
                         channelMask = gActiveSeqs[playerIndex].setupCmd[j] & 0xFFFF;
-                        AudioSeqCmd_SetActiveChannels(setupPlayerIndex, channelMask);
+                        AudioSeqCmd_DisableChannels(setupPlayerIndex, channelMask);
                         break;
 
                     case SETUP_CMD_SET_PLAYER_FREQ:
@@ -758,9 +758,10 @@ typedef enum {
     /* 0x0 */ PAGE_SEQ,
     /* 0x1 */ PAGE_PLAYER,
     /* 0x2 */ PAGE_CHANNEL,
-    /* 0x3 */ PAGE_SETUP,
-    /* 0x4 */ PAGE_MISC,
-    /* 0x5 */ PAGE_MAX
+    /* 0x3 */ PAGE_SETUP1,
+    /* 0x4 */ PAGE_SETUP2,
+    /* 0x5 */ PAGE_MISC,
+    /* 0x6 */ PAGE_MAX
 } SeqCmdDebugPage;
 
 typedef enum {
@@ -777,24 +778,100 @@ u32 sSeqCmdDebugInputButtonLast = 0;
 s8 sSeqCmdDebugPage = PAGE_SEQ;
 u8 gIsSeqCmdDebugEnabled = false;
 
+// Sequence Page Menuing
 // Current command selected
 s8 sSeqCmdDebugSeqCmdSel = PAGE_SEQ_TITLE; // on PAGE_SEQ
 s8 sSeqCmdDebugSeqCmdArgSel = 0;
 s8 sIsSeqCmdDebugSeqCmdArgSel = false;
 s8 sIsSeqCmdDebugSeqCmdArgAdj = false;
-s8 sIsSeqCmdDebugSeqCmdNumArgs[] = {0, 4, 2, 4, 3};
+s8 sIsSeqCmdDebugSeqCmdNumArgs[] = { 0, 4, 2, 4, 3 };
 
-s8 sSeqCmdDebugPlayerCmdSel = 0;  // on PAGE_PLAYER
+// Player Page Menuing
+s8 sSeqCmdDebugPlayerCmdSel = 0; // on PAGE_PLAYER
+s8 sSeqCmdDebugPlayerCmdArgSel = 0;
+s8 sIsSeqCmdDebugPlayerCmdArgSel = false;
+s8 sIsSeqCmdDebugPlayerCmdArgAdj = 0;
+s8 sIsSeqCmdDebugPlayerCmdNumArgs[] = { 0, 3, 3, 3, 3, 3, 3, 3, 2, 3 };
+
+// Channel Page Menuing
 s8 sSeqCmdDebugChannelCmdSel = 0; // on PAGE_CHANNEL
-s8 sSeqCmdDebugSetupCmdSel = 0;   // on PAGE_SETUP
-s8 sSeqCmdDebugMiscCmdSel = 0;    // on PAGE_MISC
+s8 sSeqCmdDebugChannelCmdArgSel = 0;
+s8 sIsSeqCmdDebugChannelCmdArgSel = false;
+s8 sIsSeqCmdDebugChannelCmdArgAdj = 0;
+s8 sIsSeqCmdDebugChannelCmdNumArgs[] = { 0, 4, 4, 4, 2, 2 };
+
+// Setup Page Menuing
+s8 sSeqCmdDebugSetup1CmdSel = 0; // on PAGE_SETUP1
+s8 sSeqCmdDebugSetup1CmdArgSel = 0;
+s8 sIsSeqCmdDebugSetup1CmdArgSel = false;
+s8 sIsSeqCmdDebugSetup1CmdArgAdj = 0;
+s8 sIsSeqCmdDebugSetup1CmdNumArgs[] = { 0, 3, 1, 2, 4, 3, 3 };
+
+// Setup Page Menuing
+s8 sSeqCmdDebugSetup2CmdSel = 0; // on PAGE_SETUP1
+s8 sSeqCmdDebugSetup2CmdArgSel = 0;
+s8 sIsSeqCmdDebugSetup2CmdArgSel = false;
+s8 sIsSeqCmdDebugSetup2CmdArgAdj = 0;
+s8 sIsSeqCmdDebugSetup2CmdNumArgs[] = { 0, 3, 4, 4, 3, 4, 3, 1 };
+
+// Misc Page Menuing
+s8 sSeqCmdDebugMiscCmdSel = 0; // on PAGE_MISC
+s8 sSeqCmdDebugMiscCmdArgSel = 0;
+s8 sIsSeqCmdDebugMiscCmdArgSel = false;
+s8 sIsSeqCmdDebugMiscCmdArgAdj = 0;
+s8 sIsSeqCmdDebugMiscCmdNumArgs[] = { 0, 1, 1, 2 };
+
+// Previous Command (to Display)
+u32 sSeqCmdDebugCmd = 0;
 
 char sSeqCmdDebugPlayerIndexStr[4][9] = { "MAIN BGM", "FANFARE", "SFX", "SUB BGM" };
 s8 sSeqCmdDebugPlayerIndex = SEQ_PLAYER_BGM_MAIN;
+
+// sequence args
 u8 sSeqCmdDebugFadeTimer = 0;
 u8 sSeqCmdDebugSeqArgs = 0;
 u8 sSeqCmdDebugPriority = 0;
 s8 sSeqCmdDebugSeqId = 0;
+
+// player args
+u8 sSeqCmdDebugDuration = 0;
+s8 sSeqCmdDebugPort = 0;
+u8 sSeqCmdDebugVal = 0;
+u8 sSeqCmdDebugVolume = 127;
+u16 sSeqCmdDebugFreq = 1000;
+u8 sSeqCmdDebugTempoAbs = 120;
+u8 sSeqCmdDebugTempoRel = 0;
+u8 sSeqCmdDebugTempoScale = 100;
+
+// channel args
+s8 sSeqCmdDebugChannelIndex = 0;
+u16 sSeqCmdDebugChannelMask = 0;
+s8 sSeqCmdDebugChannelMaskToggle = 0;
+// Hack to print in binary
+#define BYTE_TO_BINARY_PATTERN "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c"
+#define BYTE_TO_BINARY(byte)                                                                                          \
+    (byte & 0x8000 ? '1' : '0'), (byte & 0x4000 ? '1' : '0'), (byte & 0x2000 ? '1' : '0'),                            \
+        (byte & 0x1000 ? '1' : '0'), (byte & 0x800 ? '1' : '0'), (byte & 0x400 ? '1' : '0'),                          \
+        (byte & 0x200 ? '1' : '0'), (byte & 0x100 ? '1' : '0'), (byte & 0x80 ? '1' : '0'), (byte & 0x40 ? '1' : '0'), \
+        (byte & 0x20 ? '1' : '0'), (byte & 0x10 ? '1' : '0'), (byte & 0x08 ? '1' : '0'), (byte & 0x04 ? '1' : '0'),   \
+        (byte & 0x02 ? '1' : '0'), (byte & 0x01 ? '1' : '0')
+
+// setup args
+s8 sSeqCmdDebugPlayerTargetIndex = 0;
+u8 sSeqCmdDebugNumSeq = 0;
+u8 sSeqCmdDebugVolumeScale = 0;
+u8 sSeqCmdDebugTableTypeFlag = 0;
+s8 sSeqCmdDebugSoundMode = 0;
+u8 sSeqCmdDebugIsSeqDisabled = false;
+s8 sSeqCmdDebugSfxChannelLayout = 0;
+s8 sSeqCmdDebugSpecId = 0;
+
+char sSoundModeNamesDebug[4][8] = {
+    "STEREO",
+    "HEADSET",
+    "UNK",
+    "MONO",
+};
 char sSeqNames[109][17] = {
     "GENERAL_SFX",
     "NATURE_AMBIENCE",
@@ -904,7 +981,7 @@ char sSeqNames[109][17] = {
     "STAFF_3",
     "STAFF_4",
     "FIRE_BOSS",
-    "TIMED_MINI_GAME"
+    "TIMED_MINI_GAME",
 };
 
 void AudioSeqCmdDebug_ReadControllerInput(void) {
@@ -949,14 +1026,31 @@ void AudioSeqCmdDebug_UpdatePageSeq(void) {
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
             switch (sSeqCmdDebugSeqCmdSel) {
                 case PAGE_SEQ_PLAY:
-                    AudioSeqCmd_PlaySequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugFadeTimer, sSeqCmdDebugSeqArgs, sSeqCmdDebugSeqId);
+                    AudioSeqCmd_PlaySequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugFadeTimer, sSeqCmdDebugSeqArgs,
+                                             sSeqCmdDebugSeqId);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_START << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((u8)(sSeqCmdDebugFadeTimer) << 16) | ((u8)(sSeqCmdDebugSeqArgs) << 8) |
+                                       (u16)(sSeqCmdDebugSeqId));
                     break;
+
                 case PAGE_SEQ_STOP:
                     AudioSeqCmd_StopSequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugFadeTimer);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_STOP << 28) | 0xFF | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((u8)(sSeqCmdDebugFadeTimer) << 16));
                     break;
+
                 case PAGE_SEQ_QUEUE:
+                    AudioSeqCmd_QueueSequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugFadeTimer, sSeqCmdDebugPriority,
+                                              sSeqCmdDebugSeqId);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_QUEUE << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((u8)(sSeqCmdDebugFadeTimer) << 16) | ((u8)(sSeqCmdDebugPriority) << 8) |
+                                       (u8)(sSeqCmdDebugSeqId));
                     break;
+
                 case PAGE_SEQ_UNQUEUE:
+                    AudioSeqCmd_UnqueueSequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugFadeTimer, sSeqCmdDebugSeqId);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_UNQUEUE << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((u8)(sSeqCmdDebugFadeTimer) << 16) | (sSeqCmdDebugSeqId));
                     break;
             }
         }
@@ -1016,6 +1110,12 @@ void AudioSeqCmdDebug_UpdatePageSeq(void) {
                             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
                                 sSeqCmdDebugFadeTimer--;
                             }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugFadeTimer += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugFadeTimer -= 10;
+                            }
                             break;
 
                         case 2:
@@ -1025,32 +1125,1997 @@ void AudioSeqCmdDebug_UpdatePageSeq(void) {
                             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
                                 sSeqCmdDebugSeqArgs--;
                             }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugSeqArgs += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugSeqArgs -= 10;
+                            }
                             break;
 
                         case 3:
                             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
                                 sSeqCmdDebugSeqId++;
-                                if (sSeqCmdDebugSeqId >= 109) {
-                                    sSeqCmdDebugSeqId = 0;
-                                }
                             }
                             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
                                 sSeqCmdDebugSeqId--;
-                                if (sSeqCmdDebugSeqId < 0) {
-                                    sSeqCmdDebugSeqId = 108;
-                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugSeqId += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugSeqId -= 10;
+                            }
+                            if (sSeqCmdDebugSeqId > 108) {
+                                sSeqCmdDebugSeqId = 0;
+                            }
+                            if (sSeqCmdDebugSeqId < 0) {
+                                sSeqCmdDebugSeqId = 108;
                             }
                             break;
                     }
                     break;
 
                 case PAGE_SEQ_STOP:
+                    switch (sSeqCmdDebugSeqCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugFadeTimer++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugFadeTimer--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugFadeTimer += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugFadeTimer -= 10;
+                            }
+                            break;
+                    }
                     break;
-                    
+
                 case PAGE_SEQ_QUEUE:
+                    switch (sSeqCmdDebugSeqCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugFadeTimer++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugFadeTimer--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugFadeTimer += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugFadeTimer -= 10;
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPriority++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPriority--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugPriority += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugPriority -= 10;
+                            }
+                            break;
+
+                        case 3:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugSeqId++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugSeqId--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugSeqId += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugSeqId -= 10;
+                            }
+                            if (sSeqCmdDebugSeqId > 108) {
+                                sSeqCmdDebugSeqId = 0;
+                            }
+                            if (sSeqCmdDebugSeqId < 0) {
+                                sSeqCmdDebugSeqId = 108;
+                            }
+                            break;
+                    }
                     break;
 
                 case PAGE_SEQ_UNQUEUE:
+                    switch (sSeqCmdDebugSeqCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugFadeTimer++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugFadeTimer--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugFadeTimer += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugFadeTimer -= 10;
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugSeqId++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugSeqId--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugSeqId += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugSeqId -= 10;
+                            }
+                            if (sSeqCmdDebugSeqId > 108) {
+                                sSeqCmdDebugSeqId = 0;
+                            }
+                            if (sSeqCmdDebugSeqId < 0) {
+                                sSeqCmdDebugSeqId = 108;
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+void AudioSeqCmdDebug_UpdatePagePlayer(void) {
+
+    // Move left-right
+    if (!sIsSeqCmdDebugPlayerCmdArgAdj) {
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+            if (sSeqCmdDebugPlayerCmdSel == 0) {
+                sSeqCmdDebugPage++;
+                if (sSeqCmdDebugPage >= PAGE_MAX) {
+                    sSeqCmdDebugPage = PAGE_SEQ;
+                }
+            } else {
+                sIsSeqCmdDebugPlayerCmdArgSel = true;
+                sSeqCmdDebugPlayerCmdArgSel = 0;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+            if (sSeqCmdDebugPlayerCmdSel == PAGE_SEQ_TITLE) {
+                sSeqCmdDebugPage--;
+                if (sSeqCmdDebugPage < 0) {
+                    sSeqCmdDebugPage = PAGE_MAX - 1;
+                }
+            } else {
+                sIsSeqCmdDebugPlayerCmdArgSel = false;
+            }
+        }
+    }
+
+    // Move vertical in left column (commands)
+    if (!sIsSeqCmdDebugPlayerCmdArgSel) {
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
+            switch (sSeqCmdDebugPlayerCmdSel) {
+                case 1:
+                    AudioSeqCmd_SetPlayerVol(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugVolume);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SET_PLAYER_VOL << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((sSeqCmdDebugDuration) << 16) | (sSeqCmdDebugVolume));
+                    break;
+
+                case 2:
+                    AudioSeqCmd_SetPlayerFreq(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugFreq);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SET_PLAYER_FREQ << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((sSeqCmdDebugDuration) << 16) | (sSeqCmdDebugFreq));
+                    break;
+
+                case 3:
+                    AudioSeqCmd_SetTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugTempoAbs);
+                    sSeqCmdDebugCmd =
+                        ((SEQ_CMD_TEMPO_CMD << 28) | (TEMPO_CMD_SET << 12) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                         ((u8)(sSeqCmdDebugDuration) << 16) | (u16)(sSeqCmdDebugTempoAbs));
+                    break;
+
+                case 4:
+                    AudioSeqCmd_SpeedUpTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugTempoRel);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_TEMPO_CMD << 28) | (TEMPO_CMD_SPEED_UP << 12) |
+                                       ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugDuration) << 16) |
+                                       (u16)(sSeqCmdDebugTempoRel));
+                    break;
+
+                case 5:
+                    AudioSeqCmd_SlowDownTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugTempoRel);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_TEMPO_CMD << 28) | (TEMPO_CMD_SLOW_DOWN << 12) |
+                                       ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugDuration) << 16) |
+                                       (u16)(sSeqCmdDebugTempoRel));
+                    break;
+
+                case 6:
+                    AudioSeqCmd_ScaleTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugTempoScale);
+                    sSeqCmdDebugCmd =
+                        ((SEQ_CMD_TEMPO_CMD << 28) | (TEMPO_CMD_SCALE << 12) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                         ((u8)(sSeqCmdDebugDuration) << 16) | (u16)(sSeqCmdDebugTempoScale));
+                    break;
+
+                case 7:
+                    AudioSeqCmd_ResetTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_TEMPO_CMD << 28) | (TEMPO_CMD_RESET << 12) |
+                                       ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugDuration) << 16));
+                    break;
+
+                case 8:
+                    AudioSeqCmd_SetPlayerIO(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPort, sSeqCmdDebugVal);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SET_PLAYER_IO << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((u8)(sSeqCmdDebugPort) << 16) | (u8)(sSeqCmdDebugVal));
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+            sSeqCmdDebugPlayerCmdSel--;
+            if (sSeqCmdDebugPlayerCmdSel < 0) {
+                sSeqCmdDebugPlayerCmdSel = 8;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+            sSeqCmdDebugPlayerCmdSel++;
+            if (sSeqCmdDebugPlayerCmdSel >= 9) {
+                sSeqCmdDebugPlayerCmdSel = 0;
+            }
+        }
+    } else {
+        // In right column (arguments)
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
+            sIsSeqCmdDebugPlayerCmdArgAdj ^= 1;
+        }
+        if (!sIsSeqCmdDebugPlayerCmdArgAdj) {
+            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                sSeqCmdDebugPlayerCmdArgSel--;
+                if (sSeqCmdDebugPlayerCmdArgSel < 0) {
+                    sSeqCmdDebugPlayerCmdArgSel = sIsSeqCmdDebugPlayerCmdNumArgs[sSeqCmdDebugPlayerCmdSel] - 1;
+                }
+            }
+            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                sSeqCmdDebugPlayerCmdArgSel++;
+                if (sSeqCmdDebugPlayerCmdArgSel >= sIsSeqCmdDebugPlayerCmdNumArgs[sSeqCmdDebugPlayerCmdSel]) {
+                    sSeqCmdDebugPlayerCmdArgSel = 0;
+                }
+            }
+        } else {
+            switch (sSeqCmdDebugPlayerCmdSel) {
+                case 1:
+                    switch (sSeqCmdDebugPlayerCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugDuration++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugDuration--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugDuration += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugDuration -= 10;
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugVolume++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugVolume--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugVolume += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugVolume -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 2:
+                    switch (sSeqCmdDebugPlayerCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugDuration++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugDuration--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugDuration += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugDuration -= 10;
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugFreq++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugFreq--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugFreq += 100;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugFreq -= 100;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 3:
+                    switch (sSeqCmdDebugPlayerCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugDuration++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugDuration--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugDuration += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugDuration -= 10;
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugTempoAbs++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugTempoAbs--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugTempoAbs += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugTempoAbs -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 4:
+                case 5:
+                    switch (sSeqCmdDebugPlayerCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugDuration++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugDuration--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugDuration += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugDuration -= 10;
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugTempoRel++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugTempoRel--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugTempoRel += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugTempoRel -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 6:
+                    switch (sSeqCmdDebugPlayerCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugDuration++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugDuration--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugDuration += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugDuration -= 10;
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugTempoScale++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugTempoScale--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugTempoScale += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugTempoScale -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 7:
+                    switch (sSeqCmdDebugPlayerCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugDuration++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugDuration--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugDuration += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugDuration -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 8:
+                    switch (sSeqCmdDebugPlayerCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPort++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPort--;
+                            }
+                            if (sSeqCmdDebugPort >= 8) {
+                                sSeqCmdDebugPort = 0;
+                            }
+                            if (sSeqCmdDebugPort < 0) {
+                                sSeqCmdDebugPort = 7;
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugVal++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugVal--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugVal += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugVal -= 10;
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+// Move left-right
+void AudioSeqCmdDebug_UpdatePageChannel(void) {
+    if (!sIsSeqCmdDebugChannelCmdArgAdj) {
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+            if (sSeqCmdDebugChannelCmdSel == 0) {
+                sSeqCmdDebugPage++;
+                if (sSeqCmdDebugPage >= PAGE_MAX) {
+                    sSeqCmdDebugPage = PAGE_SEQ;
+                }
+            } else {
+                sIsSeqCmdDebugChannelCmdArgSel = true;
+                sSeqCmdDebugChannelCmdArgSel = 0;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+            if (sSeqCmdDebugChannelCmdSel == PAGE_SEQ_TITLE) {
+                sSeqCmdDebugPage--;
+                if (sSeqCmdDebugPage < 0) {
+                    sSeqCmdDebugPage = PAGE_MAX - 1;
+                }
+            } else {
+                sIsSeqCmdDebugChannelCmdArgSel = false;
+            }
+        }
+    }
+
+    // Move vertical in left column (commands)
+    if (!sIsSeqCmdDebugChannelCmdArgSel) {
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
+            switch (sSeqCmdDebugChannelCmdSel) {
+                case 1:
+                    AudioSeqCmd_SetChannelVol(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugChannelIndex,
+                                              sSeqCmdDebugVolume);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SET_CHANNEL_VOL << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((u8)(sSeqCmdDebugDuration) << 16) | ((u8)(sSeqCmdDebugChannelIndex) << 8) |
+                                       ((u8)sSeqCmdDebugVolume));
+                    break;
+
+                case 2:
+                    AudioSeqCmd_SetChannelFreq(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugChannelIndex,
+                                               sSeqCmdDebugFreq);
+                    sSeqCmdDebugCmd =
+                        ((SEQ_CMD_SET_CHANNEL_FREQ << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                         ((sSeqCmdDebugDuration) << 16) | ((sSeqCmdDebugChannelIndex) << 12) | (sSeqCmdDebugFreq));
+                    break;
+
+                case 3:
+                    AudioSeqCmd_SetChannelIO(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPort, sSeqCmdDebugChannelIndex,
+                                             sSeqCmdDebugVal);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SET_CHANNEL_IO << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((u8)(sSeqCmdDebugPort) << 16) | ((u8)(sSeqCmdDebugChannelIndex) << 8) |
+                                       (u8)(sSeqCmdDebugVal));
+                    break;
+
+                case 4:
+                    AudioSeqCmd_SetChannelIOMask(sSeqCmdDebugPlayerIndex, sSeqCmdDebugChannelMask);
+                    sSeqCmdDebugCmd = (_SHIFTL(SEQ_CMD_SET_CHANNEL_IO_MASK, 28, 4) |
+                                       ((u8)(sSeqCmdDebugPlayerIndex) << 24) | (u16)(sSeqCmdDebugChannelMask));
+                    break;
+
+                case 5:
+                    AudioSeqCmd_DisableChannels(sSeqCmdDebugPlayerIndex, sSeqCmdDebugChannelMask);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SET_ACTIVE_CHANNELS << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       (u16)(sSeqCmdDebugChannelMask));
+                    break;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+            sSeqCmdDebugChannelCmdSel--;
+            if (sSeqCmdDebugChannelCmdSel < 0) {
+                sSeqCmdDebugChannelCmdSel = 5;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+            sSeqCmdDebugChannelCmdSel++;
+            if (sSeqCmdDebugChannelCmdSel > 5) {
+                sSeqCmdDebugChannelCmdSel = 0;
+            }
+        }
+    } else {
+        // In right column (arguments)
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
+            sIsSeqCmdDebugChannelCmdArgAdj ^= 1;
+        }
+        if (!sIsSeqCmdDebugChannelCmdArgAdj) {
+            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                sSeqCmdDebugChannelCmdArgSel--;
+                if (sSeqCmdDebugChannelCmdArgSel < 0) {
+                    sSeqCmdDebugChannelCmdArgSel = sIsSeqCmdDebugChannelCmdNumArgs[sSeqCmdDebugChannelCmdSel] - 1;
+                }
+            }
+            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                sSeqCmdDebugChannelCmdArgSel++;
+                if (sSeqCmdDebugChannelCmdArgSel >= sIsSeqCmdDebugChannelCmdNumArgs[sSeqCmdDebugChannelCmdSel]) {
+                    sSeqCmdDebugChannelCmdArgSel = 0;
+                }
+            }
+        } else {
+            switch (sSeqCmdDebugChannelCmdSel) {
+                case 1:
+                    switch (sSeqCmdDebugChannelCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugChannelIndex++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugChannelIndex--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugChannelIndex += 4;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugChannelIndex -= 4;
+                            }
+                            if (sSeqCmdDebugChannelIndex >= 16) {
+                                sSeqCmdDebugChannelIndex = 0;
+                            }
+                            if (sSeqCmdDebugChannelIndex < 0) {
+                                sSeqCmdDebugChannelIndex = 15;
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugDuration++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugDuration--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugDuration += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugDuration -= 10;
+                            }
+                            break;
+
+                        case 3:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugVolume++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugVolume--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugVolume += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugVolume -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 2:
+                    switch (sSeqCmdDebugChannelCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugChannelIndex++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugChannelIndex--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugChannelIndex += 4;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugChannelIndex -= 4;
+                            }
+                            if (sSeqCmdDebugChannelIndex >= 16) {
+                                sSeqCmdDebugChannelIndex = 0;
+                            }
+                            if (sSeqCmdDebugChannelIndex < 0) {
+                                sSeqCmdDebugChannelIndex = 15;
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugDuration++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugDuration--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugDuration += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugDuration -= 10;
+                            }
+                            break;
+
+                        case 3:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugFreq++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugFreq--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugFreq += 100;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugFreq -= 100;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 3:
+                    switch (sSeqCmdDebugChannelCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugChannelIndex++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugChannelIndex--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugChannelIndex += 4;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugChannelIndex -= 4;
+                            }
+                            if (sSeqCmdDebugChannelIndex >= 16) {
+                                sSeqCmdDebugChannelIndex = 0;
+                            }
+                            if (sSeqCmdDebugChannelIndex < 0) {
+                                sSeqCmdDebugChannelIndex = 15;
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPort++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPort--;
+                            }
+                            if (sSeqCmdDebugPort >= 8) {
+                                sSeqCmdDebugPort = 0;
+                            }
+                            if (sSeqCmdDebugPort < 0) {
+                                sSeqCmdDebugPort = 7;
+                            }
+                            break;
+
+                        case 3:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugVal++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugVal--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugVal += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugVal -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 4:
+                case 5:
+                    switch (sSeqCmdDebugChannelCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugChannelMask |= 1 << sSeqCmdDebugChannelMaskToggle;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugChannelMask &= ~(1 << sSeqCmdDebugChannelMaskToggle);
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugChannelMaskToggle--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugChannelMaskToggle++;
+                            }
+                            sSeqCmdDebugChannelMaskToggle = CLAMP(sSeqCmdDebugChannelMaskToggle, 0, 15);
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+void AudioSeqCmdDebug_UpdatePageSetup1(void) {
+    if (!sIsSeqCmdDebugSetup1CmdArgAdj) {
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+            if (sSeqCmdDebugSetup1CmdSel == 0) {
+                sSeqCmdDebugPage++;
+                if (sSeqCmdDebugPage >= PAGE_MAX) {
+                    sSeqCmdDebugPage = PAGE_SEQ;
+                }
+            } else {
+                sIsSeqCmdDebugSetup1CmdArgSel = true;
+                sSeqCmdDebugSetup1CmdArgSel = 0;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+            if (sSeqCmdDebugSetup1CmdSel == PAGE_SEQ_TITLE) {
+                sSeqCmdDebugPage--;
+                if (sSeqCmdDebugPage < 0) {
+                    sSeqCmdDebugPage = PAGE_MAX - 1;
+                }
+            } else {
+                sIsSeqCmdDebugSetup1CmdArgSel = false;
+            }
+        }
+    }
+
+    // Move vertical in left column (commands)
+    if (!sIsSeqCmdDebugSetup1CmdArgSel) {
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
+            switch (sSeqCmdDebugSetup1CmdSel) {
+                case 1:
+                    AudioSeqCmd_SetupSetPlayerVolTimer(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                                       sSeqCmdDebugFadeTimer);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SET_VOLUME << 20) |
+                                       ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) | (u8)(sSeqCmdDebugFadeTimer));
+                    break;
+
+                case 2:
+                    AudioSeqCmd_SetupUnqueueSequence(sSeqCmdDebugPlayerTargetIndex);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SEQ_UNQUEUE << 20) |
+                                       ((u8)(sSeqCmdDebugPlayerTargetIndex) << 24));
+                    break;
+
+                case 3:
+                    AudioSeqCmd_SetupStartSequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex);
+                    sSeqCmdDebugCmd =
+                        ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SEQ_START << 20) |
+                         ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16));
+                    break;
+
+                case 4:
+                    AudioSeqCmd_SetupScaleTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                                sSeqCmdDebugDuration, sSeqCmdDebugTempoScale);
+                    sSeqCmdDebugCmd =
+                        ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_TEMPO_SCALE << 20) |
+                         ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) |
+                         ((u8)(sSeqCmdDebugDuration) << 8) | (u8)(sSeqCmdDebugTempoScale));
+                    break;
+
+                case 5:
+                    AudioSeqCmd_SetupResetTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                                sSeqCmdDebugDuration);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_TEMPO_RESET << 20) |
+                                       ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) | (u8)(sSeqCmdDebugDuration));
+                    break;
+
+                case 6:
+                    AudioSeqCmd_SetupStartSequenceWithFade(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                                           sSeqCmdDebugSeqId);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SEQ_START_WITH_FADE << 20) |
+                                       ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) | (u16)(sSeqCmdDebugSeqId));
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+            sSeqCmdDebugSetup1CmdSel--;
+            if (sSeqCmdDebugSetup1CmdSel < 0) {
+                sSeqCmdDebugSetup1CmdSel = 6;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+            sSeqCmdDebugSetup1CmdSel++;
+            if (sSeqCmdDebugSetup1CmdSel > 6) {
+                sSeqCmdDebugSetup1CmdSel = 0;
+            }
+        }
+    } else {
+        // In right column (arguments)
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
+            sIsSeqCmdDebugSetup1CmdArgAdj ^= 1;
+        }
+        if (!sIsSeqCmdDebugSetup1CmdArgAdj) {
+            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                sSeqCmdDebugSetup1CmdArgSel--;
+                if (sSeqCmdDebugSetup1CmdArgSel < 0) {
+                    sSeqCmdDebugSetup1CmdArgSel = sIsSeqCmdDebugSetup1CmdNumArgs[sSeqCmdDebugSetup1CmdSel] - 1;
+                }
+            }
+            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                sSeqCmdDebugSetup1CmdArgSel++;
+                if (sSeqCmdDebugSetup1CmdArgSel >= sIsSeqCmdDebugSetup1CmdNumArgs[sSeqCmdDebugSetup1CmdSel]) {
+                    sSeqCmdDebugSetup1CmdArgSel = 0;
+                }
+            }
+        } else {
+            switch (sSeqCmdDebugSetup1CmdSel) {
+                case 1:
+                    switch (sSeqCmdDebugSetup1CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerTargetIndex++;
+                                if (sSeqCmdDebugPlayerTargetIndex > 3) {
+                                    sSeqCmdDebugPlayerTargetIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerTargetIndex--;
+                                if (sSeqCmdDebugPlayerTargetIndex < 0) {
+                                    sSeqCmdDebugPlayerTargetIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugFadeTimer++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugFadeTimer--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugFadeTimer += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugFadeTimer -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 2:
+                    switch (sSeqCmdDebugSetup1CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+                    }
+                    break;
+
+                case 3:
+                    switch (sSeqCmdDebugSetup1CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerTargetIndex++;
+                                if (sSeqCmdDebugPlayerTargetIndex > 3) {
+                                    sSeqCmdDebugPlayerTargetIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerTargetIndex--;
+                                if (sSeqCmdDebugPlayerTargetIndex < 0) {
+                                    sSeqCmdDebugPlayerTargetIndex = 3;
+                                }
+                            }
+                            break;
+                    }
+                    break;
+
+                case 4:
+                    switch (sSeqCmdDebugSetup1CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerTargetIndex++;
+                                if (sSeqCmdDebugPlayerTargetIndex > 3) {
+                                    sSeqCmdDebugPlayerTargetIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerTargetIndex--;
+                                if (sSeqCmdDebugPlayerTargetIndex < 0) {
+                                    sSeqCmdDebugPlayerTargetIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugDuration++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugDuration--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugDuration += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugDuration -= 10;
+                            }
+                            break;
+
+                        case 3:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugTempoScale++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugTempoScale--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugTempoScale += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugTempoScale -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 5:
+                    switch (sSeqCmdDebugSetup1CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerTargetIndex++;
+                                if (sSeqCmdDebugPlayerTargetIndex > 3) {
+                                    sSeqCmdDebugPlayerTargetIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerTargetIndex--;
+                                if (sSeqCmdDebugPlayerTargetIndex < 0) {
+                                    sSeqCmdDebugPlayerTargetIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugDuration++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugDuration--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugDuration += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugDuration -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 6:
+                    switch (sSeqCmdDebugSetup1CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerTargetIndex++;
+                                if (sSeqCmdDebugPlayerTargetIndex > 3) {
+                                    sSeqCmdDebugPlayerTargetIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerTargetIndex--;
+                                if (sSeqCmdDebugPlayerTargetIndex < 0) {
+                                    sSeqCmdDebugPlayerTargetIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugSeqId++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugSeqId--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugSeqId += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugSeqId -= 10;
+                            }
+                            if (sSeqCmdDebugSeqId > 108) {
+                                sSeqCmdDebugSeqId = 0;
+                            }
+                            if (sSeqCmdDebugSeqId < 0) {
+                                sSeqCmdDebugSeqId = 108;
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+void AudioSeqCmdDebug_UpdatePageSetup2(void) {
+    if (!sIsSeqCmdDebugSetup2CmdArgAdj) {
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+            if (sSeqCmdDebugSetup2CmdSel == 0) {
+                sSeqCmdDebugPage++;
+                if (sSeqCmdDebugPage >= PAGE_MAX) {
+                    sSeqCmdDebugPage = PAGE_SEQ;
+                }
+            } else {
+                sIsSeqCmdDebugSetup2CmdArgSel = true;
+                sSeqCmdDebugSetup2CmdArgSel = 0;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+            if (sSeqCmdDebugSetup2CmdSel == PAGE_SEQ_TITLE) {
+                sSeqCmdDebugPage--;
+                if (sSeqCmdDebugPage < 0) {
+                    sSeqCmdDebugPage = PAGE_MAX - 1;
+                }
+            } else {
+                sIsSeqCmdDebugSetup2CmdArgSel = false;
+            }
+        }
+    }
+
+    // Move vertical in left column (commands)
+    if (!sIsSeqCmdDebugSetup2CmdArgSel) {
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
+            switch (sSeqCmdDebugSetup2CmdSel) {
+                case 1:
+                    AudioSeqCmd_SetupSetFadeTimer(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                                  sSeqCmdDebugFadeTimer);
+                    sSeqCmdDebugCmd =
+                        ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SET_FADE_TIMER << 20) |
+                         ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) |
+                         ((u8)(sSeqCmdDebugFadeTimer) << 8));
+                    break;
+
+                case 2:
+                    AudioSeqCmd_SetupSetPlayerVolumeIfQueued(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                                             sSeqCmdDebugFadeTimer, sSeqCmdDebugNumSeq);
+                    sSeqCmdDebugCmd =
+                        ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SET_VOLUME_IF_QUEUED << 20) |
+                         ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) |
+                         ((u8)(sSeqCmdDebugFadeTimer) << 8) | (u8)(sSeqCmdDebugNumSeq));
+                    break;
+
+                case 3:
+                    AudioSeqCmd_SetupSetPlayerVolumeWithFade(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                                             sSeqCmdDebugVolumeScale, sSeqCmdDebugFadeTimer);
+                    sSeqCmdDebugCmd =
+                        ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SET_VOLUME_WITH_FADE << 20) |
+                         ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) |
+                         ((u8)(sSeqCmdDebugVolumeScale) << 8) | (u8)(sSeqCmdDebugFadeTimer));
+                    break;
+
+                case 4:
+                    AudioSeqCmd_SetupSetDisableChannels(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                                        sSeqCmdDebugChannelMask);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SEQ_ACTIVE_CHANNELS << 20) |
+                                       ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) | (u16)(sSeqCmdDebugChannelMask));
+                    break;
+
+                case 5:
+                    AudioSeqCmd_SetupSetPlayerFreq(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                                   sSeqCmdDebugDuration, sSeqCmdDebugFreq);
+                    sSeqCmdDebugCmd =
+                        ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SET_PLAYER_FREQ << 20) |
+                         ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) |
+                         ((u8)(sSeqCmdDebugDuration) << 8) | (u8)(sSeqCmdDebugFreq));
+                    break;
+
+                case 6:
+                    AudioSeqCmd_SetupPopCache(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                              sSeqCmdDebugTableTypeFlag);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_POP_CACHE << 20) |
+                                       ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
+                                       ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) | ((u8)sSeqCmdDebugTableTypeFlag));
+
+                case 7:
+                    AudioSeqCmd_ResetSetupCmds(sSeqCmdDebugPlayerIndex);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_RESET_SETUP_CMDS << 20) |
+                                       ((u8)(sSeqCmdDebugPlayerIndex) << 24));
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+            sSeqCmdDebugSetup2CmdSel--;
+            if (sSeqCmdDebugSetup2CmdSel < 0) {
+                sSeqCmdDebugSetup2CmdSel = 7;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+            sSeqCmdDebugSetup2CmdSel++;
+            if (sSeqCmdDebugSetup2CmdSel > 7) {
+                sSeqCmdDebugSetup2CmdSel = 0;
+            }
+        }
+    } else {
+        // In right column (arguments)
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
+            sIsSeqCmdDebugSetup2CmdArgAdj ^= 1;
+        }
+        if (!sIsSeqCmdDebugSetup2CmdArgAdj) {
+            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                sSeqCmdDebugSetup2CmdArgSel--;
+                if (sSeqCmdDebugSetup2CmdArgSel < 0) {
+                    sSeqCmdDebugSetup2CmdArgSel = sIsSeqCmdDebugSetup2CmdNumArgs[sSeqCmdDebugSetup2CmdSel] - 1;
+                }
+            }
+            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                sSeqCmdDebugSetup2CmdArgSel++;
+                if (sSeqCmdDebugSetup2CmdArgSel >= sIsSeqCmdDebugSetup2CmdNumArgs[sSeqCmdDebugSetup2CmdSel]) {
+                    sSeqCmdDebugSetup2CmdArgSel = 0;
+                }
+            }
+        } else {
+            switch (sSeqCmdDebugSetup2CmdSel) {
+                case 1:
+                    switch (sSeqCmdDebugSetup2CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerTargetIndex++;
+                                if (sSeqCmdDebugPlayerTargetIndex > 3) {
+                                    sSeqCmdDebugPlayerTargetIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerTargetIndex--;
+                                if (sSeqCmdDebugPlayerTargetIndex < 0) {
+                                    sSeqCmdDebugPlayerTargetIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugFadeTimer++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugFadeTimer--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugFadeTimer += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugFadeTimer -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 2:
+                    switch (sSeqCmdDebugSetup2CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerTargetIndex++;
+                                if (sSeqCmdDebugPlayerTargetIndex > 3) {
+                                    sSeqCmdDebugPlayerTargetIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerTargetIndex--;
+                                if (sSeqCmdDebugPlayerTargetIndex < 0) {
+                                    sSeqCmdDebugPlayerTargetIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugFadeTimer++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugFadeTimer--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugFadeTimer += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugFadeTimer -= 10;
+                            }
+                            break;
+
+                        case 3:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugNumSeq++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugNumSeq--;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 3:
+                    switch (sSeqCmdDebugSetup2CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerTargetIndex++;
+                                if (sSeqCmdDebugPlayerTargetIndex > 3) {
+                                    sSeqCmdDebugPlayerTargetIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerTargetIndex--;
+                                if (sSeqCmdDebugPlayerTargetIndex < 0) {
+                                    sSeqCmdDebugPlayerTargetIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugVolumeScale++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugVolumeScale--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugVolumeScale += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugVolumeScale -= 10;
+                            }
+                            break;
+
+                        case 3:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugFadeTimer++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugFadeTimer--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugFadeTimer += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugFadeTimer -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 4:
+                    switch (sSeqCmdDebugSetup2CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerTargetIndex++;
+                                if (sSeqCmdDebugPlayerTargetIndex > 3) {
+                                    sSeqCmdDebugPlayerTargetIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerTargetIndex--;
+                                if (sSeqCmdDebugPlayerTargetIndex < 0) {
+                                    sSeqCmdDebugPlayerTargetIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugChannelMask |= 1 << sSeqCmdDebugChannelMaskToggle;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugChannelMask &= ~(1 << sSeqCmdDebugChannelMaskToggle);
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugChannelMaskToggle--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugChannelMaskToggle++;
+                            }
+                            sSeqCmdDebugChannelMaskToggle = CLAMP(sSeqCmdDebugChannelMaskToggle, 0, 15);
+                            break;
+                    }
+                    break;
+
+                case 5:
+                    switch (sSeqCmdDebugSetup2CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerTargetIndex++;
+                                if (sSeqCmdDebugPlayerTargetIndex > 3) {
+                                    sSeqCmdDebugPlayerTargetIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerTargetIndex--;
+                                if (sSeqCmdDebugPlayerTargetIndex < 0) {
+                                    sSeqCmdDebugPlayerTargetIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugDuration++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugDuration--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugDuration += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugDuration -= 10;
+                            }
+                            break;
+
+                        case 3:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugFreq++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugFreq--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugFreq += 100;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugFreq -= 100;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 6:
+                    switch (sSeqCmdDebugSetup2CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerTargetIndex++;
+                                if (sSeqCmdDebugPlayerTargetIndex > 3) {
+                                    sSeqCmdDebugPlayerTargetIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerTargetIndex--;
+                                if (sSeqCmdDebugPlayerTargetIndex < 0) {
+                                    sSeqCmdDebugPlayerTargetIndex = 3;
+                                }
+                            }
+                            break;
+
+                        case 2:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugTableTypeFlag++;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugTableTypeFlag--;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+                                sSeqCmdDebugTableTypeFlag += 10;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+                                sSeqCmdDebugTableTypeFlag -= 10;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 7:
+                    switch (sSeqCmdDebugSetup2CmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugPlayerIndex++;
+                                if (sSeqCmdDebugPlayerIndex >= 4) {
+                                    sSeqCmdDebugPlayerIndex = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugPlayerIndex--;
+                                if (sSeqCmdDebugPlayerIndex < 0) {
+                                    sSeqCmdDebugPlayerIndex = 3;
+                                }
+                            }
+                            break;
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+void AudioSeqCmdDebug_UpdatePageMisc(void) {
+    if (!sIsSeqCmdDebugMiscCmdArgAdj) {
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
+            if (sSeqCmdDebugMiscCmdSel == 0) {
+                sSeqCmdDebugPage++;
+                if (sSeqCmdDebugPage >= PAGE_MAX) {
+                    sSeqCmdDebugPage = PAGE_SEQ;
+                }
+            } else {
+                sIsSeqCmdDebugMiscCmdArgSel = true;
+                sSeqCmdDebugMiscCmdArgSel = 0;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
+            if (sSeqCmdDebugMiscCmdSel == PAGE_SEQ_TITLE) {
+                sSeqCmdDebugPage--;
+                if (sSeqCmdDebugPage < 0) {
+                    sSeqCmdDebugPage = PAGE_MAX - 1;
+                }
+            } else {
+                sIsSeqCmdDebugMiscCmdArgSel = false;
+            }
+        }
+    }
+
+    // Move vertical in left column (commands)
+    if (!sIsSeqCmdDebugMiscCmdArgSel) {
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
+            switch (sSeqCmdDebugMiscCmdSel) {
+                case 1:
+                    AudioSeqCmd_SetSoundMode(sSeqCmdDebugSoundMode);
+                    sSeqCmdDebugCmd =
+                        ((SEQ_CMD_SUB_CMD << 28) | (SUB_CMD_SET_SOUND_MODE << 8) | (u8)(sSeqCmdDebugSoundMode));
+                    break;
+
+                case 2:
+                    AudioSeqCmd_DisableNewSequences(sSeqCmdDebugIsSeqDisabled);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SUB_CMD << 28) | (SUB_CMD_DISABLE_NEW_SEQUENCES << 8) |
+                                       (u16)(sSeqCmdDebugIsSeqDisabled));
+                    break;
+
+                case 3:
+                    AudioSeqCmd_SetSpec(sSeqCmdDebugSfxChannelLayout, sSeqCmdDebugSpecId);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SET_SPEC << 28) | ((u8)(sSeqCmdDebugSfxChannelLayout) << 8) |
+                                       (u8)(sSeqCmdDebugSpecId));
+                    break;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+            sSeqCmdDebugMiscCmdSel--;
+            if (sSeqCmdDebugMiscCmdSel < 0) {
+                sSeqCmdDebugMiscCmdSel = 3;
+            }
+        }
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+            sSeqCmdDebugMiscCmdSel++;
+            if (sSeqCmdDebugMiscCmdSel > 3) {
+                sSeqCmdDebugMiscCmdSel = 0;
+            }
+        }
+    } else {
+        // In right column (arguments)
+        if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
+            sIsSeqCmdDebugMiscCmdArgAdj ^= 1;
+        }
+        if (!sIsSeqCmdDebugMiscCmdArgAdj) {
+            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                sSeqCmdDebugMiscCmdArgSel--;
+                if (sSeqCmdDebugMiscCmdArgSel < 0) {
+                    sSeqCmdDebugMiscCmdArgSel = sIsSeqCmdDebugMiscCmdNumArgs[sSeqCmdDebugMiscCmdSel] - 1;
+                }
+            }
+            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                sSeqCmdDebugMiscCmdArgSel++;
+                if (sSeqCmdDebugMiscCmdArgSel >= sIsSeqCmdDebugMiscCmdNumArgs[sSeqCmdDebugMiscCmdSel]) {
+                    sSeqCmdDebugMiscCmdArgSel = 0;
+                }
+            }
+        } else {
+            switch (sSeqCmdDebugMiscCmdSel) {
+                case 1:
+                    switch (sSeqCmdDebugMiscCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugSoundMode++;
+                                if (sSeqCmdDebugSoundMode > 3) {
+                                    sSeqCmdDebugSoundMode = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugSoundMode--;
+                                if (sSeqCmdDebugSoundMode < 0) {
+                                    sSeqCmdDebugSoundMode = 3;
+                                }
+                            }
+                            break;
+                    }
+                    break;
+
+                case 2:
+                    switch (sSeqCmdDebugMiscCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugIsSeqDisabled = true;
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugIsSeqDisabled = false;
+                            }
+                            break;
+                    }
+                    break;
+
+                case 3:
+                    switch (sSeqCmdDebugMiscCmdArgSel) {
+                        case 0:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugSfxChannelLayout++;
+                                if (sSeqCmdDebugSfxChannelLayout > 3) {
+                                    sSeqCmdDebugSfxChannelLayout = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugSfxChannelLayout--;
+                                if (sSeqCmdDebugSfxChannelLayout < 0) {
+                                    sSeqCmdDebugSfxChannelLayout = 3;
+                                }
+                            }
+                            break;
+
+                        case 1:
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
+                                sSeqCmdDebugSpecId++;
+                                if (sSeqCmdDebugSpecId > 17) {
+                                    sSeqCmdDebugSpecId = 0;
+                                }
+                            }
+                            if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
+                                sSeqCmdDebugSpecId--;
+                                if (sSeqCmdDebugSpecId < 0) {
+                                    sSeqCmdDebugSpecId = 17;
+                                }
+                            }
+                            break;
+                    }
                     break;
             }
         }
@@ -1064,15 +3129,23 @@ void AudioSeqCmdDebug_UpdatePage(void) {
             break;
 
         case PAGE_PLAYER:
+            AudioSeqCmdDebug_UpdatePagePlayer();
             break;
 
         case PAGE_CHANNEL:
+            AudioSeqCmdDebug_UpdatePageChannel();
             break;
 
-        case PAGE_SETUP:
+        case PAGE_SETUP1:
+            AudioSeqCmdDebug_UpdatePageSetup1();
+            break;
+
+        case PAGE_SETUP2:
+            AudioSeqCmdDebug_UpdatePageSetup2();
             break;
 
         case PAGE_MISC:
+            AudioSeqCmdDebug_UpdatePageMisc();
             break;
     }
 }
@@ -1216,27 +3289,713 @@ void AudioSeqCmdDebug_DrawPageSeq(GfxPrint* printer) {
 }
 
 void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
-    GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    GfxPrint_SetPos(printer, 2, 3);
+    // Draw Page Title
+    if (sSeqCmdDebugPlayerCmdSel == 0) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 7);
     GfxPrint_Printf(printer, "Player SeqCmds");
+
+    // Draw Command Options
+    if (sSeqCmdDebugPlayerCmdSel == 1) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 10);
+    GfxPrint_Printf(printer, "Set Volume");
+
+    if (sSeqCmdDebugPlayerCmdSel == 2) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 12);
+    GfxPrint_Printf(printer, "Set Frequency");
+
+    if (sSeqCmdDebugPlayerCmdSel == 3) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 14);
+    GfxPrint_Printf(printer, "Set Tempo");
+
+    if (sSeqCmdDebugPlayerCmdSel == 4) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 16);
+    GfxPrint_Printf(printer, "Speed Up Tempo");
+
+    if (sSeqCmdDebugPlayerCmdSel == 5) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 18);
+    GfxPrint_Printf(printer, "Slow Down Tempo");
+
+    if (sSeqCmdDebugPlayerCmdSel == 6) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 20);
+    GfxPrint_Printf(printer, "Scale Tempo");
+
+    if (sSeqCmdDebugPlayerCmdSel == 7) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 22);
+    GfxPrint_Printf(printer, "Reset Tempo");
+
+    if (sSeqCmdDebugPlayerCmdSel == 8) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 24);
+    GfxPrint_Printf(printer, "Set Player IO");
+
+    // Draw Arguments
+    if (sSeqCmdDebugPlayerCmdSel != 0) {
+        if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 0)) {
+            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+        } else {
+            GfxPrint_SetColor(printer, 255, 255, 255, 0);
+        }
+        GfxPrint_SetPos(printer, 20, 10);
+        GfxPrint_Printf(printer, "playerIndex:");
+        GfxPrint_SetColor(printer, 200, 200, 200, 0);
+        GfxPrint_SetPos(printer, 23, 12);
+        GfxPrint_Printf(printer, "%s", sSeqCmdDebugPlayerIndexStr[sSeqCmdDebugPlayerIndex]);
+
+        if (sSeqCmdDebugPlayerCmdSel != 8) {
+            if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 1)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 14);
+            GfxPrint_Printf(printer, "duration: %d", sSeqCmdDebugDuration);
+        }
+    }
+
+    switch (sSeqCmdDebugPlayerCmdSel) {
+        case 1:
+            if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 16);
+            GfxPrint_Printf(printer, "volume: %d", sSeqCmdDebugVolume);
+            break;
+
+        case 2:
+            if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 16);
+            GfxPrint_Printf(printer, "frequency: %d", sSeqCmdDebugFreq);
+            break;
+
+        case 3:
+            if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 16);
+            GfxPrint_Printf(printer, "tempo (abs): %d", sSeqCmdDebugTempoAbs);
+            break;
+
+        case 4:
+        case 5:
+            if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 16);
+            GfxPrint_Printf(printer, "tempo (rel): %d", sSeqCmdDebugTempoRel);
+            break;
+
+        case 6:
+            if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 16);
+            GfxPrint_Printf(printer, "tempo (scale): %d", sSeqCmdDebugTempoScale);
+            break;
+
+        case 8:
+            if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 1)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 14);
+            GfxPrint_Printf(printer, "port: %d", sSeqCmdDebugPort);
+
+            if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 16);
+            GfxPrint_Printf(printer, "value: %d", sSeqCmdDebugVal);
+            break;
+    }
 }
 
 void AudioSeqCmdDebug_DrawPageChannel(GfxPrint* printer) {
-    GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    GfxPrint_SetPos(printer, 2, 3);
+    if (sSeqCmdDebugChannelCmdSel == 0) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 7);
     GfxPrint_Printf(printer, "Channel SeqCmds");
+
+    // Draw Command Options
+    if (sSeqCmdDebugChannelCmdSel == 1) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 10);
+    GfxPrint_Printf(printer, "Set Volume");
+
+    if (sSeqCmdDebugChannelCmdSel == 2) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 12);
+    GfxPrint_Printf(printer, "Set Frequency");
+
+    if (sSeqCmdDebugChannelCmdSel == 3) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 14);
+    GfxPrint_Printf(printer, "Set Chan IO");
+
+    if (sSeqCmdDebugChannelCmdSel == 4) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 16);
+    GfxPrint_Printf(printer, "Set Chan IO Mask");
+
+    if (sSeqCmdDebugChannelCmdSel == 5) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 18);
+    GfxPrint_Printf(printer, "Disable Chans");
+
+    // Draw Arguments
+    if (sSeqCmdDebugChannelCmdSel != 0) {
+        if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 0)) {
+            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+        } else {
+            GfxPrint_SetColor(printer, 255, 255, 255, 0);
+        }
+        GfxPrint_SetPos(printer, 20, 10);
+        GfxPrint_Printf(printer, "playerIndex:");
+        GfxPrint_SetColor(printer, 200, 200, 200, 0);
+        GfxPrint_SetPos(printer, 23, 12);
+        GfxPrint_Printf(printer, "%s", sSeqCmdDebugPlayerIndexStr[sSeqCmdDebugPlayerIndex]);
+
+        if ((sSeqCmdDebugChannelCmdSel != 4) && (sSeqCmdDebugChannelCmdSel != 5)) {
+            if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 1)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 14);
+            GfxPrint_Printf(printer, "channelIndex: %d", sSeqCmdDebugChannelIndex);
+        }
+
+        if ((sSeqCmdDebugChannelCmdSel != 3) && (sSeqCmdDebugChannelCmdSel != 4) && (sSeqCmdDebugChannelCmdSel != 5)) {
+            if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 16);
+            GfxPrint_Printf(printer, "duration: %d", sSeqCmdDebugDuration);
+        }
+    }
+
+    switch (sSeqCmdDebugChannelCmdSel) {
+        case 1:
+            if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 3)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "volume: %d", sSeqCmdDebugVolume);
+            break;
+
+        case 2:
+            if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 3)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "frequency: %d", sSeqCmdDebugFreq);
+            break;
+
+        case 3:
+            if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 16);
+            GfxPrint_Printf(printer, "port: %d", sSeqCmdDebugPort);
+
+            if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 3)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "value: %d", sSeqCmdDebugVal);
+            break;
+
+        case 4:
+        case 5:
+            if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 1)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 14);
+            GfxPrint_Printf(printer, "channel mask:");
+            GfxPrint_SetColor(printer, 200, 200, 200, 0);
+            GfxPrint_SetPos(printer, 23, 16);
+            GfxPrint_Printf(printer, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(sSeqCmdDebugChannelMask));
+            break;
+    }
 }
 
-void AudioSeqCmdDebug_DrawPageSetup(GfxPrint* printer) {
-    GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    GfxPrint_SetPos(printer, 2, 3);
-    GfxPrint_Printf(printer, "Setup SeqCmds");
+void AudioSeqCmdDebug_DrawPageSetup1(GfxPrint* printer) {
+    if (sSeqCmdDebugSetup1CmdSel == 0) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 7);
+    GfxPrint_Printf(printer, "Setup Part 1 SeqCmds");
+
+    // Draw Command Options
+    if (sSeqCmdDebugSetup1CmdSel == 1) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 10);
+    GfxPrint_Printf(printer, "Set Vol Timer");
+
+    if (sSeqCmdDebugSetup1CmdSel == 2) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 12);
+    GfxPrint_Printf(printer, "Unqueue Seq");
+
+    if (sSeqCmdDebugSetup1CmdSel == 3) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 14);
+    GfxPrint_Printf(printer, "Play Seq");
+
+    if (sSeqCmdDebugSetup1CmdSel == 4) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 16);
+    GfxPrint_Printf(printer, "Scale Tempo");
+
+    if (sSeqCmdDebugSetup1CmdSel == 5) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 18);
+    GfxPrint_Printf(printer, "Reset Tempo");
+
+    if (sSeqCmdDebugSetup1CmdSel == 6) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 20);
+    GfxPrint_Printf(printer, "Play Seq w Fade");
+
+    // Draw Arguments
+    if (sSeqCmdDebugSetup1CmdSel != 0) {
+        if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 0)) {
+            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+        } else {
+            GfxPrint_SetColor(printer, 255, 255, 255, 0);
+        }
+        GfxPrint_SetPos(printer, 20, 10);
+        GfxPrint_Printf(printer, "playerIndex:");
+        GfxPrint_SetColor(printer, 200, 200, 200, 0);
+        GfxPrint_SetPos(printer, 23, 12);
+        GfxPrint_Printf(printer, "%s", sSeqCmdDebugPlayerIndexStr[sSeqCmdDebugPlayerIndex]);
+
+        if (sSeqCmdDebugSetup1CmdSel != 2) {
+            if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 1)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 14);
+            GfxPrint_Printf(printer, "playerIndex Target:");
+            GfxPrint_SetColor(printer, 200, 200, 200, 0);
+            GfxPrint_SetPos(printer, 23, 16);
+            GfxPrint_Printf(printer, "%s", sSeqCmdDebugPlayerIndexStr[sSeqCmdDebugPlayerTargetIndex]);
+        }
+    }
+
+    switch (sSeqCmdDebugSetup1CmdSel) {
+        case 1:
+            if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "fade timer: %d", sSeqCmdDebugFadeTimer);
+            break;
+
+        case 4:
+            if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "duration: %d", sSeqCmdDebugDuration);
+
+            if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 20);
+            GfxPrint_Printf(printer, "tempo scale: %d", sSeqCmdDebugTempoScale);
+            break;
+
+        case 5:
+            if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "duration: %d", sSeqCmdDebugDuration);
+            break;
+
+        case 6:
+            if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "seqId:");
+            GfxPrint_SetColor(printer, 200, 200, 200, 0);
+            GfxPrint_SetPos(printer, 23, 20);
+            GfxPrint_Printf(printer, "%s", sSeqNames[sSeqCmdDebugSeqId]);
+
+            break;
+    }
+}
+
+void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
+    if (sSeqCmdDebugSetup2CmdSel == 0) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 7);
+    GfxPrint_Printf(printer, "Setup Part 2 SeqCmds");
+
+    if (sSeqCmdDebugSetup2CmdSel == 1) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 10);
+    GfxPrint_Printf(printer, "Fade Timer");
+
+    if (sSeqCmdDebugSetup2CmdSel == 2) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 12);
+    GfxPrint_Printf(printer, "Set Vol If Queued");
+
+    if (sSeqCmdDebugSetup2CmdSel == 3) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 14);
+    GfxPrint_Printf(printer, "Set Vol w Fade");
+
+    if (sSeqCmdDebugSetup2CmdSel == 4) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 16);
+    GfxPrint_Printf(printer, "Disable Channels");
+
+    if (sSeqCmdDebugSetup2CmdSel == 5) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 18);
+    GfxPrint_Printf(printer, "Set Player Freq");
+
+    if (sSeqCmdDebugSetup2CmdSel == 6) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 20);
+    GfxPrint_Printf(printer, "Pop Cache");
+
+    if (sSeqCmdDebugSetup2CmdSel == 7) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 22);
+    GfxPrint_Printf(printer, "Reset Setup Cmds");
+
+    // Draw Arguments
+    if (sSeqCmdDebugSetup2CmdSel != 0) {
+        if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 0)) {
+            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+        } else {
+            GfxPrint_SetColor(printer, 255, 255, 255, 0);
+        }
+        GfxPrint_SetPos(printer, 20, 10);
+        GfxPrint_Printf(printer, "playerIndex:");
+        GfxPrint_SetColor(printer, 200, 200, 200, 0);
+        GfxPrint_SetPos(printer, 23, 12);
+        GfxPrint_Printf(printer, "%s", sSeqCmdDebugPlayerIndexStr[sSeqCmdDebugPlayerIndex]);
+
+        if ((sSeqCmdDebugSetup1CmdArgSel != 6) && (sSeqCmdDebugSetup1CmdArgSel != 7)) {
+            if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 1)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 14);
+            GfxPrint_Printf(printer, "playerIndex Target:");
+            GfxPrint_SetColor(printer, 200, 200, 200, 0);
+            GfxPrint_SetPos(printer, 23, 16);
+            GfxPrint_Printf(printer, "%s", sSeqCmdDebugPlayerIndexStr[sSeqCmdDebugPlayerTargetIndex]);
+        }
+    }
+
+    switch (sSeqCmdDebugSetup2CmdSel) {
+        case 1:
+            if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "fade timer: %d", sSeqCmdDebugFadeTimer);
+            break;
+
+        case 2:
+            if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "fade timer: %d", sSeqCmdDebugFadeTimer);
+
+            if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 3)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 20);
+            GfxPrint_Printf(printer, "num seq: %d", sSeqCmdDebugNumSeq);
+            break;
+
+        case 3:
+            if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "volume scale: %d", sSeqCmdDebugVolumeScale);
+
+            if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 3)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 20);
+            GfxPrint_Printf(printer, "fade timer: %d", sSeqCmdDebugFadeTimer);
+            break;
+
+        case 4:
+            if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "channel mask:");
+            GfxPrint_SetColor(printer, 200, 200, 200, 0);
+            GfxPrint_SetPos(printer, 23, 20);
+            GfxPrint_Printf(printer, BYTE_TO_BINARY_PATTERN, BYTE_TO_BINARY(sSeqCmdDebugChannelMask));
+            break;
+
+        case 5:
+            if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "duration: %d", sSeqCmdDebugDuration);
+
+            if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 3)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 20);
+            GfxPrint_Printf(printer, "frequency: %d", sSeqCmdDebugFreq);
+            break;
+
+        case 6:
+            if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 2)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_Printf(printer, "tableTypeFlag: %d", sSeqCmdDebugTableTypeFlag);
+    }
 }
 
 void AudioSeqCmdDebug_DrawPageMisc(GfxPrint* printer) {
-    GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    GfxPrint_SetPos(printer, 2, 3);
+    if (sSeqCmdDebugMiscCmdSel == 0) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 7);
     GfxPrint_Printf(printer, "Misc SeqCmds");
+
+    // Draw Command Options
+    if (sSeqCmdDebugMiscCmdSel == 1) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 10);
+    GfxPrint_Printf(printer, "Set Sound Mode");
+
+    if (sSeqCmdDebugMiscCmdSel == 2) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 12);
+    GfxPrint_Printf(printer, "Disable New Seq");
+
+    if (sSeqCmdDebugMiscCmdSel == 3) {
+        GfxPrint_SetColor(printer, 0, 0, 255, 255);
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, 14);
+    GfxPrint_Printf(printer, "Set Audio Spec");
+
+    switch (sSeqCmdDebugMiscCmdSel) {
+        case 1:
+            if (sIsSeqCmdDebugMiscCmdArgSel && (sSeqCmdDebugMiscCmdArgSel == 0)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 10);
+            GfxPrint_Printf(printer, "sound mode:");
+
+            GfxPrint_SetColor(printer, 200, 200, 200, 0);
+            GfxPrint_SetPos(printer, 23, 12);
+            GfxPrint_Printf(printer, "%s", sSoundModeNamesDebug[sSeqCmdDebugSoundMode]);
+            break;
+
+        case 2:
+            if (sIsSeqCmdDebugMiscCmdArgSel && (sSeqCmdDebugMiscCmdArgSel == 0)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 10);
+            GfxPrint_Printf(printer, "is seq disabled: %d", sSeqCmdDebugIsSeqDisabled);
+            break;
+
+        case 3:
+            if (sIsSeqCmdDebugMiscCmdArgSel && (sSeqCmdDebugMiscCmdArgSel == 0)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 10);
+            GfxPrint_Printf(printer, "sfx chan layout: %d", sSeqCmdDebugSfxChannelLayout);
+
+            if (sIsSeqCmdDebugMiscCmdArgSel && (sSeqCmdDebugMiscCmdArgSel == 1)) {
+                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            } else {
+                GfxPrint_SetColor(printer, 255, 255, 255, 0);
+            }
+            GfxPrint_SetPos(printer, 20, 12);
+            GfxPrint_Printf(printer, "specId: %d", sSeqCmdDebugSpecId);
+            break;
+    }
 }
 
 void AudioSeqCmdDebug_Draw(GfxPrint* printer) {
@@ -1257,12 +4016,20 @@ void AudioSeqCmdDebug_Draw(GfxPrint* printer) {
             AudioSeqCmdDebug_DrawPageChannel(printer);
             break;
 
-        case PAGE_SETUP:
-            AudioSeqCmdDebug_DrawPageSetup(printer);
+        case PAGE_SETUP1:
+            AudioSeqCmdDebug_DrawPageSetup1(printer);
+            break;
+
+        case PAGE_SETUP2:
+            AudioSeqCmdDebug_DrawPageSetup2(printer);
             break;
 
         case PAGE_MISC:
             AudioSeqCmdDebug_DrawPageMisc(printer);
             break;
     }
+
+    GfxPrint_SetColor(printer, 255, 0, 0, 255);
+    GfxPrint_SetPos(printer, 12, 28);
+    GfxPrint_Printf(printer, "Audio_QueueSeqCmd(%08X)", sSeqCmdDebugCmd);
 }
