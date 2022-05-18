@@ -316,7 +316,7 @@ void Audio_ProcessSeqCmd(u32 cmd) {
         case SEQ_CMD_SETUP_CMD:
             // start sequence with setup commands
             subOp = (cmd & 0xF00000) >> 20;
-            if (subOp != SETUP_CMD_RESET_SETUP_CMDS) {
+            if (subOp != SEQ_SUB_CMD_SETUP_RESET_SETUP_CMDS) {
                 if (gActiveSeqs[playerIndex].setupCmdNum < 7) {
                     found = gActiveSeqs[playerIndex].setupCmdNum++;
                     if (found < 8) {
@@ -329,16 +329,16 @@ void Audio_ProcessSeqCmd(u32 cmd) {
             }
             break;
 
-        case SEQ_CMD_SUB_CMD:
+        case SEQ_CMD_GLOBAL_CMD:
             subOp = (cmd & 0xF00) >> 8;
             val = cmd & 0xFF;
             switch (subOp) {
-                case SUB_CMD_SET_SOUND_MODE:
+                case SEQ_SUB_CMD_GLOBAL_SET_SOUND_MODE:
                     // set sound mode
                     Audio_QueueCmdS32(0xF0000000, sSoundModes[val]);
                     break;
 
-                case SUB_CMD_DISABLE_NEW_SEQUENCES:
+                case SEQ_SUB_CMD_GLOBAL_DISABLE_NEW_SEQUENCES:
                     // disable the starting of new sequences
                     sIsSeqStartDisabled = val & 1;
                     break;
@@ -496,24 +496,24 @@ void Audio_UpdateActiveSequences(void) {
                 tempoPrev = gAudioContext.seqPlayers[playerIndex].tempo / 0x30;
                 tempoOp = (tempoCmd & 0xF000) >> 12;
                 switch (tempoOp) {
-                    case TEMPO_CMD_SPEED_UP:
+                    case SEQ_SUB_CMD_TEMPO_SPEED_UP:
                         // speed up tempo by "tempoTarget" amount
                         tempoTarget += tempoPrev;
                         break;
 
-                    case TEMPO_CMD_SLOW_DOWN:
+                    case SEQ_SUB_CMD_TEMPO_SLOW_DOWN:
                         // slow down tempo by "tempoTarget" amount
                         if (tempoTarget < tempoPrev) {
                             tempoTarget = tempoPrev - tempoTarget;
                         }
                         break;
 
-                    case TEMPO_CMD_SCALE:
+                    case SEQ_SUB_CMD_TEMPO_SCALE:
                         // scale tempo
                         tempoTarget = tempoPrev * (tempoTarget / 100.0f);
                         break;
 
-                    case TEMPO_CMD_RESET:
+                    case SEQ_SUB_CMD_TEMPO_RESET:
                         // reset tempo to previous tempo
                         if (gActiveSeqs[playerIndex].tempoPrev) {
                             tempoTarget = gActiveSeqs[playerIndex].tempoPrev;
@@ -523,7 +523,7 @@ void Audio_UpdateActiveSequences(void) {
                         break;
 
                     default:
-                        // TEMPO_CMD_SET
+                        // SEQ_SUB_CMD_TEMPO_SET
                         // tempoTarget is the new tempo
                         break;
                 }
@@ -620,35 +620,35 @@ void Audio_UpdateActiveSequences(void) {
                 setupVal1 = gActiveSeqs[playerIndex].setupCmd[j] & 0xFF;
 
                 switch (setupOp) {
-                    case SETUP_CMD_SET_VOLUME:
+                    case SEQ_SUB_CMD_SETUP_SET_VOLUME:
                         Audio_SetVolumeScale(setupPlayerIndex, 1, 0x7F, setupVal1);
                         break;
 
-                    case SETUP_CMD_SET_VOLUME_IF_QUEUED:
+                    case SEQ_SUB_CMD_SETUP_SET_VOLUME_IF_QUEUED:
                         if (sNumSeqRequests[playerIndex] == setupVal1) {
                             Audio_SetVolumeScale(setupPlayerIndex, 1, 0x7F, setupVal2);
                         }
                         break;
 
-                    case SETUP_CMD_SEQ_UNQUEUE:
+                    case SEQ_SUB_CMD_SETUP_SEQ_UNQUEUE:
                         AudioSeqCmd_UnqueueSequence(playerIndex, 0, gActiveSeqs[playerIndex].seqId);
                         break;
 
-                    case SETUP_CMD_SEQ_START:
+                    case SEQ_SUB_CMD_SETUP_SEQ_START:
                         AudioSeqCmd_PlaySequence(setupPlayerIndex, 1, 0, gActiveSeqs[setupPlayerIndex].seqId);
                         gActiveSeqs[setupPlayerIndex].fadeVolUpdate = 1;
                         gActiveSeqs[setupPlayerIndex].volScales[1] = 0x7F;
                         break;
 
-                    case SETUP_CMD_TEMPO_SCALE:
+                    case SEQ_SUB_CMD_SETUP_TEMPO_SCALE:
                         AudioSeqCmd_ScaleTempo(setupPlayerIndex, setupVal2, setupVal1);
                         break;
 
-                    case SETUP_CMD_TEMPO_RESET:
+                    case SEQ_SUB_CMD_SETUP_TEMPO_RESET:
                         AudioSeqCmd_ResetTempo(setupPlayerIndex, setupVal1);
                         break;
 
-                    case SETUP_CMD_SEQ_START_WITH_FADE:
+                    case SEQ_SUB_CMD_SETUP_SEQ_START_WITH_FADE:
                         seqId = gActiveSeqs[playerIndex].setupCmd[j] & 0xFFFF;
                         AudioSeqCmd_PlaySequence(setupPlayerIndex, gActiveSeqs[setupPlayerIndex].setupFadeTimer, 0,
                                                  seqId);
@@ -656,32 +656,32 @@ void Audio_UpdateActiveSequences(void) {
                         gActiveSeqs[setupPlayerIndex].setupFadeTimer = 0;
                         break;
 
-                    case SETUP_CMD_SET_FADE_TIMER:
+                    case SEQ_SUB_CMD_SETUP_SET_FADE_TIMER:
                         gActiveSeqs[playerIndex].setupFadeTimer = setupVal2;
                         break;
 
-                    case SETUP_CMD_SET_VOLUME_WITH_FADE:
+                    case SEQ_SUB_CMD_SETUP_SET_VOLUME_WITH_FADE:
                         Audio_SetVolumeScale(setupPlayerIndex, setupVal2, 0x7F, setupVal1);
                         break;
 
-                    case SETUP_CMD_POP_CACHE:
-                        if (setupVal1 & 1) {
+                    case SEQ_SUB_CMD_SETUP_POP_CACHE:
+                        if (setupVal1 & (1 << SEQUENCE_TABLE)) {
                             Audio_QueueCmdS32(0xE3000000, SEQUENCE_TABLE);
                         }
-                        if (setupVal1 & 2) {
+                        if (setupVal1 & (1 << FONT_TABLE)) {
                             Audio_QueueCmdS32(0xE3000000, FONT_TABLE);
                         }
-                        if (setupVal1 & 4) {
+                        if (setupVal1 & (1 << SAMPLE_TABLE)) {
                             Audio_QueueCmdS32(0xE3000000, SAMPLE_TABLE);
                         }
                         break;
 
-                    case SETUP_CMD_SEQ_ACTIVE_CHANNELS:
+                    case SEQ_SUB_CMD_SETUP_SEQ_ACTIVE_CHANNELS:
                         channelMask = gActiveSeqs[playerIndex].setupCmd[j] & 0xFFFF;
                         AudioSeqCmd_DisableChannels(setupPlayerIndex, channelMask);
                         break;
 
-                    case SETUP_CMD_SET_PLAYER_FREQ:
+                    case SEQ_SUB_CMD_SETUP_SET_PLAYER_FREQ:
                         AudioSeqCmd_SetPlayerFreq(setupPlayerIndex, setupVal2, (setupVal1 * 10) & 0xFFFF);
                         break;
                 }
@@ -777,52 +777,48 @@ u32 sSeqCmdDebugInputButtonPress = 0;
 u32 sSeqCmdDebugInputButtonLast = 0;
 s8 sSeqCmdDebugPage = PAGE_SEQ;
 u8 gIsSeqCmdDebugEnabled = false;
+s8 sIsSeqCmdDebugCmdArgAdj = false;
 
 // Sequence Page Menuing
 // Current command selected
 s8 sSeqCmdDebugSeqCmdSel = PAGE_SEQ_TITLE; // on PAGE_SEQ
 s8 sSeqCmdDebugSeqCmdArgSel = 0;
 s8 sIsSeqCmdDebugSeqCmdArgSel = false;
-s8 sIsSeqCmdDebugSeqCmdArgAdj = false;
 s8 sIsSeqCmdDebugSeqCmdNumArgs[] = { 0, 4, 2, 4, 3 };
 
 // Player Page Menuing
 s8 sSeqCmdDebugPlayerCmdSel = 0; // on PAGE_PLAYER
 s8 sSeqCmdDebugPlayerCmdArgSel = 0;
 s8 sIsSeqCmdDebugPlayerCmdArgSel = false;
-s8 sIsSeqCmdDebugPlayerCmdArgAdj = 0;
 s8 sIsSeqCmdDebugPlayerCmdNumArgs[] = { 0, 3, 3, 3, 3, 3, 3, 3, 2, 3 };
 
 // Channel Page Menuing
 s8 sSeqCmdDebugChannelCmdSel = 0; // on PAGE_CHANNEL
 s8 sSeqCmdDebugChannelCmdArgSel = 0;
 s8 sIsSeqCmdDebugChannelCmdArgSel = false;
-s8 sIsSeqCmdDebugChannelCmdArgAdj = 0;
 s8 sIsSeqCmdDebugChannelCmdNumArgs[] = { 0, 4, 4, 4, 2, 2 };
 
 // Setup Page Menuing
 s8 sSeqCmdDebugSetup1CmdSel = 0; // on PAGE_SETUP1
 s8 sSeqCmdDebugSetup1CmdArgSel = 0;
 s8 sIsSeqCmdDebugSetup1CmdArgSel = false;
-s8 sIsSeqCmdDebugSetup1CmdArgAdj = 0;
 s8 sIsSeqCmdDebugSetup1CmdNumArgs[] = { 0, 3, 1, 2, 4, 3, 3 };
 
 // Setup Page Menuing
 s8 sSeqCmdDebugSetup2CmdSel = 0; // on PAGE_SETUP1
 s8 sSeqCmdDebugSetup2CmdArgSel = 0;
 s8 sIsSeqCmdDebugSetup2CmdArgSel = false;
-s8 sIsSeqCmdDebugSetup2CmdArgAdj = 0;
-s8 sIsSeqCmdDebugSetup2CmdNumArgs[] = { 0, 3, 4, 4, 3, 4, 3, 1 };
+s8 sIsSeqCmdDebugSetup2CmdNumArgs[] = { 0, 2, 4, 4, 3, 4, 3, 1 };
 
-// Misc Page Menuing
-s8 sSeqCmdDebugMiscCmdSel = 0; // on PAGE_MISC
-s8 sSeqCmdDebugMiscCmdArgSel = 0;
-s8 sIsSeqCmdDebugMiscCmdArgSel = false;
-s8 sIsSeqCmdDebugMiscCmdArgAdj = 0;
-s8 sIsSeqCmdDebugMiscCmdNumArgs[] = { 0, 1, 1, 2 };
+// Global Page Menuing
+s8 sSeqCmdDebugGlobalCmdSel = 0; // on PAGE_MISC
+s8 sSeqCmdDebugGlobalCmdArgSel = 0;
+s8 sIsSeqCmdDebugGlobalCmdArgSel = false;
+s8 sIsSeqCmdDebugGlobalCmdNumArgs[] = { 0, 1, 1, 2 };
 
 // Previous Command (to Display)
 u32 sSeqCmdDebugCmd = 0;
+u8 sSeqCmdDebugCmdTimer = 200;
 
 char sSeqCmdDebugPlayerIndexStr[4][9] = { "MAIN BGM", "FANFARE", "SFX", "SUB BGM" };
 s8 sSeqCmdDebugPlayerIndex = SEQ_PLAYER_BGM_MAIN;
@@ -997,7 +993,7 @@ void AudioSeqCmdDebug_ReadControllerInput(void) {
 }
 
 void AudioSeqCmdDebug_UpdatePageSeq(void) {
-    if (!sIsSeqCmdDebugSeqCmdArgAdj) {
+    if (!sIsSeqCmdDebugCmdArgAdj) {
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
             if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_TITLE) {
                 sSeqCmdDebugPage++;
@@ -1031,12 +1027,14 @@ void AudioSeqCmdDebug_UpdatePageSeq(void) {
                     sSeqCmdDebugCmd = ((SEQ_CMD_START << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((u8)(sSeqCmdDebugFadeTimer) << 16) | ((u8)(sSeqCmdDebugSeqArgs) << 8) |
                                        (u16)(sSeqCmdDebugSeqId));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case PAGE_SEQ_STOP:
                     AudioSeqCmd_StopSequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugFadeTimer);
                     sSeqCmdDebugCmd = ((SEQ_CMD_STOP << 28) | 0xFF | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((u8)(sSeqCmdDebugFadeTimer) << 16));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case PAGE_SEQ_QUEUE:
@@ -1045,12 +1043,14 @@ void AudioSeqCmdDebug_UpdatePageSeq(void) {
                     sSeqCmdDebugCmd = ((SEQ_CMD_QUEUE << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((u8)(sSeqCmdDebugFadeTimer) << 16) | ((u8)(sSeqCmdDebugPriority) << 8) |
                                        (u8)(sSeqCmdDebugSeqId));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case PAGE_SEQ_UNQUEUE:
                     AudioSeqCmd_UnqueueSequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugFadeTimer, sSeqCmdDebugSeqId);
                     sSeqCmdDebugCmd = ((SEQ_CMD_UNQUEUE << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((u8)(sSeqCmdDebugFadeTimer) << 16) | (sSeqCmdDebugSeqId));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
             }
         }
@@ -1069,9 +1069,9 @@ void AudioSeqCmdDebug_UpdatePageSeq(void) {
     } else {
         // In right column (arguments)
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
-            sIsSeqCmdDebugSeqCmdArgAdj ^= 1;
+            sIsSeqCmdDebugCmdArgAdj ^= 1;
         }
-        if (!sIsSeqCmdDebugSeqCmdArgAdj) {
+        if (!sIsSeqCmdDebugCmdArgAdj) {
             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
                 sSeqCmdDebugSeqCmdArgSel--;
                 if (sSeqCmdDebugSeqCmdArgSel < 0) {
@@ -1322,7 +1322,7 @@ void AudioSeqCmdDebug_UpdatePageSeq(void) {
 void AudioSeqCmdDebug_UpdatePagePlayer(void) {
 
     // Move left-right
-    if (!sIsSeqCmdDebugPlayerCmdArgAdj) {
+    if (!sIsSeqCmdDebugCmdArgAdj) {
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
             if (sSeqCmdDebugPlayerCmdSel == 0) {
                 sSeqCmdDebugPage++;
@@ -1354,52 +1354,61 @@ void AudioSeqCmdDebug_UpdatePagePlayer(void) {
                     AudioSeqCmd_SetPlayerVol(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugVolume);
                     sSeqCmdDebugCmd = ((SEQ_CMD_SET_PLAYER_VOL << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((sSeqCmdDebugDuration) << 16) | (sSeqCmdDebugVolume));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 2:
                     AudioSeqCmd_SetPlayerFreq(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugFreq);
                     sSeqCmdDebugCmd = ((SEQ_CMD_SET_PLAYER_FREQ << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((sSeqCmdDebugDuration) << 16) | (sSeqCmdDebugFreq));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 3:
                     AudioSeqCmd_SetTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugTempoAbs);
-                    sSeqCmdDebugCmd =
-                        ((SEQ_CMD_TEMPO_CMD << 28) | (TEMPO_CMD_SET << 12) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
-                         ((u8)(sSeqCmdDebugDuration) << 16) | (u16)(sSeqCmdDebugTempoAbs));
+                    sSeqCmdDebugCmd = ((SEQ_CMD_TEMPO_CMD << 28) | (SEQ_SUB_CMD_TEMPO_SET << 12) |
+                                       ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugDuration) << 16) |
+                                       (u16)(sSeqCmdDebugTempoAbs));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 4:
                     AudioSeqCmd_SpeedUpTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugTempoRel);
-                    sSeqCmdDebugCmd = ((SEQ_CMD_TEMPO_CMD << 28) | (TEMPO_CMD_SPEED_UP << 12) |
+                    sSeqCmdDebugCmd = ((SEQ_CMD_TEMPO_CMD << 28) | (SEQ_SUB_CMD_TEMPO_SPEED_UP << 12) |
                                        ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugDuration) << 16) |
                                        (u16)(sSeqCmdDebugTempoRel));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 5:
                     AudioSeqCmd_SlowDownTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugTempoRel);
-                    sSeqCmdDebugCmd = ((SEQ_CMD_TEMPO_CMD << 28) | (TEMPO_CMD_SLOW_DOWN << 12) |
+                    sSeqCmdDebugCmd = ((SEQ_CMD_TEMPO_CMD << 28) | (SEQ_SUB_CMD_TEMPO_SLOW_DOWN << 12) |
                                        ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugDuration) << 16) |
                                        (u16)(sSeqCmdDebugTempoRel));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 6:
                     AudioSeqCmd_ScaleTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration, sSeqCmdDebugTempoScale);
-                    sSeqCmdDebugCmd =
-                        ((SEQ_CMD_TEMPO_CMD << 28) | (TEMPO_CMD_SCALE << 12) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
-                         ((u8)(sSeqCmdDebugDuration) << 16) | (u16)(sSeqCmdDebugTempoScale));
+                    sSeqCmdDebugCmd = ((SEQ_CMD_TEMPO_CMD << 28) | (SEQ_SUB_CMD_TEMPO_SCALE << 12) |
+                                       ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugDuration) << 16) |
+                                       (u16)(sSeqCmdDebugTempoScale));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 7:
                     AudioSeqCmd_ResetTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugDuration);
-                    sSeqCmdDebugCmd = ((SEQ_CMD_TEMPO_CMD << 28) | (TEMPO_CMD_RESET << 12) |
+                    sSeqCmdDebugCmd = ((SEQ_CMD_TEMPO_CMD << 28) | (SEQ_SUB_CMD_TEMPO_RESET << 12) |
                                        ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugDuration) << 16));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 8:
                     AudioSeqCmd_SetPlayerIO(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPort, sSeqCmdDebugVal);
                     sSeqCmdDebugCmd = ((SEQ_CMD_SET_PLAYER_IO << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((u8)(sSeqCmdDebugPort) << 16) | (u8)(sSeqCmdDebugVal));
+                    sSeqCmdDebugCmdTimer = 200;
+                    break;
             }
         }
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
@@ -1417,9 +1426,9 @@ void AudioSeqCmdDebug_UpdatePagePlayer(void) {
     } else {
         // In right column (arguments)
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
-            sIsSeqCmdDebugPlayerCmdArgAdj ^= 1;
+            sIsSeqCmdDebugCmdArgAdj ^= 1;
         }
-        if (!sIsSeqCmdDebugPlayerCmdArgAdj) {
+        if (!sIsSeqCmdDebugCmdArgAdj) {
             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
                 sSeqCmdDebugPlayerCmdArgSel--;
                 if (sSeqCmdDebugPlayerCmdArgSel < 0) {
@@ -1769,7 +1778,7 @@ void AudioSeqCmdDebug_UpdatePagePlayer(void) {
 
 // Move left-right
 void AudioSeqCmdDebug_UpdatePageChannel(void) {
-    if (!sIsSeqCmdDebugChannelCmdArgAdj) {
+    if (!sIsSeqCmdDebugCmdArgAdj) {
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
             if (sSeqCmdDebugChannelCmdSel == 0) {
                 sSeqCmdDebugPage++;
@@ -1803,6 +1812,7 @@ void AudioSeqCmdDebug_UpdatePageChannel(void) {
                     sSeqCmdDebugCmd = ((SEQ_CMD_SET_CHANNEL_VOL << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((u8)(sSeqCmdDebugDuration) << 16) | ((u8)(sSeqCmdDebugChannelIndex) << 8) |
                                        ((u8)sSeqCmdDebugVolume));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 2:
@@ -1811,6 +1821,7 @@ void AudioSeqCmdDebug_UpdatePageChannel(void) {
                     sSeqCmdDebugCmd =
                         ((SEQ_CMD_SET_CHANNEL_FREQ << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                          ((sSeqCmdDebugDuration) << 16) | ((sSeqCmdDebugChannelIndex) << 12) | (sSeqCmdDebugFreq));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 3:
@@ -1819,18 +1830,21 @@ void AudioSeqCmdDebug_UpdatePageChannel(void) {
                     sSeqCmdDebugCmd = ((SEQ_CMD_SET_CHANNEL_IO << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((u8)(sSeqCmdDebugPort) << 16) | ((u8)(sSeqCmdDebugChannelIndex) << 8) |
                                        (u8)(sSeqCmdDebugVal));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 4:
                     AudioSeqCmd_SetChannelIOMask(sSeqCmdDebugPlayerIndex, sSeqCmdDebugChannelMask);
                     sSeqCmdDebugCmd = (_SHIFTL(SEQ_CMD_SET_CHANNEL_IO_MASK, 28, 4) |
                                        ((u8)(sSeqCmdDebugPlayerIndex) << 24) | (u16)(sSeqCmdDebugChannelMask));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 5:
                     AudioSeqCmd_DisableChannels(sSeqCmdDebugPlayerIndex, sSeqCmdDebugChannelMask);
                     sSeqCmdDebugCmd = ((SEQ_CMD_SET_ACTIVE_CHANNELS << 28) | ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        (u16)(sSeqCmdDebugChannelMask));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
             }
         }
@@ -1849,9 +1863,9 @@ void AudioSeqCmdDebug_UpdatePageChannel(void) {
     } else {
         // In right column (arguments)
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
-            sIsSeqCmdDebugChannelCmdArgAdj ^= 1;
+            sIsSeqCmdDebugCmdArgAdj ^= 1;
         }
-        if (!sIsSeqCmdDebugChannelCmdArgAdj) {
+        if (!sIsSeqCmdDebugCmdArgAdj) {
             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
                 sSeqCmdDebugChannelCmdArgSel--;
                 if (sSeqCmdDebugChannelCmdArgSel < 0) {
@@ -2117,7 +2131,7 @@ void AudioSeqCmdDebug_UpdatePageChannel(void) {
 }
 
 void AudioSeqCmdDebug_UpdatePageSetup1(void) {
-    if (!sIsSeqCmdDebugSetup1CmdArgAdj) {
+    if (!sIsSeqCmdDebugCmdArgAdj) {
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
             if (sSeqCmdDebugSetup1CmdSel == 0) {
                 sSeqCmdDebugPage++;
@@ -2146,49 +2160,56 @@ void AudioSeqCmdDebug_UpdatePageSetup1(void) {
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
             switch (sSeqCmdDebugSetup1CmdSel) {
                 case 1:
-                    AudioSeqCmd_SetupSetPlayerVolTimer(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
-                                                       sSeqCmdDebugFadeTimer);
-                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SET_VOLUME << 20) |
+                    AudioSeqCmd_SetupRestorePlayerVolume(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                                         sSeqCmdDebugFadeTimer);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_SET_VOLUME << 20) |
                                        ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) | (u8)(sSeqCmdDebugFadeTimer));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 2:
                     AudioSeqCmd_SetupUnqueueSequence(sSeqCmdDebugPlayerTargetIndex);
-                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SEQ_UNQUEUE << 20) |
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_SEQ_UNQUEUE << 20) |
                                        ((u8)(sSeqCmdDebugPlayerTargetIndex) << 24));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 3:
-                    AudioSeqCmd_SetupStartSequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex);
+                    AudioSeqCmd_SetupRestartSequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex);
                     sSeqCmdDebugCmd =
-                        ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SEQ_START << 20) |
+                        ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_SEQ_START << 20) |
                          ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 4:
                     AudioSeqCmd_SetupScaleTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
                                                 sSeqCmdDebugDuration, sSeqCmdDebugTempoScale);
                     sSeqCmdDebugCmd =
-                        ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_TEMPO_SCALE << 20) |
+                        ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_TEMPO_SCALE << 20) |
                          ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) |
                          ((u8)(sSeqCmdDebugDuration) << 8) | (u8)(sSeqCmdDebugTempoScale));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 5:
                     AudioSeqCmd_SetupResetTempo(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
                                                 sSeqCmdDebugDuration);
-                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_TEMPO_RESET << 20) |
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_TEMPO_RESET << 20) |
                                        ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) | (u8)(sSeqCmdDebugDuration));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 6:
-                    AudioSeqCmd_SetupStartSequenceWithFade(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
-                                                           sSeqCmdDebugSeqId);
-                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SEQ_START_WITH_FADE << 20) |
+                    AudioSeqCmd_SetupPlaySequence(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                                  sSeqCmdDebugSeqId);
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_SEQ_START_WITH_FADE << 20) |
                                        ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) | (u16)(sSeqCmdDebugSeqId));
+                    sSeqCmdDebugCmdTimer = 200;
+                    break;
             }
         }
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
@@ -2206,9 +2227,9 @@ void AudioSeqCmdDebug_UpdatePageSetup1(void) {
     } else {
         // In right column (arguments)
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
-            sIsSeqCmdDebugSetup1CmdArgAdj ^= 1;
+            sIsSeqCmdDebugCmdArgAdj ^= 1;
         }
-        if (!sIsSeqCmdDebugSetup1CmdArgAdj) {
+        if (!sIsSeqCmdDebugCmdArgAdj) {
             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
                 sSeqCmdDebugSetup1CmdArgSel--;
                 if (sSeqCmdDebugSetup1CmdArgSel < 0) {
@@ -2498,7 +2519,7 @@ void AudioSeqCmdDebug_UpdatePageSetup1(void) {
 }
 
 void AudioSeqCmdDebug_UpdatePageSetup2(void) {
-    if (!sIsSeqCmdDebugSetup2CmdArgAdj) {
+    if (!sIsSeqCmdDebugCmdArgAdj) {
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
             if (sSeqCmdDebugSetup2CmdSel == 0) {
                 sSeqCmdDebugPage++;
@@ -2527,60 +2548,69 @@ void AudioSeqCmdDebug_UpdatePageSetup2(void) {
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
             switch (sSeqCmdDebugSetup2CmdSel) {
                 case 1:
-                    AudioSeqCmd_SetupSetFadeTimer(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
-                                                  sSeqCmdDebugFadeTimer);
+                    AudioSeqCmd_SetupSetFadeTimer(sSeqCmdDebugPlayerIndex, sSeqCmdDebugFadeTimer);
                     sSeqCmdDebugCmd =
-                        ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SET_FADE_TIMER << 20) |
+                        ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_SET_FADE_TIMER << 20) |
                          ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) |
                          ((u8)(sSeqCmdDebugFadeTimer) << 8));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 2:
-                    AudioSeqCmd_SetupSetPlayerVolumeIfQueued(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
-                                                             sSeqCmdDebugFadeTimer, sSeqCmdDebugNumSeq);
+                    AudioSeqCmd_SetupRestorePlayerVolumeIfQueued(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
+                                                                 sSeqCmdDebugFadeTimer, sSeqCmdDebugNumSeq);
                     sSeqCmdDebugCmd =
-                        ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SET_VOLUME_IF_QUEUED << 20) |
+                        ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_SET_VOLUME_IF_QUEUED << 20) |
                          ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) |
                          ((u8)(sSeqCmdDebugFadeTimer) << 8) | (u8)(sSeqCmdDebugNumSeq));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 3:
-                    AudioSeqCmd_SetupSetPlayerVolumeWithFade(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
-                                                             sSeqCmdDebugVolumeScale, sSeqCmdDebugFadeTimer);
+                    AudioSeqCmd_SetupRestorePlayerVolumeWithScale(sSeqCmdDebugPlayerIndex,
+                                                                  sSeqCmdDebugPlayerTargetIndex,
+                                                                  sSeqCmdDebugVolumeScale, sSeqCmdDebugFadeTimer);
                     sSeqCmdDebugCmd =
-                        ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SET_VOLUME_WITH_FADE << 20) |
+                        ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_SET_VOLUME_WITH_FADE << 20) |
                          ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) |
                          ((u8)(sSeqCmdDebugVolumeScale) << 8) | (u8)(sSeqCmdDebugFadeTimer));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 4:
                     AudioSeqCmd_SetupSetDisableChannels(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
                                                         sSeqCmdDebugChannelMask);
-                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SEQ_ACTIVE_CHANNELS << 20) |
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_SEQ_ACTIVE_CHANNELS << 20) |
                                        ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) | (u16)(sSeqCmdDebugChannelMask));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 5:
                     AudioSeqCmd_SetupSetPlayerFreq(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
                                                    sSeqCmdDebugDuration, sSeqCmdDebugFreq);
                     sSeqCmdDebugCmd =
-                        ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_SET_PLAYER_FREQ << 20) |
+                        ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_SET_PLAYER_FREQ << 20) |
                          ((u8)(sSeqCmdDebugPlayerIndex) << 24) | ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) |
                          ((u8)(sSeqCmdDebugDuration) << 8) | (u8)(sSeqCmdDebugFreq));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 6:
                     AudioSeqCmd_SetupPopCache(sSeqCmdDebugPlayerIndex, sSeqCmdDebugPlayerTargetIndex,
                                               sSeqCmdDebugTableTypeFlag);
-                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_POP_CACHE << 20) |
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_POP_CACHE << 20) |
                                        ((u8)(sSeqCmdDebugPlayerIndex) << 24) |
                                        ((u8)(sSeqCmdDebugPlayerTargetIndex) << 16) | ((u8)sSeqCmdDebugTableTypeFlag));
+                    sSeqCmdDebugCmdTimer = 200;
+                    break;
 
                 case 7:
                     AudioSeqCmd_ResetSetupCmds(sSeqCmdDebugPlayerIndex);
-                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SETUP_CMD_RESET_SETUP_CMDS << 20) |
+                    sSeqCmdDebugCmd = ((SEQ_CMD_SETUP_CMD << 28) | (SEQ_SUB_CMD_SETUP_RESET_SETUP_CMDS << 20) |
                                        ((u8)(sSeqCmdDebugPlayerIndex) << 24));
+                    sSeqCmdDebugCmdTimer = 200;
+                    break;
             }
         }
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
@@ -2598,9 +2628,9 @@ void AudioSeqCmdDebug_UpdatePageSetup2(void) {
     } else {
         // In right column (arguments)
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
-            sIsSeqCmdDebugSetup2CmdArgAdj ^= 1;
+            sIsSeqCmdDebugCmdArgAdj ^= 1;
         }
-        if (!sIsSeqCmdDebugSetup2CmdArgAdj) {
+        if (!sIsSeqCmdDebugCmdArgAdj) {
             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
                 sSeqCmdDebugSetup2CmdArgSel--;
                 if (sSeqCmdDebugSetup2CmdArgSel < 0) {
@@ -2972,88 +3002,91 @@ void AudioSeqCmdDebug_UpdatePageSetup2(void) {
     }
 }
 
-void AudioSeqCmdDebug_UpdatePageMisc(void) {
-    if (!sIsSeqCmdDebugMiscCmdArgAdj) {
+void AudioSeqCmdDebug_UpdatePageGlobal(void) {
+    if (!sIsSeqCmdDebugCmdArgAdj) {
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DRIGHT)) {
-            if (sSeqCmdDebugMiscCmdSel == 0) {
+            if (sSeqCmdDebugGlobalCmdSel == 0) {
                 sSeqCmdDebugPage++;
                 if (sSeqCmdDebugPage >= PAGE_MAX) {
                     sSeqCmdDebugPage = PAGE_SEQ;
                 }
             } else {
-                sIsSeqCmdDebugMiscCmdArgSel = true;
-                sSeqCmdDebugMiscCmdArgSel = 0;
+                sIsSeqCmdDebugGlobalCmdArgSel = true;
+                sSeqCmdDebugGlobalCmdArgSel = 0;
             }
         }
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
-            if (sSeqCmdDebugMiscCmdSel == PAGE_SEQ_TITLE) {
+            if (sSeqCmdDebugGlobalCmdSel == PAGE_SEQ_TITLE) {
                 sSeqCmdDebugPage--;
                 if (sSeqCmdDebugPage < 0) {
                     sSeqCmdDebugPage = PAGE_MAX - 1;
                 }
             } else {
-                sIsSeqCmdDebugMiscCmdArgSel = false;
+                sIsSeqCmdDebugGlobalCmdArgSel = false;
             }
         }
     }
 
     // Move vertical in left column (commands)
-    if (!sIsSeqCmdDebugMiscCmdArgSel) {
+    if (!sIsSeqCmdDebugGlobalCmdArgSel) {
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
-            switch (sSeqCmdDebugMiscCmdSel) {
+            switch (sSeqCmdDebugGlobalCmdSel) {
                 case 1:
                     AudioSeqCmd_SetSoundMode(sSeqCmdDebugSoundMode);
-                    sSeqCmdDebugCmd =
-                        ((SEQ_CMD_SUB_CMD << 28) | (SUB_CMD_SET_SOUND_MODE << 8) | (u8)(sSeqCmdDebugSoundMode));
+                    sSeqCmdDebugCmd = ((SEQ_CMD_GLOBAL_CMD << 28) | (SEQ_SUB_CMD_GLOBAL_SET_SOUND_MODE << 8) |
+                                       (u8)(sSeqCmdDebugSoundMode));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 2:
                     AudioSeqCmd_DisableNewSequences(sSeqCmdDebugIsSeqDisabled);
-                    sSeqCmdDebugCmd = ((SEQ_CMD_SUB_CMD << 28) | (SUB_CMD_DISABLE_NEW_SEQUENCES << 8) |
+                    sSeqCmdDebugCmd = ((SEQ_CMD_GLOBAL_CMD << 28) | (SEQ_SUB_CMD_GLOBAL_DISABLE_NEW_SEQUENCES << 8) |
                                        (u16)(sSeqCmdDebugIsSeqDisabled));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
 
                 case 3:
-                    AudioSeqCmd_SetSpec(sSeqCmdDebugSfxChannelLayout, sSeqCmdDebugSpecId);
+                    AudioSeqCmd_RebuildAudioHeap(sSeqCmdDebugSfxChannelLayout, sSeqCmdDebugSpecId);
                     sSeqCmdDebugCmd = ((SEQ_CMD_SET_SPEC << 28) | ((u8)(sSeqCmdDebugSfxChannelLayout) << 8) |
                                        (u8)(sSeqCmdDebugSpecId));
+                    sSeqCmdDebugCmdTimer = 200;
                     break;
             }
         }
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
-            sSeqCmdDebugMiscCmdSel--;
-            if (sSeqCmdDebugMiscCmdSel < 0) {
-                sSeqCmdDebugMiscCmdSel = 3;
+            sSeqCmdDebugGlobalCmdSel--;
+            if (sSeqCmdDebugGlobalCmdSel < 0) {
+                sSeqCmdDebugGlobalCmdSel = 3;
             }
         }
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
-            sSeqCmdDebugMiscCmdSel++;
-            if (sSeqCmdDebugMiscCmdSel > 3) {
-                sSeqCmdDebugMiscCmdSel = 0;
+            sSeqCmdDebugGlobalCmdSel++;
+            if (sSeqCmdDebugGlobalCmdSel > 3) {
+                sSeqCmdDebugGlobalCmdSel = 0;
             }
         }
     } else {
         // In right column (arguments)
         if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_L)) {
-            sIsSeqCmdDebugMiscCmdArgAdj ^= 1;
+            sIsSeqCmdDebugCmdArgAdj ^= 1;
         }
-        if (!sIsSeqCmdDebugMiscCmdArgAdj) {
+        if (!sIsSeqCmdDebugCmdArgAdj) {
             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
-                sSeqCmdDebugMiscCmdArgSel--;
-                if (sSeqCmdDebugMiscCmdArgSel < 0) {
-                    sSeqCmdDebugMiscCmdArgSel = sIsSeqCmdDebugMiscCmdNumArgs[sSeqCmdDebugMiscCmdSel] - 1;
+                sSeqCmdDebugGlobalCmdArgSel--;
+                if (sSeqCmdDebugGlobalCmdArgSel < 0) {
+                    sSeqCmdDebugGlobalCmdArgSel = sIsSeqCmdDebugGlobalCmdNumArgs[sSeqCmdDebugGlobalCmdSel] - 1;
                 }
             }
             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DDOWN)) {
-                sSeqCmdDebugMiscCmdArgSel++;
-                if (sSeqCmdDebugMiscCmdArgSel >= sIsSeqCmdDebugMiscCmdNumArgs[sSeqCmdDebugMiscCmdSel]) {
-                    sSeqCmdDebugMiscCmdArgSel = 0;
+                sSeqCmdDebugGlobalCmdArgSel++;
+                if (sSeqCmdDebugGlobalCmdArgSel >= sIsSeqCmdDebugGlobalCmdNumArgs[sSeqCmdDebugGlobalCmdSel]) {
+                    sSeqCmdDebugGlobalCmdArgSel = 0;
                 }
             }
         } else {
-            switch (sSeqCmdDebugMiscCmdSel) {
+            switch (sSeqCmdDebugGlobalCmdSel) {
                 case 1:
-                    switch (sSeqCmdDebugMiscCmdArgSel) {
+                    switch (sSeqCmdDebugGlobalCmdArgSel) {
                         case 0:
                             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
                                 sSeqCmdDebugSoundMode++;
@@ -3072,7 +3105,7 @@ void AudioSeqCmdDebug_UpdatePageMisc(void) {
                     break;
 
                 case 2:
-                    switch (sSeqCmdDebugMiscCmdArgSel) {
+                    switch (sSeqCmdDebugGlobalCmdArgSel) {
                         case 0:
                             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
                                 sSeqCmdDebugIsSeqDisabled = true;
@@ -3085,7 +3118,7 @@ void AudioSeqCmdDebug_UpdatePageMisc(void) {
                     break;
 
                 case 3:
-                    switch (sSeqCmdDebugMiscCmdArgSel) {
+                    switch (sSeqCmdDebugGlobalCmdArgSel) {
                         case 0:
                             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DUP)) {
                                 sSeqCmdDebugSfxChannelLayout++;
@@ -3145,7 +3178,7 @@ void AudioSeqCmdDebug_UpdatePage(void) {
             break;
 
         case PAGE_MISC:
-            AudioSeqCmdDebug_UpdatePageMisc();
+            AudioSeqCmdDebug_UpdatePageGlobal();
             break;
     }
 }
@@ -3160,6 +3193,10 @@ void AudioSeqCmdDebug_Update(void) {
 
     if (gIsSeqCmdDebugEnabled) {
         AudioSeqCmdDebug_UpdatePage();
+    }
+
+    if (sSeqCmdDebugCmdTimer > 0) {
+        sSeqCmdDebugCmdTimer -= 2;
     }
 }
 
@@ -3209,7 +3246,7 @@ void AudioSeqCmdDebug_DrawPageSeq(GfxPrint* printer) {
     // Draw Arguments
     if (sSeqCmdDebugSeqCmdSel != 0) {
         if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 0)) {
-            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
         } else {
             GfxPrint_SetColor(printer, 255, 255, 255, 0);
         }
@@ -3220,7 +3257,7 @@ void AudioSeqCmdDebug_DrawPageSeq(GfxPrint* printer) {
         GfxPrint_Printf(printer, "%s", sSeqCmdDebugPlayerIndexStr[sSeqCmdDebugPlayerIndex]);
 
         if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 1)) {
-            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
         } else {
             GfxPrint_SetColor(printer, 255, 255, 255, 0);
         }
@@ -3230,7 +3267,7 @@ void AudioSeqCmdDebug_DrawPageSeq(GfxPrint* printer) {
     switch (sSeqCmdDebugSeqCmdSel) {
         case PAGE_SEQ_PLAY:
             if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3238,7 +3275,7 @@ void AudioSeqCmdDebug_DrawPageSeq(GfxPrint* printer) {
             GfxPrint_Printf(printer, "seqArgs: %d", sSeqCmdDebugSeqArgs);
 
             if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 3)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3254,7 +3291,7 @@ void AudioSeqCmdDebug_DrawPageSeq(GfxPrint* printer) {
 
         case PAGE_SEQ_QUEUE:
             if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3262,7 +3299,7 @@ void AudioSeqCmdDebug_DrawPageSeq(GfxPrint* printer) {
             GfxPrint_Printf(printer, "priority: %d", sSeqCmdDebugPriority);
 
             if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 3)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3275,7 +3312,7 @@ void AudioSeqCmdDebug_DrawPageSeq(GfxPrint* printer) {
 
         case PAGE_SEQ_UNQUEUE:
             if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3366,7 +3403,7 @@ void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
     // Draw Arguments
     if (sSeqCmdDebugPlayerCmdSel != 0) {
         if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 0)) {
-            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
         } else {
             GfxPrint_SetColor(printer, 255, 255, 255, 0);
         }
@@ -3378,7 +3415,7 @@ void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
 
         if (sSeqCmdDebugPlayerCmdSel != 8) {
             if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 1)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3390,7 +3427,7 @@ void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
     switch (sSeqCmdDebugPlayerCmdSel) {
         case 1:
             if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3400,7 +3437,7 @@ void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
 
         case 2:
             if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3410,7 +3447,7 @@ void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
 
         case 3:
             if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3421,7 +3458,7 @@ void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
         case 4:
         case 5:
             if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3431,7 +3468,7 @@ void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
 
         case 6:
             if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3441,7 +3478,7 @@ void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
 
         case 8:
             if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 1)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3449,7 +3486,7 @@ void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
             GfxPrint_Printf(printer, "port: %d", sSeqCmdDebugPort);
 
             if (sIsSeqCmdDebugPlayerCmdArgSel && (sSeqCmdDebugPlayerCmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3512,7 +3549,7 @@ void AudioSeqCmdDebug_DrawPageChannel(GfxPrint* printer) {
     // Draw Arguments
     if (sSeqCmdDebugChannelCmdSel != 0) {
         if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 0)) {
-            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
         } else {
             GfxPrint_SetColor(printer, 255, 255, 255, 0);
         }
@@ -3524,7 +3561,7 @@ void AudioSeqCmdDebug_DrawPageChannel(GfxPrint* printer) {
 
         if ((sSeqCmdDebugChannelCmdSel != 4) && (sSeqCmdDebugChannelCmdSel != 5)) {
             if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 1)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3534,7 +3571,7 @@ void AudioSeqCmdDebug_DrawPageChannel(GfxPrint* printer) {
 
         if ((sSeqCmdDebugChannelCmdSel != 3) && (sSeqCmdDebugChannelCmdSel != 4) && (sSeqCmdDebugChannelCmdSel != 5)) {
             if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3546,7 +3583,7 @@ void AudioSeqCmdDebug_DrawPageChannel(GfxPrint* printer) {
     switch (sSeqCmdDebugChannelCmdSel) {
         case 1:
             if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 3)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3556,7 +3593,7 @@ void AudioSeqCmdDebug_DrawPageChannel(GfxPrint* printer) {
 
         case 2:
             if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 3)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3566,7 +3603,7 @@ void AudioSeqCmdDebug_DrawPageChannel(GfxPrint* printer) {
 
         case 3:
             if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3574,7 +3611,7 @@ void AudioSeqCmdDebug_DrawPageChannel(GfxPrint* printer) {
             GfxPrint_Printf(printer, "port: %d", sSeqCmdDebugPort);
 
             if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 3)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3585,7 +3622,7 @@ void AudioSeqCmdDebug_DrawPageChannel(GfxPrint* printer) {
         case 4:
         case 5:
             if (sIsSeqCmdDebugChannelCmdArgSel && (sSeqCmdDebugChannelCmdArgSel == 1)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3659,7 +3696,7 @@ void AudioSeqCmdDebug_DrawPageSetup1(GfxPrint* printer) {
     // Draw Arguments
     if (sSeqCmdDebugSetup1CmdSel != 0) {
         if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 0)) {
-            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
         } else {
             GfxPrint_SetColor(printer, 255, 255, 255, 0);
         }
@@ -3671,7 +3708,7 @@ void AudioSeqCmdDebug_DrawPageSetup1(GfxPrint* printer) {
 
         if (sSeqCmdDebugSetup1CmdSel != 2) {
             if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 1)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3686,7 +3723,7 @@ void AudioSeqCmdDebug_DrawPageSetup1(GfxPrint* printer) {
     switch (sSeqCmdDebugSetup1CmdSel) {
         case 1:
             if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3696,7 +3733,7 @@ void AudioSeqCmdDebug_DrawPageSetup1(GfxPrint* printer) {
 
         case 4:
             if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3704,7 +3741,7 @@ void AudioSeqCmdDebug_DrawPageSetup1(GfxPrint* printer) {
             GfxPrint_Printf(printer, "duration: %d", sSeqCmdDebugDuration);
 
             if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3714,7 +3751,7 @@ void AudioSeqCmdDebug_DrawPageSetup1(GfxPrint* printer) {
 
         case 5:
             if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3724,7 +3761,7 @@ void AudioSeqCmdDebug_DrawPageSetup1(GfxPrint* printer) {
 
         case 6:
             if (sIsSeqCmdDebugSetup1CmdArgSel && (sSeqCmdDebugSetup1CmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3806,7 +3843,7 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
     // Draw Arguments
     if (sSeqCmdDebugSetup2CmdSel != 0) {
         if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 0)) {
-            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
         } else {
             GfxPrint_SetColor(printer, 255, 255, 255, 0);
         }
@@ -3816,9 +3853,10 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
         GfxPrint_SetPos(printer, 23, 12);
         GfxPrint_Printf(printer, "%s", sSeqCmdDebugPlayerIndexStr[sSeqCmdDebugPlayerIndex]);
 
-        if ((sSeqCmdDebugSetup1CmdArgSel != 6) && (sSeqCmdDebugSetup1CmdArgSel != 7)) {
+        if ((sSeqCmdDebugSetup1CmdArgSel != 1) && (sSeqCmdDebugSetup1CmdArgSel != 6) &&
+            (sSeqCmdDebugSetup1CmdArgSel != 7)) {
             if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 1)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3833,17 +3871,17 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
     switch (sSeqCmdDebugSetup2CmdSel) {
         case 1:
             if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
-            GfxPrint_SetPos(printer, 20, 18);
+            GfxPrint_SetPos(printer, 20, 16);
             GfxPrint_Printf(printer, "fade timer: %d", sSeqCmdDebugFadeTimer);
             break;
 
         case 2:
             if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3851,7 +3889,7 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
             GfxPrint_Printf(printer, "fade timer: %d", sSeqCmdDebugFadeTimer);
 
             if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 3)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3861,7 +3899,7 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
 
         case 3:
             if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3869,7 +3907,7 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
             GfxPrint_Printf(printer, "volume scale: %d", sSeqCmdDebugVolumeScale);
 
             if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 3)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3879,7 +3917,7 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
 
         case 4:
             if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3892,7 +3930,7 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
 
         case 5:
             if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3900,7 +3938,7 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
             GfxPrint_Printf(printer, "duration: %d", sSeqCmdDebugDuration);
 
             if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 3)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3910,7 +3948,7 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
 
         case 6:
             if (sIsSeqCmdDebugSetup2CmdArgSel && (sSeqCmdDebugSetup2CmdArgSel == 2)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3919,17 +3957,17 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
     }
 }
 
-void AudioSeqCmdDebug_DrawPageMisc(GfxPrint* printer) {
-    if (sSeqCmdDebugMiscCmdSel == 0) {
+void AudioSeqCmdDebug_DrawPageGlobal(GfxPrint* printer) {
+    if (sSeqCmdDebugGlobalCmdSel == 0) {
         GfxPrint_SetColor(printer, 0, 0, 255, 255);
     } else {
         GfxPrint_SetColor(printer, 255, 255, 255, 0);
     }
     GfxPrint_SetPos(printer, 2, 7);
-    GfxPrint_Printf(printer, "Misc SeqCmds");
+    GfxPrint_Printf(printer, "Global SeqCmds");
 
     // Draw Command Options
-    if (sSeqCmdDebugMiscCmdSel == 1) {
+    if (sSeqCmdDebugGlobalCmdSel == 1) {
         GfxPrint_SetColor(printer, 0, 0, 255, 255);
     } else {
         GfxPrint_SetColor(printer, 255, 255, 255, 0);
@@ -3937,7 +3975,7 @@ void AudioSeqCmdDebug_DrawPageMisc(GfxPrint* printer) {
     GfxPrint_SetPos(printer, 2, 10);
     GfxPrint_Printf(printer, "Set Sound Mode");
 
-    if (sSeqCmdDebugMiscCmdSel == 2) {
+    if (sSeqCmdDebugGlobalCmdSel == 2) {
         GfxPrint_SetColor(printer, 0, 0, 255, 255);
     } else {
         GfxPrint_SetColor(printer, 255, 255, 255, 0);
@@ -3945,7 +3983,7 @@ void AudioSeqCmdDebug_DrawPageMisc(GfxPrint* printer) {
     GfxPrint_SetPos(printer, 2, 12);
     GfxPrint_Printf(printer, "Disable New Seq");
 
-    if (sSeqCmdDebugMiscCmdSel == 3) {
+    if (sSeqCmdDebugGlobalCmdSel == 3) {
         GfxPrint_SetColor(printer, 0, 0, 255, 255);
     } else {
         GfxPrint_SetColor(printer, 255, 255, 255, 0);
@@ -3953,10 +3991,10 @@ void AudioSeqCmdDebug_DrawPageMisc(GfxPrint* printer) {
     GfxPrint_SetPos(printer, 2, 14);
     GfxPrint_Printf(printer, "Set Audio Spec");
 
-    switch (sSeqCmdDebugMiscCmdSel) {
+    switch (sSeqCmdDebugGlobalCmdSel) {
         case 1:
-            if (sIsSeqCmdDebugMiscCmdArgSel && (sSeqCmdDebugMiscCmdArgSel == 0)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            if (sIsSeqCmdDebugGlobalCmdArgSel && (sSeqCmdDebugGlobalCmdArgSel == 0)) {
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3969,8 +4007,8 @@ void AudioSeqCmdDebug_DrawPageMisc(GfxPrint* printer) {
             break;
 
         case 2:
-            if (sIsSeqCmdDebugMiscCmdArgSel && (sSeqCmdDebugMiscCmdArgSel == 0)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            if (sIsSeqCmdDebugGlobalCmdArgSel && (sSeqCmdDebugGlobalCmdArgSel == 0)) {
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -3979,16 +4017,16 @@ void AudioSeqCmdDebug_DrawPageMisc(GfxPrint* printer) {
             break;
 
         case 3:
-            if (sIsSeqCmdDebugMiscCmdArgSel && (sSeqCmdDebugMiscCmdArgSel == 0)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            if (sIsSeqCmdDebugGlobalCmdArgSel && (sSeqCmdDebugGlobalCmdArgSel == 0)) {
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
             GfxPrint_SetPos(printer, 20, 10);
             GfxPrint_Printf(printer, "sfx chan layout: %d", sSeqCmdDebugSfxChannelLayout);
 
-            if (sIsSeqCmdDebugMiscCmdArgSel && (sSeqCmdDebugMiscCmdArgSel == 1)) {
-                GfxPrint_SetColor(printer, 0, 0, 255, 255);
+            if (sIsSeqCmdDebugGlobalCmdArgSel && (sSeqCmdDebugGlobalCmdArgSel == 1)) {
+                GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
             } else {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
@@ -4025,11 +4063,11 @@ void AudioSeqCmdDebug_Draw(GfxPrint* printer) {
             break;
 
         case PAGE_MISC:
-            AudioSeqCmdDebug_DrawPageMisc(printer);
+            AudioSeqCmdDebug_DrawPageGlobal(printer);
             break;
     }
 
-    GfxPrint_SetColor(printer, 255, 0, 0, 255);
+    GfxPrint_SetColor(printer, 255, 200 - sSeqCmdDebugCmdTimer, 200 - sSeqCmdDebugCmdTimer, 255);
     GfxPrint_SetPos(printer, 12, 28);
     GfxPrint_Printf(printer, "Audio_QueueSeqCmd(%08X)", sSeqCmdDebugCmd);
 }

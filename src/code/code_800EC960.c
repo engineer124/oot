@@ -3146,7 +3146,7 @@ void AudioDebug_ProcessInput_SndCont(void) {
                 AudioSeqCmd_DisableNewSequences(sAudioSndContWork[sAudioSndContSel]);
                 break;
             case 6:
-                AudioSeqCmd_SetSpec(0, sAudioSndContWork[sAudioSndContSel]);
+                AudioSeqCmd_RebuildAudioHeap(0, sAudioSndContWork[sAudioSndContSel]);
                 sAudioSubTrackInfoSpec = sAudioSndContWork[6];
                 if (sAudioSubTrackInfoPlayerSel > gAudioSpecs[sAudioSubTrackInfoSpec].numSequencePlayers - 1) {
                     sAudioSubTrackInfoPlayerSel = gAudioSpecs[sAudioSubTrackInfoSpec].numSequencePlayers - 1;
@@ -4607,13 +4607,13 @@ void func_800F5718(void) {
     }
 }
 
-void func_800F574C(f32 arg0, u8 arg2) {
-    if (arg0 == 1.0f) {
-        AudioSeqCmd_ResetTempo(SEQ_PLAYER_BGM_MAIN, arg2);
+void func_800F574C(f32 scaleTempoAndFreq, u8 duration) {
+    if (scaleTempoAndFreq == 1.0f) {
+        AudioSeqCmd_ResetTempo(SEQ_PLAYER_BGM_MAIN, duration);
     } else {
-        AudioSeqCmd_SetupScaleTempo(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, arg2, arg0 * 100.0f);
+        AudioSeqCmd_SetupScaleTempo(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, duration, scaleTempoAndFreq * 100.0f);
     }
-    AudioSeqCmd_SetupSetPlayerFreq(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, arg2, arg0 * 100.0f);
+    AudioSeqCmd_SetupSetPlayerFreq(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, duration, scaleTempoAndFreq * 100.0f);
 }
 
 void func_800F5918(void) {
@@ -4750,14 +4750,14 @@ void func_800F5CF8(void) {
         if (D_8016B9F4 == 0) {
             Audio_QueueCmdS32(0xE3000000, SEQUENCE_TABLE);
             Audio_QueueCmdS32(0xE3000000, FONT_TABLE);
-            Audio_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN);
+            pad = Audio_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN);
             sp26 = Audio_GetActiveSeqId(SEQ_PLAYER_FANFARE);
             sp22 = Audio_GetActiveSeqId(SEQ_PLAYER_BGM_SUB);
             if (sp26 == NA_BGM_DISABLED) {
                 Audio_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, 1, 0, 5);
                 Audio_SetVolumeScale(SEQ_PLAYER_BGM_SUB, 1, 0, 5);
-                AudioSeqCmd_SetupSetPlayerVolumeWithFade(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, 1, 10);
-                AudioSeqCmd_SetupSetPlayerVolumeWithFade(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_SUB, 1, 10);
+                AudioSeqCmd_SetupRestorePlayerVolumeWithScale(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, 1, 10);
+                AudioSeqCmd_SetupRestorePlayerVolumeWithScale(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_SUB, 1, 10);
                 AudioSeqCmd_SetupSetDisableChannels(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, 0);
                 if (sp22 != NA_BGM_LONLON) {
                     AudioSeqCmd_SetupSetDisableChannels(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_SUB, 0);
