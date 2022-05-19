@@ -1,7 +1,7 @@
 /**
  * @file audio_seqcmd.c
  *
- * This file implements a set of high-levelaudio sequence commands that allow sequences to be modified in real-time.
+ * This file implements a set of high-level audio sequence commands that allow sequences to be modified in real-time.
  * These commands are intended to interface external to the audio library.
  *
  * These commands are generated using (Audio_QueueSeqCmd), and a user-friendly interface for this function
@@ -22,7 +22,7 @@
 #include "ultra64/abi.h"
 
 // Direct audio command (skips the queueing system)
-#define Audio_SetVolScaleNow(playerIndex, volFadeTimer, volScale)                                             \
+#define Audio_SetVolumeScaleNow(playerIndex, volFadeTimer, volScale)                                          \
     Audio_ProcessSeqCmd((SEQ_CMD_SET_PLAYER_VOL << 28) | ((u8)playerIndex << 24) | ((u8)volFadeTimer << 16) | \
                         ((u8)(volScale * 127.0f)));
 
@@ -211,7 +211,7 @@ void Audio_ProcessSeqCmd(u32 cmd) {
                 sNumSeqRequests[playerIndex]--;
             }
 
-            // If the sequence was first in queue (it was currently playing),
+            // If the sequence was first in queue (it is currently playing),
             // Then stop the sequence and play the next sequence in the queue.
             if (found == 0) {
                 Audio_StopSequenceNow(playerIndex, fadeTimer);
@@ -466,7 +466,7 @@ void Audio_SetVolumeScale(u8 playerIndex, u8 scaleIndex, u8 targetVol, u8 volFad
             volScale *= gActiveSeqs[playerIndex].volScales[i] / 127.0f;
         }
 
-        Audio_SetVolScaleNow(playerIndex, volFadeTimer, volScale);
+        Audio_SetVolumeScaleNow(playerIndex, volFadeTimer, volScale);
     }
 }
 
@@ -497,7 +497,7 @@ void Audio_UpdateActiveSequences(void) {
         // The setup for this block of code was not fully implemented until Majora's Mask.
         // The intent was to load soundfonts asyncronously before playing a
         // sequence in Audio_StartSequence using (seqArgs & 0x80).
-        // Checks if the requested sequences is finished loading fonts
+        // Checks if the requested sequence is finished loading fonts
         if (gActiveSeqs[playerIndex].isWaitingForFonts) {
             switch (func_800E5E20(&retMsg)) {
                 case SEQ_PLAYER_BGM_MAIN + 1:
@@ -546,7 +546,7 @@ void Audio_UpdateActiveSequences(void) {
 
             // Process tempo commands
             if (gAudioContext.seqPlayers[playerIndex].enabled) {
-                tempoPrev = gAudioContext.seqPlayers[playerIndex].tempo / 0x30;
+                tempoPrev = gAudioContext.seqPlayers[playerIndex].tempo / TATUMS_PER_BEAT;
                 tempoOp = (tempoCmd & 0xF000) >> 12;
                 switch (tempoOp) {
                     case SEQ_SUB_CMD_TEMPO_SPEED_UP:
@@ -587,7 +587,7 @@ void Audio_UpdateActiveSequences(void) {
                 }
 
                 gActiveSeqs[playerIndex].tempoTarget = tempoTarget;
-                gActiveSeqs[playerIndex].tempoCur = gAudioContext.seqPlayers[playerIndex].tempo / 0x30;
+                gActiveSeqs[playerIndex].tempoCur = gAudioContext.seqPlayers[playerIndex].tempo / TATUMS_PER_BEAT;
                 gActiveSeqs[playerIndex].tempoVelocity =
                     (gActiveSeqs[playerIndex].tempoCur - gActiveSeqs[playerIndex].tempoTarget) / tempoDuration;
                 gActiveSeqs[playerIndex].tempoDuration = tempoDuration;
@@ -620,7 +620,7 @@ void Audio_UpdateActiveSequences(void) {
                             gActiveSeqs[playerIndex].channelData[channelIndex].volTarget;
                         gActiveSeqs[playerIndex].volChannelFlags ^= (1 << channelIndex);
                     }
-                    // CHAN_UPD_VOL_SCALE (playerIndex = seq, channelIndex = chan)
+                    // CHAN_UPD_VOL_SCALE
                     Audio_QueueCmdF32(0x01000000 | _SHIFTL(playerIndex, 16, 8) | _SHIFTL(channelIndex, 8, 8),
                                       gActiveSeqs[playerIndex].channelData[channelIndex].volCur);
                 }
@@ -661,7 +661,8 @@ void Audio_UpdateActiveSequences(void) {
                 continue;
             }
 
-            // Do not process setup commands if the seqPlayer is already enabled
+            // Only process setup commands if the playerIndex if no longer playing
+            // i.e. the seqPlayer is no longer enabled
             if (gAudioContext.seqPlayers[playerIndex].enabled) {
                 continue;
             }
@@ -698,7 +699,7 @@ void Audio_UpdateActiveSequences(void) {
                         break;
 
                     case SEQ_SUB_CMD_SETUP_RESTART_SEQ:
-                        // Resart the currently active sequence on playerIndexTarget with full volume.
+                        // Restart the currently active sequence on playerIndexTarget with full volume.
                         // Sequence on playerIndexTarget must still be active to play (can be muted)
                         AudioSeqCmd_PlaySequence(playerIndexTarget, 1, 0, gActiveSeqs[playerIndexTarget].seqId);
                         gActiveSeqs[playerIndexTarget].fadeVolUpdate = 1;
@@ -757,7 +758,7 @@ void Audio_UpdateActiveSequences(void) {
                         break;
 
                     case SEQ_SUB_CMD_SETUP_SET_PLAYER_FREQ:
-                        // Scale all chsnnels of playerIndexTarget
+                        // Scale all channels of playerIndexTarget
                         AudioSeqCmd_SetPlayerFreq(playerIndexTarget, setupVal2, (setupVal1 * 10) & 0xFFFF);
                         break;
                 }
