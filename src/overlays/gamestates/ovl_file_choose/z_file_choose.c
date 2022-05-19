@@ -1454,11 +1454,11 @@ void FileChoose_LoadGame(GameState* thisx) {
         gSaveContext.fileNum = this->buttonIndex;
         Sram_OpenSave(&this->sramCtx);
         gSaveContext.gameMode = 0;
-        SET_NEXT_GAMESTATE(&this->state, Gameplay_Init, GlobalContext);
+        SET_NEXT_GAMESTATE(&this->state, Play_Init, GlobalContext);
         this->state.running = false;
     }
 
-    gSaveContext.respawn[0].entranceIndex = ENTR_LOAD_OPENING;
+    gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = ENTR_LOAD_OPENING;
     gSaveContext.respawnFlag = 0;
     gSaveContext.seqId = (u8)NA_BGM_DISABLED;
     gSaveContext.natureAmbienceId = 0xFF;
@@ -1893,6 +1893,6 @@ void FileChoose_Init(GameState* thisx) {
     this->state.destroy = FileChoose_Destroy;
     FileChoose_InitContext(&this->state);
     Font_LoadOrderedFont(&this->font);
-    AudioSeqCmd_RebuildAudioHeap(0, 10);
+    AudioSeqCmd_ResetAudioHeap(0, 10);
     func_800F5E18(SEQ_PLAYER_BGM_MAIN, NA_BGM_FILE_SELECT, 0, 7, 1);
 }

@@ -239,7 +239,7 @@ void func_8009883C(GlobalContext* globalCtx, SceneCmd* cmd) {
     }
 
     if (cmd->specialFiles.cUpElfMsgNum != 0) {
-        globalCtx->cUpElfMsgs = Gameplay_LoadFile(globalCtx, &sNaviMsgFiles[cmd->specialFiles.cUpElfMsgNum - 1]);
+        globalCtx->cUpElfMsgs = Play_LoadFile(globalCtx, &sNaviMsgFiles[cmd->specialFiles.cUpElfMsgNum - 1]);
     }
 }
 
@@ -418,7 +418,7 @@ void func_80099140(GlobalContext* globalCtx, SceneCmd* cmd) {
     globalCtx->sequenceCtx.natureAmbienceId = cmd->soundSettings.natureAmbienceId;
 
     if (gSaveContext.seqId == (u8)NA_BGM_DISABLED) {
-        AudioSeqCmd_RebuildAudioHeap(0, cmd->soundSettings.specId);
+        AudioSeqCmd_ResetAudioHeap(0, cmd->soundSettings.specId);
     }
 }
 
