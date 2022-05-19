@@ -944,7 +944,7 @@ char sSoundModeNamesDebug[4][8] = {
     "UNK",
     "MONO",
 };
-char sSeqNames[109][17] = {
+char sSeqNames[110][17] = {
     "GENERAL_SFX",
     "NATURE_AMBIENCE",
     "FIELD_LOGIC",
@@ -1054,6 +1054,7 @@ char sSeqNames[109][17] = {
     "STAFF_4",
     "FIRE_BOSS",
     "TIMED_MINI_GAME",
+    "VARIOUS_SFX"
 };
 
 void AudioSeqCmdDebug_ReadControllerInput(void) {
@@ -1222,11 +1223,11 @@ void AudioSeqCmdDebug_UpdatePageSeq(void) {
                             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
                                 sSeqCmdDebugSeqId -= 10;
                             }
-                            if (sSeqCmdDebugSeqId > 108) {
+                            if (sSeqCmdDebugSeqId > 109) {
                                 sSeqCmdDebugSeqId = 0;
                             }
                             if (sSeqCmdDebugSeqId < 0) {
-                                sSeqCmdDebugSeqId = 108;
+                                sSeqCmdDebugSeqId = 109;
                             }
                             break;
                     }
@@ -1326,11 +1327,11 @@ void AudioSeqCmdDebug_UpdatePageSeq(void) {
                             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
                                 sSeqCmdDebugSeqId -= 10;
                             }
-                            if (sSeqCmdDebugSeqId > 108) {
+                            if (sSeqCmdDebugSeqId > 109) {
                                 sSeqCmdDebugSeqId = 0;
                             }
                             if (sSeqCmdDebugSeqId < 0) {
-                                sSeqCmdDebugSeqId = 108;
+                                sSeqCmdDebugSeqId = 109;
                             }
                             break;
                     }
@@ -1381,11 +1382,11 @@ void AudioSeqCmdDebug_UpdatePageSeq(void) {
                             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
                                 sSeqCmdDebugSeqId -= 10;
                             }
-                            if (sSeqCmdDebugSeqId > 108) {
+                            if (sSeqCmdDebugSeqId > 109) {
                                 sSeqCmdDebugSeqId = 0;
                             }
                             if (sSeqCmdDebugSeqId < 0) {
-                                sSeqCmdDebugSeqId = 108;
+                                sSeqCmdDebugSeqId = 109;
                             }
                             break;
                     }
@@ -2595,11 +2596,11 @@ void AudioSeqCmdDebug_UpdatePageSetup1(void) {
                             if (CHECK_BTN_ANY(sSeqCmdDebugInputButtonPress, BTN_DLEFT)) {
                                 sSeqCmdDebugSeqId -= 10;
                             }
-                            if (sSeqCmdDebugSeqId > 108) {
+                            if (sSeqCmdDebugSeqId > 109) {
                                 sSeqCmdDebugSeqId = 0;
                             }
                             if (sSeqCmdDebugSeqId < 0) {
-                                sSeqCmdDebugSeqId = 108;
+                                sSeqCmdDebugSeqId = 109;
                             }
                             break;
                     }
@@ -3579,7 +3580,7 @@ void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
                 GfxPrint_SetColor(printer, 255, 255, 255, 0);
             }
             GfxPrint_SetPos(printer, 20, 16);
-            GfxPrint_Printf(printer, "value: %d", sSeqCmdDebugVal);
+            GfxPrint_Printf(printer, "ioData: %d", sSeqCmdDebugVal);
             break;
     }
 }
@@ -3895,7 +3896,7 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
         GfxPrint_SetColor(printer, 255, 255, 255, 0);
     }
     GfxPrint_SetPos(printer, 2, 10);
-    GfxPrint_Printf(printer, "Reset Vol w Queued");
+    GfxPrint_Printf(printer, "Reset Vol w Queue");
 
     if (sSeqCmdDebugSetup2CmdSel == 2) {
         GfxPrint_SetColor(printer, 0, 0, 255, 255);

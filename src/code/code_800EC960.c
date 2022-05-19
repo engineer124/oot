@@ -5163,7 +5163,7 @@ void func_800F6C34(void) {
     D_8016B9F2 = 0;
 }
 
-void Audio_SetNatureAmbienceChannelIO(u8 channelIdxRange, u8 port, u8 val) {
+void Audio_SetNatureAmbienceChannelIO(u8 channelIdxRange, u8 port, u8 ioData) {
     u8 firstChannelIdx;
     u8 lastChannelIdx;
     u8 channelIdx;
@@ -5189,7 +5189,7 @@ void Audio_SetNatureAmbienceChannelIO(u8 channelIdxRange, u8 port, u8 val) {
     }
 
     for (channelIdx = firstChannelIdx; channelIdx <= lastChannelIdx; channelIdx++) {
-        AudioSeqCmd_SetChannelIO(SEQ_PLAYER_BGM_MAIN, port, channelIdx, val);
+        AudioSeqCmd_SetChannelIO(SEQ_PLAYER_BGM_MAIN, port, channelIdx, ioData);
     }
 }
 
@@ -5229,7 +5229,7 @@ void Audio_PlayNatureAmbienceSequence(u8 natureAmbienceId) {
     u8 i = 0;
     u8 channelIdx;
     u8 port;
-    u8 val;
+    u8 ioData;
 
     if ((gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId == NA_BGM_DISABLED) ||
         !(sSeqFlags[((u8)gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId) & 0xFF] & 0x80)) {
@@ -5240,8 +5240,8 @@ void Audio_PlayNatureAmbienceSequence(u8 natureAmbienceId) {
         while ((sNatureAmbienceDataIO[natureAmbienceId].channelIO[i] != 0xFF) && (i < 100)) {
             channelIdx = sNatureAmbienceDataIO[natureAmbienceId].channelIO[i++];
             port = sNatureAmbienceDataIO[natureAmbienceId].channelIO[i++];
-            val = sNatureAmbienceDataIO[natureAmbienceId].channelIO[i++];
-            AudioSeqCmd_SetChannelIO(SEQ_PLAYER_BGM_MAIN, port, channelIdx, val);
+            ioData = sNatureAmbienceDataIO[natureAmbienceId].channelIO[i++];
+            AudioSeqCmd_SetChannelIO(SEQ_PLAYER_BGM_MAIN, port, channelIdx, ioData);
         }
 
         AudioSeqCmd_SetChannelIO(SEQ_PLAYER_BGM_MAIN, CHANNEL_IO_PORT_7, NATURE_CHANNEL_UNK, D_80130604);
