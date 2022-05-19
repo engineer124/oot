@@ -851,7 +851,7 @@ typedef enum {
 } SeqCmdDebugSeqPageCmd;
 
 u32 sSeqCmdDebugInputButtonPress = 0;
-u32 sSeqCmdDebugInputButtonLast = 0;
+u32 sSeqCmdDebugInputButtonCur = 0;
 s8 sSeqCmdDebugPage = PAGE_SEQ;
 u8 gIsSeqCmdDebugEnabled = false;
 s8 sIsSeqCmdDebugCmdArgAdj = false;
@@ -1061,13 +1061,14 @@ char sSeqNames[110][17] = {
 void AudioSeqCmdDebug_ReadControllerInput(void) {
     Input inputs[4];
     Input* input = &inputs[0];
-    u32 btn;
+    u32 btnCur;
+    u32 btnPrev = sSeqCmdDebugInputButtonCur;
 
     PadMgr_RequestPadData(&gPadMgr, inputs, 0);
 
-    btn = input->cur.button;
-    sSeqCmdDebugInputButtonPress = (btn ^ sSeqCmdDebugInputButtonLast) & btn;
-    sSeqCmdDebugInputButtonLast = btn;
+    btnCur = input->cur.button;
+    sSeqCmdDebugInputButtonPress = btnCur & ~btnPrev;
+    sSeqCmdDebugInputButtonCur = btnCur;
 }
 
 void AudioSeqCmdDebug_UpdatePageSeq(void) {
@@ -3277,7 +3278,7 @@ void AudioSeqCmdDebug_Update(void) {
 
     AudioSeqCmdDebug_ReadControllerInput();
 
-    if (CHECK_BTN_ALL(sSeqCmdDebugInputButtonPress, BTN_L | BTN_R)) {
+    if ((sSeqCmdDebugInputButtonCur & BTN_R) && (sSeqCmdDebugInputButtonPress & BTN_L)) {
         gIsSeqCmdDebugEnabled ^= 1;
     }
 
