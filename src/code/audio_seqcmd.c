@@ -3291,51 +3291,36 @@ void AudioSeqCmdDebug_Update(void) {
     }
 }
 
+void AudioSeqCmdDebug_DrawPageEntry(GfxPrint* printer, s32 drawnCmd, s32 posY, char* name, s32 selectedCmd, s8 isArgumentSelected) {
+    if (selectedCmd == drawnCmd) {
+        if (isArgumentSelected) {
+            GfxPrint_SetColor(printer, 150, 150, 255, 255);
+        } else {
+            GfxPrint_SetColor(printer, 0, 0, 255, 255);
+        }
+    } else {
+        GfxPrint_SetColor(printer, 255, 255, 255, 0);
+    }
+    GfxPrint_SetPos(printer, 2, posY);
+    GfxPrint_Printf(printer, name);
+}
+
+void AudioSeqCmdDebug_DrawPageSeqEntry(GfxPrint* printer, s32 drawnCmd, s32 posY, char* name) {
+    AudioSeqCmdDebug_DrawPageEntry(printer, drawnCmd, posY, name, sSeqCmdDebugSeqCmdSel, sIsSeqCmdDebugSeqCmdArgSel);
+}
+
 void AudioSeqCmdDebug_DrawPageSeq(GfxPrint* printer) {
     // Draw Page Title
-    if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_TITLE) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 7);
-    GfxPrint_Printf(printer, "Sequence SeqCmds");
+    AudioSeqCmdDebug_DrawPageSeqEntry(printer, PAGE_SEQ_TITLE, 7, "Sequence SeqCmds");
 
     // Draw Command Options
-    if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_PLAY) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 10);
-    GfxPrint_Printf(printer, "Play Seq");
-
-    if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_STOP) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 12);
-    GfxPrint_Printf(printer, "Stop Seq");
-
-    if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_QUEUE) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 14);
-    GfxPrint_Printf(printer, "Queue Seq");
-
-    if (sSeqCmdDebugSeqCmdSel == PAGE_SEQ_UNQUEUE) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 16);
-    GfxPrint_Printf(printer, "Unqueue Seq");
+    AudioSeqCmdDebug_DrawPageSeqEntry(printer, PAGE_SEQ_PLAY, 10, "Play Seq");
+    AudioSeqCmdDebug_DrawPageSeqEntry(printer, PAGE_SEQ_STOP, 12, "Stop Seq");
+    AudioSeqCmdDebug_DrawPageSeqEntry(printer, PAGE_SEQ_QUEUE, 14, "Queue Seq");
+    AudioSeqCmdDebug_DrawPageSeqEntry(printer, PAGE_SEQ_UNQUEUE, 16, "Unqueue Seq");
 
     // Draw Arguments
-    if (sSeqCmdDebugSeqCmdSel != 0) {
+    if (sSeqCmdDebugSeqCmdSel != PAGE_SEQ_TITLE) {
         if (sIsSeqCmdDebugSeqCmdArgSel && (sSeqCmdDebugSeqCmdArgSel == 0)) {
             GfxPrint_SetColor(printer, 150 * sIsSeqCmdDebugCmdArgAdj, 150 * sIsSeqCmdDebugCmdArgAdj, 255, 255);
         } else {
@@ -3416,80 +3401,23 @@ void AudioSeqCmdDebug_DrawPageSeq(GfxPrint* printer) {
     }
 }
 
+void AudioSeqCmdDebug_DrawPagePlayerEntry(GfxPrint* printer, s32 drawnCmd, s32 posY, char* name) {
+    AudioSeqCmdDebug_DrawPageEntry(printer, drawnCmd, posY, name, sSeqCmdDebugPlayerCmdSel, sIsSeqCmdDebugPlayerCmdArgSel);
+}
+
 void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
     // Draw Page Title
-    if (sSeqCmdDebugPlayerCmdSel == 0) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 7);
-    GfxPrint_Printf(printer, "Player SeqCmds");
+    AudioSeqCmdDebug_DrawPagePlayerEntry(printer, 0, 7, "Player SeqCmds");
 
     // Draw Command Options
-    if (sSeqCmdDebugPlayerCmdSel == 1) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 10);
-    GfxPrint_Printf(printer, "Set Volume");
-
-    if (sSeqCmdDebugPlayerCmdSel == 2) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 12);
-    GfxPrint_Printf(printer, "Set Frequency");
-
-    if (sSeqCmdDebugPlayerCmdSel == 3) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 14);
-    GfxPrint_Printf(printer, "Set Tempo");
-
-    if (sSeqCmdDebugPlayerCmdSel == 4) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 16);
-    GfxPrint_Printf(printer, "Speed Up Tempo");
-
-    if (sSeqCmdDebugPlayerCmdSel == 5) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 18);
-    GfxPrint_Printf(printer, "Slow Down Tempo");
-
-    if (sSeqCmdDebugPlayerCmdSel == 6) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 20);
-    GfxPrint_Printf(printer, "Scale Tempo");
-
-    if (sSeqCmdDebugPlayerCmdSel == 7) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 22);
-    GfxPrint_Printf(printer, "Reset Tempo");
-
-    if (sSeqCmdDebugPlayerCmdSel == 8) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 24);
-    GfxPrint_Printf(printer, "Set Player IO");
+    AudioSeqCmdDebug_DrawPagePlayerEntry(printer, 1, 10, "Set Volume");
+    AudioSeqCmdDebug_DrawPagePlayerEntry(printer, 2, 12, "Set Frequency");
+    AudioSeqCmdDebug_DrawPagePlayerEntry(printer, 3, 14, "Set Tempo");
+    AudioSeqCmdDebug_DrawPagePlayerEntry(printer, 4, 16, "Speed Up Tempo");
+    AudioSeqCmdDebug_DrawPagePlayerEntry(printer, 5, 18, "Slow Down Tempo");
+    AudioSeqCmdDebug_DrawPagePlayerEntry(printer, 6, 20, "Scale Tempo");
+    AudioSeqCmdDebug_DrawPagePlayerEntry(printer, 7, 22, "Reset Tempo");
+    AudioSeqCmdDebug_DrawPagePlayerEntry(printer, 8, 24, "Set Player IO");
 
     // Draw Arguments
     if (sSeqCmdDebugPlayerCmdSel != 0) {
@@ -3587,55 +3515,19 @@ void AudioSeqCmdDebug_DrawPagePlayer(GfxPrint* printer) {
     }
 }
 
+void AudioSeqCmdDebug_DrawPageChannelEntry(GfxPrint* printer, s32 drawnCmd, s32 posY, char* name) {
+    AudioSeqCmdDebug_DrawPageEntry(printer, drawnCmd, posY, name, sSeqCmdDebugChannelCmdSel, sIsSeqCmdDebugChannelCmdArgSel);
+}
+
 void AudioSeqCmdDebug_DrawPageChannel(GfxPrint* printer) {
-    if (sSeqCmdDebugChannelCmdSel == 0) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 7);
-    GfxPrint_Printf(printer, "Channel SeqCmds");
+    AudioSeqCmdDebug_DrawPageChannelEntry(printer, 0, 7, "Channel SeqCmds");
 
     // Draw Command Options
-    if (sSeqCmdDebugChannelCmdSel == 1) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 10);
-    GfxPrint_Printf(printer, "Set Volume");
-
-    if (sSeqCmdDebugChannelCmdSel == 2) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 12);
-    GfxPrint_Printf(printer, "Set Frequency");
-
-    if (sSeqCmdDebugChannelCmdSel == 3) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 14);
-    GfxPrint_Printf(printer, "Set Chan IO");
-
-    if (sSeqCmdDebugChannelCmdSel == 4) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 16);
-    GfxPrint_Printf(printer, "Disable Chan IO");
-
-    if (sSeqCmdDebugChannelCmdSel == 5) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 18);
-    GfxPrint_Printf(printer, "Disable Chan");
+    AudioSeqCmdDebug_DrawPageChannelEntry(printer, 1, 10, "Set Volume");
+    AudioSeqCmdDebug_DrawPageChannelEntry(printer, 2, 12, "Set Frequency");
+    AudioSeqCmdDebug_DrawPageChannelEntry(printer, 3, 14, "Set Chan IO");
+    AudioSeqCmdDebug_DrawPageChannelEntry(printer, 4, 16, "Disable Chan IO");
+    AudioSeqCmdDebug_DrawPageChannelEntry(printer, 5, 18, "Disable Chan");
 
     // Draw Arguments
     if (sSeqCmdDebugChannelCmdSel != 0) {
@@ -3726,71 +3618,21 @@ void AudioSeqCmdDebug_DrawPageChannel(GfxPrint* printer) {
     }
 }
 
+void AudioSeqCmdDebug_DrawPageSetup1Entry(GfxPrint* printer, s32 drawnCmd, s32 posY, char* name) {
+    AudioSeqCmdDebug_DrawPageEntry(printer, drawnCmd, posY, name, sSeqCmdDebugSetup1CmdSel, sIsSeqCmdDebugSetup1CmdArgSel);
+}
+
 void AudioSeqCmdDebug_DrawPageSetup1(GfxPrint* printer) {
-    if (sSeqCmdDebugSetup1CmdSel == 0) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 7);
-    GfxPrint_Printf(printer, "Setup Part 1 SeqCmds");
+    AudioSeqCmdDebug_DrawPageSetup1Entry(printer, 0, 7, "Setup Part 1 SeqCmds");
 
     // Draw Command Options
-    if (sSeqCmdDebugSetup1CmdSel == 1) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 10);
-    GfxPrint_Printf(printer, "Restore Vol");
-
-    if (sSeqCmdDebugSetup1CmdSel == 2) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 12);
-    GfxPrint_Printf(printer, "Unqueue Seq");
-
-    if (sSeqCmdDebugSetup1CmdSel == 3) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 14);
-    GfxPrint_Printf(printer, "Restart Seq");
-
-    if (sSeqCmdDebugSetup1CmdSel == 4) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 16);
-    GfxPrint_Printf(printer, "Scale Tempo");
-
-    if (sSeqCmdDebugSetup1CmdSel == 5) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 18);
-    GfxPrint_Printf(printer, "Reset Tempo");
-
-    if (sSeqCmdDebugSetup1CmdSel == 6) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 20);
-    GfxPrint_Printf(printer, "Play Seq");
-
-    if (sSeqCmdDebugSetup1CmdSel == 7) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 22);
-    GfxPrint_Printf(printer, "Fade Timer");
+    AudioSeqCmdDebug_DrawPageSetup1Entry(printer, 1, 10, "Restore Vol");
+    AudioSeqCmdDebug_DrawPageSetup1Entry(printer, 2, 12, "Unqueue Seq");
+    AudioSeqCmdDebug_DrawPageSetup1Entry(printer, 3, 14, "Restart Seq");
+    AudioSeqCmdDebug_DrawPageSetup1Entry(printer, 4, 16, "Scale Tempo");
+    AudioSeqCmdDebug_DrawPageSetup1Entry(printer, 5, 18, "Reset Tempo");
+    AudioSeqCmdDebug_DrawPageSetup1Entry(printer, 6, 20, "Play Seq");
+    AudioSeqCmdDebug_DrawPageSetup1Entry(printer, 7, 22, "Fade Timer");
 
     // Draw Arguments
     if (sSeqCmdDebugSetup1CmdSel != 0) {
@@ -3883,62 +3725,19 @@ void AudioSeqCmdDebug_DrawPageSetup1(GfxPrint* printer) {
     }
 }
 
+void AudioSeqCmdDebug_DrawPageSetup2Entry(GfxPrint* printer, s32 drawnCmd, s32 posY, char* name) {
+    AudioSeqCmdDebug_DrawPageEntry(printer, drawnCmd, posY, name, sSeqCmdDebugSetup2CmdSel, sIsSeqCmdDebugSetup2CmdArgSel);
+}
+
 void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
-    if (sSeqCmdDebugSetup2CmdSel == 0) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 7);
-    GfxPrint_Printf(printer, "Setup Part 2 SeqCmds");
+    AudioSeqCmdDebug_DrawPageSetup2Entry(printer, 0, 7, "Setup Part 2 SeqCmds");
 
-    if (sSeqCmdDebugSetup2CmdSel == 1) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 10);
-    GfxPrint_Printf(printer, "Reset Vol w Queue");
-
-    if (sSeqCmdDebugSetup2CmdSel == 2) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 12);
-    GfxPrint_Printf(printer, "Reset Vol w Scale");
-
-    if (sSeqCmdDebugSetup2CmdSel == 3) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 14);
-    GfxPrint_Printf(printer, "Disable Chan");
-
-    if (sSeqCmdDebugSetup2CmdSel == 4) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 16);
-    GfxPrint_Printf(printer, "Set Player Freq");
-
-    if (sSeqCmdDebugSetup2CmdSel == 5) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 18);
-    GfxPrint_Printf(printer, "Pop Cache");
-
-    if (sSeqCmdDebugSetup2CmdSel == 6) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 20);
-    GfxPrint_Printf(printer, "Reset Setup Cmds");
+    AudioSeqCmdDebug_DrawPageSetup2Entry(printer, 1, 10, "Reset Vol w Queue");
+    AudioSeqCmdDebug_DrawPageSetup2Entry(printer, 2, 12, "Reset Vol w Scale");
+    AudioSeqCmdDebug_DrawPageSetup2Entry(printer, 3, 14, "Disable Chan");
+    AudioSeqCmdDebug_DrawPageSetup2Entry(printer, 4, 16, "Set Player Freq");
+    AudioSeqCmdDebug_DrawPageSetup2Entry(printer, 5, 18, "Pop Cache");
+    AudioSeqCmdDebug_DrawPageSetup2Entry(printer, 6, 20, "Reset Setup Cmds");
 
     // Draw Arguments
     if (sSeqCmdDebugSetup2CmdSel != 0) {
@@ -4046,39 +3845,17 @@ void AudioSeqCmdDebug_DrawPageSetup2(GfxPrint* printer) {
     }
 }
 
+void AudioSeqCmdDebug_DrawPageGlobalEntry(GfxPrint* printer, s32 drawnCmd, s32 posY, char* name) {
+    AudioSeqCmdDebug_DrawPageEntry(printer, drawnCmd, posY, name, sSeqCmdDebugGlobalCmdSel, sIsSeqCmdDebugGlobalCmdArgSel);
+}
+
 void AudioSeqCmdDebug_DrawPageGlobal(GfxPrint* printer) {
-    if (sSeqCmdDebugGlobalCmdSel == 0) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 7);
-    GfxPrint_Printf(printer, "Global SeqCmds");
+    AudioSeqCmdDebug_DrawPageGlobalEntry(printer, 0, 7, "Global SeqCmds");
 
     // Draw Command Options
-    if (sSeqCmdDebugGlobalCmdSel == 1) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 10);
-    GfxPrint_Printf(printer, "Set Sound Mode");
-
-    if (sSeqCmdDebugGlobalCmdSel == 2) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 12);
-    GfxPrint_Printf(printer, "Disable New Seq");
-
-    if (sSeqCmdDebugGlobalCmdSel == 3) {
-        GfxPrint_SetColor(printer, 0, 0, 255, 255);
-    } else {
-        GfxPrint_SetColor(printer, 255, 255, 255, 0);
-    }
-    GfxPrint_SetPos(printer, 2, 14);
-    GfxPrint_Printf(printer, "Reset Audio Heap");
+    AudioSeqCmdDebug_DrawPageGlobalEntry(printer, 1, 10, "Set Sound Mode");
+    AudioSeqCmdDebug_DrawPageGlobalEntry(printer, 2, 12, "Disable New Seq");
+    AudioSeqCmdDebug_DrawPageGlobalEntry(printer, 3, 14, "Reset Audio Heap");
 
     switch (sSeqCmdDebugGlobalCmdSel) {
         case 1:
