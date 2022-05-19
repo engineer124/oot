@@ -233,7 +233,7 @@ u8 sSeqFlags[0x6E] = {
     0,    // NA_BGM_STAFF_4
     0,    // NA_BGM_FIRE_BOSS
     0x8,  // NA_BGM_TIMED_MINI_GAME
-    0,    // NA_BGM_VARIOUS_SFX
+    0,    // NA_BGM_CUTSCENE_EFFECTS
 };
 
 s8 sSpecReverbs[20] = { 0, 0, 0, 0, 0, 0, 0, 40, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
@@ -4067,7 +4067,7 @@ void Audio_ResetSfxChannelState(void) {
 
 void func_800F3F3C(u8 arg0) {
     if (gSoundBankMuted[0] != 1) {
-        AudioSeqCmd_PlaySequence(SEQ_PLAYER_BGM_SUB, 0, 0, NA_BGM_VARIOUS_SFX);
+        AudioSeqCmd_PlaySequence(SEQ_PLAYER_BGM_SUB, 0, 0, NA_BGM_CUTSCENE_EFFECTS);
         AudioSeqCmd_SetChannelIO(SEQ_PLAYER_BGM_SUB, 0, 0, arg0);
     }
 }
