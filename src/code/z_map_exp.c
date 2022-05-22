@@ -406,7 +406,7 @@ void Minimap_Draw(GlobalContext* globalCtx) {
                     }
                 }
 
-                if (CHECK_BTN_ALL(globalCtx->state.input[0].press.button, BTN_L) && !Play_InCsMode(globalCtx)) {
+                if (!gIsSeqCmdDebugEnabled && CHECK_BTN_ALL(globalCtx->state.input[0].press.button, BTN_L) && !Play_InCsMode(globalCtx)) {
                     osSyncPrintf("Game_play_demo_mode_check=%d\n", Play_InCsMode(globalCtx));
                     // clang-format off
                     if (!R_MINIMAP_DISABLED) { Audio_PlaySoundGeneral(NA_SE_SY_CAMERA_ZOOM_UP, &gSfxDefaultPos, 4,
@@ -493,7 +493,7 @@ void Minimap_Draw(GlobalContext* globalCtx) {
                     Minimap_DrawCompassIcons(globalCtx); // Draw icons for the player spawn and current position
                 }
 
-                if (CHECK_BTN_ALL(globalCtx->state.input[0].press.button, BTN_L) && !Play_InCsMode(globalCtx)) {
+                if (!gIsSeqCmdDebugEnabled && CHECK_BTN_ALL(globalCtx->state.input[0].press.button, BTN_L) && !Play_InCsMode(globalCtx)) {
                     // clang-format off
                     if (!R_MINIMAP_DISABLED) { Audio_PlaySoundGeneral(NA_SE_SY_CAMERA_ZOOM_UP, &gSfxDefaultPos, 4,
                                                                       &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,

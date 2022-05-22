@@ -1,3 +1,11 @@
+# Audio SeqCmd Debugger
+
+Demo video: https://www.youtube.com/watch?v=6_wj0Cs6A9k
+
+Open the debugger: R+L
+
+Use Dpad to navigate and L to confirm
+
 # The Legend of Zelda: Ocarina of Time
 
 [![Build Status][jenkins-badge]][jenkins] [![Decompilation Progress][progress-badge]][progress] [![Contributors][contributors-badge]][contributors] [![Discord Channel][discord-badge]][discord]
