@@ -458,9 +458,9 @@ typedef struct {
 #define PLAYER_STATE3_6 (1 << 6)
 #define PLAYER_STATE3_7 (1 << 7)
 
-typedef void (*PlayerFunc674)(struct Player*, struct GlobalContext*);
-typedef s32 (*PlayerFunc82C)(struct Player*, struct GlobalContext*);
-typedef void (*PlayerFuncA74)(struct GlobalContext*, struct Player*);
+typedef void (*PlayerFunc674)(struct Player*, struct PlayState*);
+typedef s32 (*PlayerFunc82C)(struct Player*, struct PlayState*);
+typedef void (*PlayerFuncA74)(struct PlayState*, struct Player*);
 
 typedef struct Player {
     /* 0x0000 */ Actor      actor;
@@ -522,7 +522,7 @@ typedef struct Player {
     /* 0x045C */ Vec3f      unk_45C;
     /* 0x0468 */ char       unk_468[0x002];
     /* 0x046A */ s16        unk_46A;
-    /* 0x046C */ s16        unk_46C;
+    /* 0x046C */ s16        subCamId;
     /* 0x046E */ char       unk_46E[0x02A];
     /* 0x0498 */ ColliderCylinder cylinder;
     /* 0x04E4 */ ColliderQuad meleeWeaponQuads[2];
