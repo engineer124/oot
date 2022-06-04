@@ -64,7 +64,7 @@ void MagicDark_Init(Actor* thisx, PlayState* play) {
 
 void MagicDark_Destroy(Actor* thisx, PlayState* play) {
     if (gSaveContext.nayrusLoveTimer == 0) {
-        func_800876C8(play);
+        Magic_Reset(play);
     }
 }
 
@@ -202,7 +202,7 @@ void MagicDark_DiamondDraw(Actor* thisx, PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_magic_dark.c", 525);
 
-    func_80093D84(play->state.gfxCtx);
+    Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     {
         Player* player = GET_PLAYER(play);
@@ -264,7 +264,7 @@ void MagicDark_OrbDraw(Actor* thisx, PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_magic_dark.c", 619);
 
-    func_80093D84(play->state.gfxCtx);
+    Gfx_SetupDL_25Xlu(play->state.gfxCtx);
     gDPSetPrimColor(POLY_XLU_DISP++, 0, 0x80, 170, 255, 255, 255);
     gDPSetEnvColor(POLY_XLU_DISP++, 0, 150, 255, 255);
     Matrix_Translate(pos.x, pos.y, pos.z, MTXMODE_NEW);

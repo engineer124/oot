@@ -38,7 +38,7 @@ void OceffWipe4_Init(Actor* thisx, PlayState* play) {
 void OceffWipe4_Destroy(Actor* thisx, PlayState* play) {
     OceffWipe4* this = (OceffWipe4*)thisx;
 
-    func_800876C8(play);
+    Magic_Reset(play);
 }
 
 void OceffWipe4_Update(Actor* thisx, PlayState* play) {
@@ -85,7 +85,7 @@ void OceffWipe4_Draw(Actor* thisx, PlayState* play) {
 
     OPEN_DISPS(play->state.gfxCtx, "../z_oceff_wipe4.c", 314);
 
-    func_80093D84(play->state.gfxCtx);
+    Gfx_SetupDL_25Xlu(play->state.gfxCtx);
 
     Matrix_Translate(eye.x + vec.x, eye.y + vec.y, eye.z + vec.z, MTXMODE_NEW);
     Matrix_Scale(0.1f, 0.1f, 0.1f, MTXMODE_APPLY);
