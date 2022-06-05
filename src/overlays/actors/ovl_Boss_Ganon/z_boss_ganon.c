@@ -559,8 +559,8 @@ void BossGanon_IntroCutscene(BossGanon* this, PlayState* play) {
             func_80064520(play, &play->csCtx);
             func_8002DF54(play, &this->actor, 8);
             this->csCamIndex = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, this->csCamIndex, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, this->csCamIndex, CAM_STATUS_ACTIVE);
             this->csCamFov = 60.0f;
 
             if (GET_EVENTCHKINF(EVENTCHKINF_78)) {
@@ -1234,8 +1234,8 @@ void BossGanon_DeathAndTowerCutscene(BossGanon* this, PlayState* play) {
             func_80064520(play, &play->csCtx);
             func_8002DF54(play, &this->actor, 8);
             this->csCamIndex = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, this->csCamIndex, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, this->csCamIndex, CAM_STATUS_ACTIVE);
 
             this->actor.world.pos.x = 0.0f;
             this->actor.world.pos.y = 70.0f;
@@ -1505,8 +1505,8 @@ void BossGanon_DeathAndTowerCutscene(BossGanon* this, PlayState* play) {
             func_80064520(play, &play->csCtx);
             func_8002DF54(play, &this->actor, 8);
             this->csCamIndex = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, this->csCamIndex, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, this->csCamIndex, CAM_STATUS_ACTIVE);
             Animation_MorphToPlayOnce(&this->skelAnime, &object_ganon_anime2_Anim_00ADDC, 0.0f);
             this->fwork[1] = Animation_GetLastFrame(&object_ganon_anime2_Anim_00EA00);
             this->csState = 101;

@@ -71,8 +71,8 @@ void EnBomBowlPit_DetectHit(EnBomBowlPit* this, PlayState* play) {
                 chu->timer = 1;
 
                 this->subCamId = Play_CreateSubCamera(play);
-                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-                Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+                Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
 
                 this->subCamAtMaxVelFrac.x = this->subCamAtMaxVelFrac.y = this->subCamAtMaxVelFrac.z = 0.1f;
                 this->subCamEyeMaxVelFrac.x = this->subCamEyeMaxVelFrac.y = this->subCamEyeMaxVelFrac.z = 0.1f;
@@ -168,7 +168,7 @@ void EnBomBowlPit_SetupGivePrize(EnBomBowlPit* this, PlayState* play) {
         }
 
         Play_ClearCamera(play, this->subCamId);
-        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_ACTIVE);
+        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_ACTIVE);
         func_8002DF54(play, NULL, 8);
         this->actionFunc = EnBomBowlPit_GivePrize;
     }

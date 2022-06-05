@@ -373,8 +373,8 @@ void BossSst_HeadSetupIntro(BossSst* this, PlayState* play) {
     func_80064520(play, &play->csCtx);
     func_8002DF54(play, &this->actor, 8);
     sSubCamId = Play_CreateSubCamera(play);
-    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-    Play_ChangeCameraStatus(play, sSubCamId, CAM_STAT_ACTIVE);
+    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+    Play_ChangeCameraStatus(play, sSubCamId, CAM_STATUS_ACTIVE);
     Math_Vec3f_Copy(&sSubCamAt, &player->actor.world.pos);
     if (GET_EVENTCHKINF(EVENTCHKINF_77)) {
         sSubCamEye.z = ROOM_CENTER_Z - 100.0f;
@@ -409,8 +409,8 @@ void BossSst_HeadIntro(BossSst* this, PlayState* play) {
         sSubCamAt.z += 300.0f;
         Play_CameraSetAtEye(play, sSubCamId, &sSubCamAt, &sSubCamEye);
         Play_CopyCamera(play, CAM_ID_MAIN, sSubCamId);
-        Play_ChangeCameraStatus(play, sSubCamId, CAM_STAT_WAIT);
-        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_ACTIVE);
+        Play_ChangeCameraStatus(play, sSubCamId, CAM_STATUS_WAIT);
+        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_ACTIVE);
         Play_ClearCamera(play, sSubCamId);
         SET_EVENTCHKINF(EVENTCHKINF_77);
         BossSst_HeadSetupNeutral(this);
@@ -1011,8 +1011,8 @@ void BossSst_HeadSetupDeath(BossSst* this, PlayState* play) {
     sHands[RIGHT]->colliderJntSph.base.ocFlags1 &= ~OC1_ON;
     Audio_QueueSeqCmd(0x1 << 28 | SEQ_PLAYER_BGM_MAIN << 24 | 0x100FF);
     sSubCamId = Play_CreateSubCamera(play);
-    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-    Play_ChangeCameraStatus(play, sSubCamId, CAM_STAT_ACTIVE);
+    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+    Play_ChangeCameraStatus(play, sSubCamId, CAM_STATUS_ACTIVE);
     Play_CopyCamera(play, sSubCamId, CAM_ID_MAIN);
     func_8002DF54(play, &player->actor, 8);
     func_80064520(play, &play->csCtx);
@@ -1174,8 +1174,8 @@ void BossSst_HeadFinish(BossSst* this, PlayState* play) {
         if (this->timer < -170) {
             BossSst_UpdateDeathCamera(this, play);
             Play_CopyCamera(play, CAM_ID_MAIN, sSubCamId);
-            Play_ChangeCameraStatus(play, sSubCamId, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, sSubCamId, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_ACTIVE);
             Play_ClearCamera(play, sSubCamId);
             func_8002DF54(play, &GET_PLAYER(play)->actor, 7);
             func_80064534(play, &play->csCtx);

@@ -590,8 +590,8 @@ void EnClearTag_Update(Actor* thisx, PlayState* play2) {
                         this->cutsceneMode = CLEAR_TAG_CUTSCENE_MODE_PLAY;
                         func_80064520(play, &play->csCtx);
                         this->subCamId = Play_CreateSubCamera(play);
-                        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-                        Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+                        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+                        Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
                         FALLTHROUGH;
                     case CLEAR_TAG_CUTSCENE_MODE_PLAY:
                         // Update the Arwing cutscene camera to spin around in a circle.

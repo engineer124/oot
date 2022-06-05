@@ -778,8 +778,8 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
                     Audio_ResetIncreasingTranspose();
                     func_80064520(play, &play->csCtx);
                     this->subCamId = Play_CreateSubCamera(play);
-                    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-                    Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+                    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+                    Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
                     this->subCamEye = mainCam1->eye;
                     this->subCamAt = mainCam1->at;
                     this->subCamYaw = Math_FAtan2F(this->subCamEye.x - this->actor.world.pos.x,
@@ -1229,8 +1229,8 @@ void BossMo_IntroCs(BossMo* this, PlayState* play) {
                 func_80064520(play, &play->csCtx);
                 func_8002DF54(play, &this->actor, 8);
                 this->subCamId = Play_CreateSubCamera(play);
-                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-                Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+                Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
                 this->actor.speedXZ = 0.0f;
                 this->csState = MO_INTRO_START;
                 this->timers[2] = 50;
@@ -1515,8 +1515,8 @@ void BossMo_DeathCs(BossMo* this, PlayState* play) {
             func_80064520(play, &play->csCtx);
             func_8002DF54(play, &this->actor, 8);
             this->subCamId = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
             this->csState = MO_DEATH_MO_CORE_BURST;
             this->subCamEye = mainCam->eye;
             this->timers[0] = 90;

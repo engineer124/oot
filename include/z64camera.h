@@ -8,11 +8,13 @@
 #define CAM_DEG_TO_BINANG(degrees) (s16)((degrees) * 182.04167f + .5f)
 #define CAM_BINANG_TO_DEG(binang) ((f32)(binang) * (360.0001525f / 65535.0f))
 
-#define CAM_STAT_CUT        0
-#define CAM_STAT_WAIT       1
-#define CAM_STAT_UNK3       3
-#define CAM_STAT_ACTIVE     7
-#define CAM_STAT_UNK100     0x100
+// Camera is on
+#define CAM_STATUS_CUT             0 // The camera is not updated at all
+#define CAM_STATUS_WAIT            1 // There is minimal updates, sCameraFunctions is not run
+#define CAM_STATUS_ACTIVE_NO_VIEW  3 // The camera is mostly updated including running its sCameraFunctions, but data is not set to view
+#define CAM_STATUS_ACTIVE          7 // The camera is fully updated, data is sent to view
+// Camera is off
+#define CAM_STATUS_DISABLED 0x100 // Turned off
 
 #define NUM_CAMS 4
 

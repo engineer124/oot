@@ -5230,8 +5230,8 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
             Camera* mainCam;
 
             sSubCamId = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, sSubCamId, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, sSubCamId, CAM_STATUS_ACTIVE);
             mainCam = Play_GetCamera(play, CAM_ID_MAIN);
             sSubCamEye.x = mainCam->eye.x;
             sSubCamEye.y = mainCam->eye.y;
@@ -5361,8 +5361,8 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
 
             func_80064520(play, &play->csCtx);
             sSubCamId = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, sSubCamId, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, sSubCamId, CAM_STATUS_ACTIVE);
             func_8002DF54(play, &this->actor, 5);
             mainCam = Play_GetCamera(play, CAM_ID_MAIN);
             sSubCamEye.x = mainCam->eye.x;
@@ -5403,8 +5403,8 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
 
             func_80064520(play, &play->csCtx);
             sSubCamId = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, sSubCamId, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, sSubCamId, CAM_STATUS_ACTIVE);
             func_8002DF54(play, &this->actor, 5);
             mainCam = Play_GetCamera(play, CAM_ID_MAIN);
             sSubCamEye.x = mainCam->eye.x;

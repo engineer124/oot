@@ -1603,7 +1603,7 @@ s32 Camera_Normal1(Camera* camera) {
     }
 
     Camera_Vec3fVecSphGeoAdd(eyeNext, at, &eyeAdjustment);
-    if ((camera->status == CAM_STAT_ACTIVE) && !(roData->interfaceFlags & 0x10)) {
+    if ((camera->status == CAM_STATUS_ACTIVE) && !(roData->interfaceFlags & 0x10)) {
         rwData->swingYawTarget = BINANG_ROT180(camera->playerPosRot.rot.y);
         if (rwData->startSwingTimer > 0) {
             func_80046E20(camera, &eyeAdjustment, roData->distMin, roData->unk_0C, &sp98, &rwData->swing);
@@ -1802,7 +1802,7 @@ s32 Camera_Normal2(Camera* camera) {
 
     Camera_Vec3fVecSphGeoAdd(eyeNext, at, &adjSph);
 
-    if (camera->status == CAM_STAT_ACTIVE) {
+    if (camera->status == CAM_STATUS_ACTIVE) {
         bgChk.pos = *eyeNext;
         if (!camera->play->envCtx.skyboxDisabled || roData->interfaceFlags & 0x10) {
             Camera_BGCheckInfo(camera, at, &bgChk);
@@ -1956,7 +1956,7 @@ s32 Camera_Normal3(Camera* camera) {
 
     Camera_Vec3fVecSphGeoAdd(eyeNext, at, &sp84);
 
-    if (camera->status == CAM_STAT_ACTIVE) {
+    if (camera->status == CAM_STATUS_ACTIVE) {
         func_80046E20(camera, &sp84, roData->distMin, roData->yawUpdateSpeed, &sp8C, &rwData->swing);
     } else {
         *eye = *eyeNext;
@@ -2138,7 +2138,7 @@ s32 Camera_Parallel1(Camera* camera) {
         }
     }
     Camera_Vec3fVecSphGeoAdd(eyeNext, at, &spA8);
-    if (camera->status == CAM_STAT_ACTIVE) {
+    if (camera->status == CAM_STATUS_ACTIVE) {
         sp6C.pos = *eyeNext;
         if (!camera->play->envCtx.skyboxDisabled || roData->interfaceFlags & 0x10) {
             Camera_BGCheckInfo(camera, at, &sp6C);
@@ -2305,7 +2305,7 @@ s32 Camera_Jump1(Camera* camera) {
     eyeNext->x = newEye.x;
     eyeNext->z = newEye.z;
     eyeNext->y += (newEye.y - eyeNext->y) * CAM_DATA_SCALED(OREG(31));
-    if ((camera->status == CAM_STAT_ACTIVE) && !(roData->interfaceFlags & 0x10)) {
+    if ((camera->status == CAM_STATUS_ACTIVE) && !(roData->interfaceFlags & 0x10)) {
         func_80046E20(camera, &eyeDiffSph, roData->distMin, roData->yawUpateRateTarget, &spA4, &rwData->swing);
         if (roData->interfaceFlags & 4) {
             camera->inputDir.x = -eyeAtOffset.pitch;
@@ -2678,7 +2678,7 @@ s32 Camera_Jump3(Camera* camera) {
     }
 
     Camera_Vec3fVecSphGeoAdd(eyeNext, at, &eyeDiffSph);
-    if ((camera->status == CAM_STAT_ACTIVE) && !(roData->interfaceFlags & 0x10)) {
+    if ((camera->status == CAM_STATUS_ACTIVE) && !(roData->interfaceFlags & 0x10)) {
         func_80046E20(camera, &eyeDiffSph, roData->distMin, roData->swingUpdateRate, &spBC, &rwData->swing);
         if (roData->interfaceFlags & 4) {
             camera->inputDir.x = -eyeAtOffset.pitch;
@@ -2853,7 +2853,7 @@ s32 Camera_Battle1(Camera* camera) {
         rwData->yPosOffset = playerPosRot->pos.y - camera->playerPosDelta.y;
     }
 
-    if (camera->status == CAM_STAT_ACTIVE) {
+    if (camera->status == CAM_STATUS_ACTIVE) {
         sUpdateCameraDirection = 1;
         camera->inputDir.x = -atToEyeDir.pitch;
         camera->inputDir.y = BINANG_ROT180(atToEyeDir.yaw);
@@ -2948,7 +2948,7 @@ s32 Camera_Battle1(Camera* camera) {
         spB4.pitch = Camera_LERPCeilS(tmpAng1, atToEyeNextDir.pitch, rwData->unk_10, 0xA);
         Camera_Vec3fVecSphGeoAdd(eyeNext, at, &spB4);
         spBC.pos = *eyeNext;
-        if (camera->status == CAM_STAT_ACTIVE) {
+        if (camera->status == CAM_STATUS_ACTIVE) {
             if (!camera->play->envCtx.skyboxDisabled || roData->flags & 1) {
                 Camera_BGCheckInfo(camera, at, &spBC);
             } else if (roData->flags & 2) {
@@ -3147,7 +3147,7 @@ s32 Camera_KeepOn1(Camera* camera) {
         rwData->unk_00 = spC0.r;
         rwData->unk_08 = playerPosRot->pos.y - camera->playerPosDelta.y;
     }
-    if (camera->status == CAM_STAT_ACTIVE) {
+    if (camera->status == CAM_STATUS_ACTIVE) {
         sUpdateCameraDirection = 1;
         camera->inputDir.x = -spC0.pitch;
         camera->inputDir.y = BINANG_ROT180(spC0.yaw);
@@ -3276,7 +3276,7 @@ s32 Camera_KeepOn1(Camera* camera) {
         spD8.pitch = Camera_LERPCeilS(spE2, spB8.pitch, CAM_DATA_SCALED(OREG(12)), 0xA);
         Camera_Vec3fVecSphGeoAdd(eyeNext, at, &spD8);
         sp8C.pos = *eyeNext;
-        if (camera->status == CAM_STAT_ACTIVE) {
+        if (camera->status == CAM_STATUS_ACTIVE) {
             if (!camera->play->envCtx.skyboxDisabled || roData->interfaceFlags & 1) {
                 Camera_BGCheckInfo(camera, at, &sp8C);
             } else if (roData->interfaceFlags & 2) {
@@ -7049,15 +7049,15 @@ s16 Camera_ChangeStatus(Camera* camera, s16 status) {
     s32 i;
 
     if (PREG(82)) {
-        osSyncPrintf("camera: change camera status: cond %c%c\n", status == CAM_STAT_ACTIVE ? 'o' : 'x',
-                     camera->status != CAM_STAT_ACTIVE ? 'o' : 'x');
+        osSyncPrintf("camera: change camera status: cond %c%c\n", status == CAM_STATUS_ACTIVE ? 'o' : 'x',
+                     camera->status != CAM_STATUS_ACTIVE ? 'o' : 'x');
     }
 
     if (PREG(82)) {
         osSyncPrintf("camera: res: stat (%d/%d/%d)\n", camera->camId, camera->setting, camera->mode);
     }
 
-    if (status == CAM_STAT_ACTIVE && camera->status != CAM_STAT_ACTIVE) {
+    if (status == CAM_STATUS_ACTIVE && camera->status != CAM_STATUS_ACTIVE) {
         values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
         for (i = 0; i < sCameraSettings[camera->setting].cameraModes[camera->mode].valueCnt; i++) {
             valueP = &values[i];
@@ -7071,79 +7071,84 @@ s16 Camera_ChangeStatus(Camera* camera, s16 status) {
     return camera->status;
 }
 
-void Camera_PrintSettings(Camera* camera) {
-    char sp58[8];
-    char sp50[8];
-    char sp48[8];
+void Camera_PrintDebugInfo(Camera* camera) {
+    char statusStr[8];
+    char bgCamStr[8];
+    char statusSpaceStr[8];
     s32 i;
 
     if ((OREG(0) & 1) && (camera->play->activeCamId == camera->camId) && !gDbgCamEnabled) {
         for (i = 0; i < NUM_CAMS; i++) {
             if (camera->play->cameraPtrs[i] == NULL) {
-                sp58[i] = '-';
-                sp48[i] = ' ';
+                statusStr[i] = '-';
+                statusSpaceStr[i] = ' ';
             } else {
                 switch (camera->play->cameraPtrs[i]->status) {
-                    case 0:
-                        sp58[i] = 'c';
+                    case CAM_STATUS_CUT:
+                        statusStr[i] = 'c';
                         break;
-                    case 1:
-                        sp58[i] = 'w';
+
+                    case CAM_STATUS_WAIT:
+                        statusStr[i] = 'w';
                         break;
-                    case 3:
-                        sp58[i] = 's';
+
+                    case CAM_STATUS_ACTIVE_NO_VIEW:
+                        statusStr[i] = 's';
                         break;
-                    case 7:
-                        sp58[i] = 'a';
+
+                    case CAM_STATUS_ACTIVE:
+                        statusStr[i] = 'a';
                         break;
-                    case 0x100:
-                        sp58[i] = 'd';
+
+                    case CAM_STATUS_DISABLED:
+                        statusStr[i] = 'd';
                         break;
+
                     default:
-                        sp58[i] = '*';
+                        statusStr[i] = '*';
                         break;
                 }
             }
-            sp48[i] = ' ';
+            statusSpaceStr[i] = ' ';
         }
-        sp58[i] = '\0';
-        sp48[i] = '\0';
+        statusStr[i] = '\0';
+        statusSpaceStr[i] = '\0';
 
-        sp48[camera->play->activeCamId] = 'a';
-        func_8006376C(3, 0x16, 5, sp58);
-        func_8006376C(3, 0x16, 1, sp48);
-        func_8006376C(3, 0x17, 5, "S:");
-        func_8006376C(5, 0x17, 4, sCameraSettingNames[camera->setting]);
-        func_8006376C(3, 0x18, 5, "M:");
-        func_8006376C(5, 0x18, 4, sCameraModeNames[camera->mode]);
-        func_8006376C(3, 0x19, 5, "F:");
-        func_8006376C(5, 0x19, 4,
+        statusSpaceStr[camera->play->activeCamId] = 'a';
+        func_8006376C(3, 22, 5, statusStr);
+        func_8006376C(3, 22, 1, statusSpaceStr);
+        func_8006376C(3, 23, 5, "S:");
+        func_8006376C(5, 23, 4, sCameraSettingNames[camera->setting]);
+        func_8006376C(3, 24, 5, "M:");
+        func_8006376C(5, 24, 4, sCameraModeNames[camera->mode]);
+        func_8006376C(3, 25, 5, "F:");
+        func_8006376C(5, 25, 4,
                       sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx]);
 
         i = 0;
         if (camera->camDataIdx < 0) {
-            sp50[i++] = '-';
+            bgCamStr[i++] = '-';
         }
 
         //! @bug: this code was clearly meaning to print `abs(camera->camDataIdx)` as a
         //! one-or-two-digit number, instead of `i`.
-        // "sp50[i++] = ..." matches here, but is undefined behavior due to conflicting
+        // "bgCamStr[i++] = ..." matches here, but is undefined behavior due to conflicting
         // reads/writes between sequence points, triggering warnings. Work around by
         // putting i++ afterwards while on the same line.
         // clang-format off
         if (camera->camDataIdx / 10 != 0) {
-            sp50[i] = i / 10 + '0'; i++;
+            bgCamStr[i] = i / 10 + '0'; i++;
         }
-        sp50[i] = i % 10 + '0'; i++;
+        bgCamStr[i] = i % 10 + '0'; i++;
         // clang-format on
 
-        sp50[i++] = ' ';
-        sp50[i++] = ' ';
-        sp50[i++] = ' ';
-        sp50[i++] = ' ';
-        sp50[i] = '\0';
+        bgCamStr[i++] = ' ';
+        bgCamStr[i++] = ' ';
+        bgCamStr[i++] = ' ';
+        bgCamStr[i++] = ' ';
+        bgCamStr[i] = '\0';
         func_8006376C(3, 26, 5, "I:");
-        func_8006376C(5, 26, 4, sp50);
+        func_8006376C(5, 26, 4, bgCamStr);
     }
 }
 
@@ -7412,7 +7417,7 @@ Vec3s Camera_Update(Camera* camera) {
         osSyncPrintf("camera: in %x\n", camera);
     }
 
-    if (camera->status == CAM_STAT_CUT) {
+    if (camera->status == CAM_STATUS_CUT) {
         if (R_DBG_CAM_UPDATE) {
             osSyncPrintf("camera: cut out %x\n", camera);
         }
@@ -7454,7 +7459,7 @@ Vec3s Camera_Update(Camera* camera) {
         camera->playerPosRot = curPlayerPosRot;
 
         if (sOOBTimer < 200) {
-            if (camera->status == CAM_STAT_ACTIVE) {
+            if (camera->status == CAM_STATUS_ACTIVE) {
                 Camera_UpdateWater(camera);
                 Camera_UpdateHotRoom(camera);
             }
@@ -7483,10 +7488,10 @@ Vec3s Camera_Update(Camera* camera) {
             }
         }
     }
-    Camera_PrintSettings(camera);
+    Camera_PrintDebugInfo(camera);
     Camera_DbgChangeMode(camera);
 
-    if (camera->status == CAM_STAT_WAIT) {
+    if (camera->status == CAM_STATUS_WAIT) {
         if (R_DBG_CAM_UPDATE) {
             osSyncPrintf("camera: wait out %x\n", camera);
         }
@@ -7509,7 +7514,7 @@ Vec3s Camera_Update(Camera* camera) {
         Camera_CalcAtDefault(camera, &eyeAtAngle, 0.0f, 0);
     }
 
-    if (camera->status == CAM_STAT_ACTIVE) {
+    if (camera->status == CAM_STATUS_ACTIVE) {
         if ((gSaveContext.gameMode != 0) && (gSaveContext.gameMode != 3)) {
             sCameraInterfaceFlags = 0;
             Camera_UpdateInterface(sCameraInterfaceFlags);
@@ -7562,7 +7567,7 @@ Vec3s Camera_Update(Camera* camera) {
 
     OREG(0) &= ~8;
 
-    if (camera->status == CAM_STAT_UNK3) {
+    if (camera->status == CAM_STATUS_ACTIVE_NO_VIEW) {
         return camera->inputDir;
     }
 
@@ -7649,7 +7654,7 @@ void Camera_Finish(Camera* camera) {
     Player* player = GET_PLAYER(camera->play);
 
     if (camera->timer == 0) {
-        Play_ChangeCameraStatus(camera->play, camera->parentCamId, CAM_STAT_ACTIVE);
+        Play_ChangeCameraStatus(camera->play, camera->parentCamId, CAM_STATUS_ACTIVE);
 
         if ((camera->parentCamId == CAM_ID_MAIN) && (camera->csId != 0)) {
             player->actor.freezeTimer = 0;
@@ -7789,7 +7794,7 @@ s32 Camera_ChangeModeFlags(Camera* camera, s16 mode, u8 flags) {
                 break;
         }
         modeChangeFlags &= ~0x10;
-        if (camera->status == CAM_STAT_ACTIVE) {
+        if (camera->status == CAM_STATUS_ACTIVE) {
             switch (modeChangeFlags) {
                 case 1:
                     func_80078884(0);

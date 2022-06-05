@@ -272,8 +272,8 @@ void BossDodongo_IntroCutscene(BossDodongo* this, PlayState* play) {
             func_8002DF54(play, &this->actor, 1);
             Play_ClearAllSubCameras(play);
             this->subCamId = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
             this->csState = 2;
             this->unk_196 = 0x3C;
             this->unk_198 = 160;
@@ -1303,8 +1303,8 @@ void BossDodongo_DeathCutscene(BossDodongo* this, PlayState* play) {
             func_80064520(play, &play->csCtx);
             func_8002DF54(play, &this->actor, 1);
             this->subCamId = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_UNK3);
-            Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_ACTIVE_NO_VIEW);
+            Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
             mainCam = Play_GetCamera(play, CAM_ID_MAIN);
             this->subCamEye.x = mainCam->eye.x;
             this->subCamEye.y = mainCam->eye.y;
@@ -1609,7 +1609,7 @@ void BossDodongo_DeathCutscene(BossDodongo* this, PlayState* play) {
                 this->unk_1BC = 0;
                 this->subCamId = SUB_CAM_ID_DONE;
                 this->csState = 100;
-                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_ACTIVE);
+                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_ACTIVE);
                 func_80064534(play, &play->csCtx);
                 func_8002DF54(play, &this->actor, 7);
                 Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_DOOR_WARP1, -890.0f, -1523.76f, -3304.0f,
