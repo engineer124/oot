@@ -1656,22 +1656,18 @@ void AudioLoad_RelocateSample(SoundFontSound* sound, SoundFontData* fontData, Sa
     SoundFontSample* sample;
     void* reloc;
 
+    // Relocate an offset (relative to data loaded in ram at `base`) to a pointer (a ram address)
 #define AUDIO_RELOC(offset, base) (reloc = (void*)((u32)(offset) + (u32)(base)))
 
-    // Check to see that the sample is a relative offset and not a ram address yet
-    // Ensures samples are not double-relocated
+    // If this has not already been relocated
     if ((u32)sound->sample <= AUDIO_RELOCATED_ADDRESS_START) {
-        // Relocate the sample offset embedded in the SoundFontSound struct (relative to the start of the font
-        // data) to a pointer (a ram address) Overwrite the offset in fontData with this new pointer
+
         sample = sound->sample = AUDIO_RELOC(sound->sample, fontData);
-        // Check to see if the sample itself exists or is already relocated
-        // This is important as samples can be reused by different instruments/drums/sfxs
+
+        // If the sample exists and has not already been relocated
+        // Note: this is important, as the same sample can be used by different drums, sound effects, instruments
         if ((sample->size != 0) && (sample->isRelocated != true)) {
-            // Relocate the sample's adpcm loop data offset embedded in the SoundFontSample struct to a
-            // pointer (ramAddr) Overwrite the offset in fontData with this new pointer
             sample->loop = AUDIO_RELOC(sample->loop, fontData);
-            // Relocate the sample's adpcm book data offset embedded in the SoundFontSample struct to a
-            // pointer (ramAddr) Overwrite the offset in fontData with this new pointer
             sample->book = AUDIO_RELOC(sample->book, fontData);
 
             // Resolve the sample medium 2-bit bitfield into a real value based on sampleBankReloc.
@@ -1697,7 +1693,6 @@ void AudioLoad_RelocateSample(SoundFontSound* sound, SoundFontData* fontData, Sa
                     break;
             }
 
-            // This sample is now processed and relocated
             sample->isRelocated = true;
 
             if (sample->unk_bit26 && (sample->medium != MEDIUM_RAM)) {
