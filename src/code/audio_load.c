@@ -865,10 +865,10 @@ void AudioLoad_RelocateFont(s32 fontId, SoundFontData* fontDataStartAddr, Sample
             soundOffset = ((SoundFontSound*)fontData[1]) + i;
 
             // Check for NULL (note: the pointer is guaranteed to be in fontData and can never be NULL)
-            if (soundOffset != 0) {
+            if ((SoundFontSound*)soundOffset != NULL) {
                 sfx = soundOffset;
 
-                if (sfx->sample != NULL) {
+                if ((u32)sfx->sample != 0) {
                     AudioLoad_RelocateSample(sfx, fontDataStartAddr, sampleBankReloc);
                 }
             }
@@ -887,7 +887,7 @@ void AudioLoad_RelocateFont(s32 fontId, SoundFontData* fontDataStartAddr, Sample
     // Loop through the instruments
     for (i = 2; i <= 2 + numInstruments - 1; i++) {
         // Some instrument data entries are empty, represented by an offset of 0 in the list of instrument offsets
-        if (fontData[i] != NULL) {
+        if ((u32)fontData[i] != 0) {
             fontData[i] = RELOC_TO_RAM(fontData[i]);
             inst = fontData[i];
 
