@@ -811,7 +811,7 @@ void AudioLoad_RelocateFont(s32 fontId, SoundFontData* fontDataStartAddr, Sample
     s32 numSfx = gAudioContext.soundFonts[fontId].numSfx;
     void** fontData = (void**)fontDataStartAddr;
 
-#define RELOC_TO_RAM(offset) (void*)((u32)(offset) + (u32)(fontData))
+#define RELOC_TO_RAM(offset) (void*)((u32)(offset) + (u32)(fontDataStartAddr))
 
     // Reading, extracting, and relocating drums
 
@@ -873,7 +873,7 @@ void AudioLoad_RelocateFont(s32 fontId, SoundFontData* fontDataStartAddr, Sample
                 if (sfx->sample != NULL) {
                     // Relocate the SoundFontSound embedded in the sfx struct
                     // (The entire sfx struct is a SoundFontSound)
-                    AudioLoad_RelocateSample(sfx, fontData, sampleBankReloc);
+                    AudioLoad_RelocateSample(sfx, fontDataStartAddr, sampleBankReloc);
                 }
             }
         }
@@ -901,17 +901,17 @@ void AudioLoad_RelocateFont(s32 fontId, SoundFontData* fontDataStartAddr, Sample
                 // Some instruments have a different samples for low pitches
                 if (inst->normalRangeLo != 0) {
                     // Relocate the SoundFontSound embedded in the sfx struct
-                    AudioLoad_RelocateSample(&inst->lowNotesSound, fontData, sampleBankReloc);
+                    AudioLoad_RelocateSample(&inst->lowNotesSound, fontDataStartAddr, sampleBankReloc);
                 }
 
                 // Every instrument has a sample for the default range
                 // Relocate the SoundFontSound embedded in the sfx struct
-                AudioLoad_RelocateSample(&inst->normalNotesSound, fontData, sampleBankReloc);
+                AudioLoad_RelocateSample(&inst->normalNotesSound, fontDataStartAddr, sampleBankReloc);
 
                 // Some instruments have a different samples for high pitches
                 if (inst->normalRangeHi != 0x7F) {
                     // Relocate the SoundFontSound embedded in the sfx struct
-                    AudioLoad_RelocateSample(&inst->highNotesSound, fontData, sampleBankReloc);
+                    AudioLoad_RelocateSample(&inst->highNotesSound, fontDataStartAddr, sampleBankReloc);
                 }
 
                 // Relocate the envelope offset (relative to the start
