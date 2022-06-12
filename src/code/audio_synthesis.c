@@ -17,6 +17,7 @@
 #define DMEM_WET_LEFT_CH 0xC80
 #define DMEM_WET_RIGHT_CH 0xE20 // = DMEM_WET_LEFT_CH + DEFAULT_LEN_1CH
 
+// Samples are processed in groups of 16 called a "frame"
 #define SAMPLES_PER_FRAME 16
 
 Acmd* AudioSynth_LoadRingBufferPart(Acmd* cmd, u16 dmem, u16 startPos, s32 length, SynthesisReverb* reverb);
