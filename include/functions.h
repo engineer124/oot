@@ -1798,7 +1798,7 @@ void* AudioHeap_SearchPermanentCache(s32 tableType, s32 id);
 void* AudioHeap_AllocPermanent(s32 tableType, s32 id, u32 size);
 void* AudioHeap_AllocSampleCache(u32 size, s32 fontId, void* sampleAddr, s8 medium, s32 cache);
 void AudioHeap_ApplySampleBankCache(s32 sampleBankId);
-void AudioLoad_UpdateSampleChunkCache(void);
+void AudioLoad_DecreaseSampleChunkTtls(void);
 void* AudioLoad_AllocSampleChunkCache(u32 devAddr, u32 size, s32 sampleFlags, u8* prevSampleChunkIndex, s32 medium);
 void AudioLoad_InitSampleChunkCache(s32 numNotes);
 s32 AudioLoad_IsFontLoadComplete(s32 fontId);

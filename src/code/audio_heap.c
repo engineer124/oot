@@ -888,8 +888,8 @@ void AudioHeap_Init(void) {
     gAudioContext.audioBufferParameters.updatesPerFrameInv = 1.0f / gAudioContext.audioBufferParameters.updatesPerFrame;
 
     // SampleDma buffer size
-    gAudioContext.shortSampleChunkCacheEntrySize = spec->shortSampleChunkCacheEntrySize;
-    gAudioContext.longSampleChunkCacheEntrySize = spec->longSampleChunkCacheEntrySize;
+    gAudioContext.sampleChunkShortTtlEntrySize = spec->sampleChunkShortTtlEntrySize;
+    gAudioContext.sampleChunkLongTtlEntrySize = spec->sampleChunkLongTtlEntrySize;
 
     gAudioContext.numNotes = spec->numNotes;
     gAudioContext.audioBufferParameters.numSequencePlayers = spec->numSequencePlayers;

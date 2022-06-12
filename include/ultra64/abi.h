@@ -32,9 +32,11 @@
 /*
  * Audio flags
  */
-#define A_INIT      0x01
-#define A_CONTINUE  0x00
-#define A_LOOP      0x02
+#define A_CONTINUE    0
+#define A_INIT        (1 << 0)
+#define A_LOOP        (1 << 1)
+#define A_SHORT_ADPCM (1 << 2)
+
 #define A_OUT       0x02
 #define A_LEFT      0x02
 #define A_RIGHT     0x00

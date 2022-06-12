@@ -441,7 +441,7 @@ typedef struct SequenceLayer {
 } SequenceLayer; // size = 0x80
 
 typedef struct {
-    /* 0x0000 */ s16 adpcmdecState[0x10];
+    /* 0x0000 */ s16 adpcmDecState[0x10];
     /* 0x0020 */ s16 finalResampleState[0x10];
     /* 0x0040 */ s16 mixEnvelopeState[0x28];
     /* 0x0090 */ s16 panResampleState[0x10];
@@ -457,7 +457,7 @@ typedef struct {
     /* 0x04 */ u8 reverbVol;
     /* 0x05 */ u8 numParts;
     /* 0x06 */ u16 samplePosFrac;
-    /* 0x08 */ s32 curSamplePos;
+    /* 0x08 */ s32 samplePosInt;
     /* 0x0C */ NoteSynthesisBuffers* synthesisBuffers;
     /* 0x10 */ s16 curVolLeft;
     /* 0x12 */ s16 curVolRight;
@@ -573,8 +573,8 @@ typedef struct {
     /* 0x08 */ u8 unk_08; // unused, set to zero
     /* 0x09 */ u8 numReverbs;
     /* 0x0C */ ReverbSettings* reverbSettings;
-    /* 0x10 */ u16 shortSampleChunkCacheEntrySize; // size of buffers in the audio misc pool to store small snippets of individual samples. Stored short-lived.
-    /* 0x12 */ u16 longSampleChunkCacheEntrySize; // size of buffers in the audio misc pool to store small snippets of individual samples. Stored long-lived.
+    /* 0x10 */ u16 sampleChunkShortTtlEntrySize; // size of buffers in the audio misc pool to store small snippets of individual samples. Stored short-lived.
+    /* 0x12 */ u16 sampleChunkLongTtlEntrySize; // size of buffers in the audio misc pool to store small snippets of individual samples. Stored long-lived.
     /* 0x14 */ u16 unk_14;
     /* 0x18 */ u32 persistentSeqCacheSize;  // size of cache on audio pool to store sequences persistently
     /* 0x1C */ u32 persistentFontCacheSize; // size of cache on audio pool to store soundFonts persistently
@@ -824,14 +824,14 @@ typedef struct {
     /* 0x2604 */ OSIoMesg syncDmaIoMesg;
     /* 0x261C */ SampleChunkCacheEntry* sampleChunkEntries;
     /* 0x2620 */ u32 numSampleChunks;
-    /* 0x2624 */ u32 numShortSampleChunks;
+    /* 0x2624 */ u32 numShortTtlSampleChunks;
     /* 0x2628 */ s32 sampleChunkUnused;
-    /* 0x262C */ u8 shortSampleChunkReuseQueue[0x100]; // read pos <= write pos, wrapping mod 256
-    /* 0x272C */ u8 longSampleChunkReuseQueue[0x100];
-    /* 0x282C */ u8 shortSampleChunkReuseRdPos; // Read position for short-lived sampleChunk
-    /* 0x282D */ u8 longSampleChunkReuseRdPos; // Read position for long-lived sampleChunk
-    /* 0x282E */ u8 shortSampleChunkReuseWrPos; // Write position for short-lived sampleChunk
-    /* 0x282F */ u8 longSampleChunkReuseWrPos; // Write position for long-lived sampleChunk
+    /* 0x262C */ u8 shortTtlSampleChunkReuseQueue[0x100]; // read pos <= write pos, wrapping mod 256
+    /* 0x272C */ u8 longTtlSampleChunkReuseQueue[0x100];
+    /* 0x282C */ u8 shortTtlSampleChunkReuseRdPos; // Read position for short-lived sampleChunk
+    /* 0x282D */ u8 longTtlSampleChunkReuseRdPos; // Read position for long-lived sampleChunk
+    /* 0x282E */ u8 shortTtlSampleChunkReuseWrPos; // Write position for short-lived sampleChunk
+    /* 0x282F */ u8 longTtlSampleChunkReuseWrPos; // Write position for long-lived sampleChunk
     /* 0x2830 */ AudioTable* sequenceTable;
     /* 0x2834 */ AudioTable* soundFontTable;
     /* 0x2838 */ AudioTable* sampleBankTable;
@@ -840,16 +840,16 @@ typedef struct {
     /* 0x2844 */ SoundFont* soundFonts;
     /* 0x2848 */ AudioBufferParameters audioBufferParameters;
     /* 0x2870 */ f32 unk_2870;
-    /* 0x2874 */ s32 shortSampleChunkCacheEntrySize;
-    /* 0x2874 */ s32 longSampleChunkCacheEntrySize;
+    /* 0x2874 */ s32 sampleChunkShortTtlEntrySize;
+    /* 0x2874 */ s32 sampleChunkLongTtlEntrySize;
     /* 0x287C */ char unk_287C[0x10];
-    /* 0x288C */ s32 sampleChunkCacheEntrySize;
+    /* 0x288C */ s32 sampleChunkEntrySize;
     /* 0x2890 */ s32 maxAudioCmds;
     /* 0x2894 */ s32 numNotes;
     /* 0x2898 */ s16 tempoInternalToExternal;
     /* 0x289A */ s8 soundMode;
     /* 0x289C */ s32 totalTaskCount; // The total number of times the top-level function on the audio thread has run since audio was initialized
-    /* 0x28A0 */ s32 sampleChunkCacheCountPerFrame;
+    /* 0x28A0 */ s32 sampleChunkDmaCount;
     /* 0x28A4 */ s32 rspTaskIndex;
     /* 0x28A8 */ s32 curAiBufIndex;
     /* 0x28AC */ Acmd* abiCmdBufs[2]; // Pointer to audio heap where the audio binary interface command lists (for the rsp) are stored. Two lists that alternate every frame

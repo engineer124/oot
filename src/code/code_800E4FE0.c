@@ -87,8 +87,8 @@ AudioTask* func_800E5000(void) {
     }
 
     // Update sampleChunkEntries
-    sp5C = gAudioContext.sampleChunkCacheCountPerFrame;
-    for (i = 0; i < gAudioContext.sampleChunkCacheCountPerFrame; i++) {
+    sp5C = gAudioContext.sampleChunkDmaCount;
+    for (i = 0; i < gAudioContext.sampleChunkDmaCount; i++) {
         if (osRecvMesg(&gAudioContext.SampleChunkCacheMsgQueue, NULL, OS_MESG_NOBLOCK) == 0) {
             sp5C--;
         }
@@ -107,8 +107,8 @@ AudioTask* func_800E5000(void) {
         }
     }
 
-    gAudioContext.sampleChunkCacheCountPerFrame = 0;
-    AudioLoad_UpdateSampleChunkCache();
+    gAudioContext.sampleChunkDmaCount = 0;
+    AudioLoad_DecreaseSampleChunkTtls();
     AudioLoad_ProcessLoads(gAudioContext.resetStatus);
     AudioLoad_ProcessScriptLoads();
 
@@ -812,7 +812,7 @@ s32 func_800E6590(s32 playerIdx, s32 arg1, s32 arg2) {
                     return 0;
                 }
                 loopEnd = sound->sample->loop->end;
-                samplePos = note->synthesisState.curSamplePos;
+                samplePos = note->synthesisState.samplePosInt;
                 return loopEnd - samplePos;
             }
             return 0;
