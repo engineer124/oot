@@ -689,7 +689,7 @@ Acmd* AudioSynth_DoOneAudioUpdate(s16* aiBuf, s32 aiBufLen, Acmd* cmd, s32 updat
 Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisState* synthState, s16* aiBuf,
                              s32 aiBufLen, Acmd* cmd, s32 updateIndex) {
     s32 pad1[3];
-    SoundFontSample* audioFontSample;
+    SoundFontSample* sample;
     AdpcmLoop* loopInfo;
     s32 nSamplesUntilLoopEnd;
     s32 nSamplesInThisIteration;
@@ -780,10 +780,10 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
         noteSamplesDmemAddrBeforeResampling = DMEM_UNCOMPRESSED_NOTE + (synthState->samplePosInt * 2);
         synthState->samplePosInt += nSamplesToLoad;
     } else {
-        audioFontSample = noteSubEu->sound.soundFontSound->sample;
-        loopInfo = audioFontSample->loop;
+        sample = noteSubEu->sound.soundFontSound->sample;
+        loopInfo = sample->loop;
         loopEndPos = loopInfo->end;
-        sampleDataAddr = audioFontSample->sampleAddr;
+        sampleDataAddr = sample->sampleAddr;
         resampledTempLen = 0;
 
         for (curPart = 0; curPart < nParts; curPart++) {
@@ -798,8 +798,8 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                 samplesLenAdjusted = nSamplesToLoad;
             }
 
-            if (audioFontSample->codec == CODEC_ADPCM || audioFontSample->codec == CODEC_SMALL_ADPCM) {
-                if (gAudioContext.curLoadedBook != audioFontSample->book->book) {
+            if (sample->codec == CODEC_ADPCM || sample->codec == CODEC_SMALL_ADPCM) {
+                if (gAudioContext.curLoadedBook != sample->book->book) {
                     u32 numEntries;
 
                     switch (bookOffset) {
@@ -810,13 +810,13 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         case 2:
                         case 3:
                         default:
-                            gAudioContext.curLoadedBook = audioFontSample->book->book;
+                            gAudioContext.curLoadedBook = sample->book->book;
                             break;
                     }
                     if (1) {}
                     if (1) {}
                     if (1) {}
-                    numEntries = SAMPLES_PER_FRAME * audioFontSample->book->order * audioFontSample->book->npredictors;
+                    numEntries = SAMPLES_PER_FRAME * sample->book->order * sample->book->npredictors;
                     aLoadADPCM(cmd++, numEntries, gAudioContext.curLoadedBook);
                 }
             }
@@ -856,7 +856,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                 }
 
                 // Set parameters based on compression type
-                switch (audioFontSample->codec) {
+                switch (sample->codec) {
                     case CODEC_ADPCM:
                         frameSize = 9; // 16 samples compressed into 8 bytes + 1 header byte
                         skipInitialSamples = SAMPLES_PER_FRAME;
@@ -902,11 +902,11 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                     sampleDataChunkOffset = sampleFrameIndex * frameSize;
 
                     // Get the ram address of the requested sample chunk
-                    if (audioFontSample->medium == MEDIUM_RAM) {
+                    if (sample->medium == MEDIUM_RAM) {
                         // Sample is already loaded into ram
                         sampleDataChunkAddr =
                             (u8*)(sampleDataAddr + (sampleDataOffset + sampleDataChunkOffset));
-                    } else if (audioFontSample->medium == MEDIUM_UNK) {
+                    } else if (sample->medium == MEDIUM_UNK) {
                         // This medium is unsupported so terminate processing this note
                         return cmd;
                     } else {
@@ -914,7 +914,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         sampleDataChunkAddr = AudioLoad_AllocSampleChunkCache(
                             sampleDataAddr + (sampleDataOffset + sampleDataChunkOffset),
                             ALIGN16((nFramesToDecode * frameSize) + SAMPLES_PER_FRAME), flags, &synthState->prevSampleChunkIndex,
-                            audioFontSample->medium);
+                            sample->medium);
                     }
 
                     if (sampleDataChunkAddr == NULL) {
@@ -935,7 +935,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                 }
 
                 if (synthState->restart) {
-                    aSetLoop(cmd++, audioFontSample->loop->state);
+                    aSetLoop(cmd++, sample->loop->state);
                     flags = A_LOOP;
                     synthState->restart = false;
                 }
@@ -950,7 +950,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
 
                 // Decompress the raw sample chunks in the rsp
                 // Goes from adpcm (compressed) sample data to pcm (uncompressed) sample data
-                switch (audioFontSample->codec) {
+                switch (sample->codec) {
                     case CODEC_ADPCM:
                         sampleDataChunkSize = ALIGN16((nFramesToDecode * frameSize) + SAMPLES_PER_FRAME);
                         sampleDataDmem = DMEM_COMPRESSED_ADPCM_DATA - sampleDataChunkSize;
