@@ -32,7 +32,7 @@ typedef struct {
     /* 0x9 */ s8 panSigned;
     /* 0xA */ s8 stereoBits;
     /* 0xB */ u8 filter;
-    /* 0xC */ u8 unk_0C;
+    /* 0xC */ u8 noteUnkBufGain;
 } SfxPlayerState;
 
 typedef enum {
@@ -3955,17 +3955,17 @@ u8 func_800F37B8(f32 behindScreenZ, SoundBankEntry* arg1, s8 arg2) {
     return (phi_v1 * 0x10) + (u8)((phi_f0 * phi_f12) / (10000.0f / 5.2f));
 }
 
-s8 func_800F3990(f32 arg0, u16 sfxParams) {
-    s8 ret = 0;
+s8 func_800F3990(f32 posY, u16 sfxParams) {
+    s8 noteUnkBufGain = 0;
 
-    if (arg0 >= 0.0f) {
-        if (arg0 > 625.0f) {
-            ret = 127;
+    if (posY >= 0.0f) {
+        if (posY > 625.0f) {
+            noteUnkBufGain = 127;
         } else {
-            ret = (arg0 / 625.0f) * 126.0f;
+            noteUnkBufGain = (posY / 625.0f) * 126.0f;
         }
     }
-    return ret | 1;
+    return noteUnkBufGain | 1;
 }
 
 void Audio_SetSoundProperties(u8 bankId, u8 entryIdx, u8 channelIdx) {
@@ -3976,7 +3976,7 @@ void Audio_SetSoundProperties(u8 bankId, u8 entryIdx, u8 channelIdx) {
     s8 panSigned = 0x40;
     u8 stereoBits = 0;
     u8 filter = 0;
-    s8 sp38 = 0;
+    s8 noteUnkBufGain = 0;
     f32 behindScreenZ;
     u8 baseFilter = 0;
     SoundBankEntry* entry = &gSoundBanks[bankId][entryIdx];
@@ -3988,7 +3988,7 @@ void Audio_SetSoundProperties(u8 bankId, u8 entryIdx, u8 channelIdx) {
         case BANK_ENEMY:
         case BANK_VOICE:
             if (D_80130604 == 2) {
-                sp38 = func_800F3990(*entry->posY, entry->sfxParams);
+                noteUnkBufGain = func_800F3990(*entry->posY, entry->sfxParams);
             }
             FALLTHROUGH;
         case BANK_OCARINA:
@@ -4057,12 +4057,12 @@ void Audio_SetSoundProperties(u8 bankId, u8 entryIdx, u8 channelIdx) {
         Audio_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | (channelIdx << 8) | 3, filter);
         sSfxChannelState[channelIdx].filter = filter;
     }
-    if (sp38 != sSfxChannelState[channelIdx].unk_0C) {
-        // CHAN_UPD_UNK_0F
+    if (noteUnkBufGain != sSfxChannelState[channelIdx].noteUnkBufGain) {
+        // CHAN_UPD_NOTE_UNKBUF_SIZE
         Audio_QueueCmdS8(0xC << 24 | SEQ_PLAYER_SFX << 16 | (channelIdx << 8), 0x10);
-        // CHAN_UPD_UNK_20
-        Audio_QueueCmdU16(0xD << 24 | SEQ_PLAYER_SFX << 16 | (channelIdx << 8), ((u16)(sp38) << 8) + 0xFF);
-        sSfxChannelState[channelIdx].unk_0C = sp38;
+        // CHAN_UPD_NOTE_UNKBUF_GAIN
+        Audio_QueueCmdU16(0xD << 24 | SEQ_PLAYER_SFX << 16 | (channelIdx << 8), ((u16)(noteUnkBufGain) << 8) + 0xFF);
+        sSfxChannelState[channelIdx].noteUnkBufGain = noteUnkBufGain;
     }
     if (panSigned != sSfxChannelState[channelIdx].panSigned) {
         Audio_QueueCmdS8(0x3 << 24 | SEQ_PLAYER_SFX << 16 | (channelIdx << 8), panSigned);
@@ -4082,10 +4082,10 @@ void Audio_ResetSfxChannelState(void) {
         state->panSigned = 0x40;
         state->stereoBits = 0;
         state->filter = 0xFF;
-        state->unk_0C = 0xFF;
+        state->noteUnkBufGain = 0xFF;
     }
 
-    sSfxChannelState[SFX_CHANNEL_OCARINA].unk_0C = 0;
+    sSfxChannelState[SFX_CHANNEL_OCARINA].noteUnkBufGain = 0;
     sPrevSeqMode = 0;
     sAudioCodeReverb = 0;
 }

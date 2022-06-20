@@ -4,21 +4,21 @@
 #define EXTRA_BUFFERED_AI_SAMPLES_TARGET 0x80
 
 typedef enum {
-    CHAN_UPD_UNK_0,           // 0
-    CHAN_UPD_VOL_SCALE,       // 1
-    CHAN_UPD_VOL,             // 2
-    CHAN_UPD_PAN_SIGNED,      // 3
-    CHAN_UPD_FREQ_SCALE,      // 4
-    CHAN_UPD_REVERB,          // 5
-    CHAN_UPD_SCRIPT_IO,       // 6
-    CHAN_UPD_PAN_UNSIGNED,    // 7
-    CHAN_UPD_STOP_SOMETHING2, // 8
-    CHAN_UPD_MUTE_BEHAVE,     // 9
-    CHAN_UPD_VIBE_X8,         // 10
-    CHAN_UPD_VIBE_X32,        // 11
-    CHAN_UPD_UNK_0F,          // 12
-    CHAN_UPD_UNK_20,          // 13
-    CHAN_UPD_STEREO           // 14
+    CHAN_UPD_UNK_0,            // 0
+    CHAN_UPD_VOL_SCALE,        // 1
+    CHAN_UPD_VOL,              // 2
+    CHAN_UPD_PAN_SIGNED,       // 3
+    CHAN_UPD_FREQ_SCALE,       // 4
+    CHAN_UPD_REVERB,           // 5
+    CHAN_UPD_SCRIPT_IO,        // 6
+    CHAN_UPD_PAN_UNSIGNED,     // 7
+    CHAN_UPD_STOP_SOMETHING2,  // 8
+    CHAN_UPD_MUTE_BEHAVE,      // 9
+    CHAN_UPD_VIBE_X8,          // 10
+    CHAN_UPD_VIBE_X32,         // 11
+    CHAN_UPD_NOTE_UNKBUF_SIZE, // 12
+    CHAN_UPD_NOTE_UNKBUF_GAIN, // 13
+    CHAN_UPD_STEREO            // 14
 } ChannelUpdateType;
 
 void func_800E6300(SequenceChannel* channel, AudioCmd* cmd);
@@ -746,12 +746,12 @@ void func_800E6300(SequenceChannel* channel, AudioCmd* cmd) {
             channel->vibratoRateChangeDelay = 1;
             break;
 
-        case CHAN_UPD_UNK_0F:
-            channel->unk_0F = cmd->asUbyte;
+        case CHAN_UPD_NOTE_UNKBUF_SIZE:
+            channel->noteUnkBufSize = cmd->asUbyte;
             break;
 
-        case CHAN_UPD_UNK_20:
-            channel->unk_20 = cmd->asUShort;
+        case CHAN_UPD_NOTE_UNKBUF_GAIN:
+            channel->noteUnkBufGain = cmd->asUShort;
             break;
 
         case CHAN_UPD_STEREO:

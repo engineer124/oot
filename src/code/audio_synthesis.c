@@ -701,7 +701,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     s32 frameIndex;
     s32 skipBytes;
     s32 temp_v1_6;
-    void* buf;
+    void* noteUnkBufState;
     s32 nSamplesToDecode;
     u32 sampleAddr;
     u32 samplesLenFixedPoint;
@@ -724,12 +724,12 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     s32 resampledTempLen;
     u16 noteSamplesDmemAddrBeforeResampling;
     s32 sampleDataOffset;
-    s32 thing;
+    s32 noteUnkBufDmem;
     s32 s5;
     Note* note;
     u32 nSamplesToLoad;
-    u16 unk7;
-    u16 unkE;
+    u16 noteUnkBufSize;
+    u16 noteUnkBufGain;
     s16* filter;
     s32 bookOffset;
     s32 finished;
@@ -753,7 +753,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
         synthState->prevHeadsetPanLeft = 0;
         synthState->reverbVol = noteSubEu->reverbVol;
         synthState->numParts = 0;
-        synthState->unk_1A = 1;
+        synthState->noteUnkBufClear = true;
         note->noteSubEu.bitField0.finished = false;
         finished = false;
     }
@@ -936,7 +936,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         addr = DMEM_COMPRESSED_ADPCM_DATA - aligned;
                         aSetBuffer(cmd++, 0, addr + sampleDataStartPad, DMEM_UNCOMPRESSED_NOTE + phi_s4,
                                    nSamplesToDecode * 2);
-                        aADPCMdec(cmd++, flags, synthState->synthesisBuffers->adpcmdecState);
+                        aADPCMdec(cmd++, flags, synthState->synthesisBuffers->adpcmState);
                         break;
 
                     case CODEC_SMALL_ADPCM:
@@ -944,7 +944,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         addr = DMEM_COMPRESSED_ADPCM_DATA - aligned;
                         aSetBuffer(cmd++, 0, addr + sampleDataStartPad, DMEM_UNCOMPRESSED_NOTE + phi_s4,
                                    nSamplesToDecode * 2);
-                        aADPCMdec(cmd++, flags | 4, synthState->synthesisBuffers->adpcmdecState);
+                        aADPCMdec(cmd++, flags | 4, synthState->synthesisBuffers->adpcmState);
                         break;
 
                     case CODEC_S8:
@@ -952,7 +952,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
                         addr = DMEM_COMPRESSED_ADPCM_DATA - aligned;
                         AudioSynth_SetBuffer(cmd++, 0, addr + sampleDataStartPad, DMEM_UNCOMPRESSED_NOTE + phi_s4,
                                              nSamplesToDecode * 2);
-                        AudioSynth_S8Dec(cmd++, flags, synthState->synthesisBuffers->adpcmdecState);
+                        AudioSynth_S8Dec(cmd++, flags, synthState->synthesisBuffers->adpcmState);
                         break;
                 }
 
@@ -1060,26 +1060,26 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     filter = noteSubEu->filter;
     if (filter != 0) {
         AudioSynth_LoadFilterCount(cmd++, aiBufLen * 2, filter);
-        AudioSynth_LoadFilter(cmd++, flags, DMEM_TEMP, synthState->synthesisBuffers->mixEnvelopeState);
+        AudioSynth_LoadFilter(cmd++, flags, DMEM_TEMP, synthState->synthesisBuffers->filterState);
     }
 
-    unk7 = noteSubEu->unk_07;
-    unkE = noteSubEu->unk_0E;
-    buf = &synthState->synthesisBuffers->panSamplesBuffer[0x18];
-    if (unk7 != 0 && noteSubEu->unk_0E != 0) {
+    noteUnkBufSize = noteSubEu->noteUnkBufSize;
+    noteUnkBufGain = noteSubEu->noteUnkBufGain;
+    noteUnkBufState = synthState->synthesisBuffers->noteUnkBufState;
+    if (noteUnkBufSize != 0 && noteSubEu->noteUnkBufGain != 0) {
         AudioSynth_DMemMove(cmd++, DMEM_TEMP, DMEM_SCRATCH2, aiBufLen * 2);
-        thing = DMEM_SCRATCH2 - unk7;
-        if (synthState->unk_1A != 0) {
-            AudioSynth_ClearBuffer(cmd++, thing, unk7);
-            synthState->unk_1A = 0;
+        noteUnkBufDmem = DMEM_SCRATCH2 - noteUnkBufSize;
+        if (synthState->noteUnkBufClear) {
+            AudioSynth_ClearBuffer(cmd++, noteUnkBufDmem, noteUnkBufSize);
+            synthState->noteUnkBufClear = false;
         } else {
-            AudioSynth_LoadBuffer(cmd++, thing, unk7, buf);
+            AudioSynth_LoadBuffer(cmd++, noteUnkBufDmem, noteUnkBufSize, noteUnkBufState);
         }
-        AudioSynth_SaveBuffer(cmd++, DMEM_TEMP + (aiBufLen * 2) - unk7, unk7, buf);
-        AudioSynth_Mix(cmd++, (aiBufLen * 2) >> 4, unkE, DMEM_SCRATCH2, thing);
-        AudioSynth_DMemMove(cmd++, thing, DMEM_TEMP, aiBufLen * 2);
+        AudioSynth_SaveBuffer(cmd++, DMEM_TEMP + (aiBufLen * 2) - noteUnkBufSize, noteUnkBufSize, noteUnkBufState);
+        AudioSynth_Mix(cmd++, (aiBufLen * 2) >> 4, noteUnkBufGain, DMEM_SCRATCH2, noteUnkBufDmem);
+        AudioSynth_DMemMove(cmd++, noteUnkBufDmem, DMEM_TEMP, aiBufLen * 2);
     } else {
-        synthState->unk_1A = 1;
+        synthState->noteUnkBufClear = true;
     }
 
     if (noteSubEu->headsetPanRight != 0 || synthState->prevHeadsetPanRight != 0) {
@@ -1249,7 +1249,7 @@ Acmd* AudioSynth_NoteApplyHeadsetPanEffects(Acmd* cmd, NoteSubEu* noteSubEu, Not
         }
 
         if (prevPanShift != 0) {
-            aLoadBuffer(cmd++, &synthState->synthesisBuffers->panResampleState[0x8], DMEM_NOTE_PAN_TEMP,
+            aLoadBuffer(cmd++, synthState->synthesisBuffers->panResampleState, DMEM_NOTE_PAN_TEMP,
                         ALIGN16(prevPanShift));
             aDMEMMove(cmd++, DMEM_TEMP, DMEM_NOTE_PAN_TEMP + prevPanShift, bufLen + panShift - prevPanShift);
         } else {
@@ -1264,7 +1264,7 @@ Acmd* AudioSynth_NoteApplyHeadsetPanEffects(Acmd* cmd, NoteSubEu* noteSubEu, Not
 
     if (panShift) {
         // Save excessive samples for next iteration
-        aSaveBuffer(cmd++, DMEM_NOTE_PAN_TEMP + bufLen, &synthState->synthesisBuffers->panResampleState[0x8],
+        aSaveBuffer(cmd++, DMEM_NOTE_PAN_TEMP + bufLen, synthState->synthesisBuffers->panResampleState,
                     ALIGN16(panShift));
     }
     aAddMixer(cmd++, ALIGN64(bufLen), DMEM_NOTE_PAN_TEMP, dest, 0x7FFF);
