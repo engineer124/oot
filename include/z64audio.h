@@ -455,7 +455,7 @@ typedef struct {
     /* 0x040 */ s16 filterState[32];
     /* 0x080 */ s16 unusedState[16];
     /* 0x0A0 */ s16 panResampleState[32];
-    /* 0x0E0 */ s16 noteUnkBufState[128];
+    /* 0x0E0 */ s16 noteUnkBufState[128]; // maxiumum observed size in code or sequences is 8 samples
 } NoteSynthesisBuffers; // size = 0x1E0
 
 typedef struct {
