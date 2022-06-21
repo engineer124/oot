@@ -99,8 +99,8 @@ void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
 
     sub->gain = attrs->gain;
     sub->filter = attrs->filter;
-    sub->haasEffectSize = attrs->haasEffectSize;
-    sub->haasEffectGain = attrs->haasEffectGain;
+    sub->combFilterSize = attrs->combFilterSize;
+    sub->combFilterGain = attrs->combFilterGain;
     sub->reverbVol = reverbVol;
 }
 
@@ -255,8 +255,8 @@ void Audio_ProcessNotes(void) {
                 subAttrs.stereo = attrs->stereo;
                 subAttrs.gain = attrs->gain;
                 subAttrs.filter = attrs->filter;
-                subAttrs.haasEffectSize = attrs->haasEffectSize;
-                subAttrs.haasEffectGain = attrs->haasEffectGain;
+                subAttrs.combFilterSize = attrs->combFilterSize;
+                subAttrs.combFilterGain = attrs->combFilterGain;
                 bookOffset = noteSubEu->bitField1.bookOffset;
             } else {
                 SequenceLayer* layer = playbackState->parentLayer;
@@ -273,8 +273,8 @@ void Audio_ProcessNotes(void) {
                 subAttrs.reverbVol = channel->reverb;
                 subAttrs.gain = channel->gain;
                 subAttrs.filter = channel->filter;
-                subAttrs.haasEffectSize = channel->haasEffectSize;
-                subAttrs.haasEffectGain = channel->haasEffectGain;
+                subAttrs.combFilterSize = channel->combFilterSize;
+                subAttrs.combFilterGain = channel->combFilterGain;
                 bookOffset = channel->bookOffset & 0x7;
 
                 if (channel->seqPlayer->muted && (channel->muteBehavior & 8)) {
@@ -479,8 +479,8 @@ void Audio_SeqLayerDecayRelease(SequenceLayer* layer, s32 target) {
                 attrs->filter = attrs->filterBuf;
             }
 
-            attrs->haasEffectGain = chan->haasEffectGain;
-            attrs->haasEffectSize = chan->haasEffectSize;
+            attrs->combFilterGain = chan->combFilterGain;
+            attrs->combFilterSize = chan->combFilterSize;
 
             if (chan->seqPlayer->muted && (chan->muteBehavior & 8)) {
                 note->noteSubEu.bitField0.finished = true;

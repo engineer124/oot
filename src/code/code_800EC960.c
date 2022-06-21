@@ -32,7 +32,7 @@ typedef struct {
     /* 0x9 */ s8 panSigned;
     /* 0xA */ s8 stereoBits;
     /* 0xB */ u8 filter;
-    /* 0xC */ u8 haasEffectGain;
+    /* 0xC */ u8 combFilterGain;
 } SfxPlayerState;
 
 typedef enum {
@@ -3956,16 +3956,16 @@ u8 func_800F37B8(f32 behindScreenZ, SoundBankEntry* arg1, s8 arg2) {
 }
 
 s8 Audio_ComputeHaasEffectGain(f32 posY, u16 sfxParams) {
-    s8 haasEffectGain = 0;
+    s8 combFilterGain = 0;
 
     if (posY >= 0.0f) {
         if (posY > 625.0f) {
-            haasEffectGain = 127;
+            combFilterGain = 127;
         } else {
-            haasEffectGain = (posY / 625.0f) * 126.0f;
+            combFilterGain = (posY / 625.0f) * 126.0f;
         }
     }
-    return haasEffectGain | 1;
+    return combFilterGain | 1;
 }
 
 void Audio_SetSoundProperties(u8 bankId, u8 entryIdx, u8 channelIdx) {
@@ -3976,7 +3976,7 @@ void Audio_SetSoundProperties(u8 bankId, u8 entryIdx, u8 channelIdx) {
     s8 panSigned = 0x40;
     u8 stereoBits = 0;
     u8 filter = 0;
-    s8 haasEffectGain = 0;
+    s8 combFilterGain = 0;
     f32 behindScreenZ;
     u8 baseFilter = 0;
     SoundBankEntry* entry = &gSoundBanks[bankId][entryIdx];
@@ -3988,7 +3988,7 @@ void Audio_SetSoundProperties(u8 bankId, u8 entryIdx, u8 channelIdx) {
         case BANK_ENEMY:
         case BANK_VOICE:
             if (D_80130604 == 2) {
-                haasEffectGain = Audio_ComputeHaasEffectGain(*entry->posY, entry->sfxParams);
+                combFilterGain = Audio_ComputeHaasEffectGain(*entry->posY, entry->sfxParams);
             }
             FALLTHROUGH;
         case BANK_OCARINA:
@@ -4057,12 +4057,12 @@ void Audio_SetSoundProperties(u8 bankId, u8 entryIdx, u8 channelIdx) {
         Audio_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | (channelIdx << 8) | 3, filter);
         sSfxChannelState[channelIdx].filter = filter;
     }
-    if (haasEffectGain != sSfxChannelState[channelIdx].haasEffectGain) {
-        // CHAN_UPD_HAAS_EFFECT_SIZE
+    if (combFilterGain != sSfxChannelState[channelIdx].combFilterGain) {
+        // CHAN_UPD_COMB_FILTER_SIZE
         Audio_QueueCmdS8(0xC << 24 | SEQ_PLAYER_SFX << 16 | (channelIdx << 8), 0x10);
-        // CHAN_UPD_HAAS_EFFECT_GAIN
-        Audio_QueueCmdU16(0xD << 24 | SEQ_PLAYER_SFX << 16 | (channelIdx << 8), ((u16)(haasEffectGain) << 8) + 0xFF);
-        sSfxChannelState[channelIdx].haasEffectGain = haasEffectGain;
+        // CHAN_UPD_COMB_FILTER_GAIN
+        Audio_QueueCmdU16(0xD << 24 | SEQ_PLAYER_SFX << 16 | (channelIdx << 8), ((u16)(combFilterGain) << 8) + 0xFF);
+        sSfxChannelState[channelIdx].combFilterGain = combFilterGain;
     }
     if (panSigned != sSfxChannelState[channelIdx].panSigned) {
         Audio_QueueCmdS8(0x3 << 24 | SEQ_PLAYER_SFX << 16 | (channelIdx << 8), panSigned);
@@ -4082,10 +4082,10 @@ void Audio_ResetSfxChannelState(void) {
         state->panSigned = 0x40;
         state->stereoBits = 0;
         state->filter = 0xFF;
-        state->haasEffectGain = 0xFF;
+        state->combFilterGain = 0xFF;
     }
 
-    sSfxChannelState[SFX_CHANNEL_OCARINA].haasEffectGain = 0;
+    sSfxChannelState[SFX_CHANNEL_OCARINA].combFilterGain = 0;
     sPrevSeqMode = 0;
     sAudioCodeReverb = 0;
 }
