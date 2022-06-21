@@ -16,8 +16,8 @@ typedef enum {
     CHAN_UPD_MUTE_BEHAVE,      // 9
     CHAN_UPD_VIBE_X8,          // 10
     CHAN_UPD_VIBE_X32,         // 11
-    CHAN_UPD_NOTE_UNKBUF_SIZE, // 12
-    CHAN_UPD_NOTE_UNKBUF_GAIN, // 13
+    CHAN_UPD_HAAS_EFFECT_SIZE, // 12
+    CHAN_UPD_HAAS_EFFECT_GAIN, // 13
     CHAN_UPD_STEREO            // 14
 } ChannelUpdateType;
 
@@ -750,12 +750,12 @@ void func_800E6300(SequenceChannel* channel, AudioCmd* cmd) {
             channel->vibratoRateChangeDelay = 1;
             break;
 
-        case CHAN_UPD_NOTE_UNKBUF_SIZE:
-            channel->noteUnkBufSize = cmd->asUbyte;
+        case CHAN_UPD_HAAS_EFFECT_SIZE:
+            channel->haasEffectSize = cmd->asUbyte;
             break;
 
-        case CHAN_UPD_NOTE_UNKBUF_GAIN:
-            channel->noteUnkBufGain = cmd->asUShort;
+        case CHAN_UPD_HAAS_EFFECT_GAIN:
+            channel->haasEffectGain = cmd->asUShort;
             break;
 
         case CHAN_UPD_STEREO:

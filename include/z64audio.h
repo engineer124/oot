@@ -339,8 +339,8 @@ typedef struct {
     /* 0x01 */ u8 gain; // Increases volume by a multiplicative scaling factor. Represented as a UQ4.4 number
     /* 0x02 */ u8 pan;
     /* 0x03 */ Stereo stereo;
-    /* 0x04 */ u8 noteUnkBufSize;
-    /* 0x06 */ u16 noteUnkBufGain;
+    /* 0x04 */ u8 haasEffectSize;
+    /* 0x06 */ u16 haasEffectGain;
     /* 0x08 */ f32 freqScale;
     /* 0x0C */ f32 velocity;
     /* 0x10 */ s16* filter;
@@ -378,7 +378,7 @@ typedef struct SequenceChannel {
     /* 0x0C */ u8 gain; // Increases volume by a multiplicative scaling factor. Represented as a UQ4.4 number
     /* 0x0D */ u8 velocityRandomVariance;
     /* 0x0E */ u8 gateTimeRandomVariance;
-    /* 0x0F */ u8 noteUnkBufSize;
+    /* 0x0F */ u8 haasEffectSize;
     /* 0x10 */ u16 vibratoRateStart;
     /* 0x12 */ u16 vibratoExtentStart;
     /* 0x14 */ u16 vibratoRateTarget;
@@ -387,7 +387,7 @@ typedef struct SequenceChannel {
     /* 0x1A */ u16 vibratoExtentChangeDelay;
     /* 0x1C */ u16 vibratoDelay;
     /* 0x1E */ u16 delay;
-    /* 0x20 */ u16 noteUnkBufGain;
+    /* 0x20 */ u16 haasEffectGain;
     /* 0x22 */ u16 unk_22;
     /* 0x24 */ s16 instOrWave; // either 0 (none), instrument index + 1, or
                              // 0x80..0x83 for sawtooth/triangle/sine/square waves.
@@ -459,7 +459,7 @@ typedef struct {
     /* 0x040 */ s16 filterState[32];
     /* 0x080 */ s16 unusedState[16];
     /* 0x0A0 */ s16 panResampleState[32];
-    /* 0x0E0 */ s16 noteUnkBufState[128]; // maxiumum observed size in code or sequences is 8 samples
+    /* 0x0E0 */ s16 haasEffectState[128]; // maxiumum observed size in code or sequences is 8 samples
 } NoteSynthesisBuffers; // size = 0x1E0
 
 typedef struct {
@@ -477,7 +477,7 @@ typedef struct {
     /* 0x14 */ u16 unk_14;
     /* 0x16 */ u16 unk_16;
     /* 0x18 */ u16 unk_18;
-    /* 0x1A */ u8 noteUnkBufClear;
+    /* 0x1A */ u8 haasEffectNeedsInit;
     /* 0x1C */ u16 unk_1C;
     /* 0x1E */ u16 unk_1E;
 } NoteSynthesisState; // size = 0x20
@@ -536,11 +536,11 @@ typedef struct {
     /* 0x04 */ u8 headsetPanLeft;
     /* 0x05 */ u8 reverbVol;
     /* 0x06 */ u8 harmonicIndexCurAndPrev; // bits 3..2 store curHarmonicIndex, bits 1..0 store prevHarmonicIndex
-    /* 0x07 */ u8 noteUnkBufSize;
+    /* 0x07 */ u8 haasEffectSize;
     /* 0x08 */ u16 targetVolLeft;
     /* 0x0A */ u16 targetVolRight;
     /* 0x0C */ u16 resamplingRateFixedPoint;
-    /* 0x0E */ u16 noteUnkBufGain;
+    /* 0x0E */ u16 haasEffectGain;
     /* 0x10 */ union {
                  TunedSample* tunedSample;
                  s16* waveSampleAddr; // used for synthetic waves
@@ -935,8 +935,8 @@ typedef struct {
     /* 0x08 */ f32 velocity;
     /* 0x0C */ char unk_0C[0x4];
     /* 0x10 */ s16* filter;
-    /* 0x14 */ u8 noteUnkBufSize;
-    /* 0x16 */ u16 noteUnkBufGain;
+    /* 0x14 */ u8 haasEffectSize;
+    /* 0x16 */ u16 haasEffectGain;
 } NoteSubAttributes; // size = 0x18
 
 typedef struct {

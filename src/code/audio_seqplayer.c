@@ -290,8 +290,8 @@ void AudioSeq_InitSequenceChannel(SequenceChannel* channel) {
     channel->vibratoExtentChangeDelay = 0;
     channel->vibratoDelay = 0;
     channel->filter = NULL;
-    channel->noteUnkBufGain = 0;
-    channel->noteUnkBufSize = 0;
+    channel->haasEffectGain = 0;
+    channel->haasEffectSize = 0;
     channel->volume = 1.0f;
     channel->volumeScale = 1.0f;
     channel->freqScale = 1.0f;
@@ -1514,8 +1514,8 @@ void AudioSeq_SequenceChannelProcessScript(SequenceChannel* channel) {
                     channel->adsr.sustain = 0;
                     channel->velocityRandomVariance = 0;
                     channel->gateTimeRandomVariance = 0;
-                    channel->noteUnkBufSize = 0;
-                    channel->noteUnkBufGain = 0;
+                    channel->haasEffectSize = 0;
+                    channel->haasEffectGain = 0;
                     channel->bookOffset = 0;
                     channel->freqScale = 1.0f;
                     break;
@@ -1594,8 +1594,8 @@ void AudioSeq_SequenceChannelProcessScript(SequenceChannel* channel) {
                     break;
 
                 case 0xBB:
-                    channel->noteUnkBufSize = cmdArgs[0];
-                    channel->noteUnkBufGain = cmdArgs[1];
+                    channel->haasEffectSize = cmdArgs[0];
+                    channel->haasEffectGain = cmdArgs[1];
                     break;
 
                 case 0xBC:

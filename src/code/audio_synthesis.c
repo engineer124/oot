@@ -706,7 +706,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     s32 frameIndex;
     s32 skipBytes;
     s32 temp_v1_6;
-    void* noteUnkBufState;
+    void* haasEffectState;
     s32 nSamplesToDecode;
     u32 sampleAddr;
     u32 samplesLenFixedPoint;
@@ -729,12 +729,12 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     s32 resampledTempLen;
     u16 sampleDmemBeforeResampling;
     s32 sampleDataOffset;
-    s32 noteUnkBufDmem;
+    s32 haasEffectDmem;
     s32 s5;
     Note* note;
     u32 numSamplesToLoad;
-    u16 noteUnkBufSize;
-    u16 noteUnkBufGain;
+    u16 haasEffectSize;
+    u16 haasEffectGain;
     s16* filter;
     s32 bookOffset;
     s32 finished;
@@ -758,7 +758,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
         synthState->prevHeadsetPanLeft = 0;
         synthState->reverbVol = noteSubEu->reverbVol;
         synthState->numParts = 0;
-        synthState->noteUnkBufClear = true;
+        synthState->haasEffectNeedsInit = true;
         note->noteSubEu.bitField0.finished = false;
         finished = false;
     }
@@ -1068,23 +1068,23 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
         AudioSynth_LoadFilter(cmd++, flags, DMEM_TEMP, synthState->synthesisBuffers->filterState);
     }
 
-    noteUnkBufSize = noteSubEu->noteUnkBufSize;
-    noteUnkBufGain = noteSubEu->noteUnkBufGain;
-    noteUnkBufState = synthState->synthesisBuffers->noteUnkBufState;
-    if (noteUnkBufSize != 0 && noteSubEu->noteUnkBufGain != 0) {
+    haasEffectSize = noteSubEu->haasEffectSize;
+    haasEffectGain = noteSubEu->haasEffectGain;
+    haasEffectState = synthState->synthesisBuffers->haasEffectState;
+    if (haasEffectSize != 0 && noteSubEu->haasEffectGain != 0) {
         AudioSynth_DMemMove(cmd++, DMEM_TEMP, DMEM_SCRATCH2, aiBufLen * 2);
-        noteUnkBufDmem = DMEM_SCRATCH2 - noteUnkBufSize;
-        if (synthState->noteUnkBufClear) {
-            AudioSynth_ClearBuffer(cmd++, noteUnkBufDmem, noteUnkBufSize);
-            synthState->noteUnkBufClear = false;
+        haasEffectDmem = DMEM_SCRATCH2 - haasEffectSize;
+        if (synthState->haasEffectNeedsInit) {
+            AudioSynth_ClearBuffer(cmd++, haasEffectDmem, haasEffectSize);
+            synthState->haasEffectNeedsInit = false;
         } else {
-            AudioSynth_LoadBuffer(cmd++, noteUnkBufDmem, noteUnkBufSize, noteUnkBufState);
+            AudioSynth_LoadBuffer(cmd++, haasEffectDmem, haasEffectSize, haasEffectState);
         }
-        AudioSynth_SaveBuffer(cmd++, DMEM_TEMP + (aiBufLen * 2) - noteUnkBufSize, noteUnkBufSize, noteUnkBufState);
-        AudioSynth_Mix(cmd++, (aiBufLen * 2) >> 4, noteUnkBufGain, DMEM_SCRATCH2, noteUnkBufDmem);
-        AudioSynth_DMemMove(cmd++, noteUnkBufDmem, DMEM_TEMP, aiBufLen * 2);
+        AudioSynth_SaveBuffer(cmd++, DMEM_TEMP + (aiBufLen * 2) - haasEffectSize, haasEffectSize, haasEffectState);
+        AudioSynth_Mix(cmd++, (aiBufLen * 2) >> 4, haasEffectGain, DMEM_SCRATCH2, haasEffectDmem);
+        AudioSynth_DMemMove(cmd++, haasEffectDmem, DMEM_TEMP, aiBufLen * 2);
     } else {
-        synthState->noteUnkBufClear = true;
+        synthState->haasEffectNeedsInit = true;
     }
 
     if (noteSubEu->headsetPanRight != 0 || synthState->prevHeadsetPanRight != 0) {
