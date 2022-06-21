@@ -3955,7 +3955,7 @@ u8 func_800F37B8(f32 behindScreenZ, SoundBankEntry* arg1, s8 arg2) {
     return (phi_v1 * 0x10) + (u8)((phi_f0 * phi_f12) / (10000.0f / 5.2f));
 }
 
-s8 func_800F3990(f32 posY, u16 sfxParams) {
+s8 Audio_ComputeHaasEffectGain(f32 posY, u16 sfxParams) {
     s8 haasEffectGain = 0;
 
     if (posY >= 0.0f) {
@@ -3988,7 +3988,7 @@ void Audio_SetSoundProperties(u8 bankId, u8 entryIdx, u8 channelIdx) {
         case BANK_ENEMY:
         case BANK_VOICE:
             if (D_80130604 == 2) {
-                haasEffectGain = func_800F3990(*entry->posY, entry->sfxParams);
+                haasEffectGain = Audio_ComputeHaasEffectGain(*entry->posY, entry->sfxParams);
             }
             FALLTHROUGH;
         case BANK_OCARINA:

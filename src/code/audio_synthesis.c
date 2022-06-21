@@ -1071,7 +1071,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     haasEffectSize = noteSubEu->haasEffectSize;
     haasEffectGain = noteSubEu->haasEffectGain;
     haasEffectState = synthState->synthesisBuffers->haasEffectState;
-    if (haasEffectSize != 0 && noteSubEu->haasEffectGain != 0) {
+    if ((haasEffectSize != 0) && (noteSubEu->haasEffectGain != 0)) {
         AudioSynth_DMemMove(cmd++, DMEM_TEMP, DMEM_SCRATCH2, aiBufLen * 2);
         haasEffectDmem = DMEM_SCRATCH2 - haasEffectSize;
         if (synthState->haasEffectNeedsInit) {
