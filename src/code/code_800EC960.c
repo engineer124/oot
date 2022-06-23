@@ -93,7 +93,7 @@ typedef struct {
     s8 y;
 } OcarinaStick;
 
-u8 gIsLargeSfxBank[7] = { 0, 0, 0, 1, 0, 0, 0 };
+u8 gSfxBankHasMoreThan255Entries[7] = { 0, 0, 0, 1, 0, 0, 0 };
 
 // Only the first row of these is supported by sequence 0. (gSfxChannelLayout is always 0.)
 u8 gChannelsPerBank[4][7] = {
@@ -1784,14 +1784,14 @@ void AudioOcarina_SetInstrument(u8 ocarinaInstrumentId) {
         sIsOcarinaInputEnabled = false;
         sOcarinaFlags = 0;
         // return to full volume for players 0 and 3 (background bgm) after ocarina is finished
-        Audio_ClearBGMMute(SFX_CHANNEL_OCARINA);
+        Audio_RestoreBgmVolumeWithFlag(SFX_CHANNEL_OCARINA);
     } else {
         sOcarinaInputButtonCur = 0;
         AudioOcarina_ReadControllerInput();
         // Store button used to turn on ocarina
         sOcarinaInputButtonStart = sOcarinaInputButtonCur;
         // lowers volumes of players 0 and 3 (background bgm) while playing ocarina
-        Audio_QueueSeqCmdMute(SFX_CHANNEL_OCARINA);
+        Audio_LowerBgmVolumeWithFlag(SFX_CHANNEL_OCARINA);
     }
 }
 
@@ -2552,7 +2552,7 @@ void AudioDebug_Draw(GfxPrint* printer) {
                     GfxPrint_SetPos(printer, 2 + sAudioIntInfoX, 5 + ind + sAudioIntInfoY);
                     if (sAudioIntInfoBankPage[k] == 1) {
                         if ((entryIndex != 0xFF) &&
-                            ((entry->state == SFX_STATE_PLAYING_1) || (entry->state == SFX_STATE_PLAYING_2))) {
+                            ((entry->state == SFX_STATE_PLAYING) || (entry->state == SFX_STATE_PLAYING_ONE_FRAME))) {
                             GfxPrint_Printf(printer, "%2X %5d %5d %5d %02X %04X %04X", entryIndex, (s32)*entry->posX,
                                             (s32)*entry->posY, (s32)*entry->posZ, entry->sfxImportance,
                                             entry->sfxParams, entry->sfxId);
@@ -2561,7 +2561,7 @@ void AudioDebug_Draw(GfxPrint* printer) {
                         }
                     } else if (sAudioIntInfoBankPage[k] == 2) {
                         if ((entryIndex != 0xFF) &&
-                            ((entry->state == SFX_STATE_PLAYING_1) || (entry->state == SFX_STATE_PLAYING_2))) {
+                            ((entry->state == SFX_STATE_PLAYING) || (entry->state == SFX_STATE_PLAYING_ONE_FRAME))) {
                             GfxPrint_Printf(printer, "%2X %5d %5d %5d %3d %3d %04X", entryIndex, (s32)*entry->posX,
                                             (s32)*entry->posY, (s32)*entry->posZ, (s32)(chan->volume * 127.1f),
                                             chan->newPan, entry->sfxId);
@@ -2570,7 +2570,7 @@ void AudioDebug_Draw(GfxPrint* printer) {
                         }
                     } else if (sAudioIntInfoBankPage[k] == 3) {
                         if ((entryIndex != 0xFF) &&
-                            ((entry->state == SFX_STATE_PLAYING_1) || (entry->state == SFX_STATE_PLAYING_2))) {
+                            ((entry->state == SFX_STATE_PLAYING) || (entry->state == SFX_STATE_PLAYING_ONE_FRAME))) {
                             GfxPrint_Printf(printer, "%2X %5d %5d %5d %3d %3d %04X", entryIndex, (s32)*entry->posX,
                                             (s32)*entry->posY, (s32)*entry->posZ, (s32)(chan->freqScale * 100.0f),
                                             chan->reverb, entry->sfxId);
@@ -2579,7 +2579,7 @@ void AudioDebug_Draw(GfxPrint* printer) {
                         }
                     } else if (sAudioIntInfoBankPage[k] == 4) {
                         if ((entryIndex != 0xFF) &&
-                            ((entry->state == SFX_STATE_PLAYING_1) || (entry->state == SFX_STATE_PLAYING_2))) {
+                            ((entry->state == SFX_STATE_PLAYING) || (entry->state == SFX_STATE_PLAYING_ONE_FRAME))) {
                             GfxPrint_Printf(printer, "%2X %04X", entryIndex, entry->sfxId);
                         } else {
                             GfxPrint_Printf(printer, "FF ----");
@@ -3318,8 +3318,8 @@ void AudioDebug_ProcessInput_ScrPrt(void) {
         }
     }
 
-    D_801333F0 = sAudioScrPrtWork[3] + (sAudioScrPrtWork[4] * 2) + (sAudioScrPrtWork[5] * 4) +
-                 (sAudioScrPrtWork[6] * 8) + (sAudioScrPrtWork[7] * 0x10) + (sAudioScrPrtWork[8] * 0x20);
+    sAudioDebugPrintSfxId = sAudioScrPrtWork[3] + (sAudioScrPrtWork[4] * 2) + (sAudioScrPrtWork[5] * 4) +
+                            (sAudioScrPrtWork[6] * 8) + (sAudioScrPrtWork[7] * 0x10) + (sAudioScrPrtWork[8] * 0x20);
 }
 
 void AudioDebug_ProcessInput_SfxSwap(void) {
@@ -3714,7 +3714,7 @@ void func_800F3054(void) {
         }
         Audio_ProcessSfxRequests();
         Audio_ProcessSeqCmds();
-        func_800F8F88();
+        Audio_ProcessActiveSfx();
         func_800FA3DC();
         AudioDebug_SetInput();
         AudioDebug_ProcessInput();
@@ -3740,7 +3740,7 @@ f32 Audio_ComputeSfxVolume(u8 bankId, u8 entryIdx) {
     f32 baseDist;
     f32 ret;
 
-    if (bankEntry->sfxParams & SFX_FLAG_13) {
+    if (bankEntry->sfxParams & SFX_FLAG_VOLUME_NO_DIST) {
         return 1.0f;
     }
 
@@ -3785,7 +3785,7 @@ s8 Audio_ComputeSfxReverb(u8 bankId, u8 entryIdx, u8 channelIdx) {
     SfxBankEntry* entry = &gSfxBanks[bankId][entryIdx];
     s32 reverb;
 
-    if (!(entry->sfxParams & SFX_FLAG_12)) {
+    if (!(entry->sfxParams & SFX_FLAG_REVERB_NO_DIST)) {
         if (entry->dist < 2500.0f) {
             distAdd = *entry->posZ > 0.0f ? (entry->dist / 2500.0f) * 70.0f : (entry->dist / 2500.0f) * 91.0f;
         } else {
@@ -3891,8 +3891,8 @@ f32 Audio_ComputeSfxFreqScale(u8 bankId, u8 entryIdx) {
     }
 
     unk1C = entry->dist;
-    if (!(entry->sfxParams & SFX_FLAG_13)) {
-        if (!(entry->sfxParams & SFX_FLAG_15)) {
+    if (!(entry->sfxParams & SFX_FLAG_VOLUME_NO_DIST)) {
+        if (!(entry->sfxParams & SFX_FLAG_FREQ_NO_DIST)) {
             if (unk1C >= 10000.0f) {
                 freq += 0.2f;
             } else {
@@ -4023,7 +4023,7 @@ void Audio_SetSfxProperties(u8 bankId, u8 entryIdx, u8 channelIdx) {
 
             if ((baseFilter | sAudioExtraFilter) != 0) {
                 filter = (baseFilter | sAudioExtraFilter);
-            } else if (D_80130604 == 2 && !(entry->sfxParams & SFX_FLAG_13)) {
+            } else if (D_80130604 == 2 && !(entry->sfxParams & SFX_FLAG_VOLUME_NO_DIST)) {
                 filter = func_800F37B8(behindScreenZ, entry, panSigned);
             }
             break;

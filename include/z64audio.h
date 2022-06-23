@@ -999,8 +999,8 @@ typedef enum {
     /* 1 */ SFX_STATE_QUEUED,
     /* 2 */ SFX_STATE_READY,
     /* 3 */ SFX_STATE_PLAYING_REFRESH,
-    /* 4 */ SFX_STATE_PLAYING_1,
-    /* 5 */ SFX_STATE_PLAYING_2
+    /* 4 */ SFX_STATE_PLAYING,
+    /* 5 */ SFX_STATE_PLAYING_ONE_FRAME
 } SfxState;
 
 typedef struct {
@@ -1052,14 +1052,24 @@ typedef struct {
 
 // SfxParams bit-packing
 
+// Slows the decay of volume with distance (a 2-bit number ranging from 0-3)
 #define SFX_PARAM_01_SHIFT 0
 #define SFX_PARAM_01_MASK (3 << SFX_PARAM_01_SHIFT)
 
 #define SFX_FLAG_2 (1 << 2)
-#define SFX_FLAG_3 (1 << 3)
-#define SFX_FLAG_4 (1 << 4)
-#define SFX_FLAG_5 (1 << 5)
 
+// Lower SEQ_PLAYER_BGM_MAIN and SEQ_PLAYER_BGM_SUB while the sfx is playing
+#define SFX_FLAG_LOWER_VOLUME_BGM (1 << 3)
+
+// Sfx priority is not raised with distance (making it more likely to be ejected)
+#define SFX_FLAG_PRIORITY_NO_DIST (1 << 4)
+
+// If a new sfx is requested at both the same position with the same importance,
+// Block that new sfx from replacing the current sfx
+// Note: Only 1 sfx can be played at a specific position at once
+#define SFX_FLAG_BLOCK_EQUAL_IMPORTANCE (1 << 5) 
+
+// Applies increasingly random offsets to frequency (a 2-bit number ranging from 0-3)
 #define SFX_PARAM_67_SHIFT 6
 #define SFX_PARAM_67_MASK (3 << SFX_PARAM_67_SHIFT)
 
@@ -1067,10 +1077,19 @@ typedef struct {
 #define SFX_FLAG_10_SHIFT 10
 #define SFX_FLAG_10 (1 << SFX_FLAG_10_SHIFT)
 #define SFX_FLAG_11 (1 << 11)
-#define SFX_FLAG_12 (1 << 12)
-#define SFX_FLAG_13 (1 << 13)
+
+// Sfx reverb is not raised with distance
+#define SFX_FLAG_REVERB_NO_DIST (1 << 12)
+
+// Sfx volume is not lowered with distance
+#define SFX_FLAG_VOLUME_NO_DIST (1 << 13)
+
+// SFX_FLAG_VIBRATO 
+// Randomly alter frequency each audio frame
 #define SFX_FLAG_14 (1 << 14)
-#define SFX_FLAG_15 (1 << 15)
+
+// Sfx frequency is not raised with distance
+#define SFX_FLAG_FREQ_NO_DIST (1 << 15)
 
 typedef struct {
     u8 importance;
