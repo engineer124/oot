@@ -1183,8 +1183,8 @@ Acmd* AudioSynth_ProcessEnvelope(Acmd* cmd, NoteSubEu* noteSubEu, NoteSynthesisS
         phi_a1 = D_801304AC;
     }
 
-    aEnvMixer(cmd++, inBuf, aiBufLen, (sourceReverbVol & 0x80) >> 7, noteSubEu->bitField0.stereoHeadsetEffects,
-              noteSubEu->bitField0.usesHeadsetPanEffects, noteSubEu->bitField0.stereoStrongRight,
+    aEnvMixer(cmd++, inBuf, aiBufLen, (sourceReverbVol & 0x80) >> 7, noteSubEu->bitField0.envMixerParam1,
+              noteSubEu->bitField0.envMixerParam2, noteSubEu->bitField0.stereoStrongRight,
               noteSubEu->bitField0.stereoStrongLeft, phi_a1, D_801304A0);
     return cmd;
 }

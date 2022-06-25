@@ -759,7 +759,7 @@ void func_800E6300(SequenceChannel* channel, AudioCmd* cmd) {
             break;
 
         case CHAN_UPD_STEREO:
-            channel->stereo.asByte = cmd->asUbyte;
+            channel->envMixer.asByte = cmd->asUbyte;
             break;
 
         default:

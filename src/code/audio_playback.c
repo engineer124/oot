@@ -9,13 +9,13 @@ void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
     f32 vel;
     u8 pan;
     u8 reverbVol;
-    StereoData stereoData;
+    EnvMixerData envMixerData;
     s32 stereoHeadsetEffects = note->playbackState.stereoHeadsetEffects;
 
     vel = attrs->velocity;
     pan = attrs->pan;
     reverbVol = attrs->reverbVol;
-    stereoData = attrs->stereo.s;
+    envMixerData = attrs->envMixer.s;
 
     sub->bitField0 = note->noteSubEu.bitField0;
     sub->bitField1 = note->noteSubEu.bitField1;
@@ -28,8 +28,8 @@ void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
 
     sub->bitField0.stereoStrongRight = false;
     sub->bitField0.stereoStrongLeft = false;
-    sub->bitField0.stereoHeadsetEffects = stereoData.stereoHeadsetEffects;
-    sub->bitField0.usesHeadsetPanEffects = stereoData.usesHeadsetPanEffects;
+    sub->bitField0.envMixerParam1 = envMixerData.envMixerParam1;
+    sub->bitField0.envMixerParam2 = envMixerData.envMixerParam2;
     if (stereoHeadsetEffects && (gAudioContext.soundMode == SOUNDMODE_HEADSET)) {
         smallPanIndex = pan >> 1;
         if (smallPanIndex > 0x3F) {
@@ -56,37 +56,38 @@ void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
             strongRight = 1;
         }
 
+        // case 0:
         sub->bitField0.stereoStrongRight = strongRight;
         sub->bitField0.stereoStrongLeft = strongLeft;
 
-        switch (stereoData.bit2) {
+        switch (envMixerData.bit2) {
             case 0:
                 break;
 
             case 1:
-                sub->bitField0.stereoStrongRight = stereoData.strongRight;
-                sub->bitField0.stereoStrongLeft = stereoData.strongLeft;
+                sub->bitField0.stereoStrongRight = envMixerData.strongRight;
+                sub->bitField0.stereoStrongLeft = envMixerData.strongLeft;
                 break;
 
             case 2:
-                sub->bitField0.stereoStrongRight = stereoData.strongRight | strongRight;
-                sub->bitField0.stereoStrongLeft = stereoData.strongLeft | strongLeft;
+                sub->bitField0.stereoStrongRight = envMixerData.strongRight | strongRight;
+                sub->bitField0.stereoStrongLeft = envMixerData.strongLeft | strongLeft;
                 break;
 
             case 3:
-                sub->bitField0.stereoStrongRight = stereoData.strongRight ^ strongRight;
-                sub->bitField0.stereoStrongLeft = stereoData.strongLeft ^ strongLeft;
+                sub->bitField0.stereoStrongRight = envMixerData.strongRight ^ strongRight;
+                sub->bitField0.stereoStrongLeft = envMixerData.strongLeft ^ strongLeft;
                 break;
         }
 
     } else if (gAudioContext.soundMode == SOUNDMODE_MONO) {
-        sub->bitField0.stereoHeadsetEffects = false;
-        sub->bitField0.usesHeadsetPanEffects = false;
+        sub->bitField0.envMixerParam1 = false;
+        sub->bitField0.envMixerParam2 = false;
         volLeft = 0.707f; // approx 1/sqrt(2)
         volRight = 0.707f;
     } else {
-        sub->bitField0.stereoStrongRight = stereoData.strongRight;
-        sub->bitField0.stereoStrongLeft = stereoData.strongLeft;
+        sub->bitField0.stereoStrongRight = envMixerData.strongRight;
+        sub->bitField0.stereoStrongLeft = envMixerData.strongLeft;
         volLeft = gDefaultPanVolume[pan];
         volRight = gDefaultPanVolume[0x7F - pan];
     }
@@ -252,7 +253,7 @@ void Audio_ProcessNotes(void) {
                 subAttrs.velocity = attrs->velocity;
                 subAttrs.pan = attrs->pan;
                 subAttrs.reverbVol = attrs->reverb;
-                subAttrs.stereo = attrs->stereo;
+                subAttrs.envMixer = attrs->envMixer;
                 subAttrs.gain = attrs->gain;
                 subAttrs.filter = attrs->filter;
                 subAttrs.unk_14 = attrs->unk_4;
@@ -265,10 +266,10 @@ void Audio_ProcessNotes(void) {
                 subAttrs.frequency = layer->noteFreqScale;
                 subAttrs.velocity = layer->noteVelocity;
                 subAttrs.pan = layer->notePan;
-                if (layer->stereo.asByte == 0) {
-                    subAttrs.stereo = channel->stereo;
+                if (layer->envMixer.asByte == 0) {
+                    subAttrs.envMixer = channel->envMixer;
                 } else {
-                    subAttrs.stereo = layer->stereo;
+                    subAttrs.envMixer = layer->envMixer;
                 }
                 subAttrs.reverbVol = channel->reverb;
                 subAttrs.gain = channel->gain;
@@ -485,14 +486,14 @@ void Audio_SeqLayerDecayRelease(SequenceLayer* layer, s32 target) {
                 note->noteSubEu.bitField0.finished = true;
             }
 
-            if (layer->stereo.asByte == 0) {
-                attrs->stereo = chan->stereo;
+            if (layer->envMixer.asByte == 0) {
+                attrs->envMixer = chan->envMixer;
             } else {
-                attrs->stereo = layer->stereo;
+                attrs->envMixer = layer->envMixer;
             }
             note->playbackState.priority = chan->someOtherPriority;
         } else {
-            attrs->stereo = layer->stereo;
+            attrs->envMixer = layer->envMixer;
             note->playbackState.priority = 1;
         }
 

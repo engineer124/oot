@@ -265,7 +265,7 @@ void AudioSeq_InitSequenceChannel(SequenceChannel* channel) {
     channel->transposition = 0;
     channel->largeNotes = false;
     channel->bookOffset = 0;
-    channel->stereo.asByte = 0;
+    channel->envMixer.asByte = 0;
     channel->changes.asByte = 0xFF;
     channel->scriptState.depth = 0;
     channel->newPan = 0x40;
@@ -332,7 +332,7 @@ s32 AudioSeq_SeqChannelSetLayer(SequenceChannel* channel, s32 layerIndex) {
     layer->ignoreDrumPan = false;
     layer->bit1 = false;
     layer->notePropertiesNeedInit = false;
-    layer->stereo.asByte = 0;
+    layer->envMixer.asByte = 0;
     layer->portamento.mode = PORTAMENTO_MODE_OFF;
     layer->scriptState.depth = 0;
     layer->gateTime = 0x80;
@@ -747,7 +747,7 @@ s32 AudioSeq_SeqLayerProcessScriptStep2(SequenceLayer* layer) {
                 break;
 
             case 0xCD:
-                layer->stereo.asByte = AudioSeq_ScriptReadU8(state);
+                layer->envMixer.asByte = AudioSeq_ScriptReadU8(state);
                 break;
 
             case 0xCE:
@@ -1438,7 +1438,7 @@ void AudioSeq_SequenceChannelProcessScript(SequenceChannel* channel) {
                     } else {
                         channel->stereoHeadsetEffects = false;
                     }
-                    channel->stereo.asByte = cmd & 0x7F;
+                    channel->envMixer.asByte = cmd & 0x7F;
                     break;
 
                 case 0xD1:
