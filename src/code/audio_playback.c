@@ -26,26 +26,26 @@ void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
 
     pan &= 0x7F;
 
-    sub->bitField0.stereoStrongRight = false;
-    sub->bitField0.stereoStrongLeft = false;
-    sub->bitField0.envMixerParam1 = envMixerData.envMixerParam1;
-    sub->bitField0.envMixerParam2 = envMixerData.envMixerParam2;
+    sub->bitField0.envMixerNegDryLeft = false;
+    sub->bitField0.envMixerNegDryRight = false;
+    sub->bitField0.envMixerNegWetLeft = envMixerData.envMixerNegWetLeft;
+    sub->bitField0.envMixerNegWetRight = envMixerData.envMixerNegWetRight;
     if (stereoHeadsetEffects && (gAudioContext.soundMode == SOUNDMODE_HEADSET)) {
         smallPanIndex = pan >> 1;
         if (smallPanIndex > 0x3F) {
             smallPanIndex = 0x3F;
         }
 
-        sub->headsetPanLeft = gHeadsetPanQuantization[smallPanIndex];
-        sub->headsetPanRight = gHeadsetPanQuantization[0x3F - smallPanIndex];
+        sub->haasEffectRightDelaySize = gHaasEffectDelaySize[smallPanIndex];
+        sub->haasEffectLeftDelaySize = gHaasEffectDelaySize[0x3F - smallPanIndex];
         sub->bitField1.usesHeadsetPanEffects2 = true;
 
         volLeft = gHeadsetPanVolume[pan];
         volRight = gHeadsetPanVolume[0x7F - pan];
     } else if (stereoHeadsetEffects && (gAudioContext.soundMode == SOUNDMODE_STEREO)) {
         strongLeft = strongRight = 0;
-        sub->headsetPanRight = 0;
-        sub->headsetPanLeft = 0;
+        sub->haasEffectLeftDelaySize = 0;
+        sub->haasEffectRightDelaySize = 0;
         sub->bitField1.usesHeadsetPanEffects2 = false;
 
         volLeft = gStereoPanVolume[pan];
@@ -57,37 +57,37 @@ void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
         }
 
         // case 0:
-        sub->bitField0.stereoStrongRight = strongRight;
-        sub->bitField0.stereoStrongLeft = strongLeft;
+        sub->bitField0.envMixerNegDryLeft = strongRight;
+        sub->bitField0.envMixerNegDryRight = strongLeft;
 
         switch (envMixerData.bit2) {
             case 0:
                 break;
 
             case 1:
-                sub->bitField0.stereoStrongRight = envMixerData.strongRight;
-                sub->bitField0.stereoStrongLeft = envMixerData.strongLeft;
+                sub->bitField0.envMixerNegDryLeft = envMixerData.strongRight;
+                sub->bitField0.envMixerNegDryRight = envMixerData.strongLeft;
                 break;
 
             case 2:
-                sub->bitField0.stereoStrongRight = envMixerData.strongRight | strongRight;
-                sub->bitField0.stereoStrongLeft = envMixerData.strongLeft | strongLeft;
+                sub->bitField0.envMixerNegDryLeft = envMixerData.strongRight | strongRight;
+                sub->bitField0.envMixerNegDryRight = envMixerData.strongLeft | strongLeft;
                 break;
 
             case 3:
-                sub->bitField0.stereoStrongRight = envMixerData.strongRight ^ strongRight;
-                sub->bitField0.stereoStrongLeft = envMixerData.strongLeft ^ strongLeft;
+                sub->bitField0.envMixerNegDryLeft = envMixerData.strongRight ^ strongRight;
+                sub->bitField0.envMixerNegDryRight = envMixerData.strongLeft ^ strongLeft;
                 break;
         }
 
     } else if (gAudioContext.soundMode == SOUNDMODE_MONO) {
-        sub->bitField0.envMixerParam1 = false;
-        sub->bitField0.envMixerParam2 = false;
+        sub->bitField0.envMixerNegWetLeft = false;
+        sub->bitField0.envMixerNegWetRight = false;
         volLeft = 0.707f; // approx 1/sqrt(2)
         volRight = 0.707f;
     } else {
-        sub->bitField0.stereoStrongRight = envMixerData.strongRight;
-        sub->bitField0.stereoStrongLeft = envMixerData.strongLeft;
+        sub->bitField0.envMixerNegDryLeft = envMixerData.strongRight;
+        sub->bitField0.envMixerNegDryRight = envMixerData.strongLeft;
         volLeft = gDefaultPanVolume[pan];
         volRight = gDefaultPanVolume[0x7F - pan];
     }

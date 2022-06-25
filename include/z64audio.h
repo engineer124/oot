@@ -332,8 +332,8 @@ typedef struct {
     /* 0x00 */ u8 bit2 : 2;
     /* 0x00 */ u8 strongRight : 1;
     /* 0x00 */ u8 strongLeft : 1;
-    /* 0x00 */ u8 envMixerParam1 : 1;
-    /* 0x00 */ u8 envMixerParam2 : 1;
+    /* 0x00 */ u8 envMixerNegWetLeft : 1;
+    /* 0x00 */ u8 envMixerNegWetRight : 1;
 } EnvMixerData; // size = 0x1
 
 typedef union {
@@ -463,8 +463,8 @@ typedef struct SequenceLayer {
 typedef struct {
     /* 0x0000 */ s16 adpcmdecState[0x10];
     /* 0x0020 */ s16 finalResampleState[0x10];
-    /* 0x0040 */ s16 mixEnvelopeState[0x28];
-    /* 0x0090 */ s16 panResampleState[0x10];
+    /* 0x0040 */ s16 mixEnvelopeState[0x30];
+    /* 0x0090 */ s16 haasEffectDelayState[0x8];
     /* 0x00B0 */ s16 panSamplesBuffer[0x20];
     /* 0x00F0 */ s16 dummyResampleState[0x10];
 } NoteSynthesisBuffers; // size = 0x110
@@ -472,8 +472,8 @@ typedef struct {
 typedef struct {
     /* 0x00 */ u8 restart;
     /* 0x01 */ u8 sampleDmaIndex;
-    /* 0x02 */ u8 prevHeadsetPanRight;
-    /* 0x03 */ u8 prevHeadsetPanLeft;
+    /* 0x02 */ u8 prevHaasEffectLeftDelaySize;
+    /* 0x03 */ u8 prevHaasEffectRightDelaySize;
     /* 0x04 */ u8 reverbVol;
     /* 0x05 */ u8 numParts;
     /* 0x06 */ u16 samplePosFrac;
@@ -526,10 +526,10 @@ typedef struct {
         /* 0x00 */ u8 needsInit : 1;
         /* 0x00 */ u8 finished : 1; // ?
         /* 0x00 */ u8 unused : 1;
-        /* 0x00 */ u8 stereoStrongRight : 1;
-        /* 0x00 */ u8 stereoStrongLeft : 1;
-        /* 0x00 */ u8 envMixerParam1 : 1;
-        /* 0x00 */ u8 envMixerParam2 : 1;
+        /* 0x00 */ u8 envMixerNegDryLeft : 1;
+        /* 0x00 */ u8 envMixerNegDryRight : 1;
+        /* 0x00 */ u8 envMixerNegWetLeft : 1;
+        /* 0x00 */ u8 envMixerNegWetRight : 1;
     } bitField0;
     struct {
         /* 0x01 */ u8 reverbIndex : 3;
@@ -539,8 +539,8 @@ typedef struct {
         /* 0x01 */ u8 usesHeadsetPanEffects2 : 1;
     } bitField1;
     /* 0x02 */ u8 gain; // Increases volume by a multiplicative scaling factor. Represented as a UQ4.4 number
-    /* 0x03 */ u8 headsetPanRight;
-    /* 0x04 */ u8 headsetPanLeft;
+    /* 0x03 */ u8 haasEffectLeftDelaySize;
+    /* 0x04 */ u8 haasEffectRightDelaySize;
     /* 0x05 */ u8 reverbVol;
     /* 0x06 */ u8 harmonicIndexCurAndPrev; // bits 3..2 store curHarmonicIndex, bits 1..0 store prevHarmonicIndex
     /* 0x07 */ u8 unk_07;
