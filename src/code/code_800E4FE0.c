@@ -261,11 +261,11 @@ void func_800E5584(AudioCmd* cmd) {
             if (cmd->asUInt == 1) {
                 for (i = 0; i < gAudioContext.numNotes; i++) {
                     Note* note = &gAudioContext.notes[i];
-                    NoteSampleState* sampleState = &note->sampleState;
+                    NoteSampleState* noteSampleState = &note->noteSampleState;
 
-                    if (sampleState->bitField0.enabled && note->playbackState.unk_04 == 0) {
+                    if (noteSampleState->bitField0.enabled && note->playbackState.unk_04 == 0) {
                         if (note->playbackState.parentLayer->channel->muteBehavior & 8) {
-                            sampleState->bitField0.finished = 1;
+                            noteSampleState->bitField0.finished = 1;
                         }
                     }
                 }
@@ -810,7 +810,7 @@ s32 func_800E6590(s32 playerIdx, s32 arg1, s32 arg2) {
 
             note = layer->note;
             if (layer == note->playbackState.parentLayer) {
-                tunedSample = note->sampleState.tunedSample;
+                tunedSample = note->noteSampleState.tunedSample;
                 if (tunedSample == NULL) {
                     return 0;
                 }
@@ -844,8 +844,8 @@ s32 func_800E66C0(s32 arg0) {
     for (i = 0; i < gAudioContext.numNotes; i++) {
         note = &gAudioContext.notes[i];
         temp_a2 = &note->playbackState;
-        if (note->sampleState.bitField0.enabled) {
-            temp_a3 = &note->sampleState;
+        if (note->noteSampleState.bitField0.enabled) {
+            temp_a3 = &note->noteSampleState;
             if (temp_a2->adsr.action.s.state != 0) {
                 if (arg0 >= 2) {
                     tunedSample = temp_a3->tunedSample;

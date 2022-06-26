@@ -1839,7 +1839,7 @@ void Audio_InitMesgQueues(void);
 void Audio_InvalDCache(void* buf, s32 size);
 void Audio_WritebackDCache(void* buf, s32 size);
 s32 osAiSetNextBuffer(void*, u32);
-void Audio_InitNoteSampleState(Note* note, NoteSampleState* sampleState, NoteSubAttributes* attrs);
+void Audio_InitSampleState(Note* note, NoteSampleState* sampleState, NoteSubAttributes* attrs);
 void Audio_NoteSetResamplingRate(NoteSampleState* sampleState, f32 resamplingRateInput);
 void Audio_NoteInit(Note* note);
 void Audio_NoteDisable(Note* note);
