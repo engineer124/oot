@@ -554,7 +554,7 @@ typedef struct {
              };
     /* 0x14 */ s16* filter;
     /* 0x18 */ char pad_18[0x8];
-} NoteSubEu; // size = 0x20
+} NoteSampleState; // size = 0x20
 
 typedef struct Note {
     /* 0x00 */ AudioListItem listItem;
@@ -562,7 +562,7 @@ typedef struct Note {
     /* 0x30 */ NotePlaybackState playbackState;
     /* 0xB8 */ char unk_B8[0x4];
     /* 0xBC */ u32 startSamplePos; // initial position/index to start processing s16 samples
-    /* 0xC0 */ NoteSubEu noteSubEu;
+    /* 0xC0 */ NoteSampleState sampleState;
 } Note; // size = 0xE0
 
 typedef struct {
@@ -814,7 +814,7 @@ typedef struct {
     /* 0x0004 */ u16 unk_4;
     /* 0x0006 */ char unk_0006[0x0A];
     /* 0x0010 */ s16* curLoadedBook;
-    /* 0x0014 */ NoteSubEu* noteSubsEu;
+    /* 0x0014 */ NoteSampleState* sampleStateList;
     /* 0x0018 */ SynthesisReverb synthesisReverbs[4];
     /* 0x0B38 */ char unk_0B38[0x30];
     /* 0x0B68 */ Sample* usedSamples[128];
@@ -914,7 +914,7 @@ typedef struct {
     /* 0x3530 */ SequencePlayer seqPlayers[4];
     /* 0x3AB0 */ SequenceLayer sequenceLayers[64];
     /* 0x5AB0 */ SequenceChannel sequenceChannelNone;
-    /* 0x5B84 */ s32 noteSubEuOffset;
+    /* 0x5B84 */ s32 noteSampleStateOffset;
     /* 0x5B88 */ AudioListItem layerFreeList;
     /* 0x5B98 */ NotePool noteFreeLists;
     /* 0x5BD8 */ u8 cmdWrPos;
