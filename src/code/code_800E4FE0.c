@@ -835,7 +835,7 @@ void func_800E66A0(void) {
 s32 func_800E66C0(s32 arg0) {
     s32 phi_v1;
     NotePlaybackState* temp_a2;
-    NoteSampleState* temp_a3;
+    NoteSampleState* noteSampleState;
     s32 i;
     Note* note;
     TunedSample* tunedSample;
@@ -845,11 +845,11 @@ s32 func_800E66C0(s32 arg0) {
         note = &gAudioContext.notes[i];
         temp_a2 = &note->playbackState;
         if (note->noteSampleState.bitField0.enabled) {
-            temp_a3 = &note->noteSampleState;
+            noteSampleState = &note->noteSampleState;
             if (temp_a2->adsr.action.s.state != 0) {
                 if (arg0 >= 2) {
-                    tunedSample = temp_a3->tunedSample;
-                    if (tunedSample == NULL || temp_a3->bitField1.isSyntheticWave) {
+                    tunedSample = noteSampleState->tunedSample;
+                    if (tunedSample == NULL || noteSampleState->bitField1.isSyntheticWave) {
                         continue;
                     }
                     if (tunedSample->sample->medium == MEDIUM_RAM) {
