@@ -164,7 +164,7 @@ void Audio_ProcessNotes(void) {
 
     for (i = 0; i < gAudioContext.numNotes; i++) {
         note = &gAudioContext.notes[i];
-        sampleState = &gAudioContext.sampleStateList[gAudioContext.noteSampleStateOffset + i];
+        sampleState = &gAudioContext.sampleStateList[gAudioContext.sampleStateOffset + i];
         playbackState = &note->playbackState;
         if (playbackState->parentLayer != NO_LAYER) {
             if ((u32)playbackState->parentLayer < 0x7FFFFFFF) {

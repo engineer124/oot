@@ -914,7 +914,7 @@ typedef struct {
     /* 0x3530 */ SequencePlayer seqPlayers[4];
     /* 0x3AB0 */ SequenceLayer sequenceLayers[64];
     /* 0x5AB0 */ SequenceChannel sequenceChannelNone;
-    /* 0x5B84 */ s32 noteSampleStateOffset;
+    /* 0x5B84 */ s32 sampleStateOffset;
     /* 0x5B88 */ AudioListItem layerFreeList;
     /* 0x5B98 */ NotePool noteFreeLists;
     /* 0x5BD8 */ u8 cmdWrPos;
