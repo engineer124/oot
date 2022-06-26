@@ -958,7 +958,7 @@ void AudioHeap_Init(void) {
     gAudioContext.notes = AudioHeap_AllocZeroed(&gAudioContext.miscPool, gAudioContext.numNotes * sizeof(Note));
     Audio_NoteInitAll();
     Audio_InitNoteFreeList();
-    gAudioContext.sampleStateList =
+    gAudioContext.freeSampleStateList =
         AudioHeap_AllocZeroed(&gAudioContext.miscPool, gAudioContext.audioBufferParameters.updatesPerFrame *
                                                            gAudioContext.numNotes * sizeof(NoteSampleState));
     // Initialize audio binary interface command list buffers

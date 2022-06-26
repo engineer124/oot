@@ -814,7 +814,7 @@ typedef struct {
     /* 0x0004 */ u16 unk_4;
     /* 0x0006 */ char unk_0006[0x0A];
     /* 0x0010 */ s16* curLoadedBook;
-    /* 0x0014 */ NoteSampleState* sampleStateList;
+    /* 0x0014 */ NoteSampleState* freeSampleStateList;
     /* 0x0018 */ SynthesisReverb synthesisReverbs[4];
     /* 0x0B38 */ char unk_0B38[0x30];
     /* 0x0B68 */ Sample* usedSamples[128];
