@@ -483,7 +483,7 @@ typedef struct {
 } NoteSynthesisBuffers; // size = 0x110
 
 typedef struct {
-    /* 0x00 */ u8 restart;
+    /* 0x00 */ u8 sampleEndLoop; // At the end of a sample, need to loop back to the loop start
     /* 0x01 */ u8 sampleDmaIndex;
     /* 0x02 */ u8 prevHeadsetPanRight;
     /* 0x03 */ u8 prevHeadsetPanLeft;
