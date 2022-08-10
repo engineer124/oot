@@ -18,20 +18,6 @@ typedef struct {
     /* 0x0C */ u16 remainingFrames;
 } UnusedBankLerp; // size = 0x10
 
-// rodata for Audio_ProcessSfxRequest (this file)
-// (probably moved to .data due to -use_readwrite_const)
-char sAudioDebugSfxIdStr[] = "SE"; // "Sound Effect"
-
-// rodata for Audio_ChooseActiveSfx (this file)
-char D_80133344[] = VT_COL(RED, WHITE) "<INAGAKI CHECK> dist over! flag:%04X ptr:%08X pos:%f-%f-%f" VT_RST "\n";
-
-// file padding
-s32 D_8013338C = 0;
-
-// rodata for Audio_ProcessSeqCmd (code_800F9280.c)
-char D_80133390[] = "SEQ H";
-char D_80133398[] = "    L";
-
 SfxBankEntry D_8016BAD0[9];
 SfxBankEntry D_8016BC80[12];
 SfxBankEntry D_8016BEC0[22];
@@ -50,55 +36,6 @@ UnusedBankLerp sUnusedBankLerp[7];
 u16 gAudioSfxSwapSource[10];
 u16 gAudioSfxSwapTarget[10];
 u8 gAudioSfxSwapMode[10];
-
-// sSfxRequests ring buffer endpoints. read index <= write index, wrapping around mod 256.
-u8 sSfxRequestWriteIndex = 0;
-u8 sSfxRequestReadIndex = 0;
-
-/**
- * Array of pointers to arrays of SfxBankEntry of sizes: 9, 12, 22, 20, 8, 3, 5
- *
- * 0 : Player Bank          size 9
- * 1 : Item Bank            size 12
- * 2 : Environment Bank     size 22
- * 3 : Enemy Bank           size 20
- * 4 : System Bank          size 8
- * 5 : Ocarina Bank         size 3
- * 6 : Voice Bank           size 5
- */
-SfxBankEntry* gSfxBanks[7] = {
-    D_8016BAD0, D_8016BC80, D_8016BEC0, D_8016C2E0, D_8016C6A0, D_8016C820, D_8016C8B0,
-};
-
-u8 sBankSizes[ARRAY_COUNT(gSfxBanks)] = {
-    ARRAY_COUNT(D_8016BAD0), ARRAY_COUNT(D_8016BC80), ARRAY_COUNT(D_8016BEC0), ARRAY_COUNT(D_8016C2E0),
-    ARRAY_COUNT(D_8016C6A0), ARRAY_COUNT(D_8016C820), ARRAY_COUNT(D_8016C8B0),
-};
-
-u8 gSfxChannelLayout = 0;
-
-u16 sSfxChannelLowerVolumeFlag = 0;
-
-// The center of the screen in projected coordinates.
-// Gives the impression that the sfx has no specific location
-Vec3f gSfxDefaultPos = { 0.0f, 0.0f, 0.0f };
-
-// Reused as either frequency or volume multiplicative scaling factor
-// Does not alter or change frequency or volume
-f32 gSfxDefaultFreqAndVolScale = 1.0f;
-
-s32 D_801333E4 = 0; // unused
-
-// Adds no reverb to the existing reverb
-s8 gSfxDefaultReverb = 0;
-
-s32 D_801333EC = 0; // unused
-
-u8 sAudioDebugPrintSfxId = 0;
-
-u8 gAudioSfxSwapOff = 0;
-
-u8 D_801333F8 = 0;
 
 void Audio_SetSfxBanksMute(u16 muteMask) {
     u8 bankId;
@@ -119,7 +56,7 @@ void Audio_SetSfxBanksMute(u16 muteMask) {
  * Only a single channel needs to request this to lower the volume
  */
 void Audio_LowerBgmVolumeWithFlag(u8 channelIdx) {
-    sSfxChannelLowerVolumeFlag |= (1 << channelIdx);
+    gSfxChannelLowerVolumeFlag |= (1 << channelIdx);
     Audio_SetVolScale(SEQ_PLAYER_BGM_MAIN, 2, 0x40, 0xF);
     Audio_SetVolScale(SEQ_PLAYER_BGM_SUB, 2, 0x40, 0xF);
 }
@@ -129,8 +66,8 @@ void Audio_LowerBgmVolumeWithFlag(u8 channelIdx) {
  * If all flags are cleared, then players 0 & 3 are restored to full volume
  */
 void Audio_RestoreBgmVolumeWithFlag(u8 channelIdx) {
-    sSfxChannelLowerVolumeFlag &= ((1 << channelIdx) ^ 0xFFFF);
-    if (sSfxChannelLowerVolumeFlag == 0) {
+    gSfxChannelLowerVolumeFlag &= ((1 << channelIdx) ^ 0xFFFF);
+    if (gSfxChannelLowerVolumeFlag == 0) {
         Audio_SetVolScale(SEQ_PLAYER_BGM_MAIN, 2, 0x7F, 0xF);
         Audio_SetVolScale(SEQ_PLAYER_BGM_SUB, 2, 0x7F, 0xF);
     }
@@ -141,7 +78,7 @@ void Audio_PlaySfxGeneral(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* 
     SfxRequest* req;
 
     if (!gSfxBankMuted[SFX_BANK_SHIFT(sfxId)]) {
-        req = &sSfxRequests[sSfxRequestWriteIndex];
+        req = &sSfxRequests[gSfxRequestWriteIndex];
         if (!gAudioSfxSwapOff) {
             for (i = 0; i < 10; i++) {
                 if (sfxId == gAudioSfxSwapSource[i]) {
@@ -154,8 +91,8 @@ void Audio_PlaySfxGeneral(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* 
                         req->freqScale = freqScale;
                         req->vol = vol;
                         req->reverbAdd = reverbAdd;
-                        sSfxRequestWriteIndex++;
-                        req = &sSfxRequests[sSfxRequestWriteIndex];
+                        gSfxRequestWriteIndex++;
+                        req = &sSfxRequests[gSfxRequestWriteIndex];
                     }
                     i = 10; // "break;"
                 }
@@ -167,16 +104,16 @@ void Audio_PlaySfxGeneral(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* 
         req->freqScale = freqScale;
         req->vol = vol;
         req->reverbAdd = reverbAdd;
-        sSfxRequestWriteIndex++;
+        gSfxRequestWriteIndex++;
     }
 }
 
 void Audio_RemoveMatchingSfxRequests(u8 aspect, SfxBankEntry* cmp) {
     SfxRequest* req;
     s32 remove;
-    u8 i = sSfxRequestReadIndex;
+    u8 i = gSfxRequestReadIndex;
 
-    for (; i != sSfxRequestWriteIndex; i++) {
+    for (; i != gSfxRequestWriteIndex; i++) {
         remove = false;
         req = &sSfxRequests[i];
         switch (aspect) {
@@ -228,7 +165,7 @@ void Audio_ProcessSfxRequest(void) {
     u8 evictImportance;
     u8 evictIndex;
 
-    req = &sSfxRequests[sSfxRequestReadIndex];
+    req = &sSfxRequests[gSfxRequestReadIndex];
     evictIndex = 0x80;
     if (req->sfxId == 0) {
         return;
@@ -239,7 +176,7 @@ void Audio_ProcessSfxRequest(void) {
 
     // Debug print
     if ((1 << bankId) & sAudioDebugPrintSfxId) {
-        AudioDebug_ScrPrt((const s8*)sAudioDebugSfxIdStr, req->sfxId);
+        AudioDebug_ScrPrt("SE", req->sfxId);
         bankId = SFX_BANK(req->sfxId);
     }
 
@@ -463,8 +400,9 @@ void Audio_ChooseActiveSfx(u8 bankId) {
                 // Priority value increases with distance (more likely to eject)
                 if (entry->dist > 0x7FFFFFD0) {
                     entry->dist = 0x70000008;
-                    osSyncPrintf(D_80133344, entry->sfxId, entry->posX, entry->posZ, *entry->posX, *entry->posY,
-                                 *entry->posZ);
+                    osSyncPrintf(VT_COL(RED, WHITE) "<INAGAKI CHECK> dist over! "
+                                                    "flag:%04X ptr:%08X pos:%f-%f-%f" VT_RST "\n",
+                                 entry->sfxId, entry->posX, entry->posZ, *entry->posX, *entry->posY, *entry->posZ);
                 }
                 temp3 = entry->sfxId; // fake
                 entry->priority = (u32)entry->dist + (SQ(0xFF - sfxImportance) * SQ(76)) + temp3 - temp3;
@@ -825,9 +763,9 @@ void Audio_StopSfxById(u32 sfxId) {
 }
 
 void Audio_ProcessSfxRequests(void) {
-    while (sSfxRequestWriteIndex != sSfxRequestReadIndex) {
+    while (gSfxRequestWriteIndex != gSfxRequestReadIndex) {
         Audio_ProcessSfxRequest();
-        sSfxRequestReadIndex++;
+        gSfxRequestReadIndex++;
     }
 }
 
@@ -883,9 +821,9 @@ void Audio_ResetSfx(void) {
     u8 i;
     u8 entryIndex;
 
-    sSfxRequestWriteIndex = 0;
-    sSfxRequestReadIndex = 0;
-    sSfxChannelLowerVolumeFlag = 0;
+    gSfxRequestWriteIndex = 0;
+    gSfxRequestReadIndex = 0;
+    gSfxChannelLowerVolumeFlag = 0;
     for (bankId = 0; bankId < ARRAY_COUNT(gSfxBanks); bankId++) {
         sSfxBankListEnd[bankId] = 0;
         sSfxBankFreeListStart[bankId] = 1;
@@ -902,7 +840,7 @@ void Audio_ResetSfx(void) {
     for (bankId = 0; bankId < ARRAY_COUNT(gSfxBanks); bankId++) {
         gSfxBanks[bankId][0].prev = 0xFF;
         gSfxBanks[bankId][0].next = 0xFF;
-        for (i = 1; i < sBankSizes[bankId] - 1; i++) {
+        for (i = 1; i < gSfxBankSizes[bankId] - 1; i++) {
             gSfxBanks[bankId][i].prev = i - 1;
             gSfxBanks[bankId][i].next = i + 1;
         }

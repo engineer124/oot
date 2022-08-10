@@ -409,6 +409,7 @@ beginseg
     include "build/src/code/fault.o"
     include "build/data/fault.bss.o"
     include "build/src/code/fault_drawer.o"
+    include "build/data/fault_drawer.bss.o"
     include "build/src/code/kanread.o"
     include "build/src/code/ucode_disas.o"
     pad_text // audio library aligned to 32 bytes?
@@ -426,6 +427,7 @@ beginseg
     include "build/src/code/audio_sfx_params.o"
     include "build/src/code/code_800F7260.o"
     include "build/src/code/code_800F9280.o"
+    include "build/src/code/audio_external_data.o"
     include "build/src/code/audio_init_params.o"
     include "build/src/code/logseverity.o"
     include "build/src/code/gfxprint.o"
