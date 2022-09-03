@@ -374,7 +374,7 @@ void* AudioHeap_AllocCached(s32 tableType, s32 size, s32 cache, s32 id) {
             if (loadStatusEntry0 == LOAD_STATUS_MAYBE_DISCARDABLE) {
                 for (i = 0; i < gAudioContext.numNotes; i++) {
                     if (gAudioContext.notes[i].playbackState.fontId == temporaryCache->entries[0].id &&
-                        gAudioContext.notes[i].noteSubEu.bitField0.enabled) {
+                        gAudioContext.notes[i].noteSampleState.bitField0.enabled) {
                         break;
                     }
                 }
@@ -388,7 +388,7 @@ void* AudioHeap_AllocCached(s32 tableType, s32 size, s32 cache, s32 id) {
             if (loadStatusEntry1 == LOAD_STATUS_MAYBE_DISCARDABLE) {
                 for (i = 0; i < gAudioContext.numNotes; i++) {
                     if (gAudioContext.notes[i].playbackState.fontId == temporaryCache->entries[1].id &&
-                        gAudioContext.notes[i].noteSubEu.bitField0.enabled) {
+                        gAudioContext.notes[i].noteSampleState.bitField0.enabled) {
                         break;
                     }
                 }
@@ -444,7 +444,7 @@ void* AudioHeap_AllocCached(s32 tableType, s32 size, s32 cache, s32 id) {
                 if (loadStatusEntry0 == LOAD_STATUS_COMPLETE) {
                     for (i = 0; i < gAudioContext.numNotes; i++) {
                         if (gAudioContext.notes[i].playbackState.fontId == temporaryCache->entries[0].id &&
-                            gAudioContext.notes[i].noteSubEu.bitField0.enabled) {
+                            gAudioContext.notes[i].noteSampleState.bitField0.enabled) {
                             break;
                         }
                     }
@@ -457,7 +457,7 @@ void* AudioHeap_AllocCached(s32 tableType, s32 size, s32 cache, s32 id) {
                 if (loadStatusEntry1 == LOAD_STATUS_COMPLETE) {
                     for (i = 0; i < gAudioContext.numNotes; i++) {
                         if (gAudioContext.notes[i].playbackState.fontId == temporaryCache->entries[1].id &&
-                            gAudioContext.notes[i].noteSubEu.bitField0.enabled) {
+                            gAudioContext.notes[i].noteSampleState.bitField0.enabled) {
                             break;
                         }
                     }
@@ -791,7 +791,7 @@ s32 AudioHeap_ResetStep(void) {
                 AudioHeap_UpdateReverbs();
             } else {
                 for (i = 0; i < gAudioContext.numNotes; i++) {
-                    if (gAudioContext.notes[i].noteSubEu.bitField0.enabled &&
+                    if (gAudioContext.notes[i].noteSampleState.bitField0.enabled &&
                         gAudioContext.notes[i].playbackState.adsr.action.s.state != ADSR_STATE_DISABLED) {
                         gAudioContext.notes[i].playbackState.adsr.fadeOutVel =
                             gAudioContext.audioBufferParameters.updatesPerFrameInv;
@@ -955,9 +955,9 @@ void AudioHeap_Init(void) {
     gAudioContext.notes = AudioHeap_AllocZeroed(&gAudioContext.miscPool, gAudioContext.numNotes * sizeof(Note));
     Audio_NoteInitAll();
     Audio_InitNoteFreeList();
-    gAudioContext.noteSubsEu =
+    gAudioContext.freeSampleStateList =
         AudioHeap_AllocZeroed(&gAudioContext.miscPool, gAudioContext.audioBufferParameters.updatesPerFrame *
-                                                           gAudioContext.numNotes * sizeof(NoteSubEu));
+                                                           gAudioContext.numNotes * sizeof(NoteSampleState));
     // Initialize audio binary interface command list buffers
     for (i = 0; i != 2; i++) {
         gAudioContext.abiCmdBufs[i] =

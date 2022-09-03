@@ -2424,7 +2424,7 @@ void AudioDebug_Draw(GfxPrint* printer) {
     GfxPrint_Printf(printer, "- %s -", sAudioDebugPageNames[sAudioDebugPage]);
 
     for (i = 0; i < gAudioSpecs[gAudioSpecId].numNotes; i++) {
-        if (gAudioContext.notes[i].noteSubEu.bitField0.enabled == 1) {
+        if (gAudioContext.notes[i].noteSampleState.bitField0.enabled == 1) {
             numEnabledNotes++;
         }
     }

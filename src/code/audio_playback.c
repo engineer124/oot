@@ -1,6 +1,6 @@
 #include "global.h"
 
-void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
+void Audio_InitNoteSub(Note* note, NoteSampleState* freeSampleState, NoteSubAttributes* attrs) {
     f32 volLeft;
     f32 volRight;
     s32 halfPanIndex;
@@ -18,36 +18,36 @@ void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
     reverbVol = attrs->reverbVol;
     stereoData = attrs->stereo.s;
 
-    sub->bitField0 = note->noteSubEu.bitField0;
-    sub->bitField1 = note->noteSubEu.bitField1;
-    sub->waveSampleAddr = note->noteSubEu.waveSampleAddr;
-    sub->harmonicIndexCurAndPrev = note->noteSubEu.harmonicIndexCurAndPrev;
+    freeSampleState->bitField0 = note->noteSampleState.bitField0;
+    freeSampleState->bitField1 = note->noteSampleState.bitField1;
+    freeSampleState->waveSampleAddr = note->noteSampleState.waveSampleAddr;
+    freeSampleState->harmonicIndexCurAndPrev = note->noteSampleState.harmonicIndexCurAndPrev;
 
-    Audio_NoteSetResamplingRate(sub, attrs->frequency);
+    Audio_NoteSetResamplingRate(freeSampleState, attrs->frequency);
 
     pan &= 0x7F;
 
-    sub->bitField0.stereoStrongRight = false;
-    sub->bitField0.stereoStrongLeft = false;
-    sub->bitField0.stereoHeadsetEffects = stereoData.stereoHeadsetEffects;
-    sub->bitField0.usesHeadsetPanEffects = stereoData.usesHeadsetPanEffects;
+    freeSampleState->bitField0.stereoStrongRight = false;
+    freeSampleState->bitField0.stereoStrongLeft = false;
+    freeSampleState->bitField0.stereoHeadsetEffects = stereoData.stereoHeadsetEffects;
+    freeSampleState->bitField0.usesHeadsetPanEffects = stereoData.usesHeadsetPanEffects;
     if (stereoHeadsetEffects && (gAudioContext.soundMode == SOUNDMODE_HEADSET)) {
         halfPanIndex = pan >> 1;
         if (halfPanIndex > 0x3F) {
             halfPanIndex = 0x3F;
         }
 
-        sub->haasEffectRightDelaySize = gHaasEffectDelaySizes[halfPanIndex];
-        sub->haasEffectLeftDelaySize = gHaasEffectDelaySizes[0x3F - halfPanIndex];
-        sub->bitField1.useHaasEffect = true;
+        freeSampleState->haasEffectRightDelaySize = gHaasEffectDelaySizes[halfPanIndex];
+        freeSampleState->haasEffectLeftDelaySize = gHaasEffectDelaySizes[0x3F - halfPanIndex];
+        freeSampleState->bitField1.useHaasEffect = true;
 
         volLeft = gHeadsetPanVolume[pan];
         volRight = gHeadsetPanVolume[0x7F - pan];
     } else if (stereoHeadsetEffects && (gAudioContext.soundMode == SOUNDMODE_STEREO)) {
         strongLeft = strongRight = 0;
-        sub->haasEffectLeftDelaySize = 0;
-        sub->haasEffectRightDelaySize = 0;
-        sub->bitField1.useHaasEffect = false;
+        freeSampleState->haasEffectLeftDelaySize = 0;
+        freeSampleState->haasEffectRightDelaySize = 0;
+        freeSampleState->bitField1.useHaasEffect = false;
 
         volLeft = gStereoPanVolume[pan];
         volRight = gStereoPanVolume[0x7F - pan];
@@ -57,37 +57,37 @@ void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
             strongRight = 1;
         }
 
-        sub->bitField0.stereoStrongRight = strongRight;
-        sub->bitField0.stereoStrongLeft = strongLeft;
+        freeSampleState->bitField0.stereoStrongRight = strongRight;
+        freeSampleState->bitField0.stereoStrongLeft = strongLeft;
 
         switch (stereoData.bit2) {
             case 0:
                 break;
 
             case 1:
-                sub->bitField0.stereoStrongRight = stereoData.strongRight;
-                sub->bitField0.stereoStrongLeft = stereoData.strongLeft;
+                freeSampleState->bitField0.stereoStrongRight = stereoData.strongRight;
+                freeSampleState->bitField0.stereoStrongLeft = stereoData.strongLeft;
                 break;
 
             case 2:
-                sub->bitField0.stereoStrongRight = stereoData.strongRight | strongRight;
-                sub->bitField0.stereoStrongLeft = stereoData.strongLeft | strongLeft;
+                freeSampleState->bitField0.stereoStrongRight = stereoData.strongRight | strongRight;
+                freeSampleState->bitField0.stereoStrongLeft = stereoData.strongLeft | strongLeft;
                 break;
 
             case 3:
-                sub->bitField0.stereoStrongRight = stereoData.strongRight ^ strongRight;
-                sub->bitField0.stereoStrongLeft = stereoData.strongLeft ^ strongLeft;
+                freeSampleState->bitField0.stereoStrongRight = stereoData.strongRight ^ strongRight;
+                freeSampleState->bitField0.stereoStrongLeft = stereoData.strongLeft ^ strongLeft;
                 break;
         }
 
     } else if (gAudioContext.soundMode == SOUNDMODE_MONO) {
-        sub->bitField0.stereoHeadsetEffects = false;
-        sub->bitField0.usesHeadsetPanEffects = false;
+        freeSampleState->bitField0.stereoHeadsetEffects = false;
+        freeSampleState->bitField0.usesHeadsetPanEffects = false;
         volLeft = 0.707f; // approx 1/sqrt(2)
         volRight = 0.707f;
     } else {
-        sub->bitField0.stereoStrongRight = stereoData.strongRight;
-        sub->bitField0.stereoStrongLeft = stereoData.strongLeft;
+        freeSampleState->bitField0.stereoStrongRight = stereoData.strongRight;
+        freeSampleState->bitField0.stereoStrongLeft = stereoData.strongLeft;
         volLeft = gDefaultPanVolume[pan];
         volRight = gDefaultPanVolume[0x7F - pan];
     }
@@ -95,32 +95,32 @@ void Audio_InitNoteSub(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
     vel = 0.0f > vel ? 0.0f : vel;
     vel = 1.0f < vel ? 1.0f : vel;
 
-    sub->targetVolLeft = (s32)((vel * volLeft) * (0x1000 - 0.001f));
-    sub->targetVolRight = (s32)((vel * volRight) * (0x1000 - 0.001f));
+    freeSampleState->targetVolLeft = (s32)((vel * volLeft) * (0x1000 - 0.001f));
+    freeSampleState->targetVolRight = (s32)((vel * volRight) * (0x1000 - 0.001f));
 
-    sub->gain = attrs->gain;
-    sub->filter = attrs->filter;
-    sub->unk_07 = attrs->unk_14;
-    sub->unk_0E = attrs->unk_16;
-    sub->reverbVol = reverbVol;
+    freeSampleState->gain = attrs->gain;
+    freeSampleState->filter = attrs->filter;
+    freeSampleState->unk_07 = attrs->unk_14;
+    freeSampleState->unk_0E = attrs->unk_16;
+    freeSampleState->reverbVol = reverbVol;
 }
 
-void Audio_NoteSetResamplingRate(NoteSubEu* noteSubEu, f32 resamplingRateInput) {
+void Audio_NoteSetResamplingRate(NoteSampleState* freeSampleState, f32 resamplingRateInput) {
     f32 resamplingRate = 0.0f;
 
     if (resamplingRateInput < 2.0f) {
-        noteSubEu->bitField1.hasTwoParts = false;
+        freeSampleState->bitField1.hasTwoParts = false;
         resamplingRate = CLAMP_MAX(resamplingRateInput, 1.99998f);
 
     } else {
-        noteSubEu->bitField1.hasTwoParts = true;
+        freeSampleState->bitField1.hasTwoParts = true;
         if (resamplingRateInput > 3.99996f) {
             resamplingRate = 1.99998f;
         } else {
             resamplingRate = resamplingRateInput * 0.5f;
         }
     }
-    noteSubEu->resamplingRateFixedPoint = (s32)(resamplingRate * 32768.0f);
+    freeSampleState->resamplingRateFixedPoint = (s32)(resamplingRate * 32768.0f);
 }
 
 void Audio_NoteInit(Note* note) {
@@ -134,17 +134,17 @@ void Audio_NoteInit(Note* note) {
 
     note->playbackState.unk_04 = 0;
     note->playbackState.adsr.action.s.state = ADSR_STATE_INITIAL;
-    note->noteSubEu = gDefaultNoteSub;
+    note->noteSampleState = gDefaultNoteSub;
 }
 
 void Audio_NoteDisable(Note* note) {
-    if (note->noteSubEu.bitField0.needsInit == true) {
-        note->noteSubEu.bitField0.needsInit = false;
+    if (note->noteSampleState.bitField0.needsInit == true) {
+        note->noteSampleState.bitField0.needsInit = false;
     }
     note->playbackState.priority = 0;
-    note->noteSubEu.bitField0.enabled = false;
+    note->noteSampleState.bitField0.enabled = false;
     note->playbackState.unk_04 = 0;
-    note->noteSubEu.bitField0.finished = false;
+    note->noteSampleState.bitField0.finished = false;
     note->playbackState.parentLayer = NO_LAYER;
     note->playbackState.prevParentLayer = NO_LAYER;
     note->playbackState.adsr.action.s.state = ADSR_STATE_DISABLED;
@@ -154,8 +154,8 @@ void Audio_NoteDisable(Note* note) {
 void Audio_ProcessNotes(void) {
     s32 pad[2];
     NoteAttributes* attrs;
-    NoteSubEu* noteSubEu2;
-    NoteSubEu* noteSubEu;
+    NoteSampleState* freeSampleState;
+    NoteSampleState* noteSampleState;
     Note* note;
     NotePlaybackState* playbackState;
     NoteSubAttributes subAttrs;
@@ -165,7 +165,7 @@ void Audio_ProcessNotes(void) {
 
     for (i = 0; i < gAudioContext.numNotes; i++) {
         note = &gAudioContext.notes[i];
-        noteSubEu2 = &gAudioContext.noteSubsEu[gAudioContext.noteSubEuOffset + i];
+        freeSampleState = &gAudioContext.freeSampleStateList[gAudioContext.freeSampleStateOffset + i];
         playbackState = &note->playbackState;
         if (playbackState->parentLayer != NO_LAYER) {
             if ((u32)playbackState->parentLayer < 0x7FFFFFFF) {
@@ -205,9 +205,9 @@ void Audio_ProcessNotes(void) {
     out:
         if (playbackState->priority != 0) {
             if (1) {}
-            noteSubEu = &note->noteSubEu;
-            if (playbackState->unk_04 >= 1 || noteSubEu->bitField0.finished) {
-                if (playbackState->adsr.action.s.state == ADSR_STATE_DISABLED || noteSubEu->bitField0.finished) {
+            noteSampleState = &note->noteSampleState;
+            if (playbackState->unk_04 >= 1 || noteSampleState->bitField0.finished) {
+                if (playbackState->adsr.action.s.state == ADSR_STATE_DISABLED || noteSampleState->bitField0.finished) {
                     if (playbackState->wantedParentLayer != NO_LAYER) {
                         Audio_NoteDisable(note);
                         if (playbackState->wantedParentLayer->channel != NULL) {
@@ -258,7 +258,7 @@ void Audio_ProcessNotes(void) {
                 subAttrs.filter = attrs->filter;
                 subAttrs.unk_14 = attrs->unk_4;
                 subAttrs.unk_16 = attrs->unk_6;
-                bookOffset = noteSubEu->bitField1.bookOffset;
+                bookOffset = noteSampleState->bitField1.bookOffset;
             } else {
                 SequenceLayer* layer = playbackState->parentLayer;
                 SequenceChannel* channel = layer->channel;
@@ -287,8 +287,8 @@ void Audio_ProcessNotes(void) {
             subAttrs.frequency *= playbackState->vibratoFreqScale * playbackState->portamentoFreqScale;
             subAttrs.frequency *= gAudioContext.audioBufferParameters.resampleRate;
             subAttrs.velocity *= scale;
-            Audio_InitNoteSub(note, noteSubEu2, &subAttrs);
-            noteSubEu->bitField1.bookOffset = bookOffset;
+            Audio_InitNoteSub(note, freeSampleState, &subAttrs);
+            noteSampleState->bitField1.bookOffset = bookOffset;
         skip:;
         }
     }
@@ -483,7 +483,7 @@ void Audio_SeqLayerDecayRelease(SequenceLayer* layer, s32 target) {
             attrs->unk_6 = chan->unk_20;
             attrs->unk_4 = chan->unk_0F;
             if (chan->seqPlayer->muted && (chan->muteBehavior & MUTE_BEHAVIOR_3)) {
-                note->noteSubEu.bitField0.finished = true;
+                note->noteSampleState.bitField0.finished = true;
             }
 
             if (layer->stereo.asByte == 0) {
@@ -574,7 +574,7 @@ s32 Audio_BuildSyntheticWave(Note* note, SequenceLayer* layer, s32 waveId) {
 
     // Save the pointer to the synthethic wave
     // waveId index starts at 128, there are WAVE_SAMPLE_COUNT samples to read from
-    note->noteSubEu.waveSampleAddr = &gWaveSamples[waveId - 128][harmonicIndex * WAVE_SAMPLE_COUNT];
+    note->noteSampleState.waveSampleAddr = &gWaveSamples[waveId - 128][harmonicIndex * WAVE_SAMPLE_COUNT];
 
     return harmonicIndex;
 }
@@ -592,7 +592,7 @@ void Audio_InitSyntheticWave(Note* note, SequenceLayer* layer) {
     curHarmonicIndex = Audio_BuildSyntheticWave(note, layer, waveId);
 
     if (curHarmonicIndex != prevHarmonicIndex) {
-        note->noteSubEu.harmonicIndexCurAndPrev = (curHarmonicIndex << 2) + prevHarmonicIndex;
+        note->noteSampleState.harmonicIndexCurAndPrev = (curHarmonicIndex << 2) + prevHarmonicIndex;
     }
 }
 
@@ -761,7 +761,7 @@ void Audio_NoteInitForLayer(Note* note, SequenceLayer* layer) {
     s32 pad[3];
     s16 instId;
     NotePlaybackState* playbackState = &note->playbackState;
-    NoteSubEu* sub = &note->noteSubEu;
+    NoteSampleState* noteSampleState = &note->noteSampleState;
 
     note->playbackState.prevParentLayer = NO_LAYER;
     note->playbackState.parentLayer = layer;
@@ -778,21 +778,21 @@ void Audio_NoteInitForLayer(Note* note, SequenceLayer* layer) {
     if (instId == 0xFF) {
         instId = layer->channel->instOrWave;
     }
-    sub->tunedSample = layer->tunedSample;
+    noteSampleState->tunedSample = layer->tunedSample;
 
     if (instId >= 0x80 && instId < 0xC0) {
-        sub->bitField1.isSyntheticWave = true;
+        noteSampleState->bitField1.isSyntheticWave = true;
     } else {
-        sub->bitField1.isSyntheticWave = false;
+        noteSampleState->bitField1.isSyntheticWave = false;
     }
 
-    if (sub->bitField1.isSyntheticWave) {
+    if (noteSampleState->bitField1.isSyntheticWave) {
         Audio_BuildSyntheticWave(note, layer, instId);
     }
 
     playbackState->fontId = layer->channel->fontId;
     playbackState->stereoHeadsetEffects = layer->channel->stereoHeadsetEffects;
-    sub->bitField1.reverbIndex = layer->channel->reverbIndex & 3;
+    noteSampleState->bitField1.reverbIndex = layer->channel->reverbIndex & 3;
 }
 
 void func_800E82C0(Note* note, SequenceLayer* layer) {
@@ -931,7 +931,7 @@ void Audio_NoteInitAll(void) {
 
     for (i = 0; i < gAudioContext.numNotes; i++) {
         note = &gAudioContext.notes[i];
-        note->noteSubEu = gZeroNoteSub;
+        note->noteSampleState = gZeroNoteSub;
         note->playbackState.priority = 0;
         note->playbackState.unk_04 = 0;
         note->playbackState.parentLayer = NO_LAYER;

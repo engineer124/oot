@@ -261,11 +261,11 @@ void func_800E5584(AudioCmd* cmd) {
             if (cmd->asUInt == 1) {
                 for (i = 0; i < gAudioContext.numNotes; i++) {
                     Note* note = &gAudioContext.notes[i];
-                    NoteSubEu* subEu = &note->noteSubEu;
+                    NoteSampleState* noteSampleState = &note->noteSampleState;
 
-                    if (subEu->bitField0.enabled && note->playbackState.unk_04 == 0) {
+                    if (noteSampleState->bitField0.enabled && note->playbackState.unk_04 == 0) {
                         if (note->playbackState.parentLayer->channel->muteBehavior & MUTE_BEHAVIOR_3) {
-                            subEu->bitField0.finished = true;
+                            noteSampleState->bitField0.finished = true;
                         }
                     }
                 }
@@ -810,7 +810,7 @@ s32 func_800E6590(s32 playerIdx, s32 arg1, s32 arg2) {
 
             note = layer->note;
             if (layer == note->playbackState.parentLayer) {
-                tunedSample = note->noteSubEu.tunedSample;
+                tunedSample = note->noteSampleState.tunedSample;
                 if (tunedSample == NULL) {
                     return 0;
                 }
@@ -835,7 +835,7 @@ void func_800E66A0(void) {
 s32 func_800E66C0(s32 arg0) {
     s32 phi_v1;
     NotePlaybackState* playbackState;
-    NoteSubEu* noteSubEu;
+    NoteSampleState* noteSampleState;
     s32 i;
     Note* note;
     TunedSample* tunedSample;
@@ -844,12 +844,12 @@ s32 func_800E66C0(s32 arg0) {
     for (i = 0; i < gAudioContext.numNotes; i++) {
         note = &gAudioContext.notes[i];
         playbackState = &note->playbackState;
-        if (note->noteSubEu.bitField0.enabled) {
-            noteSubEu = &note->noteSubEu;
+        if (note->noteSampleState.bitField0.enabled) {
+            noteSampleState = &note->noteSampleState;
             if (playbackState->adsr.action.s.state != 0) {
                 if (arg0 >= 2) {
-                    tunedSample = noteSubEu->tunedSample;
-                    if (tunedSample == NULL || noteSubEu->bitField1.isSyntheticWave) {
+                    tunedSample = noteSampleState->tunedSample;
+                    if (tunedSample == NULL || noteSampleState->bitField1.isSyntheticWave) {
                         continue;
                     }
                     if (tunedSample->sample->medium == MEDIUM_RAM) {

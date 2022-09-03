@@ -12,7 +12,7 @@
 
 #define MAX_CHANNELS_PER_BANK 3
 
-#define MUTE_BEHAVIOR_3 (1 << 3)           // prevent further noteSubEus from playing
+#define MUTE_BEHAVIOR_3 (1 << 3)           // prevent further samples by disabling NoteSampleState
 #define MUTE_BEHAVIOR_4 (1 << 4)           // stop something in seqLayer scripts
 #define MUTE_BEHAVIOR_SOFTEN (1 << 5)      // lower volume, by default to half
 #define MUTE_BEHAVIOR_STOP_NOTES (1 << 6)  // prevent further notes from playing
@@ -577,7 +577,7 @@ typedef struct {
              };
     /* 0x14 */ s16* filter;
     /* 0x18 */ char pad_18[0x8];
-} NoteSubEu; // size = 0x20
+} NoteSampleState; // size = 0x20
 
 typedef struct Note {
     /* 0x00 */ AudioListItem listItem;
@@ -585,7 +585,7 @@ typedef struct Note {
     /* 0x30 */ NotePlaybackState playbackState;
     /* 0xB8 */ char unk_B8[0x4];
     /* 0xBC */ u32 startSamplePos; // initial position/index to start processing s16 samples
-    /* 0xC0 */ NoteSubEu noteSubEu;
+    /* 0xC0 */ NoteSampleState noteSampleState;
 } Note; // size = 0xE0
 
 typedef struct {
@@ -837,7 +837,7 @@ typedef struct {
     /* 0x0004 */ u16 unk_4;
     /* 0x0006 */ char unk_0006[0x0A];
     /* 0x0010 */ s16* curLoadedBook;
-    /* 0x0014 */ NoteSubEu* noteSubsEu;
+    /* 0x0014 */ NoteSampleState* freeSampleStateList;
     /* 0x0018 */ SynthesisReverb synthesisReverbs[4];
     /* 0x0B38 */ char unk_0B38[0x30];
     /* 0x0B68 */ Sample* usedSamples[128];
@@ -937,7 +937,7 @@ typedef struct {
     /* 0x3530 */ SequencePlayer seqPlayers[4];
     /* 0x3AB0 */ SequenceLayer sequenceLayers[64];
     /* 0x5AB0 */ SequenceChannel sequenceChannelNone;
-    /* 0x5B84 */ s32 noteSubEuOffset;
+    /* 0x5B84 */ s32 freeSampleStateOffset;
     /* 0x5B88 */ AudioListItem layerFreeList;
     /* 0x5B98 */ NotePool noteFreeLists;
     /* 0x5BD8 */ u8 cmdWrPos;
