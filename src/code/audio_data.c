@@ -550,10 +550,10 @@ EnvelopePoint gDefaultEnvelope[] = {
     { ADSR_DISABLE, 0 },
 };
 
-NoteSampleState gZeroNoteSub = { 0 };
+NoteSampleState gZeroedSampleState = { 0 };
 
-NoteSampleState gDefaultNoteSub = {
-    { 1, 1, 0, 0, 0, 0, 0, 0 }, { 0 }, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+NoteSampleState gDefaultSampleState = {
+    { true, true, false, false, false, false, false, false }, { false }, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
 u16 gHaasEffectDelaySizes[64] = {

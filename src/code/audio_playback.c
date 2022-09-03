@@ -134,7 +134,7 @@ void Audio_NoteInit(Note* note) {
 
     note->playbackState.unk_04 = 0;
     note->playbackState.adsr.action.s.state = ADSR_STATE_INITIAL;
-    note->noteSampleState = gDefaultNoteSub;
+    note->noteSampleState = gDefaultSampleState;
 }
 
 void Audio_NoteDisable(Note* note) {
@@ -931,7 +931,7 @@ void Audio_NoteInitAll(void) {
 
     for (i = 0; i < gAudioContext.numNotes; i++) {
         note = &gAudioContext.notes[i];
-        note->noteSampleState = gZeroNoteSub;
+        note->noteSampleState = gZeroedSampleState;
         note->playbackState.priority = 0;
         note->playbackState.unk_04 = 0;
         note->playbackState.parentLayer = NO_LAYER;
