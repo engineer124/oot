@@ -131,22 +131,22 @@ void AudioSynth_InitNextRingBuf(s32 chunkLen, s32 updateIndex, s32 reverbIndex) 
 }
 
 void func_800DB03C(s32 updateIndex) {
-    NoteSampleState* noteSampleState;
+    NoteSampleState* sampleState;
     NoteSampleState* freeSampleState;
     s32 baseIndex;
     s32 i;
 
     baseIndex = gAudioContext.numNotes * updateIndex;
     for (i = 0; i < gAudioContext.numNotes; i++) {
-        noteSampleState = &gAudioContext.notes[i].noteSampleState;
+        sampleState = &gAudioContext.notes[i].sampleState;
         freeSampleState = &gAudioContext.freeSampleStateList[baseIndex + i];
-        if (noteSampleState->bitField0.enabled) {
-            noteSampleState->bitField0.needsInit = false;
+        if (sampleState->bitField0.enabled) {
+            sampleState->bitField0.needsInit = false;
         } else {
             freeSampleState->bitField0.enabled = false;
         }
 
-        noteSampleState->harmonicIndexCurAndPrev = 0;
+        sampleState->harmonicIndexCurAndPrev = 0;
     }
 }
 
@@ -773,7 +773,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSampleState* freeSampleState, No
         synthState->reverbVol = freeSampleState->reverbVol;
         synthState->numParts = 0;
         synthState->unk_1A = 1;
-        note->noteSampleState.bitField0.finished = false;
+        note->sampleState.bitField0.finished = false;
         finished = false;
     }
 
@@ -1016,7 +1016,7 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSampleState* freeSampleState, No
                     AudioSynth_ClearBuffer(cmd++, DMEM_UNCOMPRESSED_NOTE + s5,
                                            (samplesLenAdjusted - nSamplesProcessed) * SAMPLE_SIZE);
                     finished = true;
-                    note->noteSampleState.bitField0.finished = true;
+                    note->sampleState.bitField0.finished = true;
                     func_800DB2C0(updateIndex, noteIndex);
                     break;
                 } else {
