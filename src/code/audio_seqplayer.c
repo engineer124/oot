@@ -579,12 +579,6 @@ void AudioSeq_SeqLayerProcessScriptStep1(SequenceLayer* layer) {
 s32 AudioSeq_SeqLayerProcessScriptStep5(SequenceLayer* layer, s32 sameTunedSample) {
     Note* note;
 
-    if (!layer->stopSomething && layer->tunedSample != NULL &&
-        layer->tunedSample->sample->codec == CODEC_S16_INMEMORY && layer->tunedSample->sample->medium != MEDIUM_RAM) {
-        layer->stopSomething = true;
-        return PROCESS_SCRIPT_END;
-    }
-
     if (layer->continuousNotes == true && layer->bit1 == 1) {
         return 0;
     }

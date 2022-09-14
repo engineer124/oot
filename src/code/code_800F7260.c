@@ -32,7 +32,6 @@ u8 sSfxBankUnused[7];
 ActiveSfx gActiveSfx[7][3];
 u8 sCurSfxPlayerChannelIdx;
 u8 gSfxBankMuted[7];
-UnusedBankLerp sUnusedBankLerp[7];
 u16 gAudioSfxSwapSource[10];
 u16 gAudioSfxSwapTarget[10];
 u8 gAudioSfxSwapMode[10];
@@ -638,26 +637,6 @@ void Audio_ProcessSfxRequests(void) {
     }
 }
 
-void Audio_SetUnusedBankLerp(u8 bankId, u8 target, u16 delay) {
-    if (delay == 0) {
-        delay++;
-    }
-    sUnusedBankLerp[bankId].target = target / 127.0f;
-    sUnusedBankLerp[bankId].remainingFrames = delay;
-    sUnusedBankLerp[bankId].step = ((sUnusedBankLerp[bankId].value - sUnusedBankLerp[bankId].target) / delay);
-}
-
-void Audio_StepUnusedBankLerp(u8 bankId) {
-    if (sUnusedBankLerp[bankId].remainingFrames != 0) {
-        sUnusedBankLerp[bankId].remainingFrames--;
-        if (sUnusedBankLerp[bankId].remainingFrames != 0) {
-            sUnusedBankLerp[bankId].value -= sUnusedBankLerp[bankId].step;
-        } else {
-            sUnusedBankLerp[bankId].value = sUnusedBankLerp[bankId].target;
-        }
-    }
-}
-
 void func_800F8F88(void) {
     u8 bankId;
 
@@ -666,7 +645,6 @@ void func_800F8F88(void) {
         for (bankId = 0; bankId < ARRAY_COUNT(gSfxBanks); bankId++) {
             Audio_ChooseActiveSfx(bankId);
             Audio_PlayActiveSfx(bankId);
-            Audio_StepUnusedBankLerp(bankId);
         }
     }
 }
@@ -698,8 +676,6 @@ void Audio_ResetSfx(void) {
         sSfxBankFreeListStart[bankId] = 1;
         sSfxBankUnused[bankId] = 0;
         gSfxBankMuted[bankId] = false;
-        sUnusedBankLerp[bankId].value = 1.0f;
-        sUnusedBankLerp[bankId].remainingFrames = 0;
     }
     for (bankId = 0; bankId < ARRAY_COUNT(gSfxBanks); bankId++) {
         for (i = 0; i < MAX_CHANNELS_PER_BANK; i++) {

@@ -1276,22 +1276,6 @@ s32 Audio_SetGanonsTowerBgmVolume(u8 targetVol);
 
 // =========== Audio Ocarina ===========
 
-void AudioOcarina_SetCustomButtonMapping(u8 useCustom) {
-    if (!useCustom) {
-        osSyncPrintf("AUDIO : Ocarina Control Assign Normal\n");
-        sOcarinaAllowedButtonMask = (BTN_A | BTN_CUP | BTN_CDOWN | BTN_CLEFT | BTN_CRIGHT);
-        sOcarinaAButtonMap = BTN_A;
-        sOcarinaCUpButtonMap = BTN_CUP;
-        sOcarinaCDownButtonMap = BTN_CDOWN;
-    } else {
-        osSyncPrintf("AUDIO : Ocarina Control Assign Custom\n");
-        sOcarinaAllowedButtonMask = (BTN_A | BTN_B | BTN_CDOWN | BTN_CLEFT | BTN_CRIGHT);
-        sOcarinaAButtonMap = BTN_B;
-        sOcarinaCUpButtonMap = BTN_CDOWN;
-        sOcarinaCDownButtonMap = BTN_A;
-    }
-}
-
 void AudioOcarina_ReadControllerInput(void) {
     Input inputs[MAXCONTROLLERS];
     Input* input = &inputs[0];
@@ -1666,7 +1650,6 @@ void AudioOcarina_PlayControllerInput(u8 unused) {
     if ((sOcarinaInputButtonStart == 0) || ((sOcarinaInputButtonStart & sOcarinaAllowedButtonMask) !=
                                             (sOcarinaInputButtonCur & sOcarinaAllowedButtonMask))) {
         sOcarinaInputButtonStart = 0;
-        if (1) {}
         sCurOcarinaPitch = OCARINA_PITCH_NONE;
         sCurOcarinaButtonIndex = OCARINA_BTN_INVALID;
         ocarinaBtnsHeld = (sOcarinaInputButtonCur & sOcarinaAllowedButtonMask) &
@@ -1978,8 +1961,6 @@ void AudioOcarina_SetRecordingSong(u8 isRecordingComplete) {
         pitch = recordedSong[i].pitch;
     }
 
-    if (1) {}
-
     if (sRecordSongPos != (i + 1)) {
         sRecordSongPos = i + 2;
         recordedSong[sRecordSongPos - 1].length = 0;
@@ -2215,7 +2196,6 @@ s32 AudioOcarina_MemoryGameNextNote(void) {
     sOcarinaSongNotes[OCARINA_SONG_MEMORY_GAME][sOcaMemoryGameAppendPos].length = 0;
     sOcarinaSongNotes[OCARINA_SONG_MEMORY_GAME][sOcaMemoryGameAppendPos + 1].pitch = OCARINA_PITCH_NONE;
     sOcarinaSongNotes[OCARINA_SONG_MEMORY_GAME][sOcaMemoryGameAppendPos + 1].length = 0;
-    if (1) {}
     return 0;
 }
 
@@ -3209,14 +3189,12 @@ void AudioDebug_ProcessInput_SndCont(void) {
 
     if (CHECK_BTN_ANY(sDebugPadPress, BTN_CDOWN)) {
         if (sAudioSndContSel == 0) {
-            if (1) {}
             func_800F595C(sAudioSndContWork[sAudioSndContSel]);
         }
     }
 
     if (CHECK_BTN_ANY(sDebugPadPress, BTN_CRIGHT)) {
         if (sAudioSndContSel == 0) {
-            if (1) {}
             func_800F5ACC(sAudioSndContWork[sAudioSndContSel]);
         }
     }
@@ -3723,16 +3701,6 @@ void func_800F3054(void) {
         sAudioUpdateTaskEnd = gAudioContext.totalTaskCount;
         sAudioUpdateEndTime = osGetTime();
     }
-}
-
-void func_800F3138(UNK_TYPE arg0) {
-}
-
-void func_800F3140(UNK_TYPE arg0, UNK_TYPE arg1) {
-}
-
-void func_800F314C(s8 arg0) {
-    Audio_QueueCmdS32(0x82 << 24 | SEQ_PLAYER_BGM_MAIN << 16 | (((u8)arg0 & 0xFF) << 8), 1);
 }
 
 f32 Audio_ComputeSfxVolume(u8 bankId, u8 entryIdx) {
@@ -5119,30 +5087,12 @@ void func_800F6AB0(u16 arg0) {
     Audio_SetVolScale(SEQ_PLAYER_BGM_MAIN, 1, 0x7F, 0);
 }
 
-void func_800F6B3C(void) {
-    func_800F9280(SEQ_PLAYER_SFX, 0, 0xFF, 5);
-}
-
 void Audio_DisableAllSeq(void) {
     Audio_DisableSeq(SEQ_PLAYER_BGM_MAIN, 0);
     Audio_DisableSeq(SEQ_PLAYER_FANFARE, 0);
     Audio_DisableSeq(SEQ_PLAYER_SFX, 0);
     Audio_DisableSeq(SEQ_PLAYER_BGM_SUB, 0);
     Audio_ScheduleProcessCmds();
-}
-
-s8 func_800F6BB8(void) {
-    return func_800E6680();
-}
-
-void func_800F6BDC(void) {
-    Audio_DisableAllSeq();
-    Audio_ScheduleProcessCmds();
-    while (true) {
-        if (!func_800F6BB8()) {
-            return;
-        }
-    }
 }
 
 void Audio_PreNMI(void) {
@@ -5291,12 +5241,4 @@ void func_800F71BC(s32 arg0) {
     Audio_ResetSfxChannelState();
     func_800FADF8();
     Audio_ResetSfx();
-}
-
-void func_800F7208(void) {
-    func_800FADF8();
-    Audio_QueueCmdS32(0xF2000000, 1);
-    func_800F6C34();
-    Audio_ResetSfxChannelState();
-    func_800F9280(SEQ_PLAYER_SFX, 0, 0x70, 1);
 }

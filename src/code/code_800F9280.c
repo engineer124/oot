@@ -438,18 +438,6 @@ void func_800FA3DC(void) {
     u8 k;
 
     for (playerIdx = 0; playerIdx < 4; playerIdx++) {
-        if (D_8016E750[playerIdx].unk_260 != 0) {
-            switch (func_800E5E20(&dummy)) {
-                case 1:
-                case 2:
-                case 3:
-                case 4:
-                    D_8016E750[playerIdx].unk_260 = 0;
-                    Audio_ProcessSeqCmd(D_8016E750[playerIdx].unk_25C);
-                    break;
-            }
-        }
-
         if (D_8016E750[playerIdx].fadeVolUpdate) {
             phi_f0 = 1.0f;
             for (j = 0; j < 4; j++) {

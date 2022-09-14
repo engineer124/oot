@@ -729,14 +729,6 @@ typedef struct {
     /* 0xC */ u32 cachePoolSize;
 } AudioSessionPoolSplit; // size = 0x10
 
-typedef struct {
-    /* 0x00 */ u32 endAndMediumKey;
-    /* 0x04 */ Sample* sample;
-    /* 0x08 */ u8* ramAddr;
-    /* 0x0C */ u32 encodedInfo;
-    /* 0x10 */ s32 isFree;
-} AudioPreloadReq; // size = 0x14
-
 /**
  * Audio commands used to transfer audio requests from the graph thread to the audio thread
  */
@@ -831,22 +823,12 @@ typedef struct {
 } SampleDma; // size = 0x10
 
 typedef struct {
-    /* 0x0000 */ char unk_0000;
     /* 0x0001 */ s8 numSynthesisReverbs;
-    /* 0x0002 */ u16 unk_2; // reads from audio spec unk_14, never used, always set to 0x7FFF
-    /* 0x0004 */ u16 unk_4;
-    /* 0x0006 */ char unk_0006[0x0A];
     /* 0x0010 */ s16* curLoadedBook;
     /* 0x0014 */ NoteSubEu* noteSubsEu;
     /* 0x0018 */ SynthesisReverb synthesisReverbs[4];
-    /* 0x0B38 */ char unk_0B38[0x30];
-    /* 0x0B68 */ Sample* usedSamples[128];
-    /* 0x0D68 */ AudioPreloadReq preloadSampleStack[128];
-    /* 0x1768 */ s32 numUsedSamples;
-    /* 0x176C */ s32 preloadSampleStackTop;
     /* 0x1770 */ AudioAsyncLoad asyncLoads[0x10];
     /* 0x1CF0 */ OSMesgQueue asyncLoadUnkMediumQueue;
-    /* 0x1D08 */ char unk_1D08[0x40];
     /* 0x1D48 */ AudioAsyncLoad* curUnkMediumLoad;
     /* 0x1D4C */ u32 slowLoadPos;
     /* 0x1D50 */ AudioSlowLoad slowLoads[2];
@@ -865,7 +847,6 @@ typedef struct {
     /* 0x261C */ SampleDma* sampleDmas;
     /* 0x2620 */ u32 sampleDmaCount;
     /* 0x2624 */ u32 sampleDmaListSize1;
-    /* 0x2628 */ s32 unused2628;
     /* 0x262C */ u8 sampleDmaReuseQueue1[0x100]; // read pos <= write pos, wrapping mod 256
     /* 0x272C */ u8 sampleDmaReuseQueue2[0x100];
     /* 0x282C */ u8 sampleDmaReuseQueue1RdPos; // Read position for short-lived sampleDma
@@ -882,7 +863,6 @@ typedef struct {
     /* 0x2870 */ f32 unk_2870;
     /* 0x2874 */ s32 sampleDmaBufSize1;
     /* 0x2874 */ s32 sampleDmaBufSize2;
-    /* 0x287C */ char unk_287C[0x10];
     /* 0x288C */ s32 sampleDmaBufSize;
     /* 0x2890 */ s32 maxAudioCmds;
     /* 0x2894 */ s32 numNotes;
@@ -895,7 +875,6 @@ typedef struct {
     /* 0x28AC */ Acmd* abiCmdBufs[2]; // Pointer to audio heap where the audio binary interface command lists (for the rsp) are stored. Two lists that alternate every frame
     /* 0x28B4 */ Acmd* curAbiCmdBuf; // Pointer to the currently active abiCmdBufs
     /* 0x28B8 */ AudioTask* curTask;
-    /* 0x28BC */ char unk_28BC[0x4];
     /* 0x28C0 */ AudioTask rspTask[2];
     /* 0x2960 */ f32 unk_2960;
     /* 0x2964 */ s32 refreshRate;
@@ -904,12 +883,9 @@ typedef struct {
     /* 0x297C */ u32 audioRandom;
     /* 0x2980 */ s32 audioErrorFlags;
     /* 0x2984 */ volatile u32 resetTimer;
-    /* 0x2988 */ char unk_2988[0x8];
     /* 0x2990 */ AudioAllocPool sessionPool; // A sub-pool to main pool, contains all sub-pools and data that changes every audio reset
-    /* 0x29A0 */ AudioAllocPool externalPool; // pool allocated externally to the audio heap. Never used in game
     /* 0x29B0 */ AudioAllocPool initPool;// A sub-pool to the main pool, contains all sub-pools and data that persists every audio reset
     /* 0x29C0 */ AudioAllocPool miscPool; // A sub-pool to the session pool. 
-    /* 0x29D0 */ char unk_29D0[0x20]; // probably two unused pools
     /* 0x29F0 */ AudioAllocPool cachePool; // The common pool for cache entries
     /* 0x2A00 */ AudioAllocPool persistentCommonPool; // A sub-pool to the cache pool, contains caches for data stored persistently
     /* 0x2A10 */ AudioAllocPool temporaryCommonPool; // A sub-pool to the cache pool, contains caches for data stored temporarily
@@ -918,8 +894,6 @@ typedef struct {
     /* 0x2C40 */ AudioCache sampleBankCache; // Cache for loading entire sample banks
     /* 0x2D50 */ AudioAllocPool permanentPool; // Pool to store audio data that is always loaded. Used for sfxs
     /* 0x2D60 */ AudioCacheEntry permanentCache[32]; // individual entries to the permanent pool
-    /* 0x2EE0 */ AudioSampleCache persistentSampleCache; // Stores individual samples persistently
-    /* 0x3174 */ AudioSampleCache temporarySampleCache; // Stores individual samples temporarily
     /* 0x3408 */ AudioSessionPoolSplit sessionPoolSplit; // splits session pool into the cache pool and misc pool
     /* 0x3418 */ AudioCachePoolSplit cachePoolSplit; // splits cache pool into the persistent & temporary common pools
     /* 0x3420 */ AudioCommonPoolSplit persistentCommonPoolSplit;// splits persistent common pool into caches for sequences, soundFonts, sample banks

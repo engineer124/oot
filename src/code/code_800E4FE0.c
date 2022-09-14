@@ -40,7 +40,6 @@ AudioTask* func_800E4FE0(void) {
  */
 AudioTask* func_800E5000(void) {
     static s32 sMaxAbiCmdCnt = 0x80;
-    static AudioTask* sWaitingAudioTask = NULL;
     u32 samplesRemainingInAi;
     s32 abiCmdCnt;
     s32 pad;
@@ -54,18 +53,6 @@ AudioTask* func_800E5000(void) {
     s32 i;
 
     gAudioContext.totalTaskCount++;
-    if (gAudioContext.totalTaskCount % (gAudioContext.audioBufferParameters.specUnk4) != 0) {
-        if (D_801755D0 != NULL) {
-            D_801755D0();
-        }
-
-        if ((gAudioContext.totalTaskCount % gAudioContext.audioBufferParameters.specUnk4) + 1 ==
-            gAudioContext.audioBufferParameters.specUnk4) {
-            return sWaitingAudioTask;
-        } else {
-            return NULL;
-        }
-    }
 
     osSendMesg(gAudioContext.taskStartQueueP, (OSMesg)gAudioContext.totalTaskCount, OS_MESG_NOBLOCK);
     gAudioContext.rspTaskIndex ^= 1;
@@ -77,8 +64,6 @@ AudioTask* func_800E5000(void) {
     if (gAudioContext.resetTimer < 16) {
         if (gAudioContext.aiBufLengths[index] != 0) {
             osAiSetNextBuffer(gAudioContext.aiBuffers[index], gAudioContext.aiBufLengths[index] * 4);
-            if (gAudioContext.aiBuffers[index]) {}
-            if (gAudioContext.aiBufLengths[index]) {}
         }
     }
 
@@ -118,7 +103,6 @@ AudioTask* func_800E5000(void) {
                            OS_MESG_NOBLOCK);
             }
 
-            sWaitingAudioTask = NULL;
             return NULL;
         }
     }
@@ -153,7 +137,6 @@ AudioTask* func_800E5000(void) {
     if (gAudioContext.resetStatus == 0) {
         // msg = 0000RREE R = read pos, E = End Pos
         while (osRecvMesg(gAudioContext.cmdProcQueueP, (OSMesg*)&sp4C, OS_MESG_NOBLOCK) != -1) {
-            if (1) {}
             Audio_ProcessCmds(sp4C);
             j++;
         }
@@ -169,11 +152,6 @@ AudioTask* func_800E5000(void) {
     gAudioContext.audioRandom = (gAudioContext.audioRandom + gAudioContext.totalTaskCount) * osGetCount();
     gAudioContext.audioRandom =
         gAudioContext.audioRandom + gAudioContext.aiBuffers[index][gAudioContext.totalTaskCount & 0xFF];
-
-    // gWaveSamples[8] interprets compiled assembly code as s16 samples as a way to generate sound with noise.
-    // Start with the address of func_800E4FE0, and offset it by a random number between 0 - 0xFFF0
-    // Use the resulting address as the starting address to interpret an array of samples i.e. `s16 samples[]`
-    gWaveSamples[8] = (s16*)(((u8*)func_800E4FE0) + (gAudioContext.audioRandom & 0xFFF0));
 
     index = gAudioContext.rspTaskIndex;
     gAudioContext.curTask->msgQueue = NULL;
@@ -192,7 +170,6 @@ AudioTask* func_800E5000(void) {
     task->dram_stack_size = 0;
     task->output_buff = NULL;
     task->output_buff_size = NULL;
-    if (1) {}
     task->data_ptr = (u64*)gAudioContext.abiCmdBufs[index];
     task->data_size = abiCmdCnt * sizeof(Acmd);
     task->yield_data_ptr = NULL;
@@ -202,12 +179,7 @@ AudioTask* func_800E5000(void) {
         sMaxAbiCmdCnt = abiCmdCnt;
     }
 
-    if (gAudioContext.audioBufferParameters.specUnk4 == 1) {
-        return gAudioContext.curTask;
-    } else {
-        sWaitingAudioTask = gAudioContext.curTask;
-        return NULL;
-    }
+    return gAudioContext.curTask;
 }
 
 #define ACMD_SND_MDE ((u32)0xF0000000)
@@ -506,17 +478,6 @@ void Audio_ProcessCmds(u32 msg) {
     }
 }
 
-u32 func_800E5E20(u32* out) {
-    u32 sp1C;
-
-    if (osRecvMesg(&gAudioContext.externalLoadQueue, (OSMesg*)&sp1C, OS_MESG_NOBLOCK) == -1) {
-        *out = 0;
-        return 0;
-    }
-    *out = sp1C & 0xFFFFFF;
-    return sp1C >> 0x18;
-}
-
 u8* func_800E5E84(s32 arg0, u32* arg1) {
     return AudioLoad_GetFontsForSequence(arg0, arg1);
 }
@@ -577,30 +538,6 @@ void Audio_PreNMIInternal(void) {
         func_800E5F88(0);
         gAudioContext.resetStatus = 0;
     }
-}
-
-s8 func_800E6070(s32 playerIdx, s32 channelIdx, s32 scriptIdx) {
-    SequencePlayer* seqPlayer = &gAudioContext.seqPlayers[playerIdx];
-    SequenceChannel* channel;
-
-    if (seqPlayer->enabled) {
-        channel = seqPlayer->channels[channelIdx];
-        return channel->soundScriptIO[scriptIdx];
-    } else {
-        return -1;
-    }
-}
-
-s8 func_800E60C4(s32 playerIdx, s32 port) {
-    return gAudioContext.seqPlayers[playerIdx].soundScriptIO[port];
-}
-
-void Audio_InitExternalPool(void* ramAddr, u32 size) {
-    AudioHeap_InitPool(&gAudioContext.externalPool, ramAddr, size);
-}
-
-void Audio_DestroyExternalPool(void) {
-    gAudioContext.externalPool.startRamAddr = NULL;
 }
 
 void func_800E6128(SequencePlayer* seqPlayer, AudioCmd* cmd) {
@@ -765,71 +702,6 @@ void func_800E6300(SequenceChannel* channel, AudioCmd* cmd) {
         default:
             break;
     }
-}
-
-void func_800E64B0(s32 arg0, s32 arg1, s32 arg2) {
-    Audio_QueueCmdS32(((arg0 & 0xFF) << 0x10) | 0xFA000000 | ((arg1 & 0xFF) << 8) | (arg2 & 0xFF), 1);
-}
-
-void func_800E64F8(void) {
-    Audio_QueueCmdS32(0xFA000000, 0);
-}
-
-void func_800E651C(u32 arg0, s32 arg1) {
-    Audio_QueueCmdS32((arg1 & 0xFF) | 0xFD000000, arg0);
-}
-
-void Audio_WaitForAudioTask(void) {
-    osRecvMesg(gAudioContext.taskStartQueueP, NULL, OS_MESG_NOBLOCK);
-    osRecvMesg(gAudioContext.taskStartQueueP, NULL, OS_MESG_BLOCK);
-}
-
-s32 func_800E6590(s32 playerIdx, s32 arg1, s32 arg2) {
-    SequencePlayer* seqPlayer;
-    SequenceLayer* layer;
-    Note* note;
-    TunedSample* tunedSample;
-    s32 loopEnd;
-    s32 samplePos;
-
-    seqPlayer = &gAudioContext.seqPlayers[playerIdx];
-    if (seqPlayer->enabled && seqPlayer->channels[arg1]->enabled) {
-        layer = seqPlayer->channels[arg1]->layers[arg2];
-        if (layer == NULL) {
-            return 0;
-        }
-
-        if (layer->enabled) {
-            if (layer->note == NULL) {
-                return 0;
-            }
-
-            if (!layer->bit3) {
-                return 0;
-            }
-
-            note = layer->note;
-            if (layer == note->playbackState.parentLayer) {
-                tunedSample = note->noteSubEu.tunedSample;
-                if (tunedSample == NULL) {
-                    return 0;
-                }
-                loopEnd = tunedSample->sample->loop->end;
-                samplePos = note->synthesisState.samplePosInt;
-                return loopEnd - samplePos;
-            }
-            return 0;
-        }
-    }
-    return 0;
-}
-
-s32 func_800E6680(void) {
-    return func_800E66C0(0);
-}
-
-void func_800E66A0(void) {
-    func_800E66C0(2);
 }
 
 s32 func_800E66C0(s32 arg0) {
