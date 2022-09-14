@@ -327,8 +327,7 @@ Acmd* AudioSynth_SaveReverbSamples(Acmd* cmd, SynthesisReverb* reverb, s16 updat
         cmd = AudioSynth_SaveRingBufferPart(cmd, DMEM_WET_LEFT_CH, bufItem->startPos, bufItem->lengthA, reverb);
         if (bufItem->lengthB != 0) {
             // Ring buffer wrapped
-            cmd = AudioSynth_SaveRingBufferPart(cmd, DMEM_WET_LEFT_CH + bufItem->lengthA, 0, bufItem->lengthB,
-                                                reverb);
+            cmd = AudioSynth_SaveRingBufferPart(cmd, DMEM_WET_LEFT_CH + bufItem->lengthA, 0, bufItem->lengthB, reverb);
         }
     } else {
         // Downsampling is done later by CPU when RSP is done, therefore we need to have
@@ -911,7 +910,7 @@ Acmd* AudioSynth_LoadWaveSamples(Acmd* cmd, NoteSubEu* noteSubEu, NoteSynthesisS
     // If the harmonic changes, map the offset in the wave from one harmonic to another for continuity
     if (harmonicIndexCurAndPrev != 0) {
         samplePosInt = samplePosInt * sNumSamplesPerWavePeriod[harmonicIndexCurAndPrev >> 2] /
-                        sNumSamplesPerWavePeriod[harmonicIndexCurAndPrev & 3];
+                       sNumSamplesPerWavePeriod[harmonicIndexCurAndPrev & 3];
     }
 
     // Offset in the WAVE_SAMPLE_COUNT samples of gWaveSamples to start processing the wave for continuity
@@ -927,7 +926,7 @@ Acmd* AudioSynth_LoadWaveSamples(Acmd* cmd, NoteSubEu* noteSubEu, NoteSynthesisS
         numDuplicates = ((numSamplesToLoad - numSamplesAvail + WAVE_SAMPLE_COUNT - 1) / WAVE_SAMPLE_COUNT);
         if (numDuplicates != 0) {
             aDuplicate(cmd++, numDuplicates, DMEM_UNCOMPRESSED_NOTE,
-                        DMEM_UNCOMPRESSED_NOTE + (WAVE_SAMPLE_COUNT * SAMPLE_SIZE));
+                       DMEM_UNCOMPRESSED_NOTE + (WAVE_SAMPLE_COUNT * SAMPLE_SIZE));
         }
     }
     synthState->samplePosInt = samplePosInt;

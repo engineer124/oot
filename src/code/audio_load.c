@@ -200,10 +200,8 @@ void AudioLoad_InitSampleDmaBuffers(s32 numNotes) {
     s32 j;
 
     gAudioContext.sampleDmaBufSize = gAudioContext.sampleDmaBufSize1;
-    gAudioContext.sampleDmas =
-        AudioHeap_Alloc(&gAudioContext.miscPool,
-                        4 * gAudioContext.numNotes * sizeof(SampleDma));
-    t2 = 3 * gAudioContext.numNotes ;
+    gAudioContext.sampleDmas = AudioHeap_Alloc(&gAudioContext.miscPool, 4 * gAudioContext.numNotes * sizeof(SampleDma));
+    t2 = 3 * gAudioContext.numNotes;
     for (i = 0; i < t2; i++) {
         dma = &gAudioContext.sampleDmas[gAudioContext.sampleDmaCount];
         dma->ramAddr = AudioHeap_AllocAttemptExternal(&gAudioContext.miscPool, gAudioContext.sampleDmaBufSize);
@@ -638,7 +636,7 @@ void* AudioLoad_SyncLoad(u32 tableType, u32 id, s32* didAllocate) {
         }
 
         *didAllocate = true;
-         AudioLoad_SyncDma(romAddr, ramAddr, size, medium);
+        AudioLoad_SyncDma(romAddr, ramAddr, size, medium);
 
         loadStatus = (cachePolicy == 0) ? LOAD_STATUS_PERMANENTLY_LOADED : LOAD_STATUS_COMPLETE;
     }
@@ -978,7 +976,7 @@ void* AudioLoad_AsyncLoadInner(s32 tableType, s32 id, s32 nChunks, s32 retData, 
         }
 
         AudioLoad_StartAsyncLoad(devAddr, ramAddr, size, medium, nChunks, retQueue,
-                                    MK_ASYNC_MSG(retData, tableType, realId, loadStatus));
+                                 MK_ASYNC_MSG(retData, tableType, realId, loadStatus));
         loadStatus = LOAD_STATUS_IN_PROGRESS;
     }
 
@@ -1233,7 +1231,7 @@ void AudioLoad_ProcessSlowLoads(s32 resetStatus) {
                     slowLoad->state = SLOW_LOAD_STATE_DONE;
                     *slowLoad->status = 1;
                 } else if (slowLoad->bytesRemaining < 0x400) {
-                     AudioLoad_DmaSlowCopy(slowLoad, slowLoad->bytesRemaining);
+                    AudioLoad_DmaSlowCopy(slowLoad, slowLoad->bytesRemaining);
                     slowLoad->bytesRemaining = 0;
                 } else {
                     AudioLoad_DmaSlowCopy(slowLoad, 0x400);
@@ -1500,7 +1498,6 @@ void AudioLoad_RelocateFontAndPreloadSamples(s32 fontId, SoundFontData* fontData
     D_8016B780 = 0;
 
     AudioLoad_RelocateFont(fontId, fontData, sampleBankReloc);
-
 }
 
 s32 AudioLoad_AddToSampleSet(Sample* sample, s32 numSamples, Sample** sampleSet) {
