@@ -168,7 +168,6 @@ typedef struct {
 typedef struct {
     /* 0x00 */ u32 codec : 4; // The state of compression or decompression
     /* 0x00 */ u32 medium : 2; // Medium where sample is currently stored
-    /* 0x00 */ u32 unk_bit26 : 1;
     /* 0x00 */ u32 isRelocated : 1; // Has the sample header been relocated (offsets to pointers)
     /* 0x01 */ u32 size : 24; // Size of the sample
     /* 0x04 */ u8* sampleAddr; // Raw sample data. Offset from the start of the sample bank or absolute address to either rom or ram
@@ -220,15 +219,11 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ s16 numSamplesAfterDownsampling; // never read
-    /* 0x02 */ s16 chunkLen; // never read
     /* 0x04 */ s16* toDownsampleLeft;
     /* 0x08 */ s16* toDownsampleRight; // data pointed to by left and right are adjacent in memory
     /* 0x0C */ s32 startPos; // start pos in ring buffer
     /* 0x10 */ s16 lengthA; // first length in ring buffer (from startPos, at most until end)
     /* 0x12 */ s16 lengthB; // second length in ring buffer (from pos 0)
-    /* 0x14 */ u16 unk_14;
-    /* 0x16 */ u16 unk_16;
-    /* 0x18 */ u16 unk_18;
 } ReverbRingBufferItem; // size = 0x1C
 
 typedef struct {
@@ -237,31 +232,19 @@ typedef struct {
     /* 0x002 */ u8 framesToIgnore;
     /* 0x003 */ u8 curFrame;
     /* 0x004 */ u8 downsampleRate;
-    /* 0x005 */ s8 unk_05;
     /* 0x006 */ u16 windowSize;
-    /* 0x008 */ s16 unk_08;
     /* 0x00A */ s16 volume;
     /* 0x00C */ u16 decayRatio; // determines how much reverb persists
     /* 0x00E */ u16 unk_0E;
     /* 0x010 */ s16 leakRtl;
     /* 0x012 */ s16 leakLtr;
-    /* 0x014 */ u16 unk_14;
-    /* 0x016 */ s16 unk_16;
-    /* 0x018 */ u8 unk_18;
-    /* 0x019 */ u8 unk_19;
-    /* 0x01A */ u8 unk_1A;
-    /* 0x01B */ u8 unk_1B;
     /* 0x01C */ s32 nextRingBufPos;
-    /* 0x020 */ s32 unk_20;
     /* 0x024 */ s32 bufSizePerChan;
     /* 0x028 */ s16* leftRingBuf;
     /* 0x02C */ s16* rightRingBuf;
     /* 0x030 */ void* unk_30;
     /* 0x034 */ void* unk_34;
-    /* 0x038 */ void* unk_38;
-    /* 0x03C */ void* unk_3C;
     /* 0x040 */ ReverbRingBufferItem items[2][5];
-    /* 0x158 */ ReverbRingBufferItem items2[2][5];
     /* 0x270 */ s16* filterLeft;
     /* 0x274 */ s16* filterRight;
     /* 0x278 */ s16* filterLeftState;
@@ -294,7 +277,6 @@ typedef struct {
     /* 0x003 */ u8 muteBehavior;
     /* 0x004 */ u8 seqId;
     /* 0x005 */ u8 defaultFont;
-    /* 0x006 */ u8 unk_06[1];
     /* 0x007 */ s8 playerIdx;
     /* 0x008 */ u16 tempo; // tatums per minute
     /* 0x00A */ u16 tempoAcc;
@@ -318,7 +300,6 @@ typedef struct {
     /* 0x09C */ NotePool notePool;
     /* 0x0DC */ s32 skipTicks;
     /* 0x0E0 */ u32 scriptCounter;
-    /* 0x0E4 */ char unk_E4[0x74]; // unused struct members for sequence/sound font dma management, according to sm64 decomp
     /* 0x158 */ s8 soundScriptIO[8];
 } SequencePlayer; // size = 0x160
 
@@ -428,8 +409,6 @@ typedef struct SequenceChannel {
     /* 0x34 */ f32 appliedVolume;
     /* 0x38 */ f32 freqScale;
     /* 0x3C */ u8 (*dynTable)[][2];
-    /* 0x40 */ struct Note* noteUnused;
-    /* 0x44 */ struct SequenceLayer* layerUnused;
     /* 0x48 */ Instrument* instrument;
     /* 0x4C */ SequencePlayer* seqPlayer;
     /* 0x50 */ struct SequenceLayer* layers[4];
@@ -576,14 +555,12 @@ typedef struct {
                  s16* waveSampleAddr; // used for synthetic waves
              };
     /* 0x14 */ s16* filter;
-    /* 0x18 */ char pad_18[0x8];
 } NoteSubEu; // size = 0x20
 
 typedef struct Note {
     /* 0x00 */ AudioListItem listItem;
     /* 0x10 */ NoteSynthesisState synthesisState;
     /* 0x30 */ NotePlaybackState playbackState;
-    /* 0xB8 */ char unk_B8[0x4];
     /* 0xBC */ u32 startSamplePos; // initial position/index to start processing s16 samples
     /* 0xC0 */ NoteSubEu noteSubEu;
 } Note; // size = 0xE0
@@ -679,7 +656,6 @@ typedef struct {
     /* 0x00 */ s8 inUse;
     /* 0x01 */ s8 origMedium;
     /* 0x02 */ s8 sampleBankId;
-    /* 0x03 */ char unk_03[0x5];
     /* 0x08 */ u8* allocatedAddr;
     /* 0x0C */ void* sampleAddr;
     /* 0x10 */ u32 size;
@@ -709,8 +685,7 @@ typedef struct {
 typedef struct {
     /* 0x000*/ AudioPersistentCache persistent;
     /* 0x0D4*/ AudioTemporaryCache temporary;
-    /* 0x100*/ u8 unk_100[0x10];
-} AudioCache; // size = 0x110
+} AudioCache; // size = 0x100
 
 typedef struct {
     /* 0x0 */ u32 persistentCommonPoolSize;
@@ -809,7 +784,6 @@ typedef struct {
     /* 0x00 */ OSTask task;
     /* 0x40 */ OSMesgQueue* msgQueue;
     /* 0x44 */ void* unk_44; // probably a message that gets unused.
-    /* 0x48 */ char unk_48[0x8];
 } AudioTask; // size = 0x50
 
 typedef struct {
@@ -817,7 +791,6 @@ typedef struct {
     /* 0x04 */ u32 devAddr;
     /* 0x08 */ u16 sizeUnused;
     /* 0x0A */ u16 size;
-    /* 0x0C */ u8 unused;
     /* 0x0D */ u8 reuseIndex; // position in sSampleDmaReuseQueue1/2, if ttl == 0
     /* 0x0E */ u8 ttl;        // duration after which the DMA can be discarded
 } SampleDma; // size = 0x10

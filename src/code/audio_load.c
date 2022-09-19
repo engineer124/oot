@@ -185,7 +185,6 @@ void* AudioLoad_DmaSampleData(u32 devAddr, u32 size, s32 arg2, u8* dmaIndexRef, 
     dmaDevAddr = devAddr & ~0xF;
     dma->ttl = 3;
     dma->devAddr = dmaDevAddr;
-    dma->sizeUnused = transfer;
     AudioLoad_Dma(&gAudioContext.currAudioFrameDmaIoMsgBuf[gAudioContext.curAudioFrameDmaCount++], OS_MESG_PRI_NORMAL,
                   OS_READ, dmaDevAddr, dma->ramAddr, transfer, &gAudioContext.currAudioFrameDmaQueue, medium,
                   "SUPERDMA");
@@ -211,8 +210,6 @@ void AudioLoad_InitSampleDmaBuffers(s32 numNotes) {
             AudioHeap_WritebackDCache(dma->ramAddr, gAudioContext.sampleDmaBufSize);
             dma->size = gAudioContext.sampleDmaBufSize;
             dma->devAddr = 0;
-            dma->sizeUnused = 0;
-            dma->unused = 0;
             dma->ttl = 0;
             gAudioContext.sampleDmaCount++;
         }
@@ -241,8 +238,6 @@ void AudioLoad_InitSampleDmaBuffers(s32 numNotes) {
             AudioHeap_WritebackDCache(dma->ramAddr, gAudioContext.sampleDmaBufSize);
             dma->size = gAudioContext.sampleDmaBufSize;
             dma->devAddr = 0U;
-            dma->sizeUnused = 0;
-            dma->unused = 0;
             dma->ttl = 0;
             gAudioContext.sampleDmaCount++;
         }

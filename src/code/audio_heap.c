@@ -868,20 +868,14 @@ void AudioHeap_Init(void) {
         reverb->windowSize /= reverb->downsampleRate;
         reverb->decayRatio = settings->decayRatio;
         reverb->volume = settings->volume;
-        reverb->unk_14 = settings->unk_6 * 64;
-        reverb->unk_16 = settings->unk_8;
-        reverb->unk_18 = 0;
         reverb->leakRtl = settings->leakRtl;
         reverb->leakLtr = settings->leakLtr;
-        reverb->unk_05 = settings->unk_10;
-        reverb->unk_08 = settings->unk_12;
         reverb->useReverb = 8;
         reverb->leftRingBuf =
             AudioHeap_AllocZeroedAttemptExternal(&gAudioContext.miscPool, reverb->windowSize * SAMPLE_SIZE);
         reverb->rightRingBuf =
             AudioHeap_AllocZeroedAttemptExternal(&gAudioContext.miscPool, reverb->windowSize * SAMPLE_SIZE);
         reverb->nextRingBufPos = 0;
-        reverb->unk_20 = 0;
         reverb->curFrame = 0;
         reverb->bufSizePerChan = reverb->windowSize;
         reverb->framesToIgnore = 2;
@@ -901,8 +895,6 @@ void AudioHeap_Init(void) {
             reverb->unk_0E = 0x8000 / reverb->downsampleRate;
             reverb->unk_30 = AudioHeap_AllocZeroed(&gAudioContext.miscPool, sizeof(RESAMPLE_STATE));
             reverb->unk_34 = AudioHeap_AllocZeroed(&gAudioContext.miscPool, sizeof(RESAMPLE_STATE));
-            reverb->unk_38 = AudioHeap_AllocZeroed(&gAudioContext.miscPool, sizeof(RESAMPLE_STATE));
-            reverb->unk_3C = AudioHeap_AllocZeroed(&gAudioContext.miscPool, sizeof(RESAMPLE_STATE));
             for (j = 0; j < gAudioContext.audioBufferParameters.updatesPerFrame; j++) {
                 ramAddr = AudioHeap_AllocZeroedAttemptExternal(&gAudioContext.miscPool, DMEM_2CH_SIZE);
                 reverb->items[0][j].toDownsampleLeft = ramAddr;

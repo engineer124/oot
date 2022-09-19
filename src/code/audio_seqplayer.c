@@ -272,7 +272,6 @@ void AudioSeq_InitSequenceChannel(SequenceChannel* channel) {
     channel->panChannelWeight = 0x80;
     channel->velocityRandomVariance = 0;
     channel->gateTimeRandomVariance = 0;
-    channel->noteUnused = NULL;
     channel->reverbIndex = 0;
     channel->reverb = 0;
     channel->gain = 0;
@@ -300,7 +299,6 @@ void AudioSeq_InitSequenceChannel(SequenceChannel* channel) {
         channel->soundScriptIO[i] = -1;
     }
 
-    channel->unused = false;
     Audio_InitNoteLists(&channel->notePool);
 }
 

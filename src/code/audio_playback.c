@@ -768,8 +768,6 @@ void Audio_NoteInitForLayer(Note* note, SequenceLayer* layer) {
     layer->notePropertiesNeedInit = true;
     layer->bit3 = true;
     layer->note = note;
-    layer->channel->noteUnused = note;
-    layer->channel->layerUnused = layer;
     layer->noteVelocity = 0.0f;
     Audio_NoteInit(note);
     instId = layer->instOrWave;

@@ -100,7 +100,6 @@ void AudioSynth_InitNextRingBuf(s32 chunkLen, s32 updateIndex, s32 reverbIndex) 
     }
 
     bufItem->numSamplesAfterDownsampling = numSamples;
-    bufItem->chunkLen = chunkLen;
 }
 
 void func_800DB03C(s32 updateIndex) {
@@ -488,7 +487,6 @@ Acmd* AudioSynth_ProcessNote(s32 noteIndex, NoteSubEu* noteSubEu, NoteSynthesisS
     s32 finished;
     s32 aligned;
     s16 addr;
-    u16 unused;
 
     finished = noteSubEu->bitField0.finished;
     note = &gAudioContext.notes[noteIndex];
