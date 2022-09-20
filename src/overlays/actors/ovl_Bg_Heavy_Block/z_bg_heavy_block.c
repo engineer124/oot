@@ -188,7 +188,7 @@ void BgHeavyBlock_MovePiece(BgHeavyBlock* this, PlayState* play) {
             thisx->velocity.x = Rand_CenteredFloat(8.0f);
             thisx->velocity.z = Rand_CenteredFloat(8.0f);
             BgHeavyBlock_SetPieceRandRot(this, 1.0f);
-            Audio_PlayActorSfx2(thisx, NA_SE_EV_ROCK_BROKEN);
+            Actor_PlaySfx(thisx, NA_SE_EV_ROCK_BROKEN);
             func_800AA000(thisx->xzDistToPlayer, 0x96, 0xA, 8);
         }
     }
@@ -349,7 +349,7 @@ void BgHeavyBlock_LiftedUp(BgHeavyBlock* this, PlayState* play) {
 
     if (this->timer == 11) {
         func_800AA000(0.0f, 0xFF, 0x14, 0x14);
-        func_8002F7DC(&player->actor, NA_SE_PL_PULL_UP_BIGROCK);
+        Player_PlaySfx(&player->actor, NA_SE_PL_PULL_UP_BIGROCK);
         LOG_STRING("NA_SE_PL_PULL_UP_BIGROCK", "../z_bg_heavy_block.c", 691);
     }
 
@@ -370,7 +370,7 @@ void BgHeavyBlock_LiftedUp(BgHeavyBlock* this, PlayState* play) {
 
     // if parent is NULL, link threw it
     if (Actor_HasNoParent(&this->dyna.actor, play)) {
-        Audio_PlayActorSfx2(&this->dyna.actor, NA_SE_EV_HEAVY_THROW);
+        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_HEAVY_THROW);
         this->actionFunc = BgHeavyBlock_Fly;
     }
 }
@@ -411,7 +411,7 @@ void BgHeavyBlock_Fly(BgHeavyBlock* this, PlayState* play) {
                 SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 30, NA_SE_EV_ELECTRIC_EXPLOSION);
                 return;
             case HEAVYBLOCK_UNBREAKABLE_OUTSIDE_CASTLE:
-                Audio_PlayActorSfx2(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
+                Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_STONE_BOUND);
 
                 quakeIndex = Quake_Add(GET_ACTIVE_CAM(play), 3);
                 Quake_SetSpeed(quakeIndex, 28000);
@@ -422,7 +422,7 @@ void BgHeavyBlock_Fly(BgHeavyBlock* this, PlayState* play) {
                 Flags_SetSwitch(play, (this->dyna.actor.params >> 8) & 0x3F);
                 break;
             case HEAVYBLOCK_UNBREAKABLE:
-                Audio_PlayActorSfx2(&this->dyna.actor, NA_SE_EV_BUYOSTAND_STOP_U);
+                Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BUYOSTAND_STOP_U);
 
                 quakeIndex = Quake_Add(GET_ACTIVE_CAM(play), 3);
                 Quake_SetSpeed(quakeIndex, 28000);

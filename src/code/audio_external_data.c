@@ -27,7 +27,7 @@ u8 gSfxBankSizes[ARRAY_COUNT(gSfxBanks)] = {
 
 u8 gSfxChannelLayout = 0;
 
-u16 D_801333D0 = 0;
+u16 gSfxChannelLowVolumeFlag = 0;
 
 // The center of the screen in projected coordinates.
 // Gives the impression that the sfx has no specific location
@@ -66,4 +66,4 @@ u8 gSoundModeList[] = {
 
 u8 gAudioSpecId = 0;
 
-u8 D_80133418 = 0;
+u8 gAudioHeapResetState = 0;

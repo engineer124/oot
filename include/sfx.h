@@ -16,8 +16,8 @@ typedef enum {
     /* 1 */ SFX_STATE_QUEUED,
     /* 2 */ SFX_STATE_READY,
     /* 3 */ SFX_STATE_PLAYING_REFRESH,
-    /* 4 */ SFX_STATE_PLAYING_1,
-    /* 5 */ SFX_STATE_PLAYING_2
+    /* 4 */ SFX_STATE_PLAYING,
+    /* 5 */ SFX_STATE_PLAYING_ONE_FRAME
 } SfxState;
 
 typedef struct {
@@ -37,7 +37,7 @@ typedef struct {
     /* 0x2B */ u8       freshness;
     /* 0x2C */ u8       prev;
     /* 0x2D */ u8       next;
-    /* 0x2E */ u8       channelIdx;
+    /* 0x2E */ u8       channelIndex;
     /* 0x2F */ u8       unk_2F;
 } SfxBankEntry; // size = 0x30
 
@@ -93,25 +93,25 @@ typedef struct {
 
 // SfxParams bit-packing
 
-#define SFX_PARAM_01_SHIFT 0
-#define SFX_PARAM_01_MASK (3 << SFX_PARAM_01_SHIFT)
+#define SFX_PARAM_DIST_RANGE_SHIFT 0
+#define SFX_PARAM_DIST_RANGE_MASK (3 << SFX_PARAM_DIST_RANGE_SHIFT)
 
 #define SFX_FLAG_2 (1 << 2)
-#define SFX_FLAG_3 (1 << 3)
+#define SFX_FLAG_LOWER_VOLUME_BGM (1 << 3)
 #define SFX_FLAG_4 (1 << 4)
 #define SFX_FLAG_5 (1 << 5)
 
-#define SFX_PARAM_67_SHIFT 6
-#define SFX_PARAM_67_MASK (3 << SFX_PARAM_67_SHIFT)
+#define SFX_PARAM_RAND_FREQ_RAISE_SHIFT 6
+#define SFX_PARAM_RAND_FREQ_RAISE_MASK (3 << SFX_PARAM_RAND_FREQ_RAISE_SHIFT)
 
-#define SFX_FLAG_9 (1 << 9)
+#define SFX_FLAG_SURROUND_LOWPASS_FILTER (1 << 9)
 #define SFX_FLAG_10_SHIFT 10
 #define SFX_FLAG_10 (1 << SFX_FLAG_10_SHIFT)
-#define SFX_FLAG_11 (1 << 11)
-#define SFX_FLAG_12 (1 << 12)
-#define SFX_FLAG_13 (1 << 13)
-#define SFX_FLAG_14 (1 << 14)
-#define SFX_FLAG_15 (1 << 15)
+#define SFX_PARAM_RAND_FREQ_SCALE (1 << 11)
+#define SFX_FLAG_REVERB_NO_DIST (1 << 12)
+#define SFX_FLAG_VOLUME_NO_DIST (1 << 13)
+#define SFX_PARAM_RAND_FREQ_LOWER (1 << 14)
+#define SFX_FLAG_FREQ_NO_DIST (1 << 15)
 
 typedef struct {
     u8 importance;

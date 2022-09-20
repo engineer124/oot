@@ -8,6 +8,6 @@ void AudioMgr_StopAllSfx(void) {
     u8* bankIdPtr;
 
     for (bankIdPtr = &sSfxBankIds[0]; bankIdPtr < (sSfxBankIds + ARRAY_COUNT(sSfxBankIds)); bankIdPtr++) {
-        Audio_StopSfxByBank(*bankIdPtr);
+        AudioSfx_StopByBank(*bankIdPtr);
     }
 }

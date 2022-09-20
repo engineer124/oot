@@ -235,7 +235,7 @@ void EnBomChu_WaitForRelease(EnBomChu* this, PlayState* play) {
         //! and will cause a crash inside this function.
         EnBomChu_UpdateFloorPoly(this, this->actor.floorPoly, play);
         this->actor.flags |= ACTOR_FLAG_0; // make chu targetable
-        func_8002F850(play, &this->actor);
+        Actor_PlaySfx_Surface(play, &this->actor);
         this->actionFunc = EnBomChu_Move;
     }
 }

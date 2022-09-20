@@ -70,7 +70,7 @@ void BgHakaShip_Destroy(Actor* thisx, PlayState* play) {
     BgHakaShip* this = (BgHakaShip*)thisx;
 
     DynaPoly_DeleteBgActor(play, &play->colCtx.dyna, this->dyna.bgId);
-    Audio_StopSfxByPos(&this->bellSfxPos);
+    AudioSfx_StopByPos(&this->bellSfxPos);
 }
 
 void BgHakaShip_ChildUpdatePosition(BgHakaShip* this, PlayState* play) {
@@ -177,7 +177,7 @@ void BgHakaShip_CrashFall(BgHakaShip* this, PlayState* play) {
             Actor_Kill(child);
         }
     } else {
-        Audio_PlayActorSfx2(&this->dyna.actor, NA_SE_EV_BLOCKSINK - SFX_FLAG);
+        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BLOCKSINK - SFX_FLAG);
         if ((this->dyna.actor.home.pos.y - this->dyna.actor.world.pos.y > 500.0f) &&
             DynaPolyActor_IsPlayerOnTop(&this->dyna)) {
             Play_TriggerVoidOut(play);

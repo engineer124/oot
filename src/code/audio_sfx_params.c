@@ -1,9 +1,9 @@
 #include "ultra64.h"
 #include "global.h"
 
-#define DEFINE_SFX(_0, importance, distParam, randParam, flags)                \
-    { importance, ((((distParam) << SFX_PARAM_01_SHIFT) & SFX_PARAM_01_MASK) | \
-                   (((randParam) << SFX_PARAM_67_SHIFT) & SFX_PARAM_67_MASK) | (flags)) },
+#define DEFINE_SFX(_0, importance, distParam, randParam, flags)                                \
+    { importance, ((((distParam) << SFX_PARAM_DIST_RANGE_SHIFT) & SFX_PARAM_DIST_RANGE_MASK) | \
+                   (((randParam) << SFX_PARAM_RAND_FREQ_RAISE_SHIFT) & SFX_PARAM_RAND_FREQ_RAISE_MASK) | (flags)) },
 
 SfxParams sEnemyBankParams[] = {
 #include "tables/sfx/enemybank_table.h"

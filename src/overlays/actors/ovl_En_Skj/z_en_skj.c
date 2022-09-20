@@ -1432,7 +1432,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
                 if (sOcarinaMinigameSkullKids[SKULL_KID_LEFT].skullkid != NULL) {
                     sOcarinaMinigameSkullKids[SKULL_KID_LEFT].skullkid->minigameState = SKULL_KID_OCARINA_WAIT;
                 }
-                if (!Audio_IsSfxPlaying(NA_SE_SY_METRONOME)) {
+                if (!AudioSfx_IsPlaying(NA_SE_SY_METRONOME)) {
                     if (sOcarinaMinigameSkullKids[SKULL_KID_RIGHT].skullkid != NULL) {
                         sOcarinaMinigameSkullKids[SKULL_KID_RIGHT].skullkid->minigameState =
                             SKULL_KID_OCARINA_PLAY_NOTES;
@@ -1444,7 +1444,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
                 if (sOcarinaMinigameSkullKids[SKULL_KID_RIGHT].skullkid != NULL) {
                     sOcarinaMinigameSkullKids[SKULL_KID_RIGHT].skullkid->minigameState = SKULL_KID_OCARINA_WAIT;
                 }
-                if (!Audio_IsSfxPlaying(NA_SE_SY_METRONOME)) {
+                if (!AudioSfx_IsPlaying(NA_SE_SY_METRONOME)) {
                     Message_UpdateOcarinaMemoryGame(play);
                     this->songFailTimer = 160;
                 }
@@ -1463,7 +1463,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
                 }
                 break;
             case MSGMODE_MEMORY_GAME_START_NEXT_ROUND:
-                if (!Audio_IsSfxPlaying(NA_SE_SY_METRONOME)) {
+                if (!AudioSfx_IsPlaying(NA_SE_SY_METRONOME)) {
                     if (sOcarinaMinigameSkullKids[SKULL_KID_LEFT].skullkid != NULL) {
                         sOcarinaMinigameSkullKids[SKULL_KID_LEFT].skullkid->minigameState =
                             SKULL_KID_OCARINA_PLAY_NOTES;

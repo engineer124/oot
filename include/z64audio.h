@@ -7,16 +7,16 @@
 
 #define TATUMS_PER_BEAT 48
 
-#define IS_SEQUENCE_CHANNEL_VALID(ptr) ((u32)(ptr) != (u32)&gAudioContext.sequenceChannelNone)
+#define IS_SEQUENCE_CHANNEL_VALID(ptr) ((u32)(ptr) != (u32)&gAudioCtx.sequenceChannelNone)
 #define SEQ_NUM_CHANNELS 16
 
 #define MAX_CHANNELS_PER_BANK 3
 
-#define MUTE_BEHAVIOR_3 (1 << 3)           // prevent further noteSubEus from playing
-#define MUTE_BEHAVIOR_4 (1 << 4)           // stop something in seqLayer scripts
-#define MUTE_BEHAVIOR_SOFTEN (1 << 5)      // lower volume, by default to half
-#define MUTE_BEHAVIOR_STOP_NOTES (1 << 6)  // prevent further notes from playing
-#define MUTE_BEHAVIOR_STOP_SCRIPT (1 << 7) // stop processing sequence/channel scripts
+#define MUTE_FLAGS_3 (1 << 3)           // prevent further noteSubEus from playing
+#define MUTE_FLAGS_4 (1 << 4)           // stop something in seqLayer scripts
+#define MUTE_FLAGS_SOFTEN (1 << 5)      // lower volume, by default to half
+#define MUTE_FLAGS_STOP_NOTES (1 << 6)  // prevent further notes from playing
+#define MUTE_FLAGS_STOP_SCRIPT (1 << 7) // stop processing sequence/channel scripts
 
 #define ADSR_DISABLE 0
 #define ADSR_HANG -1
@@ -291,11 +291,11 @@ typedef struct {
     /* 0x000 */ u8 applyBend : 1;
     /* 0x001 */ u8 state;
     /* 0x002 */ u8 noteAllocPolicy;
-    /* 0x003 */ u8 muteBehavior;
+    /* 0x003 */ u8 muteFlags;
     /* 0x004 */ u8 seqId;
     /* 0x005 */ u8 defaultFont;
     /* 0x006 */ u8 unk_06[1];
-    /* 0x007 */ s8 playerIdx;
+    /* 0x007 */ s8 seqPlayerIndex;
     /* 0x008 */ u16 tempo; // tatums per minute
     /* 0x00A */ u16 tempoAcc;
     /* 0x00C */ u16 unk_0C;
@@ -339,7 +339,7 @@ typedef struct {
         } s;
         /* 0x00 */ u8 asByte;
     } action;
-    /* 0x01 */ u8 envIndex;
+    /* 0x01 */ u8 envelopeIndex;
     /* 0x02 */ s16 delay;
     /* 0x04 */ f32 sustain;
     /* 0x08 */ f32 velocity;
@@ -396,7 +396,7 @@ typedef struct SequenceChannel {
         /* 0x01 */ u8 asByte;
     } changes;
     /* 0x02 */ u8 noteAllocPolicy;
-    /* 0x03 */ u8 muteBehavior;
+    /* 0x03 */ u8 muteFlags;
     /* 0x04 */ u8 reverb;       // or dry/wet mix
     /* 0x05 */ u8 notePriority; // 0-3
     /* 0x06 */ u8 someOtherPriority;
@@ -928,7 +928,7 @@ typedef struct {
     /* 0x3468 */ u8 fontLoadStatus[0x30];
     /* 0x3498 */ u8 seqLoadStatus[0x80];
     /* 0x3518 */ volatile u8 resetStatus;
-    /* 0x3519 */ u8 audioResetSpecIdToLoad;
+    /* 0x3519 */ u8 specId;
     /* 0x351C */ s32 audioResetFadeOutFramesLeft;
     /* 0x3520 */ f32* adsrDecayTable; // A table on the audio heap that stores decay rates used for adsr
     /* 0x3524 */ u8* audioHeap;
@@ -940,8 +940,8 @@ typedef struct {
     /* 0x5B84 */ s32 noteSubEuOffset;
     /* 0x5B88 */ AudioListItem layerFreeList;
     /* 0x5B98 */ NotePool noteFreeLists;
-    /* 0x5BD8 */ u8 cmdWrPos;
-    /* 0x5BD9 */ u8 cmdRdPos;
+    /* 0x5BD8 */ u8 cmdWritePos;
+    /* 0x5BD9 */ u8 cmdReadPos;
     /* 0x5BDA */ u8 cmdQueueFinished;
     /* 0x5BDC */ u16 unk_5BDC[4];
     /* 0x5BE4 */ OSMesgQueue* audioResetQueueP;

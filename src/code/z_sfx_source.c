@@ -16,7 +16,7 @@ void SfxSource_UpdateAll(PlayState* play) {
     for (i = 0; i < ARRAY_COUNT(play->sfxSources); i++) {
         if (source->countdown != 0) {
             if (DECR(source->countdown) == 0) {
-                Audio_StopSfxByPos(&source->projectedPos);
+                AudioSfx_StopByPos(&source->projectedPos);
             } else {
                 SkinMatrix_Vec3fMtxFMultXYZ(&play->viewProjectionMtxF, &source->worldPos, &source->projectedPos);
             }
@@ -51,13 +51,13 @@ void SfxSource_PlaySfxAtFixedWorldPos(PlayState* play, Vec3f* worldPos, s32 dura
     // If no sfx source is available, replace the sfx source with the smallest remaining countdown
     if (i >= ARRAY_COUNT(play->sfxSources)) {
         source = backupSource;
-        Audio_StopSfxByPos(&source->projectedPos);
+        AudioSfx_StopByPos(&source->projectedPos);
     }
 
     source->worldPos = *worldPos;
     source->countdown = duration;
 
     SkinMatrix_Vec3fMtxFMultXYZ(&play->viewProjectionMtxF, &source->worldPos, &source->projectedPos);
-    Audio_PlaySfxGeneral(sfxId, &source->projectedPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultReverb);
+    AudioSfx_PlaySfx(sfxId, &source->projectedPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
+                     &gSfxDefaultReverb);
 }

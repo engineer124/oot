@@ -61,11 +61,11 @@ void EffectSs_ClearAll(PlayState* play) {
 
 void EffectSs_Delete(EffectSs* effectSs) {
     if (effectSs->flags & 2) {
-        Audio_StopSfxByPos(&effectSs->pos);
+        AudioSfx_StopByPos(&effectSs->pos);
     }
 
     if (effectSs->flags & 4) {
-        Audio_StopSfxByPos(&effectSs->vec);
+        AudioSfx_StopByPos(&effectSs->vec);
     }
 
     EffectSs_Reset(effectSs);
