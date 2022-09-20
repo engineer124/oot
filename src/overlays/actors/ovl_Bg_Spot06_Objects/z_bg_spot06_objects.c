@@ -255,7 +255,7 @@ void BgSpot06Objects_GateOpen(BgSpot06Objects* this, PlayState* play) {
         this->timer = 0;
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_STOP);
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_SLIDE - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_SLIDE - SFX_FLAG);
     }
 }
 
@@ -505,5 +505,5 @@ void BgSpot06Objects_WaterPlaneCutsceneRise(BgSpot06Objects* this, PlayState* pl
         play->colCtx.colHeader->waterBoxes[LHWB_MAIN_2].ySurface = this->dyna.actor.world.pos.y;
     }
 
-    func_8002F948(&this->dyna.actor, SFX_ID_ENVIRONMENT_WATER_LEVEL_DOWN - SFX_FLAG);
+    Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, SFX_ID_ENVIRONMENT_WATER_LEVEL_DOWN - SFX_FLAG);
 }

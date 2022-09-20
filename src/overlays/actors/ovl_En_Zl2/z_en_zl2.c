@@ -589,34 +589,34 @@ void func_80B4FD90(EnZl2* this, PlayState* play) {
 
 void func_80B4FDD4(EnZl2* this) {
     if (Animation_OnFrame(&this->skelAnime, 14.0f)) {
-        func_80078914(&this->actor.projectedPos, SFX_ID_PLAYER_WALK_CONCRETE);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_WALK_CONCRETE);
     }
 }
 
 void func_80B4FE10(PlayState* play) {
     if ((play->csCtx.frames >= 830) && (play->csCtx.frames < 1081)) {
-        func_800788CC(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
+        Lib_PlaySfx_Centered(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
     }
 }
 
 void func_80B4FE48(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_GOTO_HEAVEN - SFX_FLAG);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_GOTO_HEAVEN - SFX_FLAG);
 }
 
 void func_80B4FE6C(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, SFX_ID_ENEMY_GANON_LAUGH);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_ENEMY_GANON_LAUGH);
 }
 
 void func_80B4FE90(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_Z1_SURPRISE);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_SURPRISE);
 }
 
 void func_80B4FEB4(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
 }
 
 void func_80B4FED8(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_Z1_CRY_0);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_CRY_0);
 }
 
 void EnZl2_GiveLightArrows(EnZl2* this, PlayState* play) {
@@ -1438,7 +1438,7 @@ void func_80B51D24(EnZl2* this, PlayState* play) {
         if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
             sfxId = SFX_FLAG;
             sfxId += SurfaceType_GetSfxId(&play->colCtx, this->actor.floorPoly, this->actor.floorBgId);
-            func_80078914(&this->actor.projectedPos, sfxId);
+            Lib_PlaySfx_AtPos(&this->actor.projectedPos, sfxId);
         }
     }
 }

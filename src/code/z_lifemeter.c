@@ -508,7 +508,7 @@ void Health_UpdateBeatingHeart(PlayState* play) {
             interfaceCtx->beatingHeartOscillatorDirection = 0;
             if (!Player_InCsMode(play) && (play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0) &&
                 Health_IsCritical() && !Play_InCsMode(play)) {
-                func_80078884(SFX_ID_SYSTEM_HITPOINT_ALARM);
+                Lib_PlaySfx(SFX_ID_SYSTEM_HITPOINT_ALARM);
             }
         }
     } else {

@@ -89,7 +89,7 @@ void func_80893438(BgJyaAmishutter* this) {
         func_808934B0(this);
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_STOP);
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_SLIDE - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_SLIDE - SFX_FLAG);
     }
 }
 
@@ -112,7 +112,7 @@ void func_8089350C(BgJyaAmishutter* this) {
         BgJyaAmishutter_SetupWaitForPlayer(this);
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_STOP);
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_SLIDE - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_SLIDE - SFX_FLAG);
     }
 }
 

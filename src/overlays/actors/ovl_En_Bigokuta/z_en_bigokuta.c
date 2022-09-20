@@ -244,7 +244,7 @@ void func_809BCF68(EnBigokuta* this, PlayState* play) {
     }
     EffectSsGSplash_Spawn(play, &effectPos, NULL, NULL, 1, 800);
     if (this->actionFunc != func_809BE4A4) {
-        func_8002F974(&this->actor, SFX_ID_ENEMY_DAIOCTA_SPLASH - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_DAIOCTA_SPLASH - SFX_FLAG);
     }
 }
 

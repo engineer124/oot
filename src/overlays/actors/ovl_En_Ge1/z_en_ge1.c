@@ -244,7 +244,7 @@ void EnGe1_SpotPlayer(EnGe1* this, PlayState* play) {
     this->cutsceneTimer = 30;
     this->actionFunc = EnGe1_KickPlayer;
     func_8002DF54(play, &this->actor, 0x5F);
-    func_80078884(SFX_ID_SYSTEM_FOUND);
+    Lib_PlaySfx(SFX_ID_SYSTEM_FOUND);
     Message_StartTextbox(play, 0x6000, &this->actor);
 }
 

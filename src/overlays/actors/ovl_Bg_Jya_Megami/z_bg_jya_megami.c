@@ -190,7 +190,7 @@ void BgJyaMegami_DetectLight(BgJyaMegami* this, PlayState* play) {
         if (play->gameplayFrames % 4 == 0) {
             BgJyaMegami_SetupSpawnEffect(this, play, (this->crumbleIndex * 0.04f) + 0.05f);
         }
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_FACE_CRUMBLE_SLOW - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_FACE_CRUMBLE_SLOW - SFX_FLAG);
     } else if (this->lightTimer > 0) {
         this->lightTimer--;
     }
@@ -278,7 +278,7 @@ void BgJyaMegami_Explode(BgJyaMegami* this, PlayState* play) {
         func_80033480(play, &sp8C, 100.0f, 1, 150, 100, 1);
     }
     if (this->explosionTimer == 60) {
-        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
     }
     if (this->explosionTimer >= 100) {
         Actor_Kill(&this->dyna.actor);

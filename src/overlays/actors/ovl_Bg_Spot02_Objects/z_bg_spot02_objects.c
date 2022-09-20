@@ -178,7 +178,7 @@ void func_808ACB58(BgSpot02Objects* this, PlayState* play) {
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_STONEDOOR_STOP);
         this->actionFunc = func_808AC8FC;
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_WALL_MOVE_SP - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_WALL_MOVE_SP - SFX_FLAG);
     }
 }
 
@@ -208,7 +208,7 @@ void func_808ACC34(BgSpot02Objects* this, PlayState* play) {
     }
 
     if (play->csCtx.frames == 245 || play->csCtx.frames == 351) {
-        func_800788CC(SFX_ID_ENVIRONMENT_LIGHTNING);
+        Lib_PlaySfx_Centered(SFX_ID_ENVIRONMENT_LIGHTNING);
     }
 }
 

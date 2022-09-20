@@ -210,7 +210,7 @@ void EnHintnuts_SetupFreeze(EnHintnuts* this) {
     this->animFlagAndTimer = 0;
     Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_NUTS_FAINT);
     if (sPuzzleCounter == -3) {
-        func_80078884(SFX_ID_SYSTEM_ERROR);
+        Lib_PlaySfx(SFX_ID_SYSTEM_ERROR);
         sPuzzleCounter = -4;
     }
     this->actionFunc = EnHintnuts_Freeze;

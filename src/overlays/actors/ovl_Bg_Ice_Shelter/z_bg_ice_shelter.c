@@ -370,7 +370,7 @@ void func_808911D4(BgIceShelter* this, PlayState* play) {
         }
 
         if (type == 4) {
-            func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+            Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
         }
 
         Actor_Kill(&this->dyna.actor);

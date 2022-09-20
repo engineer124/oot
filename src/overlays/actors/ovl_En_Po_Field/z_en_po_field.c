@@ -324,7 +324,7 @@ void func_80AD42B0(EnPoField* this) {
     this->actor.scale.y = 0.0f;
     Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_METAL_BOX_BOUND);
     if (this->actor.params == EN_PO_FIELD_BIG) {
-        func_80078884(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+        Lib_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
     }
     this->actionFunc = func_80AD587C;
 }
@@ -494,7 +494,7 @@ void EnPoField_CirclePlayer(EnPoField* this, PlayState* play) {
         EnPoField_SpawnFlame(this);
     }
     EnPoField_CorrectYPos(this, play);
-    func_8002F974(&this->actor, SFX_ID_ENEMY_PO_FLY - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_PO_FLY - SFX_FLAG);
 }
 
 void EnPoField_Flee(EnPoField* this, PlayState* play) {
@@ -522,7 +522,7 @@ void EnPoField_Flee(EnPoField* this, PlayState* play) {
     } else {
         EnPoField_CorrectYPos(this, play);
     }
-    func_8002F974(&this->actor, SFX_ID_ENEMY_PO_AWAY - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_PO_AWAY - SFX_FLAG);
 }
 
 void EnPoField_Damage(EnPoField* this, PlayState* play) {
@@ -689,7 +689,7 @@ void EnPoField_SoulInteract(EnPoField* this, PlayState* play) {
     if (this->actor.textId != 0x5005) {
         EnPoField_SoulUpdateProperties(this, -13);
     } else {
-        func_8002F974(&this->actor, SFX_ID_ENEMY_PO_BIG_CRY - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_PO_BIG_CRY - SFX_FLAG);
     }
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_CHOICE) {
         if (Message_ShouldAdvance(play)) {

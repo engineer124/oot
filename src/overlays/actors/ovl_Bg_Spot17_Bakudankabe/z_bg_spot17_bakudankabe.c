@@ -117,7 +117,7 @@ void BgSpot17Bakudankabe_Update(Actor* thisx, PlayState* play) {
         func_808B6BC0(this, play);
         Flags_SetSwitch(play, (this->dyna.actor.params & 0x3F));
         SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 40, SFX_ID_ENVIRONMENT_WALL_BROKEN);
-        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
         Actor_Kill(&this->dyna.actor);
     }
 }

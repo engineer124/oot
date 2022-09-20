@@ -157,7 +157,7 @@ void func_8088B268(BgHidanRock* this, PlayState* play) {
                 this->timer = 5;
             }
 
-            func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
+            Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
         } else {
             player->stateFlags2 &= ~PLAYER_STATE2_4;
             this->dyna.unk_150 = 0.0f;
@@ -393,7 +393,7 @@ void BgHidanRock_Draw(Actor* thisx, PlayState* play) {
             SkinMatrix_Vec3fMtxFMultXYZ(&play->viewProjectionMtxF, &this->dyna.actor.home.pos, &this->unk_170);
         }
 
-        func_80078914(&this->unk_170, SFX_ID_ENVIRONMENT_FIRE_PILLAR - SFX_FLAG);
+        Lib_PlaySfx_AtPos(&this->unk_170, SFX_ID_ENVIRONMENT_FIRE_PILLAR - SFX_FLAG);
         func_8088BC40(play, this);
     }
 }

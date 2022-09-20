@@ -507,7 +507,7 @@ void func_80896ABC(BgJyaCobra* this, PlayState* play) {
     }
 
     this->dyna.unk_150 = 0.0f;
-    func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
 }
 
 void BgJyaCobra_Update(Actor* thisx, PlayState* play2) {

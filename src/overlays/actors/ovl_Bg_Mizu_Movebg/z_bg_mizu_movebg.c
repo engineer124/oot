@@ -270,9 +270,9 @@ void func_8089E318(BgMizuMovebg* this, PlayState* play) {
                 }
                 if (this->sfxFlags & 2) {
                     if (this->dyna.actor.room == 0) {
-                        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE - SFX_FLAG);
+                        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE - SFX_FLAG);
                     } else {
-                        func_8002F948(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE - SFX_FLAG);
+                        Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE - SFX_FLAG);
                     }
                 }
             }
@@ -291,7 +291,7 @@ void func_8089E318(BgMizuMovebg* this, PlayState* play) {
                     this->sfxFlags |= 2;
                 }
                 if (this->sfxFlags & 2) {
-                    func_8002F948(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE - SFX_FLAG);
+                    Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE - SFX_FLAG);
                 }
             }
             break;
@@ -345,7 +345,7 @@ void func_8089E650(BgMizuMovebg* this, PlayState* play) {
         this->sfxFlags |= 1;
     }
     if (this->sfxFlags & 1) {
-        func_8002F948(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROLL_STAND_2 - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROLL_STAND_2 - SFX_FLAG);
     }
 }
 

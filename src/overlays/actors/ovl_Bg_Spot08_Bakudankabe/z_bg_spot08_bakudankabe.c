@@ -186,7 +186,7 @@ void BgSpot08Bakudankabe_Update(Actor* thisx, PlayState* play) {
         func_808B0324(this, play);
         Flags_SetSwitch(play, (this->dyna.actor.params & 0x3F));
         SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 40, SFX_ID_ENVIRONMENT_WALL_BROKEN);
-        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
         Actor_Kill(&this->dyna.actor);
     } else if (this->dyna.actor.xzDistToPlayer < 800.0f) {
         CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);

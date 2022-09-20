@@ -216,7 +216,7 @@ void func_8086C1A0(BgBdanObjects* this, PlayState* play) {
             func_800AA000(0.0f, 0x78, 0x14, 0xA);
             this->timer = 11;
         }
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_BUYOSTAND_RISING - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_BUYOSTAND_RISING - SFX_FLAG);
     }
 }
 
@@ -263,7 +263,7 @@ void func_8086C3D8(BgBdanObjects* this, PlayState* play) {
         player->actor.world.rot.y = player->actor.shape.rot.y;
         func_800AA000(0.0f, 0xFF, 0x1E, 0x96);
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_BUYOSTAND_FALL - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_BUYOSTAND_FALL - SFX_FLAG);
         if (this->timer != 0) {
             this->timer--;
         }
@@ -339,7 +339,7 @@ void func_8086C7D0(BgBdanObjects* this, PlayState* play) {
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BUYOSTAND_STOP_A);
         this->actionFunc = BgBdanObjects_DoNothing;
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_BUYOSTAND_RISING - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_BUYOSTAND_RISING - SFX_FLAG);
     }
 }
 
@@ -390,12 +390,12 @@ void func_8086C9F0(BgBdanObjects* this, PlayState* play) {
             Flags_UnsetSwitch(play, this->switchFlag);
             this->actionFunc = func_8086C9A8;
         }
-        func_8002F948(&this->dyna.actor, SFX_ID_ENVIRONMENT_WATER_LEVEL_DOWN - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, SFX_ID_ENVIRONMENT_WATER_LEVEL_DOWN - SFX_FLAG);
     } else {
         if (Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y + 75.0f, 0.5f)) {
             this->actionFunc = func_8086CABC;
         }
-        func_8002F948(&this->dyna.actor, SFX_ID_ENVIRONMENT_WATER_LEVEL_DOWN - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, SFX_ID_ENVIRONMENT_WATER_LEVEL_DOWN - SFX_FLAG);
     }
     play->colCtx.colHeader->waterBoxes[7].ySurface = this->dyna.actor.world.pos.y;
 }
@@ -404,7 +404,7 @@ void func_8086CABC(BgBdanObjects* this, PlayState* play) {
     if (this->timer != 0) {
         this->timer--;
     }
-    func_8002F994(&this->dyna.actor, this->timer);
+    Actor_PlaySfx_FlaggedTimer(&this->dyna.actor, this->timer);
     if (this->timer == 0) {
         this->actionFunc = func_8086C9F0;
     }
@@ -433,7 +433,7 @@ void func_8086CB8C(BgBdanObjects* this, PlayState* play) {
         // Using `CAM_ID_NONE` here defaults to the active camera
         Play_CopyCamera(play, CAM_ID_MAIN, CAM_ID_NONE);
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_BUYOSTAND_FALL - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_BUYOSTAND_FALL - SFX_FLAG);
     }
 }
 

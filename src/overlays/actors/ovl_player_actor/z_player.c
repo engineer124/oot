@@ -2170,7 +2170,7 @@ s32 func_8083442C(Player* this, PlayState* play) {
 
     if ((this->heldItemActionParam >= PLAYER_AP_BOW_FIRE) && (this->heldItemActionParam <= PLAYER_AP_BOW_0E) &&
         (gSaveContext.magicState != MAGIC_STATE_IDLE)) {
-        func_80078884(SFX_ID_SYSTEM_ERROR);
+        Lib_PlaySfx(SFX_ID_SYSTEM_ERROR);
     } else {
         func_80833638(this, func_808351D4);
 
@@ -2874,7 +2874,7 @@ void func_80835F44(PlayState* play, Player* this, s32 item) {
                  (temp = Player_ActionToExplosive(this, actionParam),
                   ((temp >= 0) && ((AMMO(sExplosiveInfos[temp].itemId) == 0) ||
                                    (play->actorCtx.actorLists[ACTORCAT_EXPLOSIVE].length >= 3)))))) {
-                func_80078884(SFX_ID_SYSTEM_ERROR);
+                Lib_PlaySfx(SFX_ID_SYSTEM_ERROR);
             } else if (actionParam == PLAYER_AP_LENS) {
                 if (Magic_RequestChange(play, 0, MAGIC_CONSUME_LENS)) {
                     if (play->actorCtx.lensActive) {
@@ -2883,16 +2883,15 @@ void func_80835F44(PlayState* play, Player* this, s32 item) {
                         play->actorCtx.lensActive = true;
                     }
 
-                    func_80078884((play->actorCtx.lensActive) ? SFX_ID_SYSTEM_GLASSMODE_ON
-                                                              : SFX_ID_SYSTEM_GLASSMODE_OFF);
+                    Lib_PlaySfx((play->actorCtx.lensActive) ? SFX_ID_SYSTEM_GLASSMODE_ON : SFX_ID_SYSTEM_GLASSMODE_OFF);
                 } else {
-                    func_80078884(SFX_ID_SYSTEM_ERROR);
+                    Lib_PlaySfx(SFX_ID_SYSTEM_ERROR);
                 }
             } else if (actionParam == PLAYER_AP_NUT) {
                 if (AMMO(ITEM_NUT) != 0) {
                     func_8083C61C(play, this);
                 } else {
-                    func_80078884(SFX_ID_SYSTEM_ERROR);
+                    Lib_PlaySfx(SFX_ID_SYSTEM_ERROR);
                 }
             } else if ((temp = Player_ActionToMagicSpell(this, actionParam)) >= 0) {
                 if (((actionParam == PLAYER_AP_FARORES_WIND) && (gSaveContext.respawn[RESPAWN_MODE_TOP].data > 0)) ||
@@ -2901,7 +2900,7 @@ void func_80835F44(PlayState* play, Player* this, s32 item) {
                     this->itemActionParam = actionParam;
                     this->unk_6AD = 4;
                 } else {
-                    func_80078884(SFX_ID_SYSTEM_ERROR);
+                    Lib_PlaySfx(SFX_ID_SYSTEM_ERROR);
                 }
             } else if (actionParam >= PLAYER_AP_MASK_KEATON) {
                 if (this->currentMask != PLAYER_MASK_NONE) {
@@ -3805,7 +3804,7 @@ s32 func_808382DC(Player* this, PlayState* play) {
 
             func_80832698(this, SFX_ID_VOICE_LI_TAKEN_AWAY);
             play->unk_11DE9 = true;
-            func_80078884(SFX_ID_OCARINA_ABYSS);
+            Lib_PlaySfx(SFX_ID_OCARINA_ABYSS);
         } else if ((this->unk_8A1 != 0) && ((this->unk_8A1 >= 2) || (this->invincibilityTimer == 0))) {
             u8 sp5C[] = { 2, 1, 1 };
 
@@ -4065,7 +4064,7 @@ s32 func_80838FB8(PlayState* play, Player* this) {
         func_80838F5C(play, this);
         func_80832284(play, this, &gPlayerAnim_003040);
         func_80832698(this, SFX_ID_VOICE_LI_FALL_S);
-        func_800788CC(SFX_ID_OCARINA_SECRET_WARP_IN);
+        Lib_PlaySfx_Centered(SFX_ID_OCARINA_SECRET_WARP_IN);
         return 1;
     }
 
@@ -4184,7 +4183,7 @@ s32 func_80839034(PlayState* play, Player* this, CollisionPoly* poly, u32 bgId) 
                 ((sp34 < 100) || (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND))) {
 
                 if (temp == FLOOR_TYPE_11) {
-                    func_800788CC(SFX_ID_OCARINA_SECRET_HOLE_OUT);
+                    Lib_PlaySfx_Centered(SFX_ID_OCARINA_SECRET_HOLE_OUT);
                     Audio_MuteAllSeqExceptSysAndOca(5);
                     gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
                     gSaveContext.ambienceId = AMBIENCE_ID_DISABLED;
@@ -4236,7 +4235,7 @@ s32 func_80839034(PlayState* play, Player* this, CollisionPoly* poly, u32 bgId) 
                             Play_TriggerVoidOut(play);
                         }
                         play->transitionType = TRANS_TYPE_FADE_BLACK_FAST;
-                        func_80078884(SFX_ID_OCARINA_ABYSS);
+                        Lib_PlaySfx(SFX_ID_OCARINA_ABYSS);
                     } else {
                         func_80838F5C(play, this);
                         this->unk_850 = 9999;
@@ -5027,12 +5026,12 @@ s32 func_8083B040(Player* this, PlayState* play) {
                     func_8083B010(this);
                 }
                 this->stateFlags1 |= PLAYER_STATE1_20;
-                func_80078884(SFX_ID_SYSTEM_CAMERA_ZOOM_UP);
+                Lib_PlaySfx(SFX_ID_SYSTEM_CAMERA_ZOOM_UP);
                 func_80832210(this);
                 return 1;
             } else {
                 this->unk_6AD = 0;
-                func_80078884(SFX_ID_SYSTEM_ERROR);
+                Lib_PlaySfx(SFX_ID_SYSTEM_ERROR);
                 return 0;
             }
 
@@ -5147,7 +5146,7 @@ s32 func_8083B998(Player* this, PlayState* play) {
     } else if ((this->naviTextId == 0) && !func_8008E9C4(this) && CHECK_BTN_ALL(sControlInput->press.button, BTN_CUP) &&
                (R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT) &&
                (R_SCENE_CAM_TYPE != SCENE_CAM_TYPE_FIXED_TOGGLE_VIEWPOINT) && !func_8083B8F4(this, play)) {
-        func_80078884(SFX_ID_SYSTEM_ERROR);
+        Lib_PlaySfx(SFX_ID_SYSTEM_ERROR);
     }
 
     return 0;
@@ -5453,7 +5452,7 @@ s32 func_8083C6B8(PlayState* play, Player* this) {
 
             if (!(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) || (this->actor.world.pos.z > 1300.0f) ||
                 BgCheck_SphVsFirstPoly(&play->colCtx, &sp24, 20.0f)) {
-                func_80078884(SFX_ID_SYSTEM_ERROR);
+                Lib_PlaySfx(SFX_ID_SYSTEM_ERROR);
                 return 0;
             }
 
@@ -6098,7 +6097,7 @@ void func_8083E4C4(PlayState* play, Player* this, GetItemEntry* giEntry) {
         Item_Give(play, giEntry->itemId);
     }
 
-    func_80078884((this->getItemId < 0) ? SFX_ID_SYSTEM_GET_BOXITEM : SFX_ID_SYSTEM_GET_ITEM);
+    Lib_PlaySfx((this->getItemId < 0) ? SFX_ID_SYSTEM_GET_BOXITEM : SFX_ID_SYSTEM_GET_ITEM);
 }
 
 s32 func_8083E5A8(Player* this, PlayState* play) {
@@ -6762,7 +6761,7 @@ void func_8084029C(Player* this, f32 arg1) {
 
     if ((this->currentBoots == PLAYER_BOOTS_HOVER) && !(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) &&
         (this->hoverBootsTimer != 0)) {
-        func_8002F8F0(&this->actor, SFX_ID_PLAYER_HOBBERBOOTS_LV - SFX_FLAG);
+        Actor_PlaySfx_Flagged2(&this->actor, SFX_ID_PLAYER_HOBBERBOOTS_LV - SFX_FLAG);
     } else if (func_8084021C(this->unk_868, arg1, 29.0f, 10.0f) || func_8084021C(this->unk_868, arg1, 29.0f, 24.0f)) {
         func_808327F8(this, this->linearVelocity);
         if (this->linearVelocity > 4.0f) {
@@ -8393,7 +8392,7 @@ void func_80844708(Player* this, PlayState* play) {
                 func_8083DF68(this, sp38, this->actor.shape.rot.y);
 
                 if (func_8084269C(play, this)) {
-                    func_8002F8F0(&this->actor, SFX_ID_PLAYER_ROLL_DUST - SFX_FLAG);
+                    Actor_PlaySfx_Flagged2(&this->actor, SFX_ID_PLAYER_ROLL_DUST - SFX_FLAG);
                 }
 
                 func_80832924(this, D_8085460C);
@@ -10023,7 +10022,7 @@ void func_80848B44(PlayState* play, Player* this) {
         shockPos.z = (Rand_CenteredFloat(5.0f) + randBodyPart->z) - this->actor.world.pos.z;
 
         EffectSsFhgFlash_SpawnShock(play, &this->actor, &shockPos, shockScale, FHGFLASH_SHOCK_PLAYER);
-        func_8002F8F0(&this->actor, SFX_ID_PLAYER_SPARK - SFX_FLAG);
+        Actor_PlaySfx_Flagged2(&this->actor, SFX_ID_PLAYER_SPARK - SFX_FLAG);
     }
 }
 
@@ -10138,7 +10137,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
         this->unk_A86++;
         if (this->unk_A86 == 0) {
             this->unk_A86 = 1;
-            func_80078884(SFX_ID_OCARINA_REVENGE);
+            Lib_PlaySfx(SFX_ID_OCARINA_REVENGE);
         }
     }
 
@@ -10919,7 +10918,7 @@ void func_8084B1D8(Player* this, PlayState* play) {
           CHECK_BTN_ANY(sControlInput->press.button,
                         BTN_A | BTN_B | BTN_R | BTN_CUP | BTN_CLEFT | BTN_CRIGHT | BTN_CDOWN)))) {
         func_8083C148(this, play);
-        func_80078884(SFX_ID_SYSTEM_CAMERA_ZOOM_UP);
+        Lib_PlaySfx(SFX_ID_SYSTEM_CAMERA_ZOOM_UP);
     } else if ((DECR(this->unk_850) == 0) || (this->unk_6AD != 2)) {
         if (func_8008F128(this)) {
             this->unk_6AE |= 0x43;
@@ -12722,7 +12721,7 @@ void func_8084F88C(Player* this, PlayState* play) {
             }
 
             play->transitionType = TRANS_TYPE_FADE_BLACK_FAST;
-            func_80078884(SFX_ID_OCARINA_ABYSS);
+            Lib_PlaySfx(SFX_ID_OCARINA_ABYSS);
         } else {
             play->transitionType = TRANS_TYPE_FADE_BLACK;
             gSaveContext.nextTransitionType = TRANS_TYPE_FADE_BLACK;
@@ -12804,7 +12803,7 @@ void func_8084FBF4(Player* this, PlayState* play) {
     }
 
     this->shockTimer = 40;
-    func_8002F8F0(&this->actor, SFX_ID_VOICE_LI_TAKEN_AWAY - SFX_FLAG + this->ageProperties->unk_92);
+    Actor_PlaySfx_Flagged2(&this->actor, SFX_ID_VOICE_LI_TAKEN_AWAY - SFX_FLAG + this->ageProperties->unk_92);
 }
 
 s32 func_8084FCAC(Player* this, PlayState* play) {
@@ -13059,7 +13058,7 @@ void func_8085063C(Player* this, PlayState* play) {
         if (play->msgCtx.choiceIndex == 1) {
             gSaveContext.respawn[RESPAWN_MODE_TOP].data = -respawnData;
             gSaveContext.fw.set = 0;
-            func_80078914(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, SFX_ID_PLAYER_MAGIC_WIND_VANISH);
+            Lib_PlaySfx_AtPos(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, SFX_ID_PLAYER_MAGIC_WIND_VANISH);
         }
 
         func_80853080(this, play);
@@ -13079,7 +13078,7 @@ void func_8085076C(Player* this, PlayState* play) {
 
     if (this->unk_850++ == 20) {
         gSaveContext.respawn[RESPAWN_MODE_TOP].data = respawnData + 1;
-        func_80078914(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, SFX_ID_PLAYER_MAGIC_WIND_WARP);
+        Lib_PlaySfx_AtPos(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, SFX_ID_PLAYER_MAGIC_WIND_WARP);
     }
 }
 

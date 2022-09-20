@@ -130,7 +130,7 @@ void ObjBombiwa_Update(Actor* thisx, PlayState* play) {
         Flags_SetSwitch(play, this->actor.params & 0x3F);
         SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 80, SFX_ID_ENVIRONMENT_WALL_BROKEN);
         if (((this->actor.params >> 0xF) & 1) != 0) {
-            func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+            Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
         }
         Actor_Kill(&this->actor);
     } else {

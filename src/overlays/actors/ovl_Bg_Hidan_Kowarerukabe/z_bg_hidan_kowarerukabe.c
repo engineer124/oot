@@ -312,7 +312,7 @@ void BgHidanKowarerukabe_Update(Actor* thisx, PlayState* play) {
             SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 40, SFX_ID_ENVIRONMENT_WALL_BROKEN);
         }
 
-        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
         Actor_Kill(&this->dyna.actor);
         return;
     }

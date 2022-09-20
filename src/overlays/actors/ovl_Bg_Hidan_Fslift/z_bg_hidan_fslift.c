@@ -102,7 +102,7 @@ void func_8088706C(BgHidanFslift* this, PlayState* play) {
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCK_BOUND);
         func_80886FB4(this);
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE3 - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE3 - SFX_FLAG);
     }
     func_80886F24(this);
 }
@@ -113,7 +113,7 @@ void func_808870D8(BgHidanFslift* this, PlayState* play) {
             Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCK_BOUND);
             func_80886FB4(this);
         } else {
-            func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE3 - SFX_FLAG);
+            Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE3 - SFX_FLAG);
         }
     } else {
         func_80886FB4(this);

@@ -207,11 +207,11 @@ void func_80966DB0(Demo6K* this, PlayState* play) {
 
 void func_80966E04(Demo6K* this, PlayState* play) {
     if (play->csCtx.frames > 214) {
-        func_8002F948(&this->actor, SFX_ID_ENVIRONMENT_LIGHT_GATHER - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_LIGHT_GATHER - SFX_FLAG);
     }
 
     if (play->csCtx.frames > 264) {
-        func_8002F948(&this->actor, SFX_ID_ENVIRONMENT_GOD_LIGHTBALL_2 - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_GOD_LIGHTBALL_2 - SFX_FLAG);
     }
 
     if ((play->csCtx.state != CS_STATE_IDLE) && (play->csCtx.npcActions[6] != NULL) &&
@@ -222,8 +222,8 @@ void func_80966E04(Demo6K* this, PlayState* play) {
 
 void func_80966E98(Demo6K* this, PlayState* play) {
     if (play->csCtx.frames < 353) {
-        func_8002F948(&this->actor, SFX_ID_ENVIRONMENT_LIGHT_GATHER - SFX_FLAG);
-        func_8002F948(&this->actor, SFX_ID_ENVIRONMENT_GOD_LIGHTBALL_2 - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_LIGHT_GATHER - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_GOD_LIGHTBALL_2 - SFX_FLAG);
     }
 
     if (play->csCtx.frames == 342) {
@@ -231,7 +231,7 @@ void func_80966E98(Demo6K* this, PlayState* play) {
     }
 
     if (this->timer1 == 39) {
-        func_800788CC(SFX_ID_ENVIRONMENT_CONSENTRATION);
+        Lib_PlaySfx_Centered(SFX_ID_ENVIRONMENT_CONSENTRATION);
         Actor_Spawn(&play->actorCtx, play, ACTOR_DEMO_6K, this->actor.world.pos.x, this->actor.world.pos.y + 10.0f,
                     this->actor.world.pos.z, 0, 0, 0, 2);
     }
@@ -300,7 +300,7 @@ void func_8096712C(Demo6K* this, PlayState* play) {
     this->timer2++;
 
     if ((play->sceneId == SCENE_GANONTIKA) && (play->csCtx.frames < D_8096932C[this->actor.params - 3])) {
-        func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_LIGHT_GATHER - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENVIRONMENT_LIGHT_GATHER - SFX_FLAG);
     }
 }
 
@@ -465,7 +465,7 @@ void func_80967AD0(Demo6K* this, PlayState* play) {
     if ((play->csCtx.state != CS_STATE_IDLE) && (play->csCtx.npcActions[1] != NULL)) {
         if (play->csCtx.npcActions[1]->action == 2) {
             this->unk_170++;
-            func_8002F948(&this->actor, SFX_ID_ENVIRONMENT_RAINBOW_SHOWER - SFX_FLAG);
+            Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_RAINBOW_SHOWER - SFX_FLAG);
         }
 
         func_809691BC(this, play, 1);

@@ -103,14 +103,14 @@ void func_8087B938(BgHaka* this, PlayState* play) {
         this->dyna.unk_150 = 0.0f;
         player->stateFlags2 &= ~PLAYER_STATE2_4;
         if (this->dyna.actor.params == 1) {
-            func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+            Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
         } else if (!IS_DAY && play->sceneId == SCENE_SPOT02) {
             Actor_Spawn(&play->actorCtx, play, ACTOR_EN_POH, this->dyna.actor.home.pos.x, this->dyna.actor.home.pos.y,
                         this->dyna.actor.home.pos.z, 0, this->dyna.actor.shape.rot.y, 0, 1);
         }
         this->actionFunc = func_8087BAAC;
     }
-    func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
 }
 
 void func_8087BAAC(BgHaka* this, PlayState* play) {

@@ -88,7 +88,7 @@ void EnWallTubo_DetectChu(EnWallTubo* this, PlayState* play) {
                     (fabsf(chuPosDiff.z) < 40.0f || (BREG(2)))) {
                     this->chuGirl->wallStatus[this->actor.params] = 1;
                     chu->timer = 2;
-                    func_80078884(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+                    Lib_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
                     this->timer = 60;
                     EffectSsBomb2_SpawnLayered(play, &this->explosionCenter, &effVelocity, &effAccel, 200, 40);
                     quakeIndex = Quake_Add(GET_ACTIVE_CAM(play), 1);

@@ -232,7 +232,7 @@ void func_808801B8(BgHakaTrap* this, PlayState* play) {
 
     if ((D_80880F30 == 0) && (!Player_InCsMode(play))) {
         if (!Math_StepToF(&this->dyna.actor.world.pos.x, this->dyna.actor.home.pos.x, 0.5f)) {
-            func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_TRAP_OBJ_SLIDE - SFX_FLAG);
+            Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_TRAP_OBJ_SLIDE - SFX_FLAG);
         } else if (this->dyna.actor.params == HAKA_TRAP_SPIKED_WALL) {
             D_80881018 |= 1;
         } else if (this->dyna.actor.params == HAKA_TRAP_SPIKED_WALL_2) {
@@ -262,7 +262,7 @@ void func_808802D8(BgHakaTrap* this, PlayState* play) {
         this->timer--;
     }
 
-    func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_BURN_OUT - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_BURN_OUT - SFX_FLAG);
 
     for (i = 0; i < 2; i++) {
         f32 rand = Rand_ZeroOne();
@@ -386,7 +386,7 @@ void func_808806BC(BgHakaTrap* this, PlayState* play) {
     }
 
     if (this->dyna.actor.velocity.y >= 0.01f) {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_CHINETRAP_DOWN - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_CHINETRAP_DOWN - SFX_FLAG);
     }
 
     if (this->timer == 0) {
@@ -456,7 +456,7 @@ void func_80880AE8(BgHakaTrap* this, PlayState* play) {
 
     this->dyna.actor.shape.rot.z += this->dyna.actor.world.rot.z;
     if (this->dyna.actor.world.rot.z >= 0x1801) {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_WIND_TRAP - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_WIND_TRAP - SFX_FLAG);
     }
 
     func_808809E4(this, play, this->dyna.actor.world.rot.z);
@@ -467,7 +467,7 @@ void func_80880C0C(BgHakaTrap* this, PlayState* play) {
         this->timer--;
     }
 
-    func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_WIND_TRAP - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_WIND_TRAP - SFX_FLAG);
 
     if (this->timer == 0) {
         this->timer = 1;
@@ -544,6 +544,6 @@ void BgHakaTrap_Draw(Actor* thisx, PlayState* play) {
         sp2C.y = this->dyna.actor.world.pos.y + 110.0f;
 
         SkinMatrix_Vec3fMtxFMultXYZ(&play->viewProjectionMtxF, &sp2C, &this->unk_16C);
-        func_80078914(&this->unk_16C, SFX_ID_ENVIRONMENT_BRIDGE_CLOSE - SFX_FLAG);
+        Lib_PlaySfx_AtPos(&this->unk_16C, SFX_ID_ENVIRONMENT_BRIDGE_CLOSE - SFX_FLAG);
     }
 }

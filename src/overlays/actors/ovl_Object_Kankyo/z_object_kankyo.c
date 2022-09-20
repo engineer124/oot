@@ -206,7 +206,7 @@ void ObjectKankyo_Fairies(ObjectKankyo* this, PlayState* play) {
         Audio_PlaySfx_AtPosWithFreq(&sSfxPos, SFX_ID_ENVIRONMENT_NAVY_FLY - SFX_FLAG, (0.4f * dist) + 0.6f);
         switch (play->csCtx.frames) {
             case 473:
-                func_800788CC(SFX_ID_VOICE_NA_HELLO_3);
+                Lib_PlaySfx_Centered(SFX_ID_VOICE_NA_HELLO_3);
                 break;
 
             case 583:
@@ -214,11 +214,11 @@ void ObjectKankyo_Fairies(ObjectKankyo* this, PlayState* play) {
                 break;
 
             case 763:
-                func_80078884(SFX_ID_ENVIRONMENT_NAVY_CRASH - SFX_FLAG);
+                Lib_PlaySfx(SFX_ID_ENVIRONMENT_NAVY_CRASH - SFX_FLAG);
                 break;
 
             case 771:
-                func_80078884(SFX_ID_VOICE_RT_THROW);
+                Lib_PlaySfx(SFX_ID_VOICE_RT_THROW);
                 break;
 
             default:

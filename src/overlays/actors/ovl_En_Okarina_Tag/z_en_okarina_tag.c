@@ -155,7 +155,7 @@ void func_80ABF0CC(EnOkarinaTag* this, PlayState* play) {
             if ((play->sceneId != SCENE_DAIYOUSEI_IZUMI) && (play->sceneId != SCENE_YOUSEI_IZUMI_YOKO)) {
                 play->msgCtx.ocarinaMode = OCARINA_MODE_04;
             }
-            func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+            Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
             this->actionFunc = func_80ABEF2C;
             return;
         }
@@ -168,7 +168,7 @@ void func_80ABF0CC(EnOkarinaTag* this, PlayState* play) {
                     Flags_SetSwitch(play, this->switchFlag);
                 }
                 play->msgCtx.ocarinaMode = OCARINA_MODE_04;
-                func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+                Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
                 this->actionFunc = func_80ABEF2C;
                 return;
             }
@@ -231,7 +231,7 @@ void func_80ABF4C8(EnOkarinaTag* this, PlayState* play) {
     if (play->msgCtx.ocarinaMode == OCARINA_MODE_04) {
         this->actionFunc = func_80ABF28C;
     } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_03) {
-        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
         if (this->switchFlag >= 0) {
             Flags_SetSwitch(play, this->switchFlag);
         }
@@ -254,7 +254,7 @@ void func_80ABF4C8(EnOkarinaTag* this, PlayState* play) {
                                                     : SEGMENTED_TO_VIRTUAL(&spot02_scene_Cs_005020);
                 gSaveContext.cutsceneTrigger = 1;
                 SET_EVENTCHKINF(EVENTCHKINF_1D);
-                func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+                Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
                 break;
             default:
                 break;

@@ -164,7 +164,7 @@ void BgHakaShip_CrashShake(BgHakaShip* this, PlayState* play) {
         this->dyna.actor.gravity = -1.0f;
         this->actionFunc = BgHakaShip_CrashFall;
     }
-    func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCKSINK - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCKSINK - SFX_FLAG);
 }
 
 void BgHakaShip_CrashFall(BgHakaShip* this, PlayState* play) {
@@ -230,6 +230,6 @@ void BgHakaShip_Draw(Actor* thisx, PlayState* play) {
         sp2C.z = this->dyna.actor.world.pos.z;
 
         SkinMatrix_Vec3fMtxFMultXYZ(&play->viewProjectionMtxF, &sp2C, &this->bellSfxPos);
-        func_80078914(&this->bellSfxPos, SFX_ID_ENVIRONMENT_SHIP_BELL - SFX_FLAG);
+        Lib_PlaySfx_AtPos(&this->bellSfxPos, SFX_ID_ENVIRONMENT_SHIP_BELL - SFX_FLAG);
     }
 }

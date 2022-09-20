@@ -589,9 +589,9 @@ void func_80ADA35C(EnPoSisters* this, PlayState* play) {
     this->actor.world.pos.y += (2.0f + 0.5f * Rand_ZeroOne()) * Math_SinS(this->unk_196 * 0x800);
     if (this->unk_22E.a == 255 && this->actionFunc != func_80ADA8C0 && this->actionFunc != func_80ADA7F0) {
         if (this->actionFunc == func_80ADAC70) {
-            func_8002F974(&this->actor, SFX_ID_ENEMY_PO_AWAY - SFX_FLAG);
+            Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_PO_AWAY - SFX_FLAG);
         } else {
-            func_8002F974(&this->actor, SFX_ID_ENEMY_PO_FLY - SFX_FLAG);
+            Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_PO_FLY - SFX_FLAG);
         }
     }
 }
@@ -817,7 +817,7 @@ void func_80ADB17C(EnPoSisters* this, PlayState* play) {
             Flags_UnsetSwitch(play, 0x1B);
         }
         play->envCtx.lightSettingOverride = LIGHT_SETTING_OVERRIDE_NONE;
-        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
         Actor_Kill(&this->actor);
     } else if (this->unk_19A < 32) {
         func_80AD9240(this, this->unk_19A, &this->actor.world.pos);
@@ -1048,7 +1048,7 @@ void func_80ADBC88(EnPoSisters* this, PlayState* play) {
             func_80ADA10C(this);
         }
     }
-    func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_TORCH - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENVIRONMENT_TORCH - SFX_FLAG);
 }
 
 void func_80ADBD38(EnPoSisters* this, PlayState* play) {

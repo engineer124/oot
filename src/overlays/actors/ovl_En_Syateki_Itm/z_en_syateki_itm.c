@@ -157,7 +157,7 @@ void EnSyatekiItm_StartRound(EnSyatekiItm* this, PlayState* play) {
 
         this->timer = (this->roundNum == 1) ? 50 : 30;
 
-        func_80078884(SFX_ID_SYSTEM_FOUND);
+        Lib_PlaySfx(SFX_ID_SYSTEM_FOUND);
         this->actionFunc = EnSyatekiItm_SpawnTargets;
     }
 }

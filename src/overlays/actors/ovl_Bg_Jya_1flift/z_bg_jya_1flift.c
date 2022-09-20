@@ -162,7 +162,7 @@ void BgJya1flift_Move(BgJya1flift* this, PlayState* play) {
         BgJya1flift_ResetMoveDelay(this);
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCK_BOUND);
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE3 - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE3 - SFX_FLAG);
     }
 }
 

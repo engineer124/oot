@@ -152,7 +152,7 @@ void func_8087E10C(BgHakaMeganeBG* this, PlayState* play) {
 
     if (!Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y - 640.0f,
                       this->dyna.actor.velocity.y)) {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_CHINETRAP_DOWN - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_CHINETRAP_DOWN - SFX_FLAG);
     }
 
     if (this->unk_16A == 0) {
@@ -164,7 +164,7 @@ void func_8087E10C(BgHakaMeganeBG* this, PlayState* play) {
 
 void func_8087E1E0(BgHakaMeganeBG* this, PlayState* play) {
     Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y, 16.0f / 3.0f);
-    func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_BRIDGE_CLOSE - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_BRIDGE_CLOSE - SFX_FLAG);
 
     if (this->unk_16A != 0) {
         this->unk_16A--;
@@ -178,7 +178,7 @@ void func_8087E1E0(BgHakaMeganeBG* this, PlayState* play) {
 
 void func_8087E258(BgHakaMeganeBG* this, PlayState* play) {
     this->dyna.actor.shape.rot.y += 0x180;
-    func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE - SFX_FLAG);
 }
 
 void func_8087E288(BgHakaMeganeBG* this, PlayState* play) {
@@ -195,7 +195,7 @@ void func_8087E2D8(BgHakaMeganeBG* this, PlayState* play) {
         Actor_SetFocus(&this->dyna.actor, 50.0f);
         this->actionFunc = func_8087E34C;
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_OPEN);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_OPEN);
     }
 }
 

@@ -690,7 +690,7 @@ void BossGanon_IntroCutscene(BossGanon* this, PlayState* play) {
             this->fwork[GDF_TRIFORCE_PRIM_A] = 0.0f;
             this->fwork[GDF_TRIFORCE_PRIM_B] = 255.0f;
             this->fwork[GDF_TRIFORCE_ENV_G] = 100.0f;
-            func_80078884(SFX_ID_ENVIRONMENT_TRIFORCE_MARK);
+            Lib_PlaySfx(SFX_ID_ENVIRONMENT_TRIFORCE_MARK);
             play->envCtx.lightBlend = 0.0f;
             FALLTHROUGH;
         case 7:
@@ -737,7 +737,7 @@ void BossGanon_IntroCutscene(BossGanon* this, PlayState* play) {
             this->fwork[GDF_TRIFORCE_PRIM_A] = 0.0f;
             this->fwork[GDF_TRIFORCE_PRIM_B] = 255.0f;
             this->fwork[GDF_TRIFORCE_ENV_G] = 100.0f;
-            func_80078884(SFX_ID_ENVIRONMENT_TRIFORCE_MARK);
+            Lib_PlaySfx(SFX_ID_ENVIRONMENT_TRIFORCE_MARK);
             play->envCtx.lightBlend = 0.0f;
             FALLTHROUGH;
         case 9:
@@ -942,7 +942,7 @@ void BossGanon_IntroCutscene(BossGanon* this, PlayState* play) {
 
             if (this->csTimer >= 30) {
                 if (this->csTimer == 30) {
-                    func_80078884(SFX_ID_ENVIRONMENT_TRIFORCE_MARK);
+                    Lib_PlaySfx(SFX_ID_ENVIRONMENT_TRIFORCE_MARK);
                 }
 
                 // fade in ganondorf's triforce
@@ -1434,7 +1434,7 @@ void BossGanon_DeathAndTowerCutscene(BossGanon* this, PlayState* play) {
 
             this->unk_70C = Math_SinS(this->csTimer * 0x6300) * 0.2f;
 
-            func_80078884(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
+            Lib_PlaySfx(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
 
         skip_cam_and_quake:
             this->envLightMode = 15;
@@ -1481,7 +1481,7 @@ void BossGanon_DeathAndTowerCutscene(BossGanon* this, PlayState* play) {
             }
 
             this->unk_70C = Math_SinS(this->csTimer * 0x6300) * this->unk_710;
-            func_80078884(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
+            Lib_PlaySfx(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
 
             if (this->csTimer < 100) {
                 this->windowShatterState = GDF_WINDOW_SHATTER_PARTIAL;
@@ -1678,7 +1678,7 @@ void BossGanon_DeathAndTowerCutscene(BossGanon* this, PlayState* play) {
 
         case 1055:
             this->unk_70C = Math_SinS(this->csTimer * 0x6300) * 0.3f;
-            func_80078884(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
+            Lib_PlaySfx(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
 
             if (this->csTimer == 20) {
                 sZelda->unk_3C8 = 5;
@@ -1693,7 +1693,7 @@ void BossGanon_DeathAndTowerCutscene(BossGanon* this, PlayState* play) {
 
         case 1056:
             this->unk_70C = Math_SinS(this->csTimer * 0x6300) * 0.3f;
-            func_80078884(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
+            Lib_PlaySfx(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
 
             this->csCamEye.x = -503.0f;
             this->csCamEye.y = 4128.0f;
@@ -1711,7 +1711,7 @@ void BossGanon_DeathAndTowerCutscene(BossGanon* this, PlayState* play) {
 
         case 1057:
             this->unk_70C = Math_SinS(this->csTimer * 0x6300) * (50.0f * this->csCamMovementScale);
-            func_80078884(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
+            Lib_PlaySfx(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
 
             Math_ApproachF(&this->csCamEye.x, -1200.0f, 0.1f, this->csCamMovementScale * 697.0f);
             Math_ApproachF(&this->csCamEye.y, 4241.0f, 0.1f, this->csCamMovementScale * 113.0f);
@@ -1735,7 +1735,7 @@ void BossGanon_DeathAndTowerCutscene(BossGanon* this, PlayState* play) {
             this->csCamAt.z = sZelda->actor.world.pos.z - 25.0f;
 
             this->unk_70C = Math_SinS(this->csTimer * 0x6300) * 0.3f;
-            func_80078884(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
+            Lib_PlaySfx(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
 
             if (this->csTimer == 70) {
                 sZelda->unk_3C8 = 6;
@@ -1755,7 +1755,7 @@ void BossGanon_DeathAndTowerCutscene(BossGanon* this, PlayState* play) {
 
         case 107:
             this->unk_70C = Math_SinS(this->csTimer * 0x6300) * 0.8f;
-            func_80078884(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
+            Lib_PlaySfx(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
 
             this->csCamEye.x = -380.0f;
             this->csCamEye.y = 4154.0f;
@@ -1774,7 +1774,7 @@ void BossGanon_DeathAndTowerCutscene(BossGanon* this, PlayState* play) {
 
         case 108:
             this->unk_70C = Math_SinS(this->csTimer * 0x6300) * 0.8f;
-            func_80078884(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
+            Lib_PlaySfx(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
 
             this->csCamAt.x = (sZelda->actor.world.pos.x - 5.0f) - 30.0f;
             this->csCamAt.y = (sZelda->actor.world.pos.y + 40.0f + 5.0f) - 20.0f;
@@ -1797,7 +1797,7 @@ void BossGanon_DeathAndTowerCutscene(BossGanon* this, PlayState* play) {
             break;
 
         case 109:
-            func_80078884(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
+            Lib_PlaySfx(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
             break;
     }
 
@@ -2240,7 +2240,7 @@ void BossGanon_Wait(BossGanon* this, PlayState* play) {
     this->actor.world.pos.y += this->actor.velocity.y;
 
     Math_ApproachS(&this->actor.shape.rot.y, this->actor.yawTowardsPlayer, 5, 0xBB8);
-    func_80078914(&this->actor.projectedPos, SFX_ID_ENEMY_FANTOM_FLOAT - SFX_FLAG);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_ENEMY_FANTOM_FLOAT - SFX_FLAG);
 }
 
 void BossGanon_SetupChargeLightBall(BossGanon* this, PlayState* play) {
@@ -2737,7 +2737,7 @@ void BossGanon_UpdateDamage(BossGanon* this, PlayState* play) {
                     BossGanon_SetupDeathCutscene(this, play);
                     Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GANON_DEAD);
                     Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GANON_DD_THUNDER);
-                    func_80078914(&sZeroVec, SFX_ID_ENEMY_LAST_DAMAGE);
+                    Lib_PlaySfx_AtPos(&sZeroVec, SFX_ID_ENEMY_LAST_DAMAGE);
                     SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 1);
                     this->screenFlashTimer = 4;
                 } else {
@@ -2918,7 +2918,7 @@ void BossGanon_Update(Actor* thisx, PlayState* play2) {
 
         // player hit, spawn shock and play sound effect
         if (this->unk_2E8 != 0) {
-            func_80078914(&player->actor.projectedPos, SFX_ID_PLAYER_SPARK - SFX_FLAG);
+            Lib_PlaySfx_AtPos(&player->actor.projectedPos, SFX_ID_PLAYER_SPARK - SFX_FLAG);
             BossGanonEff_SpawnShock(play, 700.0f, GDF_SHOCK_PLAYER_YELLOW);
         }
     }
@@ -4227,8 +4227,8 @@ void func_808E1EB4(Actor* thisx, PlayState* play2) {
             this->actor.speedXZ = 0.0f;
 
             if (this->actor.params == 0xC8) {
-                func_80078884(SFX_ID_ENEMY_GANON_DAMAGE2);
-                func_80078884(SFX_ID_ENEMY_GANON_DD_THUNDER);
+                Lib_PlaySfx(SFX_ID_ENEMY_GANON_DAMAGE2);
+                Lib_PlaySfx(SFX_ID_ENEMY_GANON_DD_THUNDER);
 
                 for (i = 0; i < 150; i++) {
 
@@ -4733,7 +4733,7 @@ void BossGanon_UpdateEffects(PlayState* play) {
                 Math_ApproachF(&eff->unk_40, 4.0f, 1.0f, 0.15f);
             } else if (eff->type == GDF_EFF_IMPACT_DUST_LIGHT) {
                 if (i == 0) {
-                    func_80078884(SFX_ID_ENEMY_GANON_WAVE_GND - SFX_FLAG);
+                    Lib_PlaySfx(SFX_ID_ENEMY_GANON_WAVE_GND - SFX_FLAG);
                 }
 
                 eff->unk_30++; // unused

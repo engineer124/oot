@@ -116,7 +116,7 @@ void func_808B318C(BgSpot12Gate* this, PlayState* play) {
         Quake_SetCountdown(var, 0xC);
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BRIDGE_OPEN_STOP);
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALGATE_OPEN - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALGATE_OPEN - SFX_FLAG);
     }
 }
 

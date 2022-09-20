@@ -258,10 +258,10 @@ void func_808B8F08(BgSpot18Obj* this, PlayState* play) {
         this->dyna.unk_150 = 0.0f;
         player->stateFlags2 &= ~PLAYER_STATE2_4;
         Flags_SetSwitch(play, (this->dyna.actor.params >> 8) & 0x3F);
-        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCK_BOUND);
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
     }
 }
 

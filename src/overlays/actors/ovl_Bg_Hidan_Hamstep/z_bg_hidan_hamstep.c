@@ -377,7 +377,7 @@ void func_80888A58(BgHidanHamstep* this, PlayState* play) {
                 func_808884C8(this, play);
 
                 if ((this->dyna.actor.params & 0xFF) == 5) {
-                    func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+                    Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
                 }
 
                 osSyncPrintf("B(%d)\n", this->dyna.actor.params);

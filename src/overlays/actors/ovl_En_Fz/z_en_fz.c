@@ -505,7 +505,7 @@ void EnFz_BlowSmoke(EnFz* this, PlayState* play) {
     } else if (this->timer >= 11) {
         isTimerMod8 = false;
         primAlpha = 150;
-        func_8002F974(&this->actor, SFX_ID_ENEMY_FREEZAD_BREATH - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_FREEZAD_BREATH - SFX_FLAG);
 
         if ((this->timer - 10) < 16) { // t < 26
             primAlpha = (this->timer * 10) - 100;
@@ -617,7 +617,7 @@ void EnFz_BlowSmokeStationary(EnFz* this, PlayState* play) {
     } else {
         isTimerMod8 = false;
         primAlpha = 150;
-        func_8002F974(&this->actor, SFX_ID_ENEMY_FREEZAD_BREATH - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_FREEZAD_BREATH - SFX_FLAG);
 
         if ((this->counter & 0x3F) >= 48) {
             primAlpha = 630 - ((this->counter & 0x3F) * 10);

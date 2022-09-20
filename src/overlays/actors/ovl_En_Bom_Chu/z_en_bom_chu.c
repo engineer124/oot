@@ -343,7 +343,7 @@ void EnBomChu_Move(EnBomChu* this, PlayState* play) {
     Math_ScaledStepToS(&this->actor.shape.rot.y, this->actor.world.rot.y, 0x800);
     Math_ScaledStepToS(&this->actor.shape.rot.z, this->actor.world.rot.z, 0x800);
 
-    func_8002F8F0(&this->actor, SFX_ID_ITEM_BOMBCHU_MOVE - SFX_FLAG);
+    Actor_PlaySfx_Flagged2(&this->actor, SFX_ID_ITEM_BOMBCHU_MOVE - SFX_FLAG);
 }
 
 void EnBomChu_WaitForKill(EnBomChu* this, PlayState* play) {

@@ -54,7 +54,7 @@ void EfcErupc_UpdateAction(EfcErupc* this, PlayState* play) {
         if (play->csCtx.npcActions[1] != NULL) {
             if (play->csCtx.npcActions[1]->action == 2) {
                 if (this->unk_150 == 30) {
-                    func_800788CC(SFX_ID_ITEM_EARTHQUAKE);
+                    Lib_PlaySfx_Centered(SFX_ID_ITEM_EARTHQUAKE);
                 }
                 if (this->unk_150 <= 64) {
                     if (this->unk_154 < 200) {

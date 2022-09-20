@@ -178,7 +178,7 @@ void DemoKekkai_TowerBarrier(DemoKekkai* this, PlayState* play) {
         }
     }
     if (!(this->sfxFlag & 1)) {
-        func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_TOWER_BARRIER - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENVIRONMENT_TOWER_BARRIER - SFX_FLAG);
     }
 }
 
@@ -226,7 +226,7 @@ void DemoKekkai_TrialBarrierDispel(Actor* thisx, PlayState* play) {
         this->orbScale = 0.0f;
     }
     if (this->orbScale != 0.0f) {
-        func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_TOWER_ENERGY - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENVIRONMENT_TOWER_ENERGY - SFX_FLAG);
     }
     this->timer++;
 }
@@ -251,7 +251,7 @@ void DemoKekkai_TrialBarrierIdle(Actor* thisx, PlayState* play) {
     CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider1.base);
     CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider1.base);
     if (this->collider2.base.acFlags & AC_HIT) {
-        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
         // "I got it"
         LOG_STRING("当ったよ", "../z_demo_kekkai.c", 572);
         this->actor.update = DemoKekkai_TrialBarrierDispel;
@@ -260,7 +260,7 @@ void DemoKekkai_TrialBarrierIdle(Actor* thisx, PlayState* play) {
         gSaveContext.cutsceneTrigger = 1;
     }
     CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider2.base);
-    func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_TOWER_ENERGY - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENVIRONMENT_TOWER_ENERGY - SFX_FLAG);
 }
 
 void DemoKekkai_DrawTrialBarrier(Actor* thisx, PlayState* play2) {

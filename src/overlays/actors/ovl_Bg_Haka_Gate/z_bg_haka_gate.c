@@ -215,7 +215,7 @@ void BgHakaGate_StatueTurn(BgHakaGate* this, PlayState* play) {
         this->actionFunc = BgHakaGate_StatueIdle;
         this->dyna.unk_150 = 0.0f;
     }
-    func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
 }
 
 void BgHakaGate_FloorClosed(BgHakaGate* this, PlayState* play) {
@@ -240,7 +240,7 @@ void BgHakaGate_FloorClosed(BgHakaGate* this, PlayState* play) {
                 sPuzzleState = SKULL_OF_TRUTH_FOUND;
                 this->actionFunc = BgHakaGate_DoNothing;
             } else {
-                func_80078884(SFX_ID_SYSTEM_ERROR);
+                Lib_PlaySfx(SFX_ID_SYSTEM_ERROR);
                 Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_GROUND_GATE_OPEN);
                 DynaPoly_DisableCollision(play, &play->colCtx.dyna, this->dyna.bgId);
                 this->vTimer = 60;
@@ -277,7 +277,7 @@ void BgHakaGate_GateOpen(BgHakaGate* this, PlayState* play) {
         this->dyna.actor.flags &= ~ACTOR_FLAG_4;
         this->actionFunc = BgHakaGate_DoNothing;
     } else {
-        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_SLIDE - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_SLIDE - SFX_FLAG);
     }
 }
 

@@ -529,9 +529,9 @@ void EnFd_SpinAndSpawnFire(EnFd* this, PlayState* play) {
     f32 rotSpeed;
 
     if ((this->spinTimer < 31) && (this->invincibilityTimer == 0)) {
-        func_8002F974(&this->actor, SFX_ID_ENEMY_FLAME_FIRE_ATTACK - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_FLAME_FIRE_ATTACK - SFX_FLAG);
     } else {
-        func_8002F974(&this->actor, SFX_ID_ENEMY_FLAME_ROLL - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_FLAME_ROLL - SFX_FLAG);
     }
 
     if (DECR(this->spinTimer) != 0) {
@@ -620,7 +620,7 @@ void EnFd_Run(EnFd* this, PlayState* play) {
     EnFd_GetPosAdjAroundCircle(&adjPos, this, this->runRadius, this->runDir);
     Math_SmoothStepToS(&this->actor.shape.rot.y, RAD_TO_BINANG(Math_FAtan2F(adjPos.x, adjPos.z)), 4, 0xFA0, 1);
     this->actor.world.rot = this->actor.shape.rot;
-    func_8002F974(&this->actor, SFX_ID_ENEMY_FLAME_RUN - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_FLAME_RUN - SFX_FLAG);
     if (this->skelAnime.curFrame == 6.0f || this->skelAnime.curFrame == 13.0f || this->skelAnime.curFrame == 28.0f) {
         Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_FLAME_KICK);
     }

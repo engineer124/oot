@@ -381,7 +381,7 @@ void func_80AF2E1C(EnRu2* this, PlayState* play) {
 }
 
 void func_80AF2E64(void) {
-    func_800788CC(SFX_ID_SYSTEM_WHITE_OUT_T);
+    Lib_PlaySfx_Centered(SFX_ID_SYSTEM_WHITE_OUT_T);
 }
 
 void func_80AF2E84(EnRu2* this, PlayState* play) {

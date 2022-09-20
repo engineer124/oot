@@ -948,7 +948,7 @@ void func_80ACC00C(EnOwl* this, PlayState* play) {
                     break;
             }
 
-            func_80078884(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+            Lib_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
             gSaveContext.cutsceneTrigger = 1;
             Audio_SetSfxTimerLerpInterval(0x14, 0xA);
             this->actionFunc = EnOwl_WaitDefault;

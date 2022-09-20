@@ -739,7 +739,7 @@ void func_80B154FC(EnTa* this, PlayState* play) {
     if (gSaveContext.timer1Value == 0 && !Play_InCsMode(play)) {
         SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
         this->unk_2E0 &= ~0x200;
-        func_80078884(SFX_ID_SYSTEM_FOUND);
+        Lib_PlaySfx(SFX_ID_SYSTEM_FOUND);
         gSaveContext.timer1State = 0;
         func_8002DF54(play, &this->actor, 1);
         Message_StartTextbox(play, 0x2081, &this->actor);

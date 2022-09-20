@@ -203,7 +203,7 @@ void func_808A3E54(BgMoriHineri* this, PlayState* play) {
             this->moriHineriObjIdx = objBankIndex;
             this->dyna.actor.params ^= 1;
             sSubCamId = SUB_CAM_ID_DONE;
-            func_80078884(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+            Lib_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
         } else {
             this->dyna.actor.draw = NULL;
             this->actionFunc = func_808A3D58;
@@ -211,7 +211,7 @@ void func_808A3E54(BgMoriHineri* this, PlayState* play) {
         }
     }
     if ((sSubCamId >= CAM_ID_SUB_FIRST) && ((GET_ACTIVE_CAM(play)->eye.z - this->dyna.actor.world.pos.z) < 1100.0f)) {
-        func_8002F948(&this->dyna.actor, SFX_ID_ENVIRONMENT_FLOOR_ROLLING - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, SFX_ID_ENVIRONMENT_FLOOR_ROLLING - SFX_FLAG);
     }
 }
 

@@ -176,10 +176,10 @@ void func_80B42F74(EnYabusameMark* this, PlayState* play) {
         }
         if (scoreIndex == 1) {
             AudioSfx_StopById(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
-            func_80078884(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+            Lib_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
         }
         if (scoreIndex == 0) {
-            func_80078884(SFX_ID_SYSTEM_DECIDE);
+            Lib_PlaySfx(SFX_ID_SYSTEM_DECIDE);
         }
         EffectSsExtra_Spawn(play, &arrowHitPos, &effectVelocity, &effectAccel, 5, scoreIndex);
     }

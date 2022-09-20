@@ -189,7 +189,7 @@ void BgHidanFirewall_Update(Actor* thisx, PlayState* play) {
         BgHidanFirewall_ColliderFollowPlayer(this, play);
         CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider.base);
         CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
-        func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_FIRE_PLATE - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENVIRONMENT_FIRE_PLATE - SFX_FLAG);
     }
 }
 

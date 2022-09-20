@@ -124,7 +124,7 @@ void EnStream_Update(Actor* thisx, PlayState* play) {
     EnStream* this = (EnStream*)thisx;
 
     this->actionFunc(this, play);
-    func_8002F948(thisx, SFX_ID_ENVIRONMENT_WHIRLPOOL - SFX_FLAG);
+    Actor_PlaySfx_FlaggedCentered(thisx, SFX_ID_ENVIRONMENT_WHIRLPOOL - SFX_FLAG);
 }
 
 void EnStream_Draw(Actor* thisx, PlayState* play) {

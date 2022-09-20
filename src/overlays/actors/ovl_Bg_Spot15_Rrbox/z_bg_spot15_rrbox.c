@@ -286,7 +286,7 @@ void func_808B4194(BgSpot15Rrbox* this, PlayState* play) {
             Actor_PlaySfx(actor, SFX_ID_ENVIRONMENT_WOOD_BOUND);
         }
         if (func_808B3A40(this, play)) {
-            func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+            Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
         }
         actor->home.pos.x = actor->world.pos.x;
         actor->home.pos.z = actor->world.pos.z;

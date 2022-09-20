@@ -773,7 +773,7 @@ void func_80B54EA4(EnZl3* this, PlayState* play) {
 }
 
 void func_80B54EF4(EnZl3* this) {
-    func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
 }
 
 void func_80B54F18(EnZl3* this, PlayState* play) {
@@ -1013,7 +1013,7 @@ void func_80B55780(EnZl3* this, PlayState* play) {
 }
 
 void func_80B55808(EnZl3* this) {
-    func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
 }
 
 void func_80B5582C(EnZl3* this) {
@@ -1024,7 +1024,7 @@ void func_80B5585C(EnZl3* this) {
     SkelAnime* skelAnime = &this->skelAnime;
 
     if ((skelAnime->mode == 2) && Animation_OnFrame(skelAnime, 4.0f)) {
-        func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
     }
 }
 
@@ -1535,18 +1535,18 @@ void func_80B56D44(EnZl3* this, PlayState* play) {
 }
 
 void func_80B56DA4(EnZl3* this) {
-    func_800788CC(SFX_ID_ENVIRONMENT_ZELDA_POWER);
+    Lib_PlaySfx_Centered(SFX_ID_ENVIRONMENT_ZELDA_POWER);
 }
 
 void func_80B56DC8(EnZl3* this) {
-    func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
 }
 
 void func_80B56DEC(EnZl3* this) {
     SkelAnime* skelAnime = &this->skelAnime;
 
     if ((skelAnime->mode == 2) && Animation_OnFrame(skelAnime, 9.0f) != 0) {
-        func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_Z1_OPENDOOR);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_OPENDOOR);
     }
 }
 
@@ -1559,7 +1559,7 @@ void func_80B56E38(EnZl3* this, PlayState* play) {
         (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
         sfxId = 0x800;
         sfxId += SurfaceType_GetSfxId(&play->colCtx, this->actor.floorPoly, this->actor.floorBgId);
-        func_80078914(&this->actor.projectedPos, sfxId);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, sfxId);
     }
 }
 

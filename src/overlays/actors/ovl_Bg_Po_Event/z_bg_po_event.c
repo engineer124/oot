@@ -341,7 +341,7 @@ void BgPoEvent_BlockIdle(BgPoEvent* this, PlayState* play) {
             if (amy != NULL) {
                 OnePointCutscene_Init(play, 3170, 30, amy, CAM_ID_MAIN);
             }
-            func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+            Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
             gSaveContext.timer1State = 0xA;
         }
     } else {
@@ -410,7 +410,7 @@ void BgPoEvent_BlockPush(BgPoEvent* this, PlayState* play) {
         BgPoEvent_CheckBlock(this);
         BgPoEvent_CheckBlock((BgPoEvent*)this->dyna.actor.parent);
     }
-    func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
 }
 
 void BgPoEvent_BlockReset(BgPoEvent* this, PlayState* play) {
@@ -535,7 +535,7 @@ void BgPoEvent_PaintingPresent(BgPoEvent* this, PlayState* play) {
             Actor_Spawn(&play->actorCtx, play, ACTOR_EN_PO_SISTERS, thisx->world.pos.x, thisx->world.pos.y - 40.0f,
                         thisx->world.pos.z, 0, thisx->shape.rot.y, 0, thisx->params + ((this->type - 1) << 8));
             OnePointCutscene_Init(play, 3160, 80, thisx, CAM_ID_MAIN);
-            func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+            Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
 
         } else {
             Actor_PlaySfx(thisx, SFX_ID_ENEMY_PO_LAUGH2);

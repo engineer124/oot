@@ -481,7 +481,7 @@ void EnGe2_SetupCapturePlayer(EnGe2* this, PlayState* play) {
     this->actor.speedXZ = 0.0f;
     EnGe2_ChangeAction(this, GE2_ACTION_CAPTURETURN);
     func_8002DF54(play, &this->actor, 95);
-    func_80078884(SFX_ID_SYSTEM_FOUND);
+    Lib_PlaySfx(SFX_ID_SYSTEM_FOUND);
     Message_StartTextbox(play, 0x6000, &this->actor);
 }
 

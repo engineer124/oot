@@ -488,7 +488,7 @@ void func_8002C7BC(TargetContext* targetCtx, Player* player, Actor* actorArg, Pl
 
             lockOnSfxId = CHECK_FLAG_ALL(actorArg->flags, ACTOR_FLAG_0 | ACTOR_FLAG_2) ? SFX_ID_SYSTEM_LOCK_ON
                                                                                        : SFX_ID_SYSTEM_LOCK_ON_HUMAN;
-            func_80078884(lockOnSfxId);
+            Lib_PlaySfx(lockOnSfxId);
         }
 
         targetCtx->targetCenterPos.x = actorArg->world.pos.x;
@@ -1686,13 +1686,19 @@ void func_8002F7A0(PlayState* play, Actor* actor, f32 arg2, s16 arg3, f32 arg4) 
     func_8002F758(play, actor, arg2, arg3, arg4, 0);
 }
 
+/**
+ * Plays the sound effect at the players's position
+ */
 void Player_PlaySfx(Actor* actor, u16 sfxId) {
     AudioSfx_PlaySfx(sfxId, &actor->projectedPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                      &gSfxDefaultReverb);
 }
 
+/**
+ * Plays the sound effect at the actor's position
+ */
 void Actor_PlaySfx(Actor* actor, u16 sfxId) {
-    func_80078914(&actor->projectedPos, sfxId);
+    Lib_PlaySfx_AtPos(&actor->projectedPos, sfxId);
 }
 
 void Actor_PlaySfx_Surface(PlayState* play, Actor* actor) {
@@ -1708,43 +1714,55 @@ void Actor_PlaySfx_Surface(PlayState* play, Actor* actor) {
         sfxId = SurfaceType_GetSfxId(&play->colCtx, actor->floorPoly, actor->floorBgId);
     }
 
-    func_80078914(&actor->projectedPos, SFX_ID_ENVIRONMENT_BOMB_BOUND);
-    func_80078914(&actor->projectedPos, sfxId + SFX_FLAG);
+    Lib_PlaySfx_AtPos(&actor->projectedPos, SFX_ID_ENVIRONMENT_BOMB_BOUND);
+    Lib_PlaySfx_AtPos(&actor->projectedPos, sfxId + SFX_FLAG);
 }
 
-void func_8002F8F0(Actor* actor, u16 sfxId) {
+/**
+ * Play a sfx at the actor's position using the shared audioFlag system
+ */
+void Actor_PlaySfx_Flagged2(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
     actor->flags |= ACTOR_FLAG_SFX_AT_POS;
     actor->flags &= ~(ACTOR_FLAG_SFX_CENTERED2 | ACTOR_FLAG_SFX_CENTERED | ACTOR_FLAG_SFX_TIMER);
 }
 
-void func_8002F91C(Actor* actor, u16 sfxId) {
+/**
+ * Play a sfx at the center of the screen using the shared audioFlag system
+ */
+void Actor_PlaySfx_FlaggedCentered2(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
     actor->flags |= ACTOR_FLAG_SFX_CENTERED2;
     actor->flags &= ~(ACTOR_FLAG_SFX_AT_POS | ACTOR_FLAG_SFX_CENTERED | ACTOR_FLAG_SFX_TIMER);
 }
 
-void func_8002F948(Actor* actor, u16 sfxId) {
+/**
+ * Play a sfx at the center of the screen using the shared audioFlag system
+ */
+void Actor_PlaySfx_FlaggedCentered(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
     actor->flags |= ACTOR_FLAG_SFX_CENTERED;
     actor->flags &= ~(ACTOR_FLAG_SFX_AT_POS | ACTOR_FLAG_SFX_CENTERED2 | ACTOR_FLAG_SFX_TIMER);
 }
 
-void func_8002F974(Actor* actor, u16 sfxId) {
+/**
+ * Play a sfx at the actor's position using the shared audioFlag system
+ */
+void Actor_PlaySfx_Flagged(Actor* actor, u16 sfxId) {
     actor->flags &=
         ~(ACTOR_FLAG_SFX_AT_POS | ACTOR_FLAG_SFX_CENTERED2 | ACTOR_FLAG_SFX_CENTERED | ACTOR_FLAG_SFX_TIMER);
     actor->sfx = sfxId;
 }
 
-void func_8002F994(Actor* actor, s32 arg1) {
+void Actor_PlaySfx_FlaggedTimer(Actor* actor, s32 timer) {
     actor->flags |= ACTOR_FLAG_SFX_TIMER;
     actor->flags &= ~(ACTOR_FLAG_SFX_AT_POS | ACTOR_FLAG_SFX_CENTERED2 | ACTOR_FLAG_SFX_CENTERED);
-    if (arg1 < 40) {
-        actor->sfx = SFX_ID_PLAYER_WALK_DIRT - SFX_FLAG;
-    } else if (arg1 < 100) {
-        actor->sfx = SFX_ID_PLAYER_WALK_CONCRETE - SFX_FLAG;
+    if (timer < 40) {
+        actor->sfx = 3;
+    } else if (timer < 100) {
+        actor->sfx = 2;
     } else {
-        actor->sfx = SFX_ID_PLAYER_WALK_SAND - SFX_FLAG;
+        actor->sfx = 1;
     }
 }
 
@@ -2136,7 +2154,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
         actor = NULL;
         if (actorCtx->targetCtx.unk_4B != 0) {
             actorCtx->targetCtx.unk_4B = 0;
-            func_80078884(SFX_ID_SYSTEM_LOCK_OFF);
+            Lib_PlaySfx(SFX_ID_SYSTEM_LOCK_OFF);
         }
     }
 
@@ -2238,13 +2256,13 @@ void func_80030ED8(Actor* actor) {
         AudioSfx_PlaySfx(actor->sfx, &actor->projectedPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultReverb);
     } else if (actor->flags & ACTOR_FLAG_SFX_CENTERED2) {
-        func_80078884(actor->sfx);
+        Lib_PlaySfx(actor->sfx);
     } else if (actor->flags & ACTOR_FLAG_SFX_CENTERED) {
-        func_800788CC(actor->sfx);
+        Lib_PlaySfx_Centered(actor->sfx);
     } else if (actor->flags & ACTOR_FLAG_SFX_TIMER) {
         func_800F4C58(&gSfxDefaultPos, SFX_ID_SYSTEM_TIMER - SFX_FLAG, (s8)(actor->sfx - 1));
     } else {
-        func_80078914(&actor->projectedPos, actor->sfx);
+        Lib_PlaySfx_AtPos(&actor->projectedPos, actor->sfx);
     }
 }
 

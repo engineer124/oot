@@ -646,7 +646,7 @@ void DemoEffect_UpdateGetItem(DemoEffect* this, PlayState* play) {
                 if (gSaveContext.entranceIndex == ENTR_TOKINOMA_0) {
                     Actor_PlaySfx(thisx, SFX_ID_ENVIRONMENT_MEDAL_APPEAR_L - SFX_FLAG);
                 } else {
-                    func_800788CC(SFX_ID_ENVIRONMENT_MEDAL_APPEAR_S - SFX_FLAG);
+                    Lib_PlaySfx_Centered(SFX_ID_ENVIRONMENT_MEDAL_APPEAR_S - SFX_FLAG);
                 }
                 if (this->getItem.drawId != GID_ARROW_LIGHT) {
                     this->actor.shape.rot.y += 0x3E80;
@@ -661,7 +661,7 @@ void DemoEffect_UpdateGetItem(DemoEffect* this, PlayState* play) {
                 if (gSaveContext.entranceIndex == ENTR_TOKINOMA_0) {
                     Actor_PlaySfx(thisx, SFX_ID_ENVIRONMENT_MEDAL_APPEAR_L - SFX_FLAG);
                 } else {
-                    func_800788CC(SFX_ID_ENVIRONMENT_MEDAL_APPEAR_S - SFX_FLAG);
+                    Lib_PlaySfx_Centered(SFX_ID_ENVIRONMENT_MEDAL_APPEAR_S - SFX_FLAG);
                 }
                 break;
             case 4:
@@ -775,7 +775,7 @@ void DemoEffect_UpdateTimeWarpReturnFromChamberOfSages(DemoEffect* this, PlaySta
         DemoEffect_TimewarpShrink(shrinkProgress * 5.0f);
     }
 
-    func_8002F948(&this->actor, SFX_ID_ENVIRONMENT_TIMETRIP_LIGHT - SFX_FLAG);
+    Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_TIMETRIP_LIGHT - SFX_FLAG);
 }
 
 /**
@@ -799,7 +799,7 @@ void DemoEffect_UpdateTimeWarpTimeblock(DemoEffect* this, PlayState* play) {
         this->actor.scale.x = scale;
         this->actor.scale.z = scale;
         DemoEffect_TimewarpShrink(shrinkProgress);
-        func_8002F948(&this->actor, SFX_ID_ENVIRONMENT_TIMETRIP_LIGHT - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_TIMETRIP_LIGHT - SFX_FLAG);
         return;
     }
 
@@ -812,7 +812,7 @@ void DemoEffect_UpdateTimeWarpTimeblock(DemoEffect* this, PlayState* play) {
  * This is an Update Func that is only ran for one frame.
  */
 void DemoEffect_InitTimeWarpTimeblock(DemoEffect* this, PlayState* play) {
-    func_8002F948(&this->actor, SFX_ID_ENVIRONMENT_TIMETRIP_LIGHT - SFX_FLAG);
+    Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_TIMETRIP_LIGHT - SFX_FLAG);
 
     if (SkelCurve_Update(play, &this->skelCurve)) {
         SkelCurve_SetAnim(&this->skelCurve, &gTimeWarpAnim, 1.0f, 60.0f, 59.0f, 0.0f);
@@ -966,7 +966,7 @@ void DemoEffect_UpdateCreationFireball(DemoEffect* this, PlayState* play) {
         Actor_SetScale(&effect->actor, 0.2f);
     }
 
-    func_800788CC(SFX_ID_ITEM_DM_RING_EXPLOSION);
+    Lib_PlaySfx_Centered(SFX_ID_ITEM_DM_RING_EXPLOSION);
     Actor_Kill(&this->actor);
 }
 
@@ -1523,10 +1523,10 @@ void DemoEffect_JewelSparkle(DemoEffect* this, PlayState* play, s32 spawnerCount
 void DemoEffect_PlayJewelSfx(DemoEffect* this, PlayState* play) {
     if (!DemoEffect_CheckCsAction(this, play, 1)) {
         if (this->actor.params == sSfxJewelId[0]) {
-            func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_SPIRIT_STONE - SFX_FLAG);
+            Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENVIRONMENT_SPIRIT_STONE - SFX_FLAG);
         } else if (sSfxJewelId[0] == 0) {
             sSfxJewelId[0] = this->actor.params;
-            func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_SPIRIT_STONE - SFX_FLAG);
+            Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENVIRONMENT_SPIRIT_STONE - SFX_FLAG);
         }
     }
 }
@@ -1805,13 +1805,13 @@ void DemoEffect_DrawGodLgt(Actor* thisx, PlayState* play) {
         if (gSaveContext.entranceIndex == ENTR_HIRAL_DEMO_0) {
             if (gSaveContext.sceneLayer == 4) {
                 if (play->csCtx.frames <= 680) {
-                    func_80078914(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_GOD_FLYING - SFX_FLAG);
+                    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_GOD_FLYING - SFX_FLAG);
                 }
             } else {
-                func_80078914(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_GOD_FLYING - SFX_FLAG);
+                Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_GOD_FLYING - SFX_FLAG);
             }
         } else {
-            func_80078914(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_GOD_FLYING - SFX_FLAG);
+            Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_GOD_FLYING - SFX_FLAG);
         }
 
         gSPSegment(POLY_XLU_DISP++, 8,

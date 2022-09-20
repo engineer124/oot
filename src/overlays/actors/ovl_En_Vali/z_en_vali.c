@@ -301,7 +301,7 @@ void EnVali_DischargeLightning(EnVali* this, PlayState* play) {
         }
     }
 
-    func_8002F974(&this->actor, SFX_ID_ENEMY_BIRI_SPARK - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_BIRI_SPARK - SFX_FLAG);
 }
 
 void EnVali_Lurk(EnVali* this, PlayState* play) {

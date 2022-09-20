@@ -134,7 +134,7 @@ void func_808A91AC(BgRelayObjects* this, PlayState* play) {
         if (this->timer != 0) {
             this->timer--;
         }
-        func_8002F994(&this->dyna.actor, this->timer);
+        Actor_PlaySfx_FlaggedTimer(&this->dyna.actor, this->timer);
     }
     if ((this->timer == 0) || (this->unk_169 == play->roomCtx.curRoom.num)) {
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_SLIDE_DOOR_CLOSE);
@@ -148,7 +148,7 @@ void func_808A9234(BgRelayObjects* this, PlayState* play) {
         func_800AA000(this->dyna.actor.xyzDistToPlayerSq, 180, 20, 100);
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_STONE_BOUND);
         if (this->unk_169 != play->roomCtx.curRoom.num) {
-            func_800788CC(SFX_ID_ENEMY_PO_LAUGH);
+            Lib_PlaySfx_Centered(SFX_ID_ENEMY_PO_LAUGH);
             this->timer = 5;
             this->actionFunc = func_808A932C;
             return;
@@ -171,7 +171,7 @@ void func_808A932C(BgRelayObjects* this, PlayState* play) {
     }
     if (this->timer == 0) {
         if (!Player_InCsMode(play)) {
-            func_80078884(SFX_ID_OCARINA_ABYSS);
+            Lib_PlaySfx(SFX_ID_OCARINA_ABYSS);
             Play_TriggerRespawn(play);
             this->actionFunc = BgRelayObjects_DoNothing;
         }

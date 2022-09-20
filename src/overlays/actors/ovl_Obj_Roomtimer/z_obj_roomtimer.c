@@ -70,7 +70,7 @@ void func_80B9D0B0(ObjRoomtimer* this, PlayState* play) {
         }
         Flags_SetClear(play, this->actor.room);
         Flags_SetSwitch(play, this->switchFlag);
-        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
         Actor_Kill(&this->actor);
     } else {
         if ((this->actor.params != 0x3FF) && (gSaveContext.timer1Value == 0)) {
