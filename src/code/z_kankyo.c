@@ -1888,7 +1888,7 @@ void Environment_UpdateLightningStrike(PlayState* play) {
                 sLightningFlashAlpha += 100;
 
                 if (sLightningFlashAlpha >= gLightningStrike.flashAlphaTarget) {
-                    Audio_SetAmbienceChannelIO(NATURE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_0, 0);
+                    Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_0, 0);
                     gLightningStrike.state++;
                     gLightningStrike.flashAlphaTarget = 0;
                 }
@@ -2032,30 +2032,30 @@ void Environment_PlaySceneSequence(PlayState* play) {
     // both lost woods exits on the bridge from kokiri to hyrule field
     if (((void)0, gSaveContext.entranceIndex) == ENTR_SPOT10_8 ||
         ((void)0, gSaveContext.entranceIndex) == ENTR_SPOT10_9) {
-        Audio_PlayAmbience(NATURE_ID_KOKIRI_REGION);
+        Audio_PlayAmbience(AMBIENCE_ID_KOKIRI_REGION);
     } else if (((void)0, gSaveContext.forcedSeqId) != SEQ_ID_GENERAL_SFX) {
         if (!Environment_IsForcedSequenceDisabled()) {
             SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, ((void)0, gSaveContext.forcedSeqId));
         }
         gSaveContext.forcedSeqId = SEQ_ID_GENERAL_SFX;
     } else if (play->sequenceCtx.seqId == SEQ_ID_NO_MUSIC) {
-        if (play->sequenceCtx.ambienceId == NATURE_ID_NONE) {
+        if (play->sequenceCtx.ambienceId == AMBIENCE_ID_NONE) {
             return;
         }
         if (((void)0, gSaveContext.ambienceId) != play->sequenceCtx.ambienceId) {
             Audio_PlayAmbience(play->sequenceCtx.ambienceId);
         }
-    } else if (play->sequenceCtx.ambienceId == NATURE_ID_NONE) {
+    } else if (play->sequenceCtx.ambienceId == AMBIENCE_ID_NONE) {
         // "BGM Configuration"
         osSyncPrintf("\n\n\nBGM設定game_play->sound_info.BGM=[%d] old_bgm=[%d]\n\n", play->sequenceCtx.seqId,
                      ((void)0, gSaveContext.seqId));
         if (((void)0, gSaveContext.seqId) != play->sequenceCtx.seqId) {
-            func_800F5550(play->sequenceCtx.seqId);
+            Audio_PlaySceneSequence(play->sequenceCtx.seqId);
         }
     } else if (((void)0, gSaveContext.dayTime) >= CLOCK_TIME(7, 0) &&
                ((void)0, gSaveContext.dayTime) <= CLOCK_TIME(17, 10)) {
         if (((void)0, gSaveContext.seqId) != play->sequenceCtx.seqId) {
-            func_800F5550(play->sequenceCtx.seqId);
+            Audio_PlaySceneSequence(play->sequenceCtx.seqId);
         }
 
         play->envCtx.timeSeqState = TIMESEQ_FADE_DAY_BGM;
@@ -2087,11 +2087,12 @@ void Environment_PlaySceneSequence(PlayState* play) {
 void Environment_PlayTimeBasedSequence(PlayState* play) {
     switch (play->envCtx.timeSeqState) {
         case TIMESEQ_DAY_BGM:
-            Audio_SetAmbienceChannelIO(NATURE_CHANNEL_CRITTER_4 << 4 | NATURE_CHANNEL_CRITTER_5, CHANNEL_IO_PORT_1, 0);
+            Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_CRITTER_4 << 4 | AMBIENCE_CHANNEL_CRITTER_5, CHANNEL_IO_PORT_1,
+                                       0);
 
             if (play->envCtx.precipitation[PRECIP_RAIN_MAX] == 0 && play->envCtx.precipitation[PRECIP_SOS_MAX] == 0) {
                 osSyncPrintf("\n\n\nNa_StartMorinigBgm\n\n");
-                func_800F5510(play->sequenceCtx.seqId);
+                Audio_PlayMorningSceneSequence(play->sequenceCtx.seqId);
             }
 
             play->envCtx.timeSeqState++;
@@ -2118,7 +2119,7 @@ void Environment_PlayTimeBasedSequence(PlayState* play) {
         case TIMESEQ_EARLY_NIGHT_CRITTERS:
             if (play->envCtx.precipitation[PRECIP_RAIN_MAX] == 0 && play->envCtx.precipitation[PRECIP_SOS_MAX] == 0) {
                 Audio_PlayAmbience(play->sequenceCtx.ambienceId);
-                Audio_SetAmbienceChannelIO(NATURE_CHANNEL_CRITTER_0, CHANNEL_IO_PORT_1, 1);
+                Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_CRITTER_0, CHANNEL_IO_PORT_1, 1);
             }
 
             play->envCtx.timeSeqState++;
@@ -2131,11 +2132,11 @@ void Environment_PlayTimeBasedSequence(PlayState* play) {
             break;
 
         case TIMESEQ_NIGHT_CRITTERS:
-            Audio_SetAmbienceChannelIO(NATURE_CHANNEL_CRITTER_0, CHANNEL_IO_PORT_1, 0);
+            Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_CRITTER_0, CHANNEL_IO_PORT_1, 0);
 
             if (play->envCtx.precipitation[PRECIP_RAIN_MAX] == 0 && play->envCtx.precipitation[PRECIP_SOS_MAX] == 0) {
-                Audio_SetAmbienceChannelIO(NATURE_CHANNEL_CRITTER_1 << 4 | NATURE_CHANNEL_CRITTER_3, CHANNEL_IO_PORT_1,
-                                           1);
+                Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_CRITTER_1 << 4 | AMBIENCE_CHANNEL_CRITTER_3,
+                                           CHANNEL_IO_PORT_1, 1);
             }
 
             play->envCtx.timeSeqState++;
@@ -2159,11 +2160,12 @@ void Environment_PlayTimeBasedSequence(PlayState* play) {
             break;
 
         case TIMESEQ_MORNING_CRITTERS:
-            Audio_SetAmbienceChannelIO(NATURE_CHANNEL_CRITTER_1 << 4 | NATURE_CHANNEL_CRITTER_3, CHANNEL_IO_PORT_1, 0);
+            Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_CRITTER_1 << 4 | AMBIENCE_CHANNEL_CRITTER_3, CHANNEL_IO_PORT_1,
+                                       0);
 
             if (play->envCtx.precipitation[PRECIP_RAIN_MAX] == 0 && play->envCtx.precipitation[PRECIP_SOS_MAX] == 0) {
-                Audio_SetAmbienceChannelIO(NATURE_CHANNEL_CRITTER_4 << 4 | NATURE_CHANNEL_CRITTER_5, CHANNEL_IO_PORT_1,
-                                           1);
+                Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_CRITTER_4 << 4 | AMBIENCE_CHANNEL_CRITTER_5,
+                                           CHANNEL_IO_PORT_1, 1);
             }
 
             play->envCtx.timeSeqState++;
@@ -2554,21 +2556,21 @@ s32 Environment_IsForcedSequenceDisabled(void) {
 }
 
 void Environment_PlayStormNatureAmbience(PlayState* play) {
-    if (play->sequenceCtx.ambienceId == NATURE_ID_NONE) {
-        Audio_PlayAmbience(NATURE_ID_MARKET_NIGHT);
+    if (play->sequenceCtx.ambienceId == AMBIENCE_ID_NONE) {
+        Audio_PlayAmbience(AMBIENCE_ID_MARKET_NIGHT);
     } else {
         Audio_PlayAmbience(play->sequenceCtx.ambienceId);
     }
 
-    Audio_SetAmbienceChannelIO(NATURE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 1);
-    Audio_SetAmbienceChannelIO(NATURE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_1, 1);
+    Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 1);
+    Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_1, 1);
 }
 
 void Environment_StopStormNatureAmbience(PlayState* play) {
-    Audio_SetAmbienceChannelIO(NATURE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 0);
-    Audio_SetAmbienceChannelIO(NATURE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_1, 0);
+    Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 0);
+    Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_1, 0);
 
-    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == SEQ_ID_NATURE_AMBIENCE) {
+    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == SEQ_ID_AMBIENCE) {
         gSaveContext.seqId = SEQ_ID_NATURE_SFX_RAIN;
         Environment_PlaySceneSequence(play);
     }

@@ -576,14 +576,14 @@ s8 AudioThread_GetChannelIO(s32 seqPlayerIndex, s32 channelIndex, s32 scriptIdx)
 
     if (seqPlayer->enabled) {
         channel = seqPlayer->channels[channelIndex];
-        return channel->soundScriptIO[scriptIdx];
+        return channel->seqScriptIO[scriptIdx];
     } else {
         return -1;
     }
 }
 
 s8 AudioThread_GetSeqPlayerIO(s32 seqPlayerIndex, s32 port) {
-    return gAudioCtx.seqPlayers[seqPlayerIndex].soundScriptIO[port];
+    return gAudioCtx.seqPlayers[seqPlayerIndex].seqScriptIO[port];
 }
 
 void AudioThread_InitExternalPool(void* ramAddr, u32 size) {
@@ -622,7 +622,7 @@ void AudioThread_ProcessSeqPlayerCmd(SequencePlayer* seqPlayer, AudioCmd* cmd) {
             break;
 
         case 0x46:
-            seqPlayer->soundScriptIO[cmd->arg2] = cmd->asSbyte;
+            seqPlayer->seqScriptIO[cmd->arg2] = cmd->asSbyte;
             break;
 
         case 0x4A:
@@ -719,7 +719,7 @@ void AudioThread_ProcessChannelCmd(SequenceChannel* channel, AudioCmd* cmd) {
 
         case CHAN_UPD_SCRIPT_IO:
             if (cmd->arg2 < 8) {
-                channel->soundScriptIO[cmd->arg2] = cmd->asSbyte;
+                channel->seqScriptIO[cmd->arg2] = cmd->asSbyte;
             }
             break;
 

@@ -4239,7 +4239,7 @@ void Interface_Update(PlayState* play) {
             gSaveContext.sunsSongState = SUNSSONG_INACTIVE;
             Audio_MuteAllSeqExceptSysAndOca(30);
             gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
-            gSaveContext.ambienceId = NATURE_ID_DISABLED;
+            gSaveContext.ambienceId = AMBIENCE_ID_DISABLED;
         } else {
             gSaveContext.sunsSongState = SUNSSONG_SPECIAL;
         }

@@ -37,7 +37,7 @@ void EnRiverSound_Init(Actor* thisx, PlayState* play) {
         Audio_SetGanonsTowerBgmVolumeLevel(this->actor.params - RS_GANON_TOWER_0);
         Actor_Kill(&this->actor);
     } else if (this->actor.params == RS_NATURE_AMBIENCE) {
-        Audio_PlayAmbience(NATURE_ID_KOKIRI_REGION);
+        Audio_PlayAmbience(AMBIENCE_ID_KOKIRI_REGION);
         Actor_Kill(&this->actor);
     } else if (this->actor.params == RS_LOST_WOODS_SARIAS_SONG) {
         if (!CHECK_QUEST_ITEM(QUEST_SONG_LULLABY) || CHECK_QUEST_ITEM(QUEST_SONG_SARIA)) {

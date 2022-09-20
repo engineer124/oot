@@ -524,7 +524,7 @@ void Play_Update(PlayState* this) {
                                 osSyncPrintf("\n\n\nサウンドイニシャル来ました。222");
                                 Audio_MuteAllSeqExceptSysAndOca(0x14);
                                 gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
-                                gSaveContext.ambienceId = NATURE_ID_DISABLED;
+                                gSaveContext.ambienceId = AMBIENCE_ID_DISABLED;
                             }
                         }
                     }

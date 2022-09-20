@@ -56,7 +56,7 @@ const ActorInit En_Syateki_Man_InitVars = {
 
 static u16 sBgmList[] = {
     SEQ_ID_GENERAL_SFX,
-    SEQ_ID_NATURE_AMBIENCE,
+    SEQ_ID_AMBIENCE,
     SEQ_ID_FIELD_LOGIC,
     SEQ_ID_DUNGEON,
     SEQ_ID_KAKARIKO_ADULT,

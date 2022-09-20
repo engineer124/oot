@@ -8,7 +8,22 @@
 #define TATUMS_PER_BEAT 48
 
 #define IS_SEQUENCE_CHANNEL_VALID(ptr) ((u32)(ptr) != (u32)&gAudioCtx.sequenceChannelNone)
+#define SEQ_ALL_SEQPLAYERS 0xFF
 #define SEQ_NUM_CHANNELS 16
+#define SEQ_ALL_CHANNELS 0xFF
+#define SEQ_IO_VAL_NONE -1
+
+typedef enum {
+    /* 0 */ AUDIO_HEAP_RESET_STATE_NONE,
+    /* 1 */ AUDIO_HEAP_RESET_STATE_RESETTING,
+    /* 2 */ AUDIO_HEAP_RESET_STATE_RESETTING_ALT // Never set to
+} AudioHeapResetState;
+
+typedef enum {
+    /* 0 */ SEQPLAYER_STATE_0,
+    /* 1 */ SEQPLAYER_STATE_1, // Fading in
+    /* 2 */ SEQPLAYER_STATE_2 // Fading out
+} SeqPlayerState;
 
 #define MAX_CHANNELS_PER_BANK 3
 
@@ -17,6 +32,8 @@
 #define MUTE_FLAGS_SOFTEN (1 << 5)      // lower volume, by default to half
 #define MUTE_FLAGS_STOP_NOTES (1 << 6)  // prevent further notes from playing
 #define MUTE_FLAGS_STOP_SCRIPT (1 << 7) // stop processing sequence/channel scripts
+
+#define AUDIO_LERPIMP(v0, v1, t) (v0 + ((v1 - v0) * t))
 
 #define ADSR_DISABLE 0
 #define ADSR_HANG -1
@@ -319,7 +336,7 @@ typedef struct {
     /* 0x0DC */ s32 skipTicks;
     /* 0x0E0 */ u32 scriptCounter;
     /* 0x0E4 */ char unk_E4[0x74]; // unused struct members for sequence/sound font dma management, according to sm64 decomp
-    /* 0x158 */ s8 soundScriptIO[8];
+    /* 0x158 */ s8 seqScriptIO[8];
 } SequencePlayer; // size = 0x160
 
 typedef struct {
@@ -436,7 +453,7 @@ typedef struct SequenceChannel {
     /* 0x60 */ SeqScriptState scriptState;
     /* 0x7C */ AdsrSettings adsr;
     /* 0x84 */ NotePool notePool;
-    /* 0xC4 */ s8 soundScriptIO[8]; // bridge between sound script and audio lib, "io ports"
+    /* 0xC4 */ s8 seqScriptIO[8]; // bridge between sound script and audio lib, "io ports"
     /* 0xCC */ s16* filter;
     /* 0xD0 */ Stereo stereo;
 } SequenceChannel; // size = 0xD4

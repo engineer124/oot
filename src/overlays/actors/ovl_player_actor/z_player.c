@@ -2969,7 +2969,7 @@ void func_80836448(PlayState* play, Player* this, LinkAnimationHeader* anim) {
             func_800F6AB0(0);
             Audio_PlayFanfare(SEQ_ID_GAME_OVER);
             gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
-            gSaveContext.ambienceId = NATURE_ID_DISABLED;
+            gSaveContext.ambienceId = AMBIENCE_ID_DISABLED;
         }
 
         OnePointCutscene_Init(play, 9806, cond ? 120 : 60, &this->actor, CAM_ID_MAIN);
@@ -4186,7 +4186,7 @@ s32 func_80839034(PlayState* play, Player* this, CollisionPoly* poly, u32 bgId) 
                     func_800788CC(NA_SE_OC_SECRET_HOLE_OUT);
                     Audio_MuteAllSeqExceptSysAndOca(5);
                     gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
-                    gSaveContext.ambienceId = NATURE_ID_DISABLED;
+                    gSaveContext.ambienceId = AMBIENCE_ID_DISABLED;
                 } else {
                     linearVel = this->linearVelocity;
 
@@ -12202,7 +12202,7 @@ void func_8084E3C4(Player* this, PlayState* play) {
         }
 
         gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
-        gSaveContext.ambienceId = NATURE_ID_DISABLED;
+        gSaveContext.ambienceId = AMBIENCE_ID_DISABLED;
     }
 }
 
