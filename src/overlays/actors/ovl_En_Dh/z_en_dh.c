@@ -160,7 +160,7 @@ void EnDh_Destroy(Actor* thisx, PlayState* play) {
     s32 pad;
     EnDh* this = (EnDh*)thisx;
 
-    func_800F5B58();
+    Audio_RestorePrevBgm();
     Collider_DestroyCylinder(play, &this->collider1);
     Collider_DestroyJntSph(play, &this->collider2);
 }
@@ -198,7 +198,7 @@ void EnDh_SetupWait(EnDh* this) {
 
 void EnDh_Wait(EnDh* this, PlayState* play) {
     if ((s32)this->skelAnime.curFrame == 5) {
-        func_800F5ACC(SEQ_ID_MINI_BOSS);
+        Audio_PlayBgm_StorePrevBgm(SEQ_ID_MINI_BOSS);
     }
     if (Actor_GetCollidedExplosive(play, &this->collider1.base)) {
         this->actor.params = ENDH_START_ATTACK_BOMB;
@@ -437,7 +437,7 @@ void EnDh_SetupDeath(EnDh* this) {
     this->timer = 300;
     this->actor.flags &= ~ACTOR_FLAG_0;
     this->actor.speedXZ = 0.0f;
-    func_800F5B58();
+    Audio_RestorePrevBgm();
     this->actor.params = ENDH_DEATH;
     Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_DEADHAND_DEAD);
     EnDh_SetupAction(this, EnDh_Death);

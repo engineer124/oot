@@ -1437,7 +1437,7 @@ void func_80832698(Player* this, u16 sfxId) {
     if (this->actor.category == ACTORCAT_PLAYER) {
         Player_PlaySfx(&this->actor, sfxId + this->ageProperties->unk_92);
     } else {
-        func_800F4190(&this->actor.projectedPos, sfxId);
+        Audio_PlaySfx_DarkLink(&this->actor.projectedPos, sfxId);
     }
 }
 
@@ -2966,7 +2966,7 @@ void func_80836448(PlayState* play, Player* this, LinkAnimationHeader* anim) {
             this->unk_84F = 1;
         } else {
             play->gameOverCtx.state = GAMEOVER_DEATH_START;
-            func_800F6AB0(0);
+            Audio_StopBgmAndFanfare(0);
             Audio_PlayFanfare(SEQ_ID_GAME_OVER);
             gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
             gSaveContext.ambienceId = AMBIENCE_ID_DISABLED;

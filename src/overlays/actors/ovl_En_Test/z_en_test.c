@@ -315,7 +315,7 @@ void EnTest_Destroy(Actor* thisx, PlayState* play) {
 
     if ((this->actor.params != STALFOS_TYPE_2) &&
         !Actor_FindNearby(play, &this->actor, ACTOR_EN_TEST, ACTORCAT_ENEMY, 8000.0f)) {
-        func_800F5B58();
+        Audio_RestorePrevBgm();
     }
 
     Effect_Delete(play, this->effectIndex);
@@ -443,7 +443,7 @@ void EnTest_WaitGround(EnTest* this, PlayState* play) {
         this->actor.shape.rot.y = this->actor.yawTowardsPlayer;
 
         if (this->actor.params != STALFOS_TYPE_2) {
-            func_800F5ACC(SEQ_ID_MINI_BOSS);
+            Audio_PlayBgm_StorePrevBgm(SEQ_ID_MINI_BOSS);
         }
     } else {
         if (this->timer != 0) {

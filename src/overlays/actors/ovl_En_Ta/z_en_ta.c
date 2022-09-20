@@ -239,7 +239,7 @@ void EnTa_Destroy(Actor* thisx, PlayState* play) {
     }
 
     if (this->unk_2E0 & 0x200) {
-        func_800F5B58();
+        Audio_RestorePrevBgm();
     }
 }
 
@@ -806,7 +806,7 @@ void func_80B15AD4(EnTa* this, PlayState* play) {
                          Animation_GetLastFrame(&gTalonSitHandsUpAnim), ANIMMODE_ONCE, 0.0f);
         this->unk_2CC = 50;
         func_80088B34(0x1E);
-        func_800F5ACC(SEQ_ID_TIMED_MINI_GAME);
+        Audio_PlayBgm_StorePrevBgm(SEQ_ID_TIMED_MINI_GAME);
         this->unk_2E0 |= 0x200;
         Message_CloseTextbox(play);
         func_8002DF54(play, &this->actor, 1);

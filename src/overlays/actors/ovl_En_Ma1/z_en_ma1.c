@@ -249,12 +249,12 @@ void func_80AA0B74(EnMa1* this) {
         if (this->unk_1E8.unk_00 == 0) {
             if (this->unk_1E0 != 0) {
                 this->unk_1E0 = 0;
-                func_800F6584(0);
+                Audio_SetMalonsSigning(false);
             }
         } else {
             if (this->unk_1E0 == 0) {
                 this->unk_1E0 = 1;
-                func_800F6584(1);
+                Audio_SetMalonsSigning(true);
             }
         }
     }
@@ -454,7 +454,7 @@ void EnMa1_Draw(Actor* thisx, PlayState* play) {
 
     activeCam = GET_ACTIVE_CAM(play);
     distFromCamera = Math_Vec3f_DistXZ(&this->actor.world.pos, &activeCam->eye);
-    func_800F6268(distFromCamera, SEQ_ID_LONLON);
+    Audio_UpdateMalonSinging(distFromCamera, SEQ_ID_LONLON);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(sMouthTextures[this->mouthIndex]));

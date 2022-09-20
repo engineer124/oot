@@ -1872,9 +1872,11 @@ void AudioDebug_Draw(GfxPrint* printer);
 void AudioDebug_ScrPrt(const char* str, u16 num);
 
 void AudioSfx_SetProperties(u8 bankId, u8 entryIndex, u8 channelIndex);
+void AudioSfx_SetChannelIO(Vec3f* pos, u16 sfxId, u8);
 
 // Various wrappers to AudioSfx_PlaySfx
 void Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(Vec3f* pos, u16 sfxId, f32);
+void Audio_PlaySfx_DarkLink(Vec3f* pos, u16 sfxId);
 void Audio_PlaySfx_Randomized(Vec3f* pos, u16 baseSfxId, u8 randLim);
 void Audio_PlaySfx_AtPosWithSyncedFreqAndVolume(Vec3f* pos, u16 sfxId, f32);
 void Audio_PlaySfx_AtPosWithFreq(Vec3f* pos, u16 sfxId, f32 arg2);
@@ -1894,6 +1896,8 @@ void Audio_PlayMorningSceneSequence(u16 seqId);
 void Audio_PlaySceneSequence(u16 seqId);
 void Audio_PlayBgmForSongOfStorms(void);
 void Audio_PlaySequenceInCutscene(u16);
+void Audio_PlayBgm_StorePrevBgm(u16 seqId);
+void Audio_PlayAmbience_StorePrevBgm(u8 ambienceId);
 void Audio_PlayFanfare(u16);
 void Audio_PlaySequenceWithSeqPlayerIO(u8 seqPlayerIndex, u16 seqId, u8 fadeTimer, s8 ioPort, s8 ioData);
 void Audio_PlayAmbience(u8 ambienceId);
@@ -1904,6 +1908,7 @@ void Audio_SetSfxTimerLerpInterval(s8 arg0, s8 arg1);
 void Audio_SetBgmVolumeOff(void);
 void Audio_SetBgmVolumeOn(void);
 void Audio_SetMainBgmVolume(u8 targetVol, u8 volFadeTimer);
+void Audio_SetMalonsSigning(u8 malonsSingingDisabled);
 void Audio_SetGanonsTowerBgmVolumeLevel(u8 ganonsTowerLevel);
 void Audio_SetSeqTempoAndFreq(f32 scaleTempoAndFreq, u8 duration);
 void Audio_SetSequenceMode(u8 seqMode);
@@ -1916,25 +1921,19 @@ void Audio_SetCutsceneFlag(s8 flag);
 void Audio_SetAmbienceChannelIO(u8 channelIndexRange, u8 ioPort, u8 ioData);
 
 void Audio_MuteAllSeqExceptSysAndOca(u16);
-
-void func_800F4190(Vec3f* pos, u16 sfxId);
 void Audio_LowerMainBgmVolume(u8 volume);
 void Audio_ResetIncreasingTranspose(void);
-void AudioSfx_SetChannelIO(Vec3f* pos, u16 sfxId, u8);
-void func_800F4E30(Vec3f* pos, f32);
+void func_800F4E30(Vec3f* pos, f32 xzDistToPlayer);
 void Audio_ClearSariaBgm(void);
 void Audio_ClearSariaBgmAtPos(Vec3f* pos);
 void Audio_ClearSariaBgm2(void);
 void Audio_IncreaseTempoForTimedMinigame(void);
 s32 Audio_IsSequencePlaying(u8);
-void func_800F5ACC(u16 seqId);
-void func_800F5B58(void);
-void func_800F5BF0(u8 ambienceId);
-void func_800F5C2C(void);
+void Audio_RestorePrevBgm(void);
+void Audio_ForceRestorePreviousBgm(void);
 void Audio_UpdateEnemyBgmVolume(f32 dist);
-void func_800F6268(f32 dist, u16);
-void func_800F6584(u8 arg0);
-void func_800F6AB0(u16);
+void Audio_UpdateMalonSinging(f32 dist, u16 seqId);
+void Audio_StopBgmAndFanfare(u16);
 
 void AudioSfx_MuteBanks(u16 muteMask);
 void AudioSfx_LowerBgmVolume(u8 channelIndex);

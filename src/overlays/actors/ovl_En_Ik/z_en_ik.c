@@ -169,7 +169,7 @@ void EnIk_Destroy(Actor* thisx, PlayState* play) {
     EnIk* this = (EnIk*)thisx;
 
     if (Actor_FindNearby(play, &this->actor, ACTOR_EN_IK, ACTORCAT_ENEMY, 8000.0f) == NULL) {
-        func_800F5B58();
+        Audio_RestorePrevBgm();
     }
 
     Collider_DestroyTris(play, &this->shieldCollider);
@@ -292,7 +292,7 @@ void func_80A747C0(EnIk* this, PlayState* play) {
         sp24.y += 30.0f;
         func_8003424C(play, &sp24);
         this->skelAnime.playSpeed = 1.0f;
-        func_800F5ACC(SEQ_ID_MINI_BOSS);
+        Audio_PlayBgm_StorePrevBgm(SEQ_ID_MINI_BOSS);
     }
     if (this->skelAnime.curFrame == 5.0f) {
         Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_IRONNACK_WAKEUP);
@@ -960,7 +960,7 @@ void func_80A76798(Actor* thisx, PlayState* play) {
 }
 
 void EnIk_StartMusic(void) {
-    func_800F5ACC(SEQ_ID_MINI_BOSS);
+    Audio_PlayBgm_StorePrevBgm(SEQ_ID_MINI_BOSS);
 }
 
 void func_80A76C14(EnIk* this) {

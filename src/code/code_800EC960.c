@@ -81,8 +81,8 @@ u8 gUsedChannelsPerBank[4][7] = {
     { 2, 1, 0, 0, 1, 1, 1 },
 };
 
-f32 D_801305B0 = 0.7950898f;
-s8 D_801305B4 = 35;
+f32 sDarkLinkFreq = 0.7950898f; // Around 5 semitones lowered
+s8 sDarkLinkReverbAdd = 35;
 s8 sSfxTimer = 20;
 s8 D_801305BC = 30;
 s8 D_801305C0 = 20;
@@ -122,7 +122,8 @@ u8 sSeqModeInput = 0;
 #define SEQ_FLAG_ENEMY (1 << 0) // Allows enemy bgm
 #define SEQ_FLAG_FANFARE (1 << 1)
 #define SEQ_FLAG_FANFARE_GANON (1 << 2)
-#define SEQ_FLAG_RESTORE (1 << 3) // required for func_800F5B58 to restore a sequence after func_800F5ACC
+#define SEQ_FLAG_RESTORE \
+    (1 << 3) // required for Audio_RestorePrevBgm to restore a sequence after Audio_PlayBgm_StorePrevBgm
 
 /**
  * These two sequence flags work together to implement a “resume playing from where you left off” system for scene
@@ -1289,7 +1290,7 @@ OcarinaSongButtons gOcarinaSongButtons[OCARINA_SONG_MAX] = {
 u32 sAudioUpdateStartTime;
 u32 sAudioUpdateEndTime;
 f32 sSfxSyncedVolume;
-f32 D_8016B7AC;
+f32 sSfxSyncedVolumeForMetalEffects;
 f32 sSfxSyncedFreq;
 f32 D_8016B7B4;
 FreqLerp sRiverFreqScaleLerp;
@@ -1309,9 +1310,9 @@ u8 sRiverSoundMainBgmRestore;
 u8 sGanonsTowerVol;
 SfxPlayerState sSfxChannelState[0x10];
 char sBinToStrBuf[0x20];
-u8 D_8016B9D8;
+u8 sMalonsSingingTimer;
 u8 sAudioSpecPeakNumNotes[0x12];
-u8 D_8016B9F2;
+u8 sMalonsSingingDisabled;
 u8 D_8016B9F3;
 u8 D_8016B9F4;
 u16 D_8016B9F6;
@@ -1338,8 +1339,8 @@ u16 sMusicStaffCurHeldLength[OCARINA_SONG_MAX];
 u16 sMusicStaffExpectedLength[OCARINA_SONG_MAX];
 u8 sMusicStaffExpectedPitch[OCARINA_SONG_MAX];
 OcarinaNote sScarecrowsLongSongSecondNote;
-u8 sAudioHasMalonBgm;
-f32 sAudioMalonBgmDist;
+u8 sAudioDebugIsMalonSingingUpdating;
+f32 sAudioDebugMalonSingingDist;
 
 void PadMgr_RequestPadData(PadMgr* padMgr, Input* inputs, s32 gameRequest);
 
@@ -3128,9 +3129,9 @@ void AudioDebug_Draw(GfxPrint* printer) {
             GfxPrint_Printf(printer, "DEMO FLAG %d", sAudioCutsceneFlag);
 
             GfxPrint_SetPos(printer, 3, 12);
-            if (sAudioHasMalonBgm == true) {
-                GfxPrint_Printf(printer, "MARON BGM DIST %f", sAudioMalonBgmDist);
-                sAudioHasMalonBgm = false;
+            if (sAudioDebugIsMalonSingingUpdating == true) {
+                GfxPrint_Printf(printer, "MARON BGM DIST %f", sAudioDebugMalonSingingDist);
+                sAudioDebugIsMalonSingingUpdating = false;
             }
 
             GfxPrint_SetPos(printer, 3, 23);
@@ -3300,7 +3301,7 @@ void AudioDebug_ProcessInput_SndCont(void) {
     if (CHECK_BTN_ANY(sDebugPadPress, BTN_CRIGHT)) {
         if (sAudioSndContSel == 0) {
             if (1) {}
-            func_800F5ACC(sAudioSndContWork[sAudioSndContSel]);
+            Audio_PlayBgm_StorePrevBgm(sAudioSndContWork[sAudioSndContSel]);
         }
     }
 }
@@ -4132,23 +4133,28 @@ void AudioSfx_SetProperties(u8 bankId, u8 entryIndex, u8 channelIndex) {
         AUDIOCMD_CHANNEL_REVERB_VOLUME(SEQ_PLAYER_SFX, channelIndex, reverb);
         sSfxChannelState[channelIndex].reverb = reverb;
     }
+
     if (freqScale != sSfxChannelState[channelIndex].freqScale) {
         AUDIOCMD_CHANNEL_FREQ_SCALE(SEQ_PLAYER_SFX, channelIndex, freqScale);
         sSfxChannelState[channelIndex].freqScale = freqScale;
     }
+
     if (stereoBits != sSfxChannelState[channelIndex].stereoBits) {
         AUDIOCMD_CHANNEL_STEREO(SEQ_PLAYER_SFX, channelIndex, stereoBits | 0x10);
         sSfxChannelState[channelIndex].stereoBits = stereoBits;
     }
+
     if (filter != sSfxChannelState[channelIndex].filter) {
         AUDIOCMD_CHANNEL_IO(SEQ_PLAYER_SFX, channelIndex, 3, filter);
         sSfxChannelState[channelIndex].filter = filter;
     }
+
     if (combFilterGain != sSfxChannelState[channelIndex].combFilterGain) {
         AUDIOCMD_CHANNEL_COMB_FILTER_SIZE(SEQ_PLAYER_SFX, channelIndex, 0x10);
         AUDIOCMD_CHANNEL_COMB_FILTER_GAIN(SEQ_PLAYER_SFX, channelIndex, ((u16)(combFilterGain) << 8) + 0xFF);
         sSfxChannelState[channelIndex].combFilterGain = combFilterGain;
     }
+
     if (panSigned != sSfxChannelState[channelIndex].panSigned) {
         AUDIOCMD_CHANNEL_PAN_SIGNED(SEQ_PLAYER_SFX, channelIndex, panSigned);
         sSfxChannelState[channelIndex].panSigned = panSigned;
@@ -4203,14 +4209,14 @@ f32 Audio_SetSyncedSfxFreqAndVolume(f32 freqVolParam) {
  *     - volume will decrease by 0.0375f
  *     - frequency will decrease by 0.0333333f
  */
-void Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(Vec3f* pos, u16 sfxId, f32 arg2) {
+void Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(Vec3f* pos, u16 sfxId, f32 freqVolParam) {
     f32 sp24;
     f32 phi_f0;
     u8 phi_v0;
-    u16 sfxId2;
+    u16 metalSfxId;
 
-    D_80131C8C = arg2;
-    sp24 = Audio_SetSyncedSfxFreqAndVolume(arg2);
+    D_80131C8C = freqVolParam;
+    sp24 = Audio_SetSyncedSfxFreqAndVolume(freqVolParam);
     AudioSfx_PlaySfx(sfxId, pos, 4, &sSfxSyncedFreq, &sSfxSyncedVolume, &gSfxDefaultReverb);
 
     if ((sfxId & 0xF0) == 0xB0) {
@@ -4223,14 +4229,15 @@ void Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(Vec3f* pos, u16 s
         phi_v0 = gAudioCtx.audioRandom % 2;
     }
 
-    if ((phi_f0 < arg2) && (phi_v0 != 0)) {
+    if ((phi_f0 < freqVolParam) && (phi_v0 != 0)) {
         if ((sfxId & 0x80) != 0) {
-            sfxId2 = SFX_ID_PLAYER_METALEFFECT_ADULT;
+            metalSfxId = SFX_ID_PLAYER_METALEFFECT_ADULT;
         } else {
-            sfxId2 = SFX_ID_PLAYER_METALEFFECT_KID;
+            metalSfxId = SFX_ID_PLAYER_METALEFFECT_KID;
         }
-        D_8016B7AC = (sp24 * 0.7) + 0.3;
-        AudioSfx_PlaySfx(sfxId2, pos, 4, &sSfxSyncedFreq, &D_8016B7AC, &gSfxDefaultReverb);
+
+        sSfxSyncedVolumeForMetalEffects = (sp24 * 0.7) + 0.3;
+        AudioSfx_PlaySfx(metalSfxId, pos, 4, &sSfxSyncedFreq, &sSfxSyncedVolumeForMetalEffects, &gSfxDefaultReverb);
     }
 }
 
@@ -4239,8 +4246,8 @@ void Audio_PlaySfx_AtPosWithSyncedFreqAndVolume(Vec3f* pos, u16 sfxId, f32 freqV
     AudioSfx_PlaySfx(sfxId, pos, 4, &sSfxSyncedFreq, &sSfxSyncedVolume, &gSfxDefaultReverb);
 }
 
-void func_800F4190(Vec3f* pos, u16 sfxId) {
-    AudioSfx_PlaySfx(sfxId, pos, 4, &D_801305B0, &gSfxDefaultFreqAndVolScale, &D_801305B4);
+void Audio_PlaySfx_DarkLink(Vec3f* pos, u16 sfxId) {
+    AudioSfx_PlaySfx(sfxId, pos, 4, &sDarkLinkFreq, &gSfxDefaultFreqAndVolScale, &sDarkLinkReverbAdd);
 }
 
 void Audio_PlaySfx_Randomized(Vec3f* pos, u16 baseSfxId, u8 randLim) {
@@ -4784,7 +4791,7 @@ s32 Audio_IsSequencePlaying(u8 seqId) {
  * Plays a sequence on the main bgm player, but stores the previous sequence to return to later
  * Designed for the mini-boss sequence, but also used by mini-game 2 sequence
  */
-void func_800F5ACC(u16 seqId) {
+void Audio_PlayBgm_StorePrevBgm(u16 seqId) {
     u16 curSeqId = AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN);
 
     if ((curSeqId & 0xFF) != SEQ_ID_GANON_TOWER && (curSeqId & 0xFF) != SEQ_ID_ESCAPE && curSeqId != seqId) {
@@ -4800,9 +4807,9 @@ void func_800F5ACC(u16 seqId) {
 }
 
 /**
- * Restores the previous sequence to the main bgm player before func_800F5ACC was called
+ * Restores the previous sequence to the main bgm player before Audio_PlayBgm_StorePrevBgm was called
  */
-void func_800F5B58(void) {
+void Audio_RestorePrevBgm(void) {
     if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != SEQ_ID_DISABLED) && (sPrevMainBgmSeqId != SEQ_ID_DISABLED) &&
         (sSeqFlags[AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) & 0xFF] & SEQ_FLAG_RESTORE)) {
         if (sPrevMainBgmSeqId == SEQ_ID_DISABLED) {
@@ -4818,7 +4825,7 @@ void func_800F5B58(void) {
 /**
  * Plays the nature ambience sequence on the main bgm player, but stores the previous sequence to return to later
  */
-void func_800F5BF0(u8 ambienceId) {
+void Audio_PlayAmbience_StorePrevBgm(u8 ambienceId) {
     u16 curSeqId = AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN);
 
     if (curSeqId != SEQ_ID_AMBIENCE) {
@@ -4829,9 +4836,9 @@ void func_800F5BF0(u8 ambienceId) {
 }
 
 /**
- * Restores the previous sequence to the main bgm player before func_800F5BF0 was called
+ * Restores the previous sequence to the main bgm player before Audio_PlayAmbience_StorePrevBgm was called
  */
-void func_800F5C2C(void) {
+void Audio_ForceRestorePreviousBgm(void) {
     if (sPrevMainBgmSeqId != SEQ_ID_DISABLED) {
         SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, sPrevMainBgmSeqId);
     }
@@ -5001,56 +5008,65 @@ void Audio_UpdateEnemyBgmVolume(f32 dist) {
     sAudioEnemyDist = dist;
 }
 
-void func_800F6268(f32 dist, u16 arg1) {
+void Audio_UpdateMalonSinging(f32 dist, u16 seqId) {
     s8 pad;
-    s8 phi_v1;
-    s16 temp_a0;
+    s8 melodyVolume;
+    s16 curSeqId;
 
-    sAudioHasMalonBgm = true;
-    sAudioMalonBgmDist = dist;
-    if (D_8016B9F2 == 0) {
-        temp_a0 = (s8)(AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) & 0xFF);
-        if (temp_a0 == (arg1 & 0xFF)) {
-            if ((arg1 & 0xFF) == SEQ_ID_LONLON) {
+    sAudioDebugIsMalonSingingUpdating = true;
+    sAudioDebugMalonSingingDist = dist;
 
-                if (dist > 2000.0f) {
-                    phi_v1 = 127;
-                } else if (dist < 200.0f) {
-                    phi_v1 = 0;
-                } else {
-                    phi_v1 = (s8)(((dist - 200.0f) * 127.0f) / 1800.0f);
-                }
-                // Transition volume of channels 0, 1 and 13 on seq player 0 over 3 frames
-                SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 3, 127 - phi_v1);
-                SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_MAIN, 1, 3, 127 - phi_v1);
-                SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_MAIN, 13, 3, phi_v1);
-                if (D_8016B9D8 == 0) {
-                    D_8016B9D8++;
-                }
-            }
-        } else if ((temp_a0 == SEQ_ID_AMBIENCE) && ((arg1 & 0xFF) == SEQ_ID_LONLON)) {
-            temp_a0 = (s8)(AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) & 0xFF);
-            if ((temp_a0 != (arg1 & 0xFF)) && (D_8016B9D8 < 10)) {
-                Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_SUB, SEQ_ID_LONLON, 0, 0, 0);
-                SEQCMD_SET_CHANNEL_DISABLE_MASK(SEQ_PLAYER_BGM_SUB, 0xFFFC);
-                D_8016B9D8 = 10;
-            }
+    if (sMalonsSingingDisabled) {
+        return;
+    }
+
+    curSeqId = (s8)(AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) & 0xFF);
+
+    if (curSeqId == (seqId & 0xFF)) {
+        if ((seqId & 0xFF) == SEQ_ID_LONLON) {
+            // Malon singing in Lon Lon Ranch
 
             if (dist > 2000.0f) {
-                phi_v1 = 127;
+                melodyVolume = 127;
             } else if (dist < 200.0f) {
-                phi_v1 = 0;
+                melodyVolume = 0;
             } else {
-                phi_v1 = (s8)(((dist - 200.0f) * 127.0f) / 1800.0f);
+                melodyVolume = (s8)(((dist - 200.0f) * 127.0f) / 1800.0f);
             }
-            // Transition volume of channels 0 and 1 on seq player 0 over 3 frames
-            SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_SUB, 0, 3, 127 - phi_v1);
-            SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_SUB, 1, 3, 127 - phi_v1);
+            // Update volume for channels 0 & 1, which contains Malon's singing
+            SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 3, 127 - melodyVolume);
+            SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_MAIN, 1, 3, 127 - melodyVolume);
+
+            // Update volume for channel 13, which contains the melody line for Lon Lon's Sequence
+            SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_MAIN, 13, 3, melodyVolume);
+
+            if (sMalonsSingingTimer == 0) {
+                sMalonsSingingTimer++;
+            }
+        }
+    } else if ((curSeqId == SEQ_ID_AMBIENCE) && ((seqId & 0xFF) == SEQ_ID_LONLON)) {
+        // Malon singing at night market
+        curSeqId = (s8)(AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) & 0xFF);
+        if ((curSeqId != (seqId & 0xFF)) && (sMalonsSingingTimer < 10)) {
+            Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_SUB, SEQ_ID_LONLON, 0, 0, 0);
+            SEQCMD_SET_CHANNEL_DISABLE_MASK(SEQ_PLAYER_BGM_SUB, 0xFFFC);
+            sMalonsSingingTimer = 10;
         }
 
-        if (D_8016B9D8 < 10) {
-            D_8016B9D8++;
+        if (dist > 2000.0f) {
+            melodyVolume = 127;
+        } else if (dist < 200.0f) {
+            melodyVolume = 0;
+        } else {
+            melodyVolume = (s8)(((dist - 200.0f) * 127.0f) / 1800.0f);
         }
+        // Update volume for channels 0 & 1, which contains Malon's singing
+        SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_SUB, 0, 3, 127 - melodyVolume);
+        SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_SUB, 1, 3, 127 - melodyVolume);
+    }
+
+    if (sMalonsSingingTimer < 10) {
+        sMalonsSingingTimer++;
     }
 }
 
@@ -5067,35 +5083,47 @@ void Audio_PlaySfx_Window(u8 arg0) {
     }
 }
 
-void func_800F6584(u8 arg0) {
+void Audio_SetMalonsSigning(u8 malonsSingingDisabled) {
     u8 seqPlayerIndex;
-    u16 sp34;
+    u16 channelMaskDisable;
 
-    D_8016B9F2 = arg0;
+    sMalonsSingingDisabled = malonsSingingDisabled;
+
     if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) & 0xFF) == SEQ_ID_LONLON) {
+        // Malon singing in Lon Lon Ranch
         seqPlayerIndex = SEQ_PLAYER_BGM_MAIN;
-        sp34 = 0;
+        // Do not disable any channel.
+        // Allow the full lon lon sequence to play in addition to Malon's singing.
+        channelMaskDisable = 0;
     } else if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) & 0xFF) == SEQ_ID_LONLON) {
+        // Malon singing at night market
         seqPlayerIndex = SEQ_PLAYER_BGM_SUB;
-        sp34 = 0xFFFC;
+        // Disable all channels between 2-15.
+        // Only allow the two channels with Malon's singing to play, and surpress the full lon lon sequence.
+        channelMaskDisable = 0xFFFC;
     } else {
         return;
     }
 
-    if (arg0 != 0) {
+    if (malonsSingingDisabled) {
+        // Turn volume off for channels 0 & 1, which contains Malon's singing,
         SEQCMD_SET_CHANNEL_VOLUME(seqPlayerIndex, 0, 1, 0);
         SEQCMD_SET_CHANNEL_VOLUME(seqPlayerIndex, 1, 1, 0);
         if (seqPlayerIndex == SEQ_PLAYER_BGM_SUB) {
-            SEQCMD_SET_CHANNEL_DISABLE_MASK(seqPlayerIndex, sp34 | 3);
+            // In night market, disable all 16 channels
+            SEQCMD_SET_CHANNEL_DISABLE_MASK(seqPlayerIndex, channelMaskDisable | 3);
         }
     } else {
         if (seqPlayerIndex == SEQ_PLAYER_BGM_SUB) {
+            // In night market, start the sequence.
             Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_SUB, SEQ_ID_LONLON, 0, 0, 0);
         }
+        // Turn volume on for channels 0 & 1, which contains Malon's singing,
         SEQCMD_SET_CHANNEL_VOLUME(seqPlayerIndex, 0, 1, 0x7F);
         SEQCMD_SET_CHANNEL_VOLUME(seqPlayerIndex, 1, 1, 0x7F);
         if (seqPlayerIndex == SEQ_PLAYER_BGM_SUB) {
-            SEQCMD_SET_CHANNEL_DISABLE_MASK(seqPlayerIndex, sp34);
+            // In night market, disable channels 2-15
+            SEQCMD_SET_CHANNEL_DISABLE_MASK(seqPlayerIndex, channelMaskDisable);
         }
     }
 }
@@ -5211,10 +5239,10 @@ void Audio_MuteAllSeqExceptSysAndOca(u16 duration) {
     SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_SUB, (duration * 3) / 2);
 }
 
-void func_800F6AB0(u16 duration) {
-    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, duration);
-    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, duration);
-    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_SUB, duration);
+void Audio_StopBgmAndFanfare(u16 fadeOutDuration) {
+    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, fadeOutDuration);
+    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, fadeOutDuration);
+    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_SUB, fadeOutDuration);
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_BGM_SUB, 0x7F, 0);
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_FANFARE, 0x7F, 0);
 }
@@ -5275,7 +5303,7 @@ void Audio_ResetData(void) {
     sRiverSoundMainBgmLower = false;
     sRiverSoundMainBgmRestore = false;
     sGanonsTowerVol = 0xFF;
-    D_8016B9D8 = 0;
+    sMalonsSingingTimer = 0;
     sSpecReverb = sSpecReverbs[gAudioSpecId];
     D_80130608 = 0;
     sPrevMainBgmSeqId = SEQ_ID_DISABLED;
@@ -5283,7 +5311,7 @@ void Audio_ResetData(void) {
     sRiverSoundBgmPos = NULL;
     D_8016B9F4 = 0;
     D_8016B9F3 = 1;
-    D_8016B9F2 = 0;
+    sMalonsSingingDisabled = false;
 }
 
 void Audio_SetAmbienceChannelIO(u8 channelIndexRange, u8 ioPort, u8 ioData) {
@@ -5300,7 +5328,7 @@ void Audio_SetAmbienceChannelIO(u8 channelIndexRange, u8 ioPort, u8 ioData) {
     // channelIndexRange = 01 on ioPort 1
     if (((channelIndexRange << 8) + ioPort) == ((AMBIENCE_CHANNEL_CRITTER_0 << 8) + CHANNEL_IO_PORT_1)) {
         if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) != SEQ_ID_LONLON) {
-            D_8016B9D8 = 0;
+            sMalonsSingingTimer = 0;
         }
     }
 

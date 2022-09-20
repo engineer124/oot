@@ -131,7 +131,7 @@ void EnTorch2_Destroy(Actor* thisx, PlayState* play) {
     Player* this = (Player*)thisx;
 
     Effect_Delete(play, this->meleeWeaponEffectIndex);
-    func_800F5B58();
+    Audio_RestorePrevBgm();
     Collider_DestroyCylinder(play, &this->cylinder);
     Collider_DestroyQuad(play, &this->meleeWeaponQuads[0]);
     Collider_DestroyQuad(play, &this->meleeWeaponQuads[1]);
@@ -237,7 +237,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
                     if (stickY) {}
                     sInput.cur.stick_y = stickY;
                 }
-                func_800F5ACC(SEQ_ID_MINI_BOSS);
+                Audio_PlayBgm_StorePrevBgm(SEQ_ID_MINI_BOSS);
                 sActionState = ENTORCH2_ATTACK;
             }
             break;
@@ -338,7 +338,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
                             EnTorch2_SwingSword(play, input, this);
                             sSwordJumpState++;
                         } else if (sSwordJumpTimer == 19) {
-                            func_800F4190(&this->actor.projectedPos, SFX_ID_VOICE_LI_AUTO_JUMP);
+                            Audio_PlaySfx_DarkLink(&this->actor.projectedPos, SFX_ID_VOICE_LI_AUTO_JUMP);
                         }
                     }
                 } else {
@@ -572,7 +572,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
         !(this->meleeWeaponQuads[0].base.atFlags & AT_HIT) && !(this->meleeWeaponQuads[1].base.atFlags & AT_HIT)) {
 
         if (!Actor_ApplyDamage(&this->actor)) {
-            func_800F5B58();
+            Audio_RestorePrevBgm();
             this->actor.flags &= ~(ACTOR_FLAG_0 | ACTOR_FLAG_2);
             this->unk_8A1 = 2;
             this->unk_8A4 = 6.0f;
@@ -585,7 +585,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
             Item_DropCollectibleRandom(play, &this->actor, &thisx->world.pos, 0xC0);
             this->stateFlags3 &= ~PLAYER_STATE3_2;
         } else {
-            func_800F5ACC(SEQ_ID_MINI_BOSS);
+            Audio_PlayBgm_StorePrevBgm(SEQ_ID_MINI_BOSS);
             if (this->actor.colChkInfo.damageEffect == 1) {
                 if (sAlpha == 255) {
                     Actor_SetColorFilter(&this->actor, 0, 0xFF, 0, 0x50);
@@ -653,7 +653,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
         }
         if (staggerThreshold < sStaggerCount) {
             this->skelAnime.playSpeed *= 0.6f;
-            func_800F4190(&this->actor.projectedPos, SFX_ID_PLAYER_DAMAGE);
+            Audio_PlaySfx_DarkLink(&this->actor.projectedPos, SFX_ID_PLAYER_DAMAGE);
             sStaggerTimer = 0;
             sStaggerCount = 0;
         }

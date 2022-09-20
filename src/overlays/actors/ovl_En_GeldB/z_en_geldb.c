@@ -262,7 +262,7 @@ void EnGeldB_Destroy(Actor* thisx, PlayState* play) {
     s32 pad;
     EnGeldB* this = (EnGeldB*)thisx;
 
-    func_800F5B58();
+    Audio_RestorePrevBgm();
     Effect_Delete(play, this->blureIndex);
     Collider_DestroyTris(play, &this->blockCollider);
     Collider_DestroyCylinder(play, &this->bodyCollider);
@@ -360,7 +360,7 @@ void EnGeldB_Wait(EnGeldB* this, PlayState* play) {
     } else {
         this->invisible = false;
         this->actor.shape.shadowScale = 90.0f;
-        func_800F5ACC(SEQ_ID_MINI_BOSS);
+        Audio_PlayBgm_StorePrevBgm(SEQ_ID_MINI_BOSS);
     }
     if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND_TOUCH) {
         Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_RIZA_DOWN);
@@ -1339,7 +1339,7 @@ void EnGeldB_Defeated(EnGeldB* this, PlayState* play) {
         EnGeldB_SetupFlee(this);
     } else if ((s32)this->skelAnime.curFrame == 10) {
         Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_RIZA_DOWN);
-        func_800F5B58();
+        Audio_RestorePrevBgm();
     }
 }
 

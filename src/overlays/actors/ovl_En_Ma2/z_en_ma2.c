@@ -197,12 +197,12 @@ void func_80AA1DB4(EnMa2* this, PlayState* play) {
     if (this->skelAnime.animation == &gMalonAdultSingAnim) {
         if (this->unk_1E0.unk_00 == 0) {
             if (this->unk_20A != 0) {
-                func_800F6584(0);
+                Audio_SetMalonsSigning(false);
                 this->unk_20A = 0;
             }
         } else {
             if (this->unk_20A == 0) {
-                func_800F6584(1);
+                Audio_SetMalonsSigning(true);
                 this->unk_20A = 1;
             }
         }
@@ -381,7 +381,7 @@ void EnMa2_Draw(Actor* thisx, PlayState* play) {
 
     activeCam = GET_ACTIVE_CAM(play);
     someFloat = Math_Vec3f_DistXZ(&this->actor.world.pos, &activeCam->eye);
-    func_800F6268(someFloat, SEQ_ID_LONLON);
+    Audio_UpdateMalonSinging(someFloat, SEQ_ID_LONLON);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(sMouthTextures[this->mouthIndex]));

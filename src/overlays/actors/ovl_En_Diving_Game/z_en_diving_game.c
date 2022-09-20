@@ -128,7 +128,7 @@ s32 EnDivingGame_HasMinigameFinished(EnDivingGame* this, PlayState* play) {
     if (gSaveContext.timer1State == 10 && !Play_InCsMode(play)) {
         // Failed.
         gSaveContext.timer1State = 0;
-        func_800F5B58();
+        Audio_RestorePrevBgm();
         Lib_PlaySfx(SFX_ID_SYSTEM_FOUND);
         this->actor.textId = 0x71AD;
         Message_StartTextbox(play, this->actor.textId, NULL);
@@ -157,7 +157,7 @@ s32 EnDivingGame_HasMinigameFinished(EnDivingGame* this, PlayState* play) {
             }
             Message_StartTextbox(play, this->actor.textId, NULL);
             this->unk_292 = TEXT_STATE_EVENT;
-            func_800F5B58();
+            Audio_RestorePrevBgm();
             Audio_PlayFanfare(SEQ_ID_SMALL_ITEM_GET);
             func_8002DF54(play, NULL, 8);
             if (!GET_EVENTCHKINF(EVENTCHKINF_38)) {
@@ -422,7 +422,7 @@ void func_809EE800(EnDivingGame* this, PlayState* play) {
         } else {
             func_80088B34(BREG(2) + 50);
         }
-        func_800F5ACC(SEQ_ID_TIMED_MINI_GAME);
+        Audio_PlayBgm_StorePrevBgm(SEQ_ID_TIMED_MINI_GAME);
         func_8002DF54(play, NULL, 7);
         this->actor.textId = 0x405B;
         this->unk_292 = TEXT_STATE_EVENT;
