@@ -264,7 +264,7 @@ f32 AudioEffects_UpdateAdsr(AdsrState* adsr) {
                     break;
 
                 default:
-                    adsr->delay *= gAudioCtx.audioBufferParameters.updatesPerFrameScaled;
+                    adsr->delay *= gAudioCtx.audioBufParams.updatesPerFrameScaled;
                     if (adsr->delay == 0) {
                         adsr->delay = 1;
                     }

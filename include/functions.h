@@ -1920,7 +1920,7 @@ void Audio_MuteAllSeqExceptSysAndOca(u16);
 void func_800F4190(Vec3f* pos, u16 sfxId);
 void Audio_LowerMainBgmVolume(u8 volume);
 void Audio_ResetIncreasingTranspose(void);
-void func_800F4C58(Vec3f* pos, u16 sfxId, u8);
+void AudioSfx_SetChannelIO(Vec3f* pos, u16 sfxId, u8);
 void func_800F4E30(Vec3f* pos, f32);
 void Audio_ClearSariaBgm(void);
 void Audio_ClearSariaBgmAtPos(Vec3f* pos);

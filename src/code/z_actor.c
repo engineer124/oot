@@ -2260,7 +2260,7 @@ void func_80030ED8(Actor* actor) {
     } else if (actor->flags & ACTOR_FLAG_SFX_CENTERED) {
         Lib_PlaySfx_Centered(actor->sfx);
     } else if (actor->flags & ACTOR_FLAG_SFX_TIMER) {
-        func_800F4C58(&gSfxDefaultPos, SFX_ID_SYSTEM_TIMER - SFX_FLAG, (s8)(actor->sfx - 1));
+        AudioSfx_SetChannelIO(&gSfxDefaultPos, SFX_ID_SYSTEM_TIMER - SFX_FLAG, (s8)(actor->sfx - 1));
     } else {
         Lib_PlaySfx_AtPos(&actor->projectedPos, actor->sfx);
     }

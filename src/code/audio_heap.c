@@ -16,7 +16,7 @@ void AudioHeap_DiscardSampleBanks(void);
  * i.e. (256.0f * `updatesPerFrameInvScaled`) is just `updatesPerFrameInv`
  */
 f32 AudioHeap_CalculateAdsrDecay(f32 scaleInv) {
-    return (256.0f * gAudioCtx.audioBufferParameters.updatesPerFrameInvScaled) / scaleInv;
+    return (256.0f * gAudioCtx.audioBufParams.updatesPerFrameInvScaled) / scaleInv;
 }
 
 /**
@@ -96,7 +96,7 @@ void AudioHeap_ReleaseNotesForFont(s32 fontId) {
         if (playbackState->fontId == fontId) {
             if ((playbackState->priority != 0) && (playbackState->adsr.action.s.state == ADSR_STATE_DECAY)) {
                 playbackState->priority = 1;
-                playbackState->adsr.fadeOutVel = gAudioCtx.audioBufferParameters.updatesPerFrameInv;
+                playbackState->adsr.fadeOutVel = gAudioCtx.audioBufParams.updatesPerFrameInv;
                 playbackState->adsr.action.s.release = true;
             }
         }
@@ -106,7 +106,7 @@ void AudioHeap_ReleaseNotesForFont(s32 fontId) {
 void AudioHeap_DiscardSequence(s32 seqId) {
     s32 i;
 
-    for (i = 0; i < gAudioCtx.audioBufferParameters.numSequencePlayers; i++) {
+    for (i = 0; i < gAudioCtx.audioBufParams.numSequencePlayers; i++) {
         if (gAudioCtx.seqPlayers[i].enabled && gAudioCtx.seqPlayers[i].seqId == seqId) {
             AudioScript_SequencePlayerDisable(&gAudioCtx.seqPlayers[i]);
         }
@@ -413,28 +413,28 @@ void* AudioHeap_AllocCached(s32 tableType, s32 size, s32 cache, s32 id) {
             // Check if there is a side which isn't in active use, if so, evict that one.
             if (tableType == SEQUENCE_TABLE) {
                 if (loadStatusEntry0 == LOAD_STATUS_COMPLETE) {
-                    for (i = 0; i < gAudioCtx.audioBufferParameters.numSequencePlayers; i++) {
+                    for (i = 0; i < gAudioCtx.audioBufParams.numSequencePlayers; i++) {
                         if (gAudioCtx.seqPlayers[i].enabled &&
                             gAudioCtx.seqPlayers[i].seqId == temporaryCache->entries[0].id) {
                             break;
                         }
                     }
 
-                    if (i == gAudioCtx.audioBufferParameters.numSequencePlayers) {
+                    if (i == gAudioCtx.audioBufParams.numSequencePlayers) {
                         temporaryCache->nextSide = 0;
                         goto done;
                     }
                 }
 
                 if (loadStatusEntry1 == LOAD_STATUS_COMPLETE) {
-                    for (i = 0; i < gAudioCtx.audioBufferParameters.numSequencePlayers; i++) {
+                    for (i = 0; i < gAudioCtx.audioBufParams.numSequencePlayers; i++) {
                         if (gAudioCtx.seqPlayers[i].enabled &&
                             gAudioCtx.seqPlayers[i].seqId == temporaryCache->entries[1].id) {
                             break;
                         }
                     }
 
-                    if (i == gAudioCtx.audioBufferParameters.numSequencePlayers) {
+                    if (i == gAudioCtx.audioBufParams.numSequencePlayers) {
                         temporaryCache->nextSide = 1;
                         goto done;
                     }
@@ -737,7 +737,7 @@ void AudioHeap_UpdateReverbs(void) {
     s32 i;
     s32 j;
 
-    if (gAudioCtx.audioBufferParameters.specUnk4 == 2) {
+    if (gAudioCtx.audioBufParams.specUnk4 == 2) {
         count = 2;
     } else {
         count = 1;
@@ -757,7 +757,7 @@ void AudioHeap_ClearCurrentAiBuffer(void) {
     s32 curAiBufferIndex = gAudioCtx.curAiBufIndex;
     s32 i;
 
-    gAudioCtx.aiBufLengths[curAiBufferIndex] = gAudioCtx.audioBufferParameters.minAiBufferLength;
+    gAudioCtx.aiBufLengths[curAiBufferIndex] = gAudioCtx.audioBufParams.minAiBufferLength;
 
     for (i = 0; i < AIBUF_LEN; i++) {
         gAudioCtx.aiBuffers[curAiBufferIndex][i] = 0;
@@ -769,7 +769,7 @@ s32 AudioHeap_ResetStep(void) {
     s32 j;
     s32 sp24;
 
-    if (gAudioCtx.audioBufferParameters.specUnk4 == 2) {
+    if (gAudioCtx.audioBufParams.specUnk4 == 2) {
         sp24 = 2;
     } else {
         sp24 = 1;
@@ -777,7 +777,7 @@ s32 AudioHeap_ResetStep(void) {
 
     switch (gAudioCtx.resetStatus) {
         case 5:
-            for (i = 0; i < gAudioCtx.audioBufferParameters.numSequencePlayers; i++) {
+            for (i = 0; i < gAudioCtx.audioBufParams.numSequencePlayers; i++) {
                 AudioScript_SequencePlayerDisableAsFinished(&gAudioCtx.seqPlayers[i]);
             }
             gAudioCtx.audioResetFadeOutFramesLeft = 2 / sp24;
@@ -792,8 +792,7 @@ s32 AudioHeap_ResetStep(void) {
                 for (i = 0; i < gAudioCtx.numNotes; i++) {
                     if (gAudioCtx.notes[i].noteSubEu.bitField0.enabled &&
                         gAudioCtx.notes[i].playbackState.adsr.action.s.state != ADSR_STATE_DISABLED) {
-                        gAudioCtx.notes[i].playbackState.adsr.fadeOutVel =
-                            gAudioCtx.audioBufferParameters.updatesPerFrameInv;
+                        gAudioCtx.notes[i].playbackState.adsr.fadeOutVel = gAudioCtx.audioBufParams.updatesPerFrameInv;
                         gAudioCtx.notes[i].playbackState.adsr.action.s.release = true;
                     }
                 }
@@ -827,7 +826,7 @@ s32 AudioHeap_ResetStep(void) {
             AudioHeap_Init();
             gAudioCtx.resetStatus = 0;
             for (i = 0; i < 3; i++) {
-                gAudioCtx.aiBufLengths[i] = gAudioCtx.audioBufferParameters.maxAiBufferLength;
+                gAudioCtx.aiBufLengths[i] = gAudioCtx.audioBufParams.maxAiBufferLength;
                 for (j = 0; j < AIBUF_LEN; j++) {
                     gAudioCtx.aiBuffers[i][j] = 0;
                 }
@@ -858,56 +857,53 @@ void AudioHeap_Init(void) {
     gAudioCtx.sampleDmaCount = 0;
 
     // audio buffer parameters
-    gAudioCtx.audioBufferParameters.samplingFrequency = spec->samplingFrequency;
-    gAudioCtx.audioBufferParameters.aiSamplingFrequency =
-        osAiSetFrequency(gAudioCtx.audioBufferParameters.samplingFrequency);
-    gAudioCtx.audioBufferParameters.samplesPerFrameTarget =
-        ALIGN16(gAudioCtx.audioBufferParameters.samplingFrequency / gAudioCtx.refreshRate);
-    gAudioCtx.audioBufferParameters.minAiBufferLength = gAudioCtx.audioBufferParameters.samplesPerFrameTarget - 0x10;
-    gAudioCtx.audioBufferParameters.maxAiBufferLength = gAudioCtx.audioBufferParameters.samplesPerFrameTarget + 0x10;
-    gAudioCtx.audioBufferParameters.updatesPerFrame =
-        ((gAudioCtx.audioBufferParameters.samplesPerFrameTarget + 0x10) / 0xD0) + 1;
-    gAudioCtx.audioBufferParameters.samplesPerUpdate =
-        (gAudioCtx.audioBufferParameters.samplesPerFrameTarget / gAudioCtx.audioBufferParameters.updatesPerFrame) & ~7;
-    gAudioCtx.audioBufferParameters.samplesPerUpdateMax = gAudioCtx.audioBufferParameters.samplesPerUpdate + 8;
-    gAudioCtx.audioBufferParameters.samplesPerUpdateMin = gAudioCtx.audioBufferParameters.samplesPerUpdate - 8;
-    gAudioCtx.audioBufferParameters.resampleRate = 32000.0f / (s32)gAudioCtx.audioBufferParameters.samplingFrequency;
-    gAudioCtx.audioBufferParameters.updatesPerFrameInvScaled =
-        (1.0f / 256.0f) / gAudioCtx.audioBufferParameters.updatesPerFrame;
-    gAudioCtx.audioBufferParameters.updatesPerFrameScaled = gAudioCtx.audioBufferParameters.updatesPerFrame / 4.0f;
-    gAudioCtx.audioBufferParameters.updatesPerFrameInv = 1.0f / gAudioCtx.audioBufferParameters.updatesPerFrame;
+    gAudioCtx.audioBufParams.samplingFrequency = spec->samplingFrequency;
+    gAudioCtx.audioBufParams.aiSamplingFrequency = osAiSetFrequency(gAudioCtx.audioBufParams.samplingFrequency);
+    gAudioCtx.audioBufParams.samplesPerFrameTarget =
+        ALIGN16(gAudioCtx.audioBufParams.samplingFrequency / gAudioCtx.refreshRate);
+    gAudioCtx.audioBufParams.minAiBufferLength = gAudioCtx.audioBufParams.samplesPerFrameTarget - 0x10;
+    gAudioCtx.audioBufParams.maxAiBufferLength = gAudioCtx.audioBufParams.samplesPerFrameTarget + 0x10;
+    gAudioCtx.audioBufParams.updatesPerFrame = ((gAudioCtx.audioBufParams.samplesPerFrameTarget + 0x10) / 0xD0) + 1;
+    gAudioCtx.audioBufParams.samplesPerUpdate =
+        (gAudioCtx.audioBufParams.samplesPerFrameTarget / gAudioCtx.audioBufParams.updatesPerFrame) & ~7;
+    gAudioCtx.audioBufParams.samplesPerUpdateMax = gAudioCtx.audioBufParams.samplesPerUpdate + 8;
+    gAudioCtx.audioBufParams.samplesPerUpdateMin = gAudioCtx.audioBufParams.samplesPerUpdate - 8;
+    gAudioCtx.audioBufParams.resampleRate = 32000.0f / (s32)gAudioCtx.audioBufParams.samplingFrequency;
+    gAudioCtx.audioBufParams.updatesPerFrameInvScaled = (1.0f / 256.0f) / gAudioCtx.audioBufParams.updatesPerFrame;
+    gAudioCtx.audioBufParams.updatesPerFrameScaled = gAudioCtx.audioBufParams.updatesPerFrame / 4.0f;
+    gAudioCtx.audioBufParams.updatesPerFrameInv = 1.0f / gAudioCtx.audioBufParams.updatesPerFrame;
 
     // SampleDma buffer size
     gAudioCtx.sampleDmaBufSize1 = spec->sampleDmaBufSize1;
     gAudioCtx.sampleDmaBufSize2 = spec->sampleDmaBufSize2;
 
     gAudioCtx.numNotes = spec->numNotes;
-    gAudioCtx.audioBufferParameters.numSequencePlayers = spec->numSequencePlayers;
-    if (gAudioCtx.audioBufferParameters.numSequencePlayers > 4) {
-        gAudioCtx.audioBufferParameters.numSequencePlayers = 4;
+    gAudioCtx.audioBufParams.numSequencePlayers = spec->numSequencePlayers;
+    if (gAudioCtx.audioBufParams.numSequencePlayers > 4) {
+        gAudioCtx.audioBufParams.numSequencePlayers = 4;
     }
     gAudioCtx.unk_2 = spec->unk_14;
     gAudioCtx.tempoInternalToExternal =
-        (u32)(gAudioCtx.audioBufferParameters.updatesPerFrame * 2880000.0f / gTatumsPerBeat / gAudioCtx.unk_2960);
+        (u32)(gAudioCtx.audioBufParams.updatesPerFrame * 2880000.0f / gTatumsPerBeat / gAudioCtx.unk_2960);
 
     gAudioCtx.unk_2870 = gAudioCtx.refreshRate;
-    gAudioCtx.unk_2870 *= gAudioCtx.audioBufferParameters.updatesPerFrame;
-    gAudioCtx.unk_2870 /= gAudioCtx.audioBufferParameters.aiSamplingFrequency;
+    gAudioCtx.unk_2870 *= gAudioCtx.audioBufParams.updatesPerFrame;
+    gAudioCtx.unk_2870 /= gAudioCtx.audioBufParams.aiSamplingFrequency;
     gAudioCtx.unk_2870 /= gAudioCtx.tempoInternalToExternal;
 
-    gAudioCtx.audioBufferParameters.specUnk4 = spec->unk_04;
-    gAudioCtx.audioBufferParameters.samplesPerFrameTarget *= gAudioCtx.audioBufferParameters.specUnk4;
-    gAudioCtx.audioBufferParameters.maxAiBufferLength *= gAudioCtx.audioBufferParameters.specUnk4;
-    gAudioCtx.audioBufferParameters.minAiBufferLength *= gAudioCtx.audioBufferParameters.specUnk4;
-    gAudioCtx.audioBufferParameters.updatesPerFrame *= gAudioCtx.audioBufferParameters.specUnk4;
+    gAudioCtx.audioBufParams.specUnk4 = spec->unk_04;
+    gAudioCtx.audioBufParams.samplesPerFrameTarget *= gAudioCtx.audioBufParams.specUnk4;
+    gAudioCtx.audioBufParams.maxAiBufferLength *= gAudioCtx.audioBufParams.specUnk4;
+    gAudioCtx.audioBufParams.minAiBufferLength *= gAudioCtx.audioBufParams.specUnk4;
+    gAudioCtx.audioBufParams.updatesPerFrame *= gAudioCtx.audioBufParams.specUnk4;
 
-    if (gAudioCtx.audioBufferParameters.specUnk4 >= 2) {
-        gAudioCtx.audioBufferParameters.maxAiBufferLength -= 0x10;
+    if (gAudioCtx.audioBufParams.specUnk4 >= 2) {
+        gAudioCtx.audioBufParams.maxAiBufferLength -= 0x10;
     }
 
     // Determine the length of the buffer for storing the audio command list passed to the rsp audio microcode
     gAudioCtx.maxAudioCmds =
-        gAudioCtx.numNotes * 0x10 * gAudioCtx.audioBufferParameters.updatesPerFrame + spec->numReverbs * 0x18 + 0x140;
+        gAudioCtx.numNotes * 0x10 * gAudioCtx.audioBufParams.updatesPerFrame + spec->numReverbs * 0x18 + 0x140;
 
     // Calculate sizes for various caches on the audio heap
     persistentSize =
@@ -949,9 +945,8 @@ void AudioHeap_Init(void) {
     gAudioCtx.notes = AudioHeap_AllocZeroed(&gAudioCtx.miscPool, gAudioCtx.numNotes * sizeof(Note));
     AudioNote_InitAll();
     AudioList_InitNoteFreeList();
-    gAudioCtx.sampleStateList =
-        AudioHeap_AllocZeroed(&gAudioCtx.miscPool, gAudioCtx.audioBufferParameters.updatesPerFrame *
-                                                       gAudioCtx.numNotes * sizeof(NoteSampleState));
+    gAudioCtx.sampleStateList = AudioHeap_AllocZeroed(
+        &gAudioCtx.miscPool, gAudioCtx.audioBufParams.updatesPerFrame * gAudioCtx.numNotes * sizeof(NoteSampleState));
     // Initialize audio binary interface command list buffers
     for (i = 0; i != 2; i++) {
         gAudioCtx.abiCmdBufs[i] =
@@ -1012,7 +1007,7 @@ void AudioHeap_Init(void) {
             reverb->unk_34 = AudioHeap_AllocZeroed(&gAudioCtx.miscPool, sizeof(RESAMPLE_STATE));
             reverb->unk_38 = AudioHeap_AllocZeroed(&gAudioCtx.miscPool, sizeof(RESAMPLE_STATE));
             reverb->unk_3C = AudioHeap_AllocZeroed(&gAudioCtx.miscPool, sizeof(RESAMPLE_STATE));
-            for (j = 0; j < gAudioCtx.audioBufferParameters.updatesPerFrame; j++) {
+            for (j = 0; j < gAudioCtx.audioBufParams.updatesPerFrame; j++) {
                 ramAddr = AudioHeap_AllocZeroedAttemptExternal(&gAudioCtx.miscPool, DMEM_2CH_SIZE);
                 reverb->bufEntry[0][j].toDownsampleLeft = ramAddr;
                 reverb->bufEntry[0][j].toDownsampleRight = ramAddr + DMEM_1CH_SIZE / SAMPLE_SIZE;
@@ -1044,7 +1039,7 @@ void AudioHeap_Init(void) {
 
     // Initialize sequence players
     AudioScript_InitSequencePlayers();
-    for (j = 0; j < gAudioCtx.audioBufferParameters.numSequencePlayers; j++) {
+    for (j = 0; j < gAudioCtx.audioBufParams.numSequencePlayers; j++) {
         AudioScript_InitSequencePlayerChannels(j);
         AudioScript_ResetSequencePlayer(&gAudioCtx.seqPlayers[j]);
     }

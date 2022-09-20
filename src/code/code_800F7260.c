@@ -337,7 +337,7 @@ void AudioSfx_RemoveBankEntry(u8 bankId, u8 entryIndex) {
 }
 
 void AudioSfx_ChooseActiveSfx(u8 bankId) {
-    u8 numChosenSfx;
+    u8 numChosenSfx = 0;
     u8 numChannels;
     u8 entryIndex;
     u8 i;
@@ -353,71 +353,108 @@ void AudioSfx_ChooseActiveSfx(u8 bankId) {
     ActiveSfx* activeSfx;
     s32 pad;
 
-    numChosenSfx = 0;
     for (i = 0; i < MAX_CHANNELS_PER_BANK; i++) {
         chosenSfx[i].priority = 0x7FFFFFFF;
         chosenSfx[i].entryIndex = 0xFF;
     }
+
     entryIndex = gSfxBanks[bankId][0].next;
     k = 0;
+
+    // Delete stale sfx and prioritize remaining sfx into the gActiveSfx arrays
     while (entryIndex != 0xFF) {
+
+        // Update the freshness for an "all-frame" sfx if it is still queued
         if ((gSfxBanks[bankId][entryIndex].state == SFX_STATE_QUEUED) &&
             (gSfxBanks[bankId][entryIndex].sfxId & 0xC00)) {
             gSfxBanks[bankId][entryIndex].freshness--;
+
         } else if (!(gSfxBanks[bankId][entryIndex].sfxId & 0xC00) &&
                    (gSfxBanks[bankId][entryIndex].state == SFX_STATE_PLAYING_ONE_FRAME)) {
-            AudioThread_QueueCmdS8((gSfxBanks[bankId][entryIndex].channelIndex << 8) | 0x6020000, 0);
+            // If a "one-frame" sfx is still in "SFX_STATE_PLAYING_ONE_FRAME", then remove the sfx
+
+            // ioPort 0, force stop sfx in seq 0
+            AUDIOCMD_CHANNEL_IO(SEQ_PLAYER_SFX, gSfxBanks[bankId][entryIndex].channelIndex, 0, 0);
             AudioSfx_RemoveBankEntry(bankId, entryIndex);
         }
+
+        // If a "all-frame" sfx goes 2 frames in the "queued" state
+        // (because it is too low priority), then remove the sfx
         if (gSfxBanks[bankId][entryIndex].freshness == 0) {
             AudioSfx_RemoveBankEntry(bankId, entryIndex);
         } else if (gSfxBanks[bankId][entryIndex].state != SFX_STATE_EMPTY) {
+            // process the entry
             entry = &gSfxBanks[bankId][entryIndex];
 
+            // Recompute distSq each frame since the sound's position may have changed
+            // (later converted into dist)
             if (&gSfxDefaultPos.x == entry[0].posX) {
                 entry->dist = 0.0f;
             } else {
                 tempf1 = *entry->posY * 1;
                 entry->dist = (SQ(*entry->posX) + SQ(tempf1) + SQ(*entry->posZ)) * 1;
             }
+
+            // Recompute priority, possibly based on sfx position relative to the camera.
+            // (Note that the priority is the opposite of importance; lower is more preserved)
             sfxImportance = entry->sfxImportance;
+
             if (entry->sfxParams & SFX_FLAG_PRIORITY_NO_DIST) {
+                // Priority is independent of distance
                 entry->priority = SQ(0xFF - sfxImportance) * SQ(76);
             } else {
+                // Priority value increases with distance (more likely to eject)
                 if (entry->dist > 0x7FFFFFD0) {
+                    // max distance
                     entry->dist = 0x70000008;
                     osSyncPrintf(VT_COL(RED, WHITE) "<INAGAKI CHECK> dist over! "
                                                     "flag:%04X ptr:%08X pos:%f-%f-%f" VT_RST "\n",
                                  entry->sfxId, entry->posX, entry->posZ, *entry->posX, *entry->posY, *entry->posZ);
                 }
+
                 temp3 = entry->sfxId; // fake
                 entry->priority = (u32)entry->dist + (SQ(0xFF - sfxImportance) * SQ(76)) + temp3 - temp3;
                 if (*entry->posZ < 0.0f) {
                     entry->priority += (s32)(-*entry->posZ * 6.0f);
                 }
             }
+
+            // Sfx is too far away, do not consider for chosen sfx
             if (entry->dist > SQ(1e5f)) {
+
+                // If too far away and also playing, stop playing
                 if (entry->state == SFX_STATE_PLAYING) {
-                    AudioThread_QueueCmdS8((entry->channelIndex << 8) | 0x6020000, 0);
+                    // ioPort 0, force stop sfx in seq 0
+                    AUDIOCMD_CHANNEL_IO(SEQ_PLAYER_SFX, entry->channelIndex, 0, 0);
                     if (entry->sfxId & 0xC00) {
                         AudioSfx_RemoveBankEntry(bankId, entryIndex);
                         entryIndex = k;
                     }
                 }
             } else {
+                // Loop through all channels allocated to a specific bank
+                // Choose which sfx from gSfxBanks to play
+                // This includes all sfx requests and sfx already playing
+                // Sort all current sfx entries in gSfxBanks by priority
+                // This is where the "active" sfx are chosen
                 numChannels = gChannelsPerBank[gSfxChannelLayout][bankId];
+
                 for (i = 0; i < numChannels; i++) {
+                    // Sort all sfx entries by priority
                     if (chosenSfx[i].priority >= entry->priority) {
+                        // Update the number of sfx to attempt to play
                         if (numChosenSfx < gChannelsPerBank[gSfxChannelLayout][bankId]) {
                             numChosenSfx++;
                         }
+
                         for (j = numChannels - 1; j > i; j--) {
                             chosenSfx[j].priority = chosenSfx[j - 1].priority;
                             chosenSfx[j].entryIndex = chosenSfx[j - 1].entryIndex;
                         }
+
                         chosenSfx[i].priority = entry->priority;
                         chosenSfx[i].entryIndex = entryIndex;
-                        i = numChannels; // "break;"
+                        i = numChannels; // make this the last pass through the loop, here equivalent to "break"
                     }
                 }
             }
@@ -425,33 +462,49 @@ void AudioSfx_ChooseActiveSfx(u8 bankId) {
         }
         entryIndex = gSfxBanks[bankId][k].next;
     }
+
+    // If a sfx is chosen, update its state
     for (i = 0; i < numChosenSfx; i++) {
         entry = &gSfxBanks[bankId][chosenSfx[i].entryIndex];
+
         if (entry->state == SFX_STATE_QUEUED) {
+            // sfx is a new entry
             entry->state = SFX_STATE_READY;
         } else if (entry->state == SFX_STATE_PLAYING) {
+            // sfx is already playing
             entry->state = SFX_STATE_PLAYING_REFRESH;
         }
     }
 
-    // Pick something to play for all channels.
+    // Apply the chosenSfx to the activeSfx in each channel
     numChannels = gChannelsPerBank[gSfxChannelLayout][bankId];
     for (i = 0; i < numChannels; i++) {
         needNewSfx = false;
         activeSfx = &gActiveSfx[bankId][i];
 
+        // Check if a sfx is already in the channel
         if (activeSfx->entryIndex == 0xFF) {
+            // No sfx playing in the channel
+            // Available for use
             needNewSfx = true;
         } else {
+            // The channel is already playing a sfx
+            // Get the entry of the sfx playing
             entry = &gSfxBanks[bankId][activeSfx[0].entryIndex];
+
+            // Check the state of the sfx playing
             if (entry->state == SFX_STATE_PLAYING) {
                 if (entry->sfxId & 0xC00) {
+                    // For "all-frames" sfx, remove the entry
                     AudioSfx_RemoveBankEntry(bankId, activeSfx->entryIndex);
                 } else {
+                    // For "one-frame" sfx, reset the state to queued
                     entry->state = SFX_STATE_QUEUED;
                 }
                 needNewSfx = true;
             } else if (entry->state == SFX_STATE_EMPTY) {
+                // The sfx already in the channel is empty
+                // Can replace the sfx
                 activeSfx->entryIndex = 0xFF;
                 needNewSfx = true;
             } else {
@@ -466,6 +519,7 @@ void AudioSfx_ChooseActiveSfx(u8 bankId) {
             }
         }
 
+        // enter the new sfx into the activeSfx
         if (needNewSfx == true) {
             for (j = 0; j < numChannels; j++) {
                 chosenEntryIndex = chosenSfx[j].entryIndex;
@@ -474,7 +528,7 @@ void AudioSfx_ChooseActiveSfx(u8 bankId) {
                     for (k = 0; k < numChannels; k++) {
                         if (chosenEntryIndex == gActiveSfx[bankId][k].entryIndex) {
                             needNewSfx = false;
-                            k = numChannels; // "break;"
+                            k = numChannels; // "break; i.e. force for-loop to end"
                         }
                     }
                     if (needNewSfx == true) {
@@ -526,30 +580,46 @@ void AudioSfx_PlayActiveSfx(u8 bankId) {
                     }
                 }
                 AudioSfx_SetProperties(bankId, entryIndex, sCurSfxPlayerChannelIndex);
-                AudioThread_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | ((sCurSfxPlayerChannelIndex & 0xFF) << 8), 1);
-                AudioThread_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | ((sCurSfxPlayerChannelIndex & 0xFF) << 8) | 4,
-                                       entry->sfxId & 0xFF);
+
+                // ioPort 0, enable the sfx to play in seq 0
+                AUDIOCMD_CHANNEL_IO(SEQ_PLAYER_SFX, sCurSfxPlayerChannelIndex, 0, 1);
+
+                // ioPort 4, write the lower bits sfx index to seq 0 so it can find the right code to execute
+                AUDIOCMD_CHANNEL_IO(SEQ_PLAYER_SFX, sCurSfxPlayerChannelIndex, 4, entry->sfxId & 0xFF);
+
+                // If the sfx bank has more than 255 entries (greater than a u8 can store),
+                // then store the Id in upper and lower bits
                 if (gIsLargeSfxBank[bankId]) {
-                    AudioThread_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 |
-                                               ((sCurSfxPlayerChannelIndex & 0xFF) << 8) | 5,
-                                           (entry->sfxId & 0x100) >> 8);
+                    // ioPort 5, write the upper bits sfx index to seq 0, for banks with > 0xFF entries
+                    AUDIOCMD_CHANNEL_IO(SEQ_PLAYER_SFX, sCurSfxPlayerChannelIndex, 5, (entry->sfxId & 0x100) >> 8);
                 }
+
+                // Update playing state
                 if (entry->sfxId & 0xC00) {
+                    // "all-frames" sfx
                     entry->state = SFX_STATE_PLAYING;
                 } else {
+                    // "one-frame" sfx
                     entry->state = SFX_STATE_PLAYING_ONE_FRAME;
                 }
             } else if ((u8)channel->seqScriptIO[1] == (u8)SEQ_IO_VAL_NONE) {
+                // Signal from seq 0 that the sfx is finished playing. Remove entry
                 AudioSfx_RemoveBankEntry(bankId, entryIndex);
             } else if (entry->state == SFX_STATE_PLAYING_REFRESH) {
+                // Sfx is playing but a refresh is requested
                 AudioSfx_SetProperties(bankId, entryIndex, sCurSfxPlayerChannelIndex);
+
+                // Update playing state
                 if (entry->sfxId & 0xC00) {
+                    // "all-frames" sfx
                     entry->state = SFX_STATE_PLAYING;
                 } else {
+                    // "one-frame" sfx
                     entry->state = SFX_STATE_PLAYING_ONE_FRAME;
                 }
             }
         }
+
         sCurSfxPlayerChannelIndex++;
     }
 }
@@ -563,7 +633,7 @@ void AudioSfx_StopByBank(u8 bankId) {
     while (entryIndex != 0xFF) {
         entry = &gSfxBanks[bankId][entryIndex];
         if (entry->state >= SFX_STATE_PLAYING_REFRESH) {
-            AudioThread_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | ((entry->channelIndex & 0xFF) << 8), 0);
+            AUDIOCMD_CHANNEL_IO(SEQ_PLAYER_SFX, entry->channelIndex, 0, 0);
         }
         if (entry->state != SFX_STATE_EMPTY) {
             AudioSfx_RemoveBankEntry(bankId, entryIndex);
@@ -583,7 +653,7 @@ void AudioSfx_StopByPosAndBankImpl(u8 bankId, Vec3f* pos) {
         entry = &gSfxBanks[bankId][entryIndex];
         if (entry->posX == &pos->x) {
             if (entry->state >= SFX_STATE_PLAYING_REFRESH) {
-                AudioThread_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | ((entry->channelIndex & 0xFF) << 8), 0);
+                AUDIOCMD_CHANNEL_IO(SEQ_PLAYER_SFX, entry->channelIndex, 0, 0);
             }
             if (entry->state != SFX_STATE_EMPTY) {
                 AudioSfx_RemoveBankEntry(bankId, entryIndex);
@@ -625,7 +695,7 @@ void AudioSfx_StopByPosAndId(Vec3f* pos, u16 sfxId) {
         entry = &gSfxBanks[SFX_BANK(sfxId)][entryIndex];
         if (entry->posX == &pos->x && entry->sfxId == sfxId) {
             if (entry->state >= SFX_STATE_PLAYING_REFRESH) {
-                AudioThread_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | ((entry->channelIndex & 0xFF) << 8), 0);
+                AUDIOCMD_CHANNEL_IO(SEQ_PLAYER_SFX, entry->channelIndex, 0, 0);
             }
             if (entry->state != SFX_STATE_EMPTY) {
                 AudioSfx_RemoveBankEntry(SFX_BANK(sfxId), entryIndex);
@@ -653,7 +723,7 @@ void AudioSfx_StopByTokenAndId(u8 token, u16 sfxId) {
         entry = &gSfxBanks[SFX_BANK(sfxId)][entryIndex];
         if (entry->token == token && entry->sfxId == sfxId) {
             if (entry->state >= SFX_STATE_PLAYING_REFRESH) {
-                AudioThread_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | ((entry->channelIndex & 0xFF) << 8), 0);
+                AUDIOCMD_CHANNEL_IO(SEQ_PLAYER_SFX, entry->channelIndex, 0, 0);
             }
             if (entry->state != SFX_STATE_EMPTY) {
                 AudioSfx_RemoveBankEntry(SFX_BANK(sfxId), entryIndex);
@@ -680,7 +750,7 @@ void AudioSfx_StopById(u32 sfxId) {
         entry = &gSfxBanks[SFX_BANK(sfxId)][entryIndex];
         if (entry->sfxId == sfxId) {
             if (entry->state >= SFX_STATE_PLAYING_REFRESH) {
-                AudioThread_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | ((entry->channelIndex & 0xFF) << 8), 0);
+                AUDIOCMD_CHANNEL_IO(SEQ_PLAYER_SFX, entry->channelIndex, 0, 0);
             }
             if (entry->state != SFX_STATE_EMPTY) {
                 AudioSfx_RemoveBankEntry(SFX_BANK(sfxId), entryIndex);

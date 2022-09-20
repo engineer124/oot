@@ -206,8 +206,8 @@ void AudioLoad_InitSampleDmaBuffers(s32 numNotes) {
 
     gAudioCtx.sampleDmaBufSize = gAudioCtx.sampleDmaBufSize1;
     gAudioCtx.sampleDmas = AudioHeap_Alloc(&gAudioCtx.miscPool, 4 * gAudioCtx.numNotes * sizeof(SampleDma) *
-                                                                    gAudioCtx.audioBufferParameters.specUnk4);
-    t2 = 3 * gAudioCtx.numNotes * gAudioCtx.audioBufferParameters.specUnk4;
+                                                                    gAudioCtx.audioBufParams.specUnk4);
+    t2 = 3 * gAudioCtx.numNotes * gAudioCtx.audioBufParams.specUnk4;
     for (i = 0; i < t2; i++) {
         dma = &gAudioCtx.sampleDmas[gAudioCtx.sampleDmaCount];
         dma->ramAddr = AudioHeap_AllocAttemptExternal(&gAudioCtx.miscPool, gAudioCtx.sampleDmaBufSize);
