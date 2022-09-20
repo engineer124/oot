@@ -292,7 +292,7 @@ void func_80A747C0(EnIk* this, PlayState* play) {
         sp24.y += 30.0f;
         func_8003424C(play, &sp24);
         this->skelAnime.playSpeed = 1.0f;
-        func_800F5ACC(NA_BGM_MINI_BOSS);
+        func_800F5ACC(SEQ_ID_MINI_BOSS);
     }
     if (this->skelAnime.curFrame == 5.0f) {
         Actor_PlaySfx(&this->actor, NA_SE_EN_IRONNACK_WAKEUP);
@@ -960,7 +960,7 @@ void func_80A76798(Actor* thisx, PlayState* play) {
 }
 
 void EnIk_StartMusic(void) {
-    func_800F5ACC(NA_BGM_MINI_BOSS);
+    func_800F5ACC(SEQ_ID_MINI_BOSS);
 }
 
 void func_80A76C14(EnIk* this) {

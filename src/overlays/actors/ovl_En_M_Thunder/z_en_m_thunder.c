@@ -239,11 +239,11 @@ void func_80A9F408(EnMThunder* this, PlayState* play) {
     }
 
     if (player->unk_858 > 0.85f) {
-        func_800F4254(&player->actor.projectedPos, 2);
+        Audio_PlaySfx_SwordCharge(&player->actor.projectedPos, 2);
     } else if (player->unk_858 > 0.15f) {
-        func_800F4254(&player->actor.projectedPos, 1);
+        Audio_PlaySfx_SwordCharge(&player->actor.projectedPos, 1);
     } else if (player->unk_858 > 0.1f) {
-        func_800F4254(&player->actor.projectedPos, 0);
+        Audio_PlaySfx_SwordCharge(&player->actor.projectedPos, 0);
     }
 
     if (Play_InCsMode(play)) {

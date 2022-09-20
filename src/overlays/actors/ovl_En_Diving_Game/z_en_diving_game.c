@@ -158,7 +158,7 @@ s32 EnDivingGame_HasMinigameFinished(EnDivingGame* this, PlayState* play) {
             Message_StartTextbox(play, this->actor.textId, NULL);
             this->unk_292 = TEXT_STATE_EVENT;
             func_800F5B58();
-            Audio_PlayFanfare(NA_BGM_SMALL_ITEM_GET);
+            Audio_PlayFanfare(SEQ_ID_SMALL_ITEM_GET);
             func_8002DF54(play, NULL, 8);
             if (!GET_EVENTCHKINF(EVENTCHKINF_38)) {
                 this->actionFunc = func_809EE96C;
@@ -422,7 +422,7 @@ void func_809EE800(EnDivingGame* this, PlayState* play) {
         } else {
             func_80088B34(BREG(2) + 50);
         }
-        func_800F5ACC(NA_BGM_TIMED_MINI_GAME);
+        func_800F5ACC(SEQ_ID_TIMED_MINI_GAME);
         func_8002DF54(play, NULL, 7);
         this->actor.textId = 0x405B;
         this->unk_292 = TEXT_STATE_EVENT;
@@ -507,7 +507,7 @@ void EnDivingGame_Update(Actor* thisx, PlayState* play2) {
     if (1) {}
 
     if (gSaveContext.timer1Value == 10) {
-        func_800F5918();
+        Audio_IncreaseTempoForTimedMinigame();
     }
     if (this->eyeTimer == 0) {
         this->eyeTimer = 2;

@@ -447,7 +447,7 @@ void func_808FD5F4(BossGanon2* this, PlayState* play) {
                 this->actor.world.pos.x = -200.0f;
                 this->actor.world.pos.y = this->actor.world.pos.y - 30.0f;
                 this->actor.world.pos.z = -200.0f;
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_OPENING_GANON);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_OPENING_GANON);
             } else {
                 break;
             }
@@ -592,7 +592,7 @@ void func_808FD5F4(BossGanon2* this, PlayState* play) {
         case 18:
             this->unk_339 = 6;
             if (this->unk_398 == 30) {
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_GANON_BOSS);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_GANON_BOSS);
             }
             Math_ApproachF(&this->unk_30C, 7.0f, 1.0f, 0.1f);
             Math_ApproachF(&this->subCamEye.x, (this->actor.world.pos.x + 500.0f) - 350.0f, 0.1f, 1.0f);

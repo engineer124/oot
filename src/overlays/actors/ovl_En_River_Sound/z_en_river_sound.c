@@ -33,11 +33,11 @@ void EnRiverSound_Init(Actor* thisx, PlayState* play) {
     this->actor.params = this->actor.params & 0xFF;
 
     if (this->actor.params >= RS_GANON_TOWER_0) {
-        // Incrementally increase volume of NA_BGM_GANON_TOWER for each new room during the climb of Ganon's Tower
+        // Incrementally increase volume of SEQ_ID_GANON_TOWER for each new room during the climb of Ganon's Tower
         Audio_SetGanonsTowerBgmVolumeLevel(this->actor.params - RS_GANON_TOWER_0);
         Actor_Kill(&this->actor);
     } else if (this->actor.params == RS_NATURE_AMBIENCE) {
-        Audio_PlayNatureAmbienceSequence(NATURE_ID_KOKIRI_REGION);
+        Audio_PlayAmbience(NATURE_ID_KOKIRI_REGION);
         Actor_Kill(&this->actor);
     } else if (this->actor.params == RS_LOST_WOODS_SARIAS_SONG) {
         if (!CHECK_QUEST_ITEM(QUEST_SONG_LULLABY) || CHECK_QUEST_ITEM(QUEST_SONG_SARIA)) {
@@ -269,7 +269,7 @@ void EnRiverSound_Draw(Actor* thisx, PlayState* play) {
     } else if ((this->actor.params == RS_RIVER_DEFAULT_LOW_FREQ) ||
                (this->actor.params == RS_RIVER_DEFAULT_MEDIUM_FREQ) ||
                (this->actor.params == RS_RIVER_DEFAULT_HIGH_FREQ)) {
-        Audio_PlaySfxRiver(&this->actor.projectedPos, sfxFreqs[this->sfxFreqIndex]);
+        Audio_PlaySfx_River(&this->actor.projectedPos, sfxFreqs[this->sfxFreqIndex]);
     } else if (this->actor.params == RS_LOWER_MAIN_BGM_VOLUME) {
         // Responsible for lowering market bgm in Child Market Entrance and Child Market Back Alley
         // Lower volume from default 127 to a volume of 90
@@ -281,11 +281,11 @@ void EnRiverSound_Draw(Actor* thisx, PlayState* play) {
     } else if (this->actor.params == RS_GORON_CITY_SARIAS_SONG) {
         // Play Sarias Song in Goron City at the entrance to lost woods
         // Volume depends on distance to source
-        Audio_PlaySariaBgm(&this->actor.home.pos, NA_BGM_SARIA_THEME, 1000);
+        Audio_PlaySariaBgm(&this->actor.home.pos, SEQ_ID_SARIA_THEME, 1000);
     } else if (this->actor.params == RS_GREAT_FAIRY) {
         // Play the Great Fairy Song inside the fairy fountain
         // Volume depends on distance to source
-        Audio_PlaySariaBgm(&this->actor.home.pos, NA_BGM_GREAT_FAIRY, 800);
+        Audio_PlaySariaBgm(&this->actor.home.pos, SEQ_ID_GREAT_FAIRY, 800);
     } else if ((this->actor.params == RS_SANDSTORM) || (this->actor.params == RS_CHAMBER_OF_SAGES_1) ||
                (this->actor.params == RS_CHAMBER_OF_SAGES_2) || (this->actor.params == RS_RUMBLING)) {
         // Play sfx in the fixed center of the screen

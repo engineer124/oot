@@ -34,8 +34,8 @@ void MapSelect_LoadGame(MapSelectState* this, s32 entranceIndex) {
     gSaveContext.entranceIndex = entranceIndex;
     gSaveContext.respawnFlag = 0;
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = ENTR_LOAD_OPENING;
-    gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-    gSaveContext.natureAmbienceId = 0xFF;
+    gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
+    gSaveContext.ambienceId = 0xFF;
     gSaveContext.showTitleCard = true;
     gWeatherMode = WEATHER_MODE_CLEAR;
     this->state.running = false;

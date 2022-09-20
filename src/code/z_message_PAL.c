@@ -1996,9 +1996,9 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
     static s16 sOcarinaNoteFlashTimer = 12;
     static s16 sOcarinaNoteFlashColorIndex = 1;
     static s16 sOcarinaSongFanfares[] = {
-        NA_BGM_OCA_MINUET,   NA_BGM_OCA_BOLERO, NA_BGM_OCA_SERENADE, NA_BGM_OCA_REQUIEM,
-        NA_BGM_OCA_NOCTURNE, NA_BGM_OCA_LIGHT,  NA_BGM_OCA_SARIA,    NA_BGM_OCA_EPONA,
-        NA_BGM_OCA_ZELDA,    NA_BGM_OCA_SUNS,   NA_BGM_OCA_TIME,     NA_BGM_OCA_STORM,
+        SEQ_ID_OCA_MINUET,   SEQ_ID_OCA_BOLERO, SEQ_ID_OCA_SERENADE, SEQ_ID_OCA_REQUIEM,
+        SEQ_ID_OCA_NOCTURNE, SEQ_ID_OCA_LIGHT,  SEQ_ID_OCA_SARIA,    SEQ_ID_OCA_EPONA,
+        SEQ_ID_OCA_ZELDA,    SEQ_ID_OCA_SUNS,   SEQ_ID_OCA_TIME,     SEQ_ID_OCA_STORM,
     };
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
     MessageContext* msgCtx = &play->msgCtx;
@@ -3167,7 +3167,7 @@ void Message_Update(PlayState* play) {
                 } else {
                     Message_GrowTextbox(msgCtx);
                     // TODO: this may be NA_SE_PL_WALK_GROUND - SFX_FLAG, or not, investigate sfxId=0
-                    Audio_PlaySfxIfNotInCutscene(0);
+                    Audio_PlaySfx_IfNotInCutscene(0);
                     msgCtx->stateTimer = 0;
                     msgCtx->msgMode = MSGMODE_TEXT_BOX_GROWING;
                 }

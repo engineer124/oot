@@ -519,7 +519,7 @@ void BossTw_Init(Actor* thisx, PlayState* play2) {
             this->actor.world.pos.x = -600.0f;
             this->actor.world.pos.y = 400.0f;
             this->actor.world.pos.z = 0.0f;
-            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
+            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
         } else {
             BossTw_SetupCSWait(this, play);
         }
@@ -1641,7 +1641,7 @@ void BossTw_TwinrovaMergeCS(BossTw* this, PlayState* play) {
                     this->timers[0] = 50;
                     func_8002DF54(play, &this->actor, 2);
                     Actor_PlaySfx(&this->actor, NA_SE_EN_TWINROBA_TRANSFORM);
-                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
+                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
                 }
             }
 
@@ -1782,7 +1782,7 @@ void BossTw_TwinrovaIntroCS(BossTw* this, PlayState* play) {
     if (this->csSfxTimer == 180) {
         func_80078914(&D_8094A7D0, NA_SE_EN_TWINROBA_LAUGH);
         func_80078914(&D_8094A7D0, NA_SE_EN_TWINROBA_LAUGH2);
-        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_KOTAKE_KOUME);
+        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_KOTAKE_KOUME);
     }
 
     this->csSfxTimer++;
@@ -2217,7 +2217,7 @@ void BossTw_TwinrovaIntroCS(BossTw* this, PlayState* play) {
                 TitleCard_InitBossName(play, &play->actorCtx.titleCtx, SEGMENTED_TO_VIRTUAL(object_tw_Blob_02E170),
                                        0xA0, 0xB4, 0x80, 0x28);
                 SET_EVENTCHKINF(EVENTCHKINF_75);
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
             }
 
             if (this->work[CS_TIMER_1] >= 160) {
@@ -2763,7 +2763,7 @@ void BossTw_TwinrovaDeathCS(BossTw* this, PlayState* play) {
                 sKoumePtr->visible = 1;
                 sKotakePtr->visible = 1;
                 func_80078884(NA_SE_EN_TWINROBA_TRANSFORM);
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_KOTAKE_KOUME);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_KOTAKE_KOUME);
                 this->csState2 = 3;
                 this->work[CS_TIMER_2] = 0;
                 this->subCamYaw = this->subCamYawStep = this->actor.speedXZ = this->subCamDistStep = 0.0f;
@@ -2811,7 +2811,7 @@ void BossTw_TwinrovaDeathCS(BossTw* this, PlayState* play) {
                 this->subCamId = SUB_CAM_ID_DONE;
                 func_80064534(play, &play->csCtx);
                 func_8002DF54(play, &this->actor, 7);
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS_CLEAR);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS_CLEAR);
                 Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_DOOR_WARP1, 600.0f, 230.0f, 0.0f, 0, 0, 0,
                                    WARP_DUNGEON_ADULT);
                 Actor_Spawn(&play->actorCtx, play, ACTOR_ITEM_B_HEART, -600.0f, 230.f, 0.0f, 0, 0, 0, 0);

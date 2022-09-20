@@ -405,7 +405,7 @@ void func_809BD84C(EnBigokuta* this, PlayState* play) {
         Actor_PlaySfx(&this->actor, NA_SE_EN_DAIOCTA_VOICE);
     }
     if (this->unk_196 == 1) {
-        func_800F5ACC(NA_BGM_MINI_BOSS);
+        func_800F5ACC(SEQ_ID_MINI_BOSS);
     }
     if (this->actor.params == 1) {
         func_809BD370(this);
@@ -468,7 +468,7 @@ void func_809BDB90(EnBigokuta* this, PlayState* play) {
     }
     if (this->unk_196 == 0) {
         if (this->actor.params == 3) {
-            func_800F5ACC(NA_BGM_MINI_BOSS);
+            func_800F5ACC(SEQ_ID_MINI_BOSS);
         }
         func_809BD3F8(this);
     }

@@ -395,7 +395,7 @@ void EnDaiku_InitEscape(EnDaiku* this, PlayState* play) {
     Vec3s* pointPos;
     s32 exitLoop;
 
-    Audio_PlayFanfare(NA_BGM_APPEAR);
+    Audio_PlayFanfare(SEQ_ID_APPEAR);
     EnDaiku_ChangeAnim(this, ENDAIKU_ANIM_RUN, &this->currentAnimIndex);
     this->stateFlags &= ~(ENDAIKU_STATEFLAG_1 | ENDAIKU_STATEFLAG_2);
 

@@ -1476,7 +1476,7 @@ void func_808327F8(Player* this, f32 arg1) {
         sfxId = func_808327A4(this, NA_SE_PL_WALK_GROUND);
     }
 
-    func_800F4010(&this->actor.projectedPos, sfxId, arg1);
+    Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(&this->actor.projectedPos, sfxId, arg1);
 }
 
 void func_80832854(Player* this) {
@@ -1535,7 +1535,8 @@ void func_80832924(Player* this, struct_80832924* entry) {
             } else if (flags == 0x4000) {
                 func_808327F8(this, 0.0f);
             } else if (flags == 0x4800) {
-                func_800F4010(&this->actor.projectedPos, this->ageProperties->unk_94 + NA_SE_PL_WALK_LADDER, 0.0f);
+                Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(
+                    &this->actor.projectedPos, this->ageProperties->unk_94 + NA_SE_PL_WALK_LADDER, 0.0f);
             }
         }
         cont = (entry->field >= 0);
@@ -2958,7 +2959,7 @@ void func_80836448(PlayState* play, Player* this, LinkAnimationHeader* anim) {
     func_80832698(this, NA_SE_VO_LI_DOWN);
 
     if (this->actor.category == ACTORCAT_PLAYER) {
-        func_800F47BC();
+        Audio_SetBgmVolumeOff();
 
         if (Inventory_ConsumeFairy(play)) {
             play->gameOverCtx.state = GAMEOVER_REVIVE_START;
@@ -2966,9 +2967,9 @@ void func_80836448(PlayState* play, Player* this, LinkAnimationHeader* anim) {
         } else {
             play->gameOverCtx.state = GAMEOVER_DEATH_START;
             func_800F6AB0(0);
-            Audio_PlayFanfare(NA_BGM_GAME_OVER);
-            gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-            gSaveContext.natureAmbienceId = NATURE_ID_DISABLED;
+            Audio_PlayFanfare(SEQ_ID_GAME_OVER);
+            gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
+            gSaveContext.ambienceId = NATURE_ID_DISABLED;
         }
 
         OnePointCutscene_Init(play, 9806, cond ? 120 : 60, &this->actor, CAM_ID_MAIN);
@@ -4183,9 +4184,9 @@ s32 func_80839034(PlayState* play, Player* this, CollisionPoly* poly, u32 bgId) 
 
                 if (temp == FLOOR_TYPE_11) {
                     func_800788CC(NA_SE_OC_SECRET_HOLE_OUT);
-                    func_800F6964(5);
-                    gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-                    gSaveContext.natureAmbienceId = NATURE_ID_DISABLED;
+                    Audio_MuteAllSeqExceptSysAndOca(5);
+                    gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
+                    gSaveContext.ambienceId = NATURE_ID_DISABLED;
                 } else {
                     linearVel = this->linearVelocity;
 
@@ -8072,7 +8073,7 @@ void func_80843AE8(PlayState* play, Player* this) {
             }
             this->unk_A87 = 20;
             func_80837AFC(this, -20);
-            func_800F47FC();
+            Audio_SetBgmVolumeOn();
         }
     } else if (this->unk_84F != 0) {
         this->unk_850 = 60;
@@ -9959,7 +9960,7 @@ void Player_UpdateCamAndSeqModes(PlayState* play, Player* this) {
 
         if (play->actorCtx.targetCtx.bgmEnemy != NULL) {
             seqMode = SEQ_MODE_ENEMY;
-            Audio_SetBgmEnemyVolume(sqrtf(play->actorCtx.targetCtx.bgmEnemy->xyzDistToPlayerSq));
+            Audio_UpdateEnemyBgmVolume(sqrtf(play->actorCtx.targetCtx.bgmEnemy->xyzDistToPlayerSq));
         }
 
         if (play->sceneId != SCENE_TURIBORI) {
@@ -10278,7 +10279,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
                 }
 
                 if ((this->linearVelocity == 0.0f) && (this->actor.speedXZ != 0.0f)) {
-                    func_800F4138(&this->actor.projectedPos, 0xD0, this->actor.speedXZ);
+                    Audio_PlaySfx_AtPosWithSyncedFreqAndVolume(&this->actor.projectedPos, 0xD0, this->actor.speedXZ);
                 }
             } else {
                 this->actor.speedXZ = this->linearVelocity;
@@ -12080,9 +12081,9 @@ s32 func_8084DFF4(PlayState* play, Player* this) {
             if ((this->getItemId == GI_HEART_CONTAINER_2) || (this->getItemId == GI_HEART_CONTAINER) ||
                 ((this->getItemId == GI_HEART_PIECE) &&
                  ((gSaveContext.inventory.questItems & 0xF0000000) == (4 << QUEST_HEART_PIECE_COUNT)))) {
-                temp1 = NA_BGM_HEART_GET | 0x900;
+                temp1 = SEQ_ID_HEART_GET | 0x900;
             } else {
-                temp1 = temp2 = (this->getItemId == GI_HEART_PIECE) ? NA_BGM_SMALL_ITEM_GET : NA_BGM_ITEM_GET | 0x900;
+                temp1 = temp2 = (this->getItemId == GI_HEART_PIECE) ? SEQ_ID_SMALL_ITEM_GET : SEQ_ID_ITEM_GET | 0x900;
             }
             Audio_PlayFanfare(temp1);
         }
@@ -12200,8 +12201,8 @@ void func_8084E3C4(Player* this, PlayState* play) {
             Environment_WarpSongLeave(play);
         }
 
-        gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-        gSaveContext.natureAmbienceId = NATURE_ID_DISABLED;
+        gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
+        gSaveContext.ambienceId = NATURE_ID_DISABLED;
     }
 }
 
@@ -12411,7 +12412,7 @@ void func_8084ECA4(Player* this, PlayState* play) {
         if (this->unk_84F != 0) {
             if (this->unk_850 == 0) {
                 Message_StartTextbox(play, sBottleCatchInfos[this->unk_84F - 1].textId, &this->actor);
-                Audio_PlayFanfare(NA_BGM_ITEM_GET | 0x900);
+                Audio_PlayFanfare(SEQ_ID_ITEM_GET | 0x900);
                 this->unk_850 = 1;
             } else if (Message_GetState(&play->msgCtx) == TEXT_STATE_CLOSING) {
                 this->unk_84F = 0;
@@ -12603,7 +12604,8 @@ void func_8084F390(Player* this, PlayState* play) {
     this->stateFlags2 |= PLAYER_STATE2_5 | PLAYER_STATE2_6;
     LinkAnimation_Update(play, &this->skelAnime);
     func_8084269C(play, this);
-    func_800F4138(&this->actor.projectedPos, NA_SE_PL_SLIP_LEVEL - SFX_FLAG, this->actor.speedXZ);
+    Audio_PlaySfx_AtPosWithSyncedFreqAndVolume(&this->actor.projectedPos, NA_SE_PL_SLIP_LEVEL - SFX_FLAG,
+                                               this->actor.speedXZ);
 
     if (func_8083B040(this, play) == 0) {
         floorPoly = this->actor.floorPoly;
@@ -12723,8 +12725,8 @@ void func_8084F88C(Player* this, PlayState* play) {
         } else {
             play->transitionType = TRANS_TYPE_FADE_BLACK;
             gSaveContext.nextTransitionType = TRANS_TYPE_FADE_BLACK;
-            gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-            gSaveContext.natureAmbienceId = 0xFF;
+            gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
+            gSaveContext.ambienceId = 0xFF;
         }
 
         play->transitionTrigger = TRANS_TRIGGER_START;

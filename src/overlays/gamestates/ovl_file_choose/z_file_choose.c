@@ -1324,7 +1324,7 @@ void FileSelect_ConfirmFile(GameState* thisx) {
             AudioSfx_PlaySfx(NA_SE_SY_FSEL_DECIDE_L, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             this->selectMode = SM_FADE_OUT;
-            func_800F6964(0xF);
+            Audio_MuteAllSeqExceptSysAndOca(0xF);
         } else {
             AudioSfx_PlaySfx(NA_SE_SY_FSEL_CLOSE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -1460,8 +1460,8 @@ void FileSelect_LoadGame(GameState* thisx) {
 
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = ENTR_LOAD_OPENING;
     gSaveContext.respawnFlag = 0;
-    gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-    gSaveContext.natureAmbienceId = 0xFF;
+    gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
+    gSaveContext.ambienceId = 0xFF;
     gSaveContext.showTitleCard = true;
     gSaveContext.dogParams = 0;
     gSaveContext.timer1State = 0;
@@ -1475,7 +1475,7 @@ void FileSelect_LoadGame(GameState* thisx) {
     gSaveContext.healthAccumulator = 0;
     gSaveContext.magicState = MAGIC_STATE_IDLE;
     gSaveContext.prevMagicState = MAGIC_STATE_IDLE;
-    gSaveContext.forcedSeqId = NA_BGM_GENERAL_SFX;
+    gSaveContext.forcedSeqId = SEQ_ID_GENERAL_SFX;
     gSaveContext.skyboxTime = CLOCK_TIME(0, 0);
     gSaveContext.nextTransitionType = TRANS_NEXT_TYPE_DEFAULT;
     gSaveContext.nextCutsceneIndex = 0xFFEF;
@@ -1895,5 +1895,5 @@ void FileSelect_Init(GameState* thisx) {
     FileSelect_InitContext(&this->state);
     Font_LoadOrderedFont(&this->font);
     SEQCMD_RESET_AUDIO_HEAP(0, 10);
-    func_800F5E18(SEQ_PLAYER_BGM_MAIN, NA_BGM_FILE_SELECT, 0, 7, 1);
+    Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_MAIN, SEQ_ID_FILE_SELECT, 0, 7, 1);
 }

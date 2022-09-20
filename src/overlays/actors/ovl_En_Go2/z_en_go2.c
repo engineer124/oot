@@ -606,7 +606,7 @@ s16 EnGo2_GetStateGoronDmtBiggoron(PlayState* play, EnGo2* this) {
                     FALLTHROUGH;
                 case 0x3059:
                     if (dialogState == TEXT_STATE_NONE) {
-                        func_800F4524(&gSfxDefaultPos, NA_SE_EN_GOLON_WAKE_UP, 60);
+                        Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_EN_GOLON_WAKE_UP, 60);
                     }
                     FALLTHROUGH;
                 case 0x3054:
@@ -1277,7 +1277,7 @@ void EnGo2_SitDownAnimation(EnGo2* this) {
             if ((this->actor.params & 0x1F) != GORON_DMT_BIGGORON) {
                 Actor_PlaySfx(&this->actor, NA_SE_EN_GOLON_SIT_DOWN);
             } else {
-                func_800F4524(&gSfxDefaultPos, NA_SE_EN_GOLON_SIT_DOWN, 60);
+                Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_EN_GOLON_SIT_DOWN, 60);
             }
         }
         if (this->skelAnime.playSpeed < 0.0f) {
@@ -1320,7 +1320,7 @@ void EnGo2_WakeUp(EnGo2* this, PlayState* play) {
         if ((this->actor.params & 0x1F) != GORON_DMT_BIGGORON) {
             Actor_PlaySfx(&this->actor, NA_SE_EN_GOLON_WAKE_UP);
         } else {
-            func_800F4524(&gSfxDefaultPos, NA_SE_EN_GOLON_WAKE_UP, 60);
+            Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_EN_GOLON_WAKE_UP, 60);
         }
     }
     if ((this->actor.params & 0x1F) == GORON_DMT_BIGGORON) {
@@ -1504,7 +1504,7 @@ void EnGo2_BiggoronAnimation(EnGo2* this) {
         (this->actor.params & 0x1F) == GORON_DMT_BIGGORON && this->unk_194.unk_00 == 0) {
         if (DECR(this->animTimer) == 0) {
             this->animTimer = Rand_S16Offset(30, 30);
-            func_800F4524(&gSfxDefaultPos, NA_SE_EN_GOLON_EYE_BIG, 60);
+            Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_EN_GOLON_EYE_BIG, 60);
         }
     }
 }
@@ -1831,22 +1831,22 @@ void EnGo2_BiggoronEyedrops(EnGo2* this, PlayState* play) {
             this->eyeMouthTexState = 2;
             this->unk_20C = 0;
             this->goronState++;
-            func_800F483C(0x28, 5);
+            Audio_SetMainBgmVolume(0x28, 5);
             OnePointCutscene_Init(play, 4190, -99, &this->actor, CAM_ID_MAIN);
             break;
         case 1:
             if (DECR(this->animTimer)) {
                 if (this->animTimer == 60 || this->animTimer == 120) {
                     func_8005B1A4(GET_ACTIVE_CAM(play));
-                    func_800F4524(&gSfxDefaultPos, NA_SE_EV_GORON_WATER_DROP, 60);
+                    Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_EV_GORON_WATER_DROP, 60);
                 }
             } else {
-                func_800F4524(&gSfxDefaultPos, NA_SE_EN_GOLON_GOOD_BIG, 60);
+                Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_EN_GOLON_GOOD_BIG, 60);
                 Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ENGO2_ANIM_6);
                 Message_ContinueTextbox(play, 0x305A);
                 this->eyeMouthTexState = 3;
                 this->goronState++;
-                func_800F483C(0x7F, 5);
+                Audio_SetMainBgmVolume(0x7F, 5);
             }
             break;
         case 2:
@@ -1924,7 +1924,7 @@ void EnGo2_GoronFireGenericAction(EnGo2* this, PlayState* play) {
                 player->actor.world.pos.z =
                     (f32)((Math_CosS(this->actor.world.rot.y) * -30.0f) + this->actor.world.pos.z);
                 func_8002DF54(play, &this->actor, 8);
-                Audio_PlayFanfare(NA_BGM_APPEAR);
+                Audio_PlayFanfare(SEQ_ID_APPEAR);
             }
             break;
         case 2: // Walking away

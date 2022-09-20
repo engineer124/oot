@@ -381,7 +381,7 @@ void EnOwl_WaitOutsideKokiri(EnOwl* this, PlayState* play) {
 
     if (EnOwl_CheckInitTalk(this, play, 0x2064, 360.0f, 0)) {
         // Sets BGM
-        Audio_PlayFanfare(NA_BGM_OWL);
+        Audio_PlayFanfare(SEQ_ID_OWL);
 
         this->actionFunc = EnOwl_ConfirmKokiriMessage;
         // spoke to owl by lost woods
@@ -428,7 +428,7 @@ void EnOwl_WaitHyruleCastle(EnOwl* this, PlayState* play) {
     EnOwl_LookAtLink(this, play);
 
     if (EnOwl_CheckInitTalk(this, play, 0x2068, 540.0f, 0)) {
-        Audio_PlayFanfare(NA_BGM_OWL);
+        Audio_PlayFanfare(SEQ_ID_OWL);
         this->actionFunc = func_80ACAAC0;
     }
 }
@@ -469,7 +469,7 @@ void EnOwl_WaitKakariko(EnOwl* this, PlayState* play) {
     EnOwl_LookAtLink(this, play);
 
     if (EnOwl_CheckInitTalk(this, play, 0x206C, 480.0f, 0)) {
-        Audio_PlayFanfare(NA_BGM_OWL);
+        Audio_PlayFanfare(SEQ_ID_OWL);
         this->actionFunc = func_80ACAC6C;
     }
 }
@@ -505,7 +505,7 @@ void EnOwl_WaitGerudo(EnOwl* this, PlayState* play) {
     EnOwl_LookAtLink(this, play);
 
     if (EnOwl_CheckInitTalk(this, play, 0x206F, 360.0f, 0)) {
-        Audio_PlayFanfare(NA_BGM_OWL);
+        Audio_PlayFanfare(SEQ_ID_OWL);
         this->actionFunc = func_80ACADF0;
     }
 }
@@ -541,7 +541,7 @@ void EnOwl_WaitLakeHylia(EnOwl* this, PlayState* play) {
     EnOwl_LookAtLink(this, play);
 
     if (EnOwl_CheckInitTalk(this, play, 0x2071, 360.0f, 0)) {
-        Audio_PlayFanfare(NA_BGM_OWL);
+        Audio_PlayFanfare(SEQ_ID_OWL);
         this->actionFunc = func_80ACAF74;
     }
 }
@@ -572,7 +572,7 @@ void EnOwl_WaitZoraRiver(EnOwl* this, PlayState* play) {
     }
 
     if (EnOwl_CheckInitTalk(this, play, textId, 360.0f, 0)) {
-        Audio_PlayFanfare(NA_BGM_OWL);
+        Audio_PlayFanfare(SEQ_ID_OWL);
         this->actionFunc = func_80ACB03C;
     }
 }
@@ -593,7 +593,7 @@ void EnOwl_WaitHyliaShortcut(EnOwl* this, PlayState* play) {
     EnOwl_LookAtLink(this, play);
     if (func_80ACA558(this, play, textId)) {
         SET_INFTABLE(INFTABLE_195);
-        Audio_PlayFanfare(NA_BGM_OWL);
+        Audio_PlayFanfare(SEQ_ID_OWL);
         this->actionFunc = func_80ACB148;
     }
 }
@@ -618,13 +618,13 @@ void EnOwl_WaitDeathMountainShortcut(EnOwl* this, PlayState* play) {
 
     if (!gSaveContext.isMagicAcquired) {
         if (func_80ACA558(this, play, 0x3062)) {
-            Audio_PlayFanfare(NA_BGM_OWL);
+            Audio_PlayFanfare(SEQ_ID_OWL);
             this->actionFunc = func_80ACB274;
             return;
         }
     } else {
         if (func_80ACA558(this, play, 0x3063)) {
-            Audio_PlayFanfare(NA_BGM_OWL);
+            Audio_PlayFanfare(SEQ_ID_OWL);
             this->actionFunc = func_80ACB22C;
         }
     }
@@ -648,7 +648,7 @@ void func_80ACB3E0(EnOwl* this, PlayState* play) {
     EnOwl_LookAtLink(this, play);
 
     if (EnOwl_CheckInitTalk(this, play, 0x6079, 360.0f, 2)) {
-        Audio_PlayFanfare(NA_BGM_OWL);
+        Audio_PlayFanfare(SEQ_ID_OWL);
         this->actionFunc = func_80ACB344;
     }
 }
@@ -683,7 +683,7 @@ void EnOwl_WaitLWPreSaria(EnOwl* this, PlayState* play) {
     EnOwl_LookAtLink(this, play);
 
     if (EnOwl_CheckInitTalk(this, play, 0x10C0, 190.0f, 0)) {
-        Audio_PlayFanfare(NA_BGM_OWL);
+        Audio_PlayFanfare(SEQ_ID_OWL);
         this->actionFunc = func_80ACB4FC;
     }
 }
@@ -719,7 +719,7 @@ void EnOwl_WaitLWPostSaria(EnOwl* this, PlayState* play) {
     EnOwl_LookAtLink(this, play);
 
     if (EnOwl_CheckInitTalk(this, play, 0x10C4, 360.0f, 0)) {
-        Audio_PlayFanfare(NA_BGM_OWL);
+        Audio_PlayFanfare(SEQ_ID_OWL);
         this->actionFunc = func_80ACB680;
     }
 }
@@ -742,22 +742,22 @@ void func_80ACB748(EnOwl* this, PlayState* play) {
 
     switch (owlType) {
         case 7:
-            func_800F436C(&D_80ACD62C, NA_SE_EV_FLYING_AIR - SFX_FLAG, weight * 2.0f);
+            Audio_PlaySfx_AtPosWithFreq(&D_80ACD62C, NA_SE_EV_FLYING_AIR - SFX_FLAG, weight * 2.0f);
             if ((play->csCtx.frames > 324) || ((play->csCtx.frames >= 142 && (play->csCtx.frames <= 266)))) {
-                func_800F4414(&D_80ACD62C, NA_SE_EN_OWL_FLUTTER, weight * 2.0f);
+                Audio_PlaySfx_AtPosWithTimer(&D_80ACD62C, NA_SE_EN_OWL_FLUTTER, weight * 2.0f);
             }
             if (play->csCtx.frames == 85) {
-                func_800F436C(&D_80ACD62C, NA_SE_EV_PASS_AIR, weight * 2.0f);
+                Audio_PlaySfx_AtPosWithFreq(&D_80ACD62C, NA_SE_EV_PASS_AIR, weight * 2.0f);
             }
             break;
         case 8:
         case 9:
-            func_800F436C(&D_80ACD62C, NA_SE_EV_FLYING_AIR - SFX_FLAG, weight * 2.0f);
+            Audio_PlaySfx_AtPosWithFreq(&D_80ACD62C, NA_SE_EV_FLYING_AIR - SFX_FLAG, weight * 2.0f);
             if ((play->csCtx.frames >= 420) || ((0xC1 < play->csCtx.frames && (play->csCtx.frames <= 280)))) {
-                func_800F4414(&D_80ACD62C, NA_SE_EN_OWL_FLUTTER, weight * 2.0f);
+                Audio_PlaySfx_AtPosWithTimer(&D_80ACD62C, NA_SE_EN_OWL_FLUTTER, weight * 2.0f);
             }
             if (play->csCtx.frames == 217) {
-                func_800F436C(&D_80ACD62C, NA_SE_EV_PASS_AIR, weight * 2.0f);
+                Audio_PlaySfx_AtPosWithFreq(&D_80ACD62C, NA_SE_EV_PASS_AIR, weight * 2.0f);
             }
             break;
     }
@@ -950,7 +950,7 @@ void func_80ACC00C(EnOwl* this, PlayState* play) {
 
             func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
             gSaveContext.cutsceneTrigger = 1;
-            func_800F44EC(0x14, 0xA);
+            Audio_SetSfxTimerLerpInterval(0x14, 0xA);
             this->actionFunc = EnOwl_WaitDefault;
             this->unk_40A = 0;
             this->actionFlags |= 0x80;

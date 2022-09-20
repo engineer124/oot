@@ -57,7 +57,7 @@ void KaleidoSetup_Update(PlayState* play) {
                 Letterbox_SetSizeTarget(0);
             }
 
-            func_800F64E0(1);
+            Audio_PlaySfx_Window(1);
         }
     }
 }

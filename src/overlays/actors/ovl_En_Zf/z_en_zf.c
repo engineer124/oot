@@ -652,7 +652,7 @@ void EnZf_DropIn(EnZf* this, PlayState* play) {
         this->actor.flags |= ACTOR_FLAG_0;
 
         if (this->actor.params == ENZF_TYPE_LIZALFOS_MINIBOSS_A) {
-            func_800F5ACC(NA_BGM_MINI_BOSS);
+            func_800F5ACC(SEQ_ID_MINI_BOSS);
         }
     }
 

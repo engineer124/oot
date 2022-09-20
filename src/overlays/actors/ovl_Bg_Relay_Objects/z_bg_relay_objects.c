@@ -60,7 +60,7 @@ void BgRelayObjects_Init(Actor* thisx, PlayState* play) {
         } else {
             thisx->world.rot.y = 0x80;
         }
-        func_800F5718();
+        Audio_PlayBgmForSongOfStorms();
         thisx->room = -1;
         thisx->flags |= ACTOR_FLAG_5;
         if (D_808A9508 & 2) {
@@ -188,8 +188,8 @@ void func_808A939C(BgRelayObjects* this, PlayState* play) {
         Math_ScaledStepToS(&this->dyna.actor.world.rot.y, 0x80, 8);
     }
     this->dyna.actor.shape.rot.y += this->dyna.actor.world.rot.y;
-    func_800F436C(&this->dyna.actor.projectedPos, NA_SE_EV_WOOD_GEAR - SFX_FLAG,
-                  ((this->dyna.actor.world.rot.y - 0x80) * (1.0f / 0x380)) + 1.0f);
+    Audio_PlaySfx_AtPosWithFreq(&this->dyna.actor.projectedPos, NA_SE_EV_WOOD_GEAR - SFX_FLAG,
+                                ((this->dyna.actor.world.rot.y - 0x80) * (1.0f / 0x380)) + 1.0f);
 }
 
 void BgRelayObjects_Update(Actor* thisx, PlayState* play) {

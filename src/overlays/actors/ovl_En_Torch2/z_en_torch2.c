@@ -237,7 +237,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
                     if (stickY) {}
                     sInput.cur.stick_y = stickY;
                 }
-                func_800F5ACC(NA_BGM_MINI_BOSS);
+                func_800F5ACC(SEQ_ID_MINI_BOSS);
                 sActionState = ENTORCH2_ATTACK;
             }
             break;
@@ -585,7 +585,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
             Item_DropCollectibleRandom(play, &this->actor, &thisx->world.pos, 0xC0);
             this->stateFlags3 &= ~PLAYER_STATE3_2;
         } else {
-            func_800F5ACC(NA_BGM_MINI_BOSS);
+            func_800F5ACC(SEQ_ID_MINI_BOSS);
             if (this->actor.colChkInfo.damageEffect == 1) {
                 if (sAlpha == 255) {
                     Actor_SetColorFilter(&this->actor, 0, 0xFF, 0, 0x50);

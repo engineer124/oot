@@ -203,14 +203,14 @@ void ObjectKankyo_Fairies(ObjectKankyo* this, PlayState* play) {
             dist = 1.0f;
         }
 
-        func_800F436C(&sSfxPos, NA_SE_EV_NAVY_FLY - SFX_FLAG, (0.4f * dist) + 0.6f);
+        Audio_PlaySfx_AtPosWithFreq(&sSfxPos, NA_SE_EV_NAVY_FLY - SFX_FLAG, (0.4f * dist) + 0.6f);
         switch (play->csCtx.frames) {
             case 473:
                 func_800788CC(NA_SE_VO_NA_HELLO_3);
                 break;
 
             case 583:
-                func_800F4524(&gSfxDefaultPos, NA_SE_VO_NA_HELLO_2, 32);
+                Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_VO_NA_HELLO_2, 32);
                 break;
 
             case 763:

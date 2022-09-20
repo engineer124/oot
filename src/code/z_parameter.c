@@ -2122,7 +2122,7 @@ void Interface_SetNaviCall(PlayState* play, u16 naviCallState) {
         // clang-format on
 
         if (naviCallState == 0x1D) {
-            func_800F4524(&gSfxDefaultPos, NA_SE_VO_NA_HELLO_2, 32);
+            Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_VO_NA_HELLO_2, 32);
         }
 
         interfaceCtx->naviCalling = true;
@@ -4237,9 +4237,9 @@ void Interface_Update(PlayState* play) {
             play->nextEntranceIndex = gSaveContext.entranceIndex;
             play->transitionTrigger = TRANS_TRIGGER_START;
             gSaveContext.sunsSongState = SUNSSONG_INACTIVE;
-            func_800F6964(30);
-            gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-            gSaveContext.natureAmbienceId = NATURE_ID_DISABLED;
+            Audio_MuteAllSeqExceptSysAndOca(30);
+            gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
+            gSaveContext.ambienceId = NATURE_ID_DISABLED;
         } else {
             gSaveContext.sunsSongState = SUNSSONG_SPECIAL;
         }

@@ -92,7 +92,7 @@ u8 gUsedChannelsPerBank[4][7] = {
 
 f32 D_801305B0 = 0.7950898f;
 s8 D_801305B4 = 35;
-s8 D_801305B8 = 20;
+s8 sSfxTimer = 20;
 s8 D_801305BC = 30;
 s8 D_801305C0 = 20;
 f32 sBehindScreenZ[2] = { -15.0f, -65.0f };
@@ -112,9 +112,9 @@ s8 sAudioCodeReverb = 0;
 u8 sPrevSeqMode = 0;
 f32 sAudioEnemyDist = 0.0f;
 s8 sAudioEnemyVol = 127;
-u16 sPrevMainBgmSeqId = NA_BGM_DISABLED;
+u16 sPrevMainBgmSeqId = SEQ_ID_DISABLED;
 u8 D_8013062C = 0;
-u8 D_80130630 = NA_BGM_GENERAL_SFX;
+u8 D_80130630 = SEQ_ID_GENERAL_SFX;
 u32 sNumFramesStill = 0;
 u32 sNumFramesMoving = 0;
 u8 sAudioBaseFilter = 0;
@@ -135,121 +135,121 @@ u8 sSeqModeInput = 0;
 #define SEQ_FLAG_NO_AMBIENCE (1 << 7)
 
 u8 sSeqFlags[0x6E] = {
-    SEQ_FLAG_FANFARE,                        // NA_BGM_GENERAL_SFX
-    SEQ_FLAG_ENEMY,                          // NA_BGM_NATURE_BACKGROUND
-    0,                                       // NA_BGM_FIELD_LOGIC
-    0,                                       // NA_BGM_FIELD_INIT
-    0,                                       // NA_BGM_FIELD_DEFAULT_1
-    0,                                       // NA_BGM_FIELD_DEFAULT_2
-    0,                                       // NA_BGM_FIELD_DEFAULT_3
-    0,                                       // NA_BGM_FIELD_DEFAULT_4
-    0,                                       // NA_BGM_FIELD_DEFAULT_5
-    0,                                       // NA_BGM_FIELD_DEFAULT_6
-    0,                                       // NA_BGM_FIELD_DEFAULT_7
-    0,                                       // NA_BGM_FIELD_DEFAULT_8
-    0,                                       // NA_BGM_FIELD_DEFAULT_9
-    0,                                       // NA_BGM_FIELD_DEFAULT_A
-    0,                                       // NA_BGM_FIELD_DEFAULT_B
-    0,                                       // NA_BGM_FIELD_ENEMY_INIT
-    0,                                       // NA_BGM_FIELD_ENEMY_1
-    0,                                       // NA_BGM_FIELD_ENEMY_2
-    0,                                       // NA_BGM_FIELD_ENEMY_3
-    0,                                       // NA_BGM_FIELD_ENEMY_4
-    0,                                       // NA_BGM_FIELD_STILL_1
-    0,                                       // NA_BGM_FIELD_STILL_2
-    0,                                       // NA_BGM_FIELD_STILL_3
-    0,                                       // NA_BGM_FIELD_STILL_4
-    SEQ_FLAG_5 | SEQ_FLAG_ENEMY,             // NA_BGM_DUNGEON
-    SEQ_FLAG_4,                              // NA_BGM_KAKARIKO_ADULT
-    0,                                       // NA_BGM_ENEMY
-    SEQ_FLAG_NO_AMBIENCE | SEQ_FLAG_RESTORE, // NA_BGM_BOSS
-    SEQ_FLAG_ENEMY,                          // NA_BGM_INSIDE_DEKU_TREE
-    0,                                       // NA_BGM_MARKET
-    0,                                       // NA_BGM_TITLE
-    SEQ_FLAG_5,                              // NA_BGM_LINK_HOUSE
-    0,                                       // NA_BGM_GAME_OVER
-    0,                                       // NA_BGM_BOSS_CLEAR
-    SEQ_FLAG_FANFARE,                        // NA_BGM_ITEM_GET
-    SEQ_FLAG_FANFARE_GANON,                  // NA_BGM_OPENING_GANON
-    SEQ_FLAG_FANFARE,                        // NA_BGM_HEART_GET
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_LIGHT
-    SEQ_FLAG_ENEMY,                          // NA_BGM_JABU_JABU
-    SEQ_FLAG_4,                              // NA_BGM_KAKARIKO_KID
-    0,                                       // NA_BGM_GREAT_FAIRY
-    0,                                       // NA_BGM_ZELDA_THEME
-    SEQ_FLAG_ENEMY,                          // NA_BGM_FIRE_TEMPLE
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OPEN_TRE_BOX
-    SEQ_FLAG_ENEMY,                          // NA_BGM_FOREST_TEMPLE
-    0,                                       // NA_BGM_COURTYARD
-    SEQ_FLAG_NO_AMBIENCE,                    // NA_BGM_GANON_TOWER
-    0,                                       // NA_BGM_LONLON
-    SEQ_FLAG_NO_AMBIENCE,                    // NA_BGM_GORON_CITY
-    0,                                       // NA_BGM_FIELD_MORNING
-    SEQ_FLAG_FANFARE,                        // NA_BGM_SPIRITUAL_STONE
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_BOLERO
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_MINUET
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_SERENADE
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_REQUIEM
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_NOCTURNE
-    SEQ_FLAG_NO_AMBIENCE | SEQ_FLAG_RESTORE, // NA_BGM_MINI_BOSS
-    SEQ_FLAG_FANFARE,                        // NA_BGM_SMALL_ITEM_GET
-    0,                                       // NA_BGM_TEMPLE_OF_TIME
-    SEQ_FLAG_FANFARE,                        // NA_BGM_EVENT_CLEAR
-    SEQ_FLAG_4 | SEQ_FLAG_ENEMY,             // NA_BGM_KOKIRI
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_FAIRY_GET
-    SEQ_FLAG_ENEMY,                          // NA_BGM_SARIA_THEME
-    SEQ_FLAG_ENEMY,                          // NA_BGM_SPIRIT_TEMPLE
-    0,                                       // NA_BGM_HORSE
-    0,                                       // NA_BGM_HORSE_GOAL
-    0,                                       // NA_BGM_INGO
-    SEQ_FLAG_FANFARE,                        // NA_BGM_MEDALLION_GET
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_SARIA
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_EPONA
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_ZELDA
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_SUNS
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_TIME
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OCA_STORM
-    0,                                       // NA_BGM_NAVI_OPENING
-    0,                                       // NA_BGM_DEKU_TREE_CS
-    0,                                       // NA_BGM_WINDMILL
-    0,                                       // NA_BGM_HYRULE_CS
-    SEQ_FLAG_5,                              // NA_BGM_MINI_GAME
-    0,                                       // NA_BGM_SHEIK
-    SEQ_FLAG_4,                              // NA_BGM_ZORA_DOMAIN
-    SEQ_FLAG_FANFARE,                        // NA_BGM_APPEAR
-    0,                                       // NA_BGM_ADULT_LINK
-    0,                                       // NA_BGM_MASTER_SWORD
-    SEQ_FLAG_FANFARE_GANON,                  // NA_BGM_INTRO_GANON
-    SEQ_FLAG_5,                              // NA_BGM_SHOP
-    SEQ_FLAG_6,                              // NA_BGM_CHAMBER_OF_SAGES
-    SEQ_FLAG_6,                              // NA_BGM_FILE_SELECT
-    SEQ_FLAG_ENEMY,                          // NA_BGM_ICE_CAVERN
-    SEQ_FLAG_FANFARE,                        // NA_BGM_DOOR_OF_TIME
-    SEQ_FLAG_FANFARE,                        // NA_BGM_OWL
-    SEQ_FLAG_ENEMY,                          // NA_BGM_SHADOW_TEMPLE
-    SEQ_FLAG_ENEMY,                          // NA_BGM_WATER_TEMPLE
-    SEQ_FLAG_FANFARE,                        // NA_BGM_BRIDGE_TO_GANONS
-    0,                                       // NA_BGM_OCARINA_OF_TIME
-    SEQ_FLAG_4 | SEQ_FLAG_ENEMY,             // NA_BGM_GERUDO_VALLEY
-    0,                                       // NA_BGM_POTION_SHOP
-    0,                                       // NA_BGM_KOTAKE_KOUME
-    SEQ_FLAG_NO_AMBIENCE,                    // NA_BGM_ESCAPE
-    0,                                       // NA_BGM_UNDERGROUND
-    SEQ_FLAG_NO_AMBIENCE,                    // NA_BGM_GANON_BATTLE_1
-    SEQ_FLAG_NO_AMBIENCE,                    // NA_BGM_GANON_BATTLE_2
-    0,                                       // NA_BGM_END_DEMO
-    0,                                       // NA_BGM_STAFF_1
-    0,                                       // NA_BGM_STAFF_2
-    0,                                       // NA_BGM_STAFF_3
-    0,                                       // NA_BGM_STAFF_4
-    0,                                       // NA_BGM_FIRE_BOSS
-    SEQ_FLAG_RESTORE,                        // NA_BGM_TIMED_MINI_GAME
-    0,                                       // NA_BGM_CUTSCENE_EFFECTS
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_GENERAL_SFX
+    SEQ_FLAG_ENEMY,                          // SEQ_ID_NATURE_BACKGROUND
+    0,                                       // SEQ_ID_FIELD_LOGIC
+    0,                                       // SEQ_ID_FIELD_INIT
+    0,                                       // SEQ_ID_FIELD_DEFAULT_1
+    0,                                       // SEQ_ID_FIELD_DEFAULT_2
+    0,                                       // SEQ_ID_FIELD_DEFAULT_3
+    0,                                       // SEQ_ID_FIELD_DEFAULT_4
+    0,                                       // SEQ_ID_FIELD_DEFAULT_5
+    0,                                       // SEQ_ID_FIELD_DEFAULT_6
+    0,                                       // SEQ_ID_FIELD_DEFAULT_7
+    0,                                       // SEQ_ID_FIELD_DEFAULT_8
+    0,                                       // SEQ_ID_FIELD_DEFAULT_9
+    0,                                       // SEQ_ID_FIELD_DEFAULT_A
+    0,                                       // SEQ_ID_FIELD_DEFAULT_B
+    0,                                       // SEQ_ID_FIELD_ENEMY_INIT
+    0,                                       // SEQ_ID_FIELD_ENEMY_1
+    0,                                       // SEQ_ID_FIELD_ENEMY_2
+    0,                                       // SEQ_ID_FIELD_ENEMY_3
+    0,                                       // SEQ_ID_FIELD_ENEMY_4
+    0,                                       // SEQ_ID_FIELD_STILL_1
+    0,                                       // SEQ_ID_FIELD_STILL_2
+    0,                                       // SEQ_ID_FIELD_STILL_3
+    0,                                       // SEQ_ID_FIELD_STILL_4
+    SEQ_FLAG_5 | SEQ_FLAG_ENEMY,             // SEQ_ID_DUNGEON
+    SEQ_FLAG_4,                              // SEQ_ID_KAKARIKO_ADULT
+    0,                                       // SEQ_ID_ENEMY
+    SEQ_FLAG_NO_AMBIENCE | SEQ_FLAG_RESTORE, // SEQ_ID_BOSS
+    SEQ_FLAG_ENEMY,                          // SEQ_ID_INSIDE_DEKU_TREE
+    0,                                       // SEQ_ID_MARKET
+    0,                                       // SEQ_ID_TITLE
+    SEQ_FLAG_5,                              // SEQ_ID_LINK_HOUSE
+    0,                                       // SEQ_ID_GAME_OVER
+    0,                                       // SEQ_ID_BOSS_CLEAR
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_ITEM_GET
+    SEQ_FLAG_FANFARE_GANON,                  // SEQ_ID_OPENING_GANON
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_HEART_GET
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_LIGHT
+    SEQ_FLAG_ENEMY,                          // SEQ_ID_JABU_JABU
+    SEQ_FLAG_4,                              // SEQ_ID_KAKARIKO_KID
+    0,                                       // SEQ_ID_GREAT_FAIRY
+    0,                                       // SEQ_ID_ZELDA_THEME
+    SEQ_FLAG_ENEMY,                          // SEQ_ID_FIRE_TEMPLE
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OPEN_TRE_BOX
+    SEQ_FLAG_ENEMY,                          // SEQ_ID_FOREST_TEMPLE
+    0,                                       // SEQ_ID_COURTYARD
+    SEQ_FLAG_NO_AMBIENCE,                    // SEQ_ID_GANON_TOWER
+    0,                                       // SEQ_ID_LONLON
+    SEQ_FLAG_NO_AMBIENCE,                    // SEQ_ID_GORON_CITY
+    0,                                       // SEQ_ID_FIELD_MORNING
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_SPIRITUAL_STONE
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_BOLERO
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_MINUET
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_SERENADE
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_REQUIEM
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_NOCTURNE
+    SEQ_FLAG_NO_AMBIENCE | SEQ_FLAG_RESTORE, // SEQ_ID_MINI_BOSS
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_SMALL_ITEM_GET
+    0,                                       // SEQ_ID_TEMPLE_OF_TIME
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_EVENT_CLEAR
+    SEQ_FLAG_4 | SEQ_FLAG_ENEMY,             // SEQ_ID_KOKIRI
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_FAIRY_GET
+    SEQ_FLAG_ENEMY,                          // SEQ_ID_SARIA_THEME
+    SEQ_FLAG_ENEMY,                          // SEQ_ID_SPIRIT_TEMPLE
+    0,                                       // SEQ_ID_HORSE
+    0,                                       // SEQ_ID_HORSE_GOAL
+    0,                                       // SEQ_ID_INGO
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_MEDALLION_GET
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_SARIA
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_EPONA
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_ZELDA
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_SUNS
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_TIME
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_STORM
+    0,                                       // SEQ_ID_NAVI_OPENING
+    0,                                       // SEQ_ID_DEKU_TREE_CS
+    0,                                       // SEQ_ID_SONG_OF_STORMS
+    0,                                       // SEQ_ID_HYRULE_CS
+    SEQ_FLAG_5,                              // SEQ_ID_MINI_GAME
+    0,                                       // SEQ_ID_SHEIK
+    SEQ_FLAG_4,                              // SEQ_ID_ZORA_DOMAIN
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_APPEAR
+    0,                                       // SEQ_ID_ADULT_LINK
+    0,                                       // SEQ_ID_MASTER_SWORD
+    SEQ_FLAG_FANFARE_GANON,                  // SEQ_ID_INTRO_GANON
+    SEQ_FLAG_5,                              // SEQ_ID_SHOP
+    SEQ_FLAG_6,                              // SEQ_ID_CHAMBER_OF_SAGES
+    SEQ_FLAG_6,                              // SEQ_ID_FILE_SELECT
+    SEQ_FLAG_ENEMY,                          // SEQ_ID_ICE_CAVERN
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_DOOR_OF_TIME
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_OWL
+    SEQ_FLAG_ENEMY,                          // SEQ_ID_SHADOW_TEMPLE
+    SEQ_FLAG_ENEMY,                          // SEQ_ID_WATER_TEMPLE
+    SEQ_FLAG_FANFARE,                        // SEQ_ID_BRIDGE_TO_GANONS
+    0,                                       // SEQ_ID_OCARINA_OF_TIME
+    SEQ_FLAG_4 | SEQ_FLAG_ENEMY,             // SEQ_ID_GERUDO_VALLEY
+    0,                                       // SEQ_ID_POTION_SHOP
+    0,                                       // SEQ_ID_KOTAKE_KOUME
+    SEQ_FLAG_NO_AMBIENCE,                    // SEQ_ID_ESCAPE
+    0,                                       // SEQ_ID_UNDERGROUND
+    SEQ_FLAG_NO_AMBIENCE,                    // SEQ_ID_GANON_BATTLE_1
+    SEQ_FLAG_NO_AMBIENCE,                    // SEQ_ID_GANON_BATTLE_2
+    0,                                       // SEQ_ID_END_DEMO
+    0,                                       // SEQ_ID_STAFF_1
+    0,                                       // SEQ_ID_STAFF_2
+    0,                                       // SEQ_ID_STAFF_3
+    0,                                       // SEQ_ID_STAFF_4
+    0,                                       // SEQ_ID_FIRE_BOSS
+    SEQ_FLAG_RESTORE,                        // SEQ_ID_TIMED_MINI_GAME
+    0,                                       // SEQ_ID_CUTSCENE_EFFECTS
 };
 
 s8 sSpecReverbs[20] = { 0, 0, 0, 0, 0, 0, 0, 40, 0, 15, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
-NatureAmbienceDataIO sNatureAmbienceDataIO[20] = {
+NatureAmbienceDataIO sAmbienceData[20] = {
     // NATURE_ID_GENERAL_NIGHT
     {
         0xC0FF, // PlayerIO Data
@@ -802,7 +802,7 @@ NatureAmbienceDataIO sNatureAmbienceDataIO[20] = {
     },
 
     // NATURE_ID_NONE
-    // While there is data for this natureAmbienceId, it is identical to previous entries
+    // While there is data for this ambienceId, it is identical to previous entries
     // and the game treats it as no nature ambience
     {
         0xC003, // PlayerIO Data
@@ -1195,15 +1195,15 @@ OcarinaSongButtons gOcarinaSongButtons[OCARINA_SONG_MAX] = {
 
 u32 sAudioUpdateStartTime;
 u32 sAudioUpdateEndTime;
-f32 D_8016B7A8;
+f32 sSfxSyncedVolume;
 f32 D_8016B7AC;
-f32 D_8016B7B0;
+f32 sSfxSyncedFreq;
 f32 D_8016B7B4;
 FreqLerp sRiverFreqScaleLerp;
 FreqLerp sWaterfallFreqScaleLerp;
 f32 D_8016B7D8;
-s8 D_8016B7DC;
-f32 D_8016B7E0;
+s8 sSfxCustomReverb;
+f32 gSfxVolume;
 u16 D_8016B7E4;
 struct {
     char str[5];
@@ -1252,7 +1252,7 @@ void PadMgr_RequestPadData(PadMgr* padMgr, Input* inputs, s32 gameRequest);
 
 void Audio_StepFreqLerp(FreqLerp* lerp);
 void func_800F56A8(void);
-void Audio_PlayNatureAmbienceSequence(u8 natureAmbienceId);
+void Audio_PlayAmbience(u8 ambienceId);
 s32 Audio_SetGanonsTowerBgmVolume(u8 targetVol);
 
 // =========== Audio Ocarina ===========
@@ -3146,7 +3146,7 @@ void AudioDebug_ProcessInput_SndCont(void) {
                                  &gSfxDefaultReverb);
                 break;
             case 4:
-                func_800F6700(sAudioSndContWork[sAudioSndContSel]);
+                Audio_SetFileSelectSettings(sAudioSndContWork[sAudioSndContSel]);
                 break;
             case 5:
                 SEQCMD_DISABLE_PLAY_SEQUENCES(sAudioSndContWork[sAudioSndContSel]);
@@ -3159,7 +3159,7 @@ void AudioDebug_ProcessInput_SndCont(void) {
                 }
                 break;
             case 7:
-                Audio_PlayNatureAmbienceSequence(sAudioSndContWork[sAudioSndContSel]);
+                Audio_PlayAmbience(sAudioSndContWork[sAudioSndContSel]);
                 break;
             case 8:
             case 9:
@@ -3189,7 +3189,7 @@ void AudioDebug_ProcessInput_SndCont(void) {
     if (CHECK_BTN_ANY(sDebugPadPress, BTN_CDOWN)) {
         if (sAudioSndContSel == 0) {
             if (1) {}
-            func_800F595C(sAudioSndContWork[sAudioSndContSel]);
+            Audio_PlaySequenceInCutscene(sAudioSndContWork[sAudioSndContSel]);
         }
     }
 
@@ -3624,7 +3624,7 @@ void AudioDebug_ProcessInput(void) {
             if (CHECK_BTN_ANY(sDebugPadPress, BTN_A)) {
                 sAudioSndContWork[5] ^= 1;
                 SEQCMD_DISABLE_PLAY_SEQUENCES(sAudioSndContWork[5]);
-                if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != NA_BGM_NATURE_AMBIENCE) {
+                if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != SEQ_ID_NATURE_AMBIENCE) {
                     SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
                 }
                 SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, 0);
@@ -4064,36 +4064,44 @@ void AudioSfx_ResetSfxChannelState(void) {
 
 void Audio_PlayCutsceneEffectsSequence(u8 csEffectType) {
     if (gSfxBankMuted[0] != 1) {
-        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_SUB, 0, 0, NA_BGM_CUTSCENE_EFFECTS);
+        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_SUB, 0, 0, SEQ_ID_CUTSCENE_EFFECTS);
         SEQCMD_SET_CHANNEL_IO(SEQ_PLAYER_BGM_SUB, 0, 0, csEffectType);
     }
 }
 
-f32 func_800F3F84(f32 arg0) {
+f32 Audio_SetSyncedSfxFreqAndVolume(f32 freqVolParam) {
     f32 ret = 1.0f;
 
-    if (arg0 > 6.0f) {
-        D_8016B7A8 = 1.0f;
-        D_8016B7B0 = 1.1f;
+    if (freqVolParam > 6.0f) {
+        sSfxSyncedVolume = 1.0f;
+        sSfxSyncedFreq = 1.1f;
     } else {
-        ret = arg0 / 6.0f;
-        D_8016B7A8 = (ret * 0.22500002f) + 0.775f;
-        D_8016B7B0 = (ret * 0.2f) + 0.9f;
+        ret = freqVolParam / 6.0f;
+        sSfxSyncedVolume = (ret * 0.22500002f) + 0.775f;
+        sSfxSyncedFreq = (ret * 0.2f) + 0.9f;
     }
     return ret;
 }
 
-void func_800F4010(Vec3f* pos, u16 sfxId, f32 arg2) {
+/**
+ * Adjusts both frequency and volume based on a single parameter "freqVolParam"
+ * When freqVolParam >= 6.0f, frequency is increased to 1.1f and volume remains fixed at 1.0f
+ * For every -1.0f taken from freqVolParam (eg. 5.0f, 4.0f, 3.0f...):
+ *     - volume will decrease by 0.0375f
+ *     - frequency will decrease by 0.0333333f
+ */
+void Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(Vec3f* pos, u16 sfxId, f32 arg2) {
     f32 sp24;
     f32 phi_f0;
     u8 phi_v0;
     u16 sfxId2;
 
     D_80131C8C = arg2;
-    sp24 = func_800F3F84(arg2);
-    AudioSfx_PlaySfx(sfxId, pos, 4, &D_8016B7B0, &D_8016B7A8, &gSfxDefaultReverb);
+    sp24 = Audio_SetSyncedSfxFreqAndVolume(arg2);
+    AudioSfx_PlaySfx(sfxId, pos, 4, &sSfxSyncedFreq, &sSfxSyncedVolume, &gSfxDefaultReverb);
 
     if ((sfxId & 0xF0) == 0xB0) {
+        // Crawlspaces
         phi_f0 = 0.3f;
         phi_v0 = 1;
         sp24 = 1.0f;
@@ -4109,26 +4117,30 @@ void func_800F4010(Vec3f* pos, u16 sfxId, f32 arg2) {
             sfxId2 = NA_SE_PL_METALEFFECT_KID;
         }
         D_8016B7AC = (sp24 * 0.7) + 0.3;
-        AudioSfx_PlaySfx(sfxId2, pos, 4, &D_8016B7B0, &D_8016B7AC, &gSfxDefaultReverb);
+        AudioSfx_PlaySfx(sfxId2, pos, 4, &sSfxSyncedFreq, &D_8016B7AC, &gSfxDefaultReverb);
     }
 }
 
-void func_800F4138(Vec3f* pos, u16 sfxId, f32 arg2) {
-    func_800F3F84(arg2);
-    AudioSfx_PlaySfx(sfxId, pos, 4, &D_8016B7B0, &D_8016B7A8, &gSfxDefaultReverb);
+void Audio_PlaySfx_AtPosWithSyncedFreqAndVolume(Vec3f* pos, u16 sfxId, f32 freqVolParam) {
+    Audio_SetSyncedSfxFreqAndVolume(freqVolParam);
+    AudioSfx_PlaySfx(sfxId, pos, 4, &sSfxSyncedFreq, &sSfxSyncedVolume, &gSfxDefaultReverb);
 }
 
 void func_800F4190(Vec3f* pos, u16 sfxId) {
     AudioSfx_PlaySfx(sfxId, pos, 4, &D_801305B0, &gSfxDefaultFreqAndVolScale, &D_801305B4);
 }
-void Audio_PlaySfxRandom(Vec3f* pos, u16 baseSfxId, u8 randLim) {
+
+void Audio_PlaySfx_Randomized(Vec3f* pos, u16 baseSfxId, u8 randLim) {
     u8 offset = AudioThread_NextRandom() % randLim;
 
     AudioSfx_PlaySfx(baseSfxId + offset, pos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                      &gSfxDefaultReverb);
 }
 
-void func_800F4254(Vec3f* pos, u8 level) {
+/**
+ * Plays increasingly high-pitched sword charging sfx as Player charges up the sword
+ */
+void Audio_PlaySfx_SwordCharge(Vec3f* pos, u8 level) {
     level &= 3;
     if (level != sPrevChargeLevel) {
         D_801305F4 = D_801305E4[level];
@@ -4152,7 +4164,7 @@ void func_800F4254(Vec3f* pos, u8 level) {
     }
 }
 
-void func_800F436C(Vec3f* pos, u16 sfxId, f32 arg2) {
+void Audio_PlaySfx_AtPosWithFreq(Vec3f* pos, u16 sfxId, f32 arg2) {
     if (arg2 < 0.75f) {
         D_8016B7D8 = ((arg2 / 0.75f) * 0.25f) + 0.5f;
     } else {
@@ -4164,40 +4176,40 @@ void func_800F436C(Vec3f* pos, u16 sfxId, f32 arg2) {
     }
 }
 
-void func_800F4414(Vec3f* pos, u16 sfxId, f32 arg2) {
-    D_801305B8--;
-    if (D_801305B8 == 0) {
+void Audio_PlaySfx_AtPosWithTimer(Vec3f* pos, u16 sfxId, f32 timerShiftedLerp) {
+    sSfxTimer--;
+    if (sSfxTimer == 0) {
         AudioSfx_PlaySfx(sfxId, pos, 4, &D_8016B7D8, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
-        if (arg2 > 2.0f) {
-            arg2 = 2.0f;
+        if (timerShiftedLerp > 2.0f) {
+            timerShiftedLerp = 2.0f;
         }
-        D_801305B8 = (s8)((D_801305C0 - D_801305BC) * (1.0f - arg2)) + D_801305C0;
+        sSfxTimer = (s8)((D_801305C0 - D_801305BC) * (1.0f - timerShiftedLerp)) + D_801305C0;
     }
 }
 
-void func_800F44EC(s8 arg0, s8 arg1) {
-    D_801305B8 = 1;
+void Audio_SetSfxTimerLerpInterval(s8 arg0, s8 arg1) {
+    sSfxTimer = 1;
     D_801305BC = arg1;
     D_801305C0 = arg0;
 }
 
-void func_800F4524(Vec3f* pos, u16 sfxId, s8 arg2) {
-    D_8016B7DC = arg2;
-    AudioSfx_PlaySfx(sfxId, pos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &D_8016B7DC);
+void Audio_PlaySfx_AtPosWithReverb(Vec3f* pos, u16 sfxId, s8 reverbAdd) {
+    sSfxCustomReverb = reverbAdd;
+    AudioSfx_PlaySfx(sfxId, pos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &sSfxCustomReverb);
 }
 
-void func_800F4578(Vec3f* pos, u16 sfxId, f32 arg2) {
-    D_8016B7E0 = arg2;
-    AudioSfx_PlaySfx(sfxId, pos, 4, &gSfxDefaultFreqAndVolScale, &D_8016B7E0, &gSfxDefaultReverb);
+void Audio_PlaySfx_AtPosWithVolume(Vec3f* pos, u16 sfxId, f32 volume) {
+    gSfxVolume = volume;
+    AudioSfx_PlaySfx(sfxId, pos, 4, &gSfxDefaultFreqAndVolScale, &gSfxVolume, &gSfxDefaultReverb);
 }
 
-void func_800F45D0(f32 arg0) {
-    func_800F4414(&gSfxDefaultPos, NA_SE_IT_FISHING_REEL_SLOW - SFX_FLAG, arg0);
-    func_800F436C(&gSfxDefaultPos, 0, (0.15f * arg0) + 1.4f);
+void Audio_PlaySfx_FishingReel(f32 arg0) {
+    Audio_PlaySfx_AtPosWithTimer(&gSfxDefaultPos, NA_SE_IT_FISHING_REEL_SLOW - SFX_FLAG, arg0);
+    Audio_PlaySfx_AtPosWithFreq(&gSfxDefaultPos, 0, (0.15f * arg0) + 1.4f);
 }
 
-void Audio_PlaySfxRiver(Vec3f* pos, f32 freqScale) {
+void Audio_PlaySfx_River(Vec3f* pos, f32 freqScale) {
     if (!AudioSfx_IsPlaying(NA_SE_EV_RIVER_STREAM - SFX_FLAG)) {
         sRiverFreqScaleLerp.value = freqScale;
     } else if (freqScale != sRiverFreqScaleLerp.value) {
@@ -4209,7 +4221,7 @@ void Audio_PlaySfxRiver(Vec3f* pos, f32 freqScale) {
                      &gSfxDefaultReverb);
 }
 
-void Audio_PlaySfxWaterfall(Vec3f* pos, f32 freqScale) {
+void Audio_PlaySfx_Waterfall(Vec3f* pos, f32 freqScale) {
     if (!AudioSfx_IsPlaying(NA_SE_EV_WATER_WALL_BIG - SFX_FLAG)) {
         sWaterfallFreqScaleLerp.value = freqScale;
     } else if (freqScale != sWaterfallFreqScaleLerp.value) {
@@ -4232,22 +4244,22 @@ void Audio_StepFreqLerp(FreqLerp* lerp) {
     }
 }
 
-void func_800F47BC(void) {
+void Audio_SetBgmVolumeOff(void) {
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_FANFARE, 0, 10);
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_SUB, VOL_SCALE_INDEX_FANFARE, 0, 10);
 }
 
-void func_800F47FC(void) {
+void Audio_SetBgmVolumeOn(void) {
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_FANFARE, 0x7F, 3);
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_SUB, VOL_SCALE_INDEX_FANFARE, 0x7F, 3);
 }
 
-void func_800F483C(u8 targetVol, u8 volFadeTimer) {
-    AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_BGM_MAIN, targetVol, volFadeTimer);
+void Audio_SetMainBgmVolume(u8 targetVol, u8 volumeFadeTimer) {
+    AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_BGM_MAIN, targetVol, volumeFadeTimer);
 }
 
 /**
- * Incrementally increase volume of NA_BGM_GANON_TOWER for each new room during the climb of Ganon's Tower
+ * Incrementally increase volume of SEQ_ID_GANON_TOWER for each new room during the climb of Ganon's Tower
  */
 void Audio_SetGanonsTowerBgmVolumeLevel(u8 ganonsTowerLevel) {
     u8 channelIndex;
@@ -4358,7 +4370,7 @@ void Audio_UpdateRiverSoundVolumes(void) {
     }
 }
 
-void Audio_PlaySfxIncreasinglyTransposed(Vec3f* pos, s16 sfxId, u8* semitones) {
+void Audio_PlaySfx_IncreasinglyTransposed(Vec3f* pos, s16 sfxId, u8* semitones) {
     AudioSfx_PlaySfx(sfxId, pos, 4, &gPitchFrequencies[semitones[sAudioIncreasingTranspose] + 39],
                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
@@ -4371,7 +4383,7 @@ void Audio_ResetIncreasingTranspose(void) {
     sAudioIncreasingTranspose = 0;
 }
 
-void Audio_PlaySfxTransposed(Vec3f* pos, u16 sfxId, s8 semitone) {
+void Audio_PlaySfx_Transposed(Vec3f* pos, u16 sfxId, s8 semitone) {
     AudioSfx_PlaySfx(sfxId, pos, 4, &gPitchFrequencies[semitone + 39], &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 }
 
@@ -4461,8 +4473,8 @@ void Audio_SplitBgmChannels(s8 volSplit) {
     u8 channelIndex;
     u8 i;
 
-    if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_FANFARE) == NA_BGM_DISABLED) &&
-        (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) != NA_BGM_LONLON)) {
+    if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_FANFARE) == SEQ_ID_DISABLED) &&
+        (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) != SEQ_ID_LONLON)) {
         for (i = 0; i < ARRAY_COUNT(bgmPlayers); i++) {
             if (i == 0) {
                 // Main Bgm SeqPlayer
@@ -4509,7 +4521,7 @@ void Audio_PlaySariaBgm(Vec3f* pos, u16 seqId, u16 distMax) {
     dist = sqrtf(SQ(pos->z) + SQ(pos->x));
     if (sSariaBgmPtr == NULL) {
         sSariaBgmPtr = pos;
-        func_800F5E18(SEQ_PLAYER_BGM_SUB, seqId, 0, 7, 2);
+        Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_SUB, seqId, 0, 7, 2);
     } else {
         prevDist = sqrtf(SQ(sSariaBgmPtr->z) + SQ(sSariaBgmPtr->x));
         if (dist < prevDist) {
@@ -4533,7 +4545,7 @@ void Audio_PlaySariaBgm(Vec3f* pos, u16 seqId, u16 distMax) {
         vol = 0;
     }
 
-    if (seqId != NA_BGM_GREAT_FAIRY) {
+    if (seqId != SEQ_ID_GREAT_FAIRY) {
         Audio_SplitBgmChannels(vol);
     }
 
@@ -4547,15 +4559,15 @@ void Audio_ClearSariaBgm2(void) {
 
 void func_800F5510(u16 seqId) {
     func_800F5550(seqId);
-    func_800F5E18(SEQ_PLAYER_BGM_MAIN, seqId, 0, 0, 1);
+    Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_MAIN, seqId, 0, 0, 1);
 }
 
 void func_800F5550(u16 seqId) {
     u8 sp27 = 0;
     u16 nv;
 
-    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != NA_BGM_WINDMILL) {
-        if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) == NA_BGM_LONLON) {
+    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != SEQ_ID_SONG_OF_STORMS) {
+        if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) == SEQ_ID_LONLON) {
             AudioSeq_StopSequence(SEQ_PLAYER_BGM_SUB, 0);
             AudioThread_QueueCmdS32(0xF8000000, 0);
         }
@@ -4566,12 +4578,12 @@ void func_800F5550(u16 seqId) {
                 sp27 = 0x1E;
             }
 
-            func_800F5E18(SEQ_PLAYER_BGM_MAIN, seqId, sp27, 7, D_8013062C);
+            Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_MAIN, seqId, sp27, 7, D_8013062C);
 
             D_8013062C = 0;
         } else {
             nv = (sSeqFlags[(seqId & 0xFF) & 0xFF] & SEQ_FLAG_6) ? 1 : 0xFF;
-            func_800F5E18(SEQ_PLAYER_BGM_MAIN, seqId, 0, 7, nv);
+            Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_MAIN, seqId, 0, 7, nv);
             if (!(sSeqFlags[seqId] & SEQ_FLAG_5)) {
                 D_8013062C = 0xC0;
             }
@@ -4586,7 +4598,7 @@ void func_800F56A8(void) {
 
     temp_v0 = AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN);
     bvar = temp_v0 & 0xFF;
-    if ((temp_v0 != NA_BGM_DISABLED) && (sSeqFlags[bvar] & SEQ_FLAG_4)) {
+    if ((temp_v0 != SEQ_ID_DISABLED) && (sSeqFlags[bvar] & SEQ_FLAG_4)) {
         if (D_8013062C != 0xC0) {
             D_8013062C = gAudioCtx.seqPlayers[SEQ_PLAYER_BGM_MAIN].soundScriptIO[3];
         } else {
@@ -4595,13 +4607,13 @@ void func_800F56A8(void) {
     }
 }
 
-void func_800F5718(void) {
-    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != NA_BGM_WINDMILL) {
-        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_WINDMILL);
+void Audio_PlayBgmForSongOfStorms(void) {
+    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != SEQ_ID_SONG_OF_STORMS) {
+        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_SONG_OF_STORMS);
     }
 }
 
-void func_800F574C(f32 scaleTempoAndFreq, u8 duration) {
+void Audio_SetSeqTempoAndFreq(f32 scaleTempoAndFreq, u8 duration) {
     if (scaleTempoAndFreq == 1.0f) {
         SEQCMD_RESET_TEMPO(SEQ_PLAYER_BGM_MAIN, duration);
     } else {
@@ -4611,52 +4623,47 @@ void func_800F574C(f32 scaleTempoAndFreq, u8 duration) {
     SEQCMD_SETUP_SET_PLAYER_FREQ(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, duration, scaleTempoAndFreq * 100.0f);
 }
 
-void func_800F5918(void) {
-    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == NA_BGM_TIMED_MINI_GAME &&
+void Audio_IncreaseTempoForTimedMinigame(void) {
+    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == SEQ_ID_TIMED_MINI_GAME &&
         AudioSeq_IsSeqCmdNotQueued(SEQCMD_OP_PLAY_SEQUENCE << 28, SEQCMD_OP_MASK)) {
         SEQCMD_SET_TEMPO(SEQ_PLAYER_BGM_MAIN, 5, 210);
     }
 }
 
-void func_800F595C(u16 arg0) {
-    u8 arg0b = arg0 & 0xFF;
-
-    if (sSeqFlags[arg0b] & SEQ_FLAG_FANFARE) {
-        Audio_PlayFanfare(arg0);
-    } else if (sSeqFlags[arg0b] & SEQ_FLAG_FANFARE_GANON) {
-        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_FANFARE, 0, 0, arg0);
-
+void Audio_PlaySequenceInCutscene(u16 seqId) {
+    if (sSeqFlags[seqId & 0xFF & 0xFF] & SEQ_FLAG_FANFARE) {
+        Audio_PlayFanfare(seqId);
+    } else if (sSeqFlags[seqId & 0xFF & 0xFF] & SEQ_FLAG_FANFARE_GANON) {
+        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_FANFARE, 0, 0, seqId);
     } else {
-        func_800F5E18(SEQ_PLAYER_BGM_MAIN, arg0, 0, 7, -1);
+        Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_MAIN, seqId, 0, 7, -1);
         SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, 0);
     }
 }
 
-void func_800F59E8(u16 arg0) {
-    u8 arg0b = arg0 & 0xFF;
-
-    if (sSeqFlags[arg0b] & SEQ_FLAG_FANFARE) {
+void Audio_StopSequenceInCutscene(u16 seqId) {
+    if (sSeqFlags[seqId & 0xFF & 0xFF] & SEQ_FLAG_FANFARE) {
         SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, 0);
-    } else if (sSeqFlags[arg0b] & SEQ_FLAG_FANFARE_GANON) {
+    } else if (sSeqFlags[seqId & 0xFF & 0xFF] & SEQ_FLAG_FANFARE_GANON) {
         SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, 0);
     } else {
         SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
     }
 }
 
-s32 func_800F5A58(u8 arg0) {
-    u8 phi_a1 = 0;
+s32 Audio_IsSequencePlaying(u8 seqId) {
+    u8 seqPlayerIndex = 0;
 
-    if (sSeqFlags[arg0 & 0xFF] & SEQ_FLAG_FANFARE) {
-        phi_a1 = 1;
-    } else if (sSeqFlags[arg0 & 0xFF] & SEQ_FLAG_FANFARE_GANON) {
-        phi_a1 = 1;
+    if (sSeqFlags[seqId & 0xFF] & SEQ_FLAG_FANFARE) {
+        seqPlayerIndex = 1;
+    } else if (sSeqFlags[seqId & 0xFF] & SEQ_FLAG_FANFARE_GANON) {
+        seqPlayerIndex = 1;
     }
 
-    if (arg0 == (u8)AudioSeq_GetActiveSeqId(phi_a1)) {
-        return 1;
+    if (seqId == (u8)AudioSeq_GetActiveSeqId(seqPlayerIndex)) {
+        return true;
     } else {
-        return 0;
+        return false;
     }
 }
 
@@ -4667,9 +4674,9 @@ s32 func_800F5A58(u8 arg0) {
 void func_800F5ACC(u16 seqId) {
     u16 curSeqId = AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN);
 
-    if ((curSeqId & 0xFF) != NA_BGM_GANON_TOWER && (curSeqId & 0xFF) != NA_BGM_ESCAPE && curSeqId != seqId) {
+    if ((curSeqId & 0xFF) != SEQ_ID_GANON_TOWER && (curSeqId & 0xFF) != SEQ_ID_ESCAPE && curSeqId != seqId) {
         Audio_SetSequenceMode(SEQ_MODE_IGNORE);
-        if (curSeqId != NA_BGM_DISABLED) {
+        if (curSeqId != SEQ_ID_DISABLED) {
             sPrevMainBgmSeqId = curSeqId;
         } else {
             osSyncPrintf("Middle Boss BGM Start not stack \n");
@@ -4683,39 +4690,39 @@ void func_800F5ACC(u16 seqId) {
  * Restores the previous sequence to the main bgm player before func_800F5ACC was called
  */
 void func_800F5B58(void) {
-    if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != NA_BGM_DISABLED) && (sPrevMainBgmSeqId != NA_BGM_DISABLED) &&
+    if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != SEQ_ID_DISABLED) && (sPrevMainBgmSeqId != SEQ_ID_DISABLED) &&
         (sSeqFlags[AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) & 0xFF] & SEQ_FLAG_RESTORE)) {
-        if (sPrevMainBgmSeqId == NA_BGM_DISABLED) {
+        if (sPrevMainBgmSeqId == SEQ_ID_DISABLED) {
             SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
         } else {
             SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, sPrevMainBgmSeqId);
         }
 
-        sPrevMainBgmSeqId = NA_BGM_DISABLED;
+        sPrevMainBgmSeqId = SEQ_ID_DISABLED;
     }
 }
 
 /**
  * Plays the nature ambience sequence on the main bgm player, but stores the previous sequence to return to later
  */
-void func_800F5BF0(u8 natureAmbienceId) {
+void func_800F5BF0(u8 ambienceId) {
     u16 curSeqId = AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN);
 
-    if (curSeqId != NA_BGM_NATURE_AMBIENCE) {
+    if (curSeqId != SEQ_ID_NATURE_AMBIENCE) {
         sPrevMainBgmSeqId = curSeqId;
     }
 
-    Audio_PlayNatureAmbienceSequence(natureAmbienceId);
+    Audio_PlayAmbience(ambienceId);
 }
 
 /**
  * Restores the previous sequence to the main bgm player before func_800F5BF0 was called
  */
 void func_800F5C2C(void) {
-    if (sPrevMainBgmSeqId != NA_BGM_DISABLED) {
+    if (sPrevMainBgmSeqId != SEQ_ID_DISABLED) {
         SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, sPrevMainBgmSeqId);
     }
-    sPrevMainBgmSeqId = NA_BGM_DISABLED;
+    sPrevMainBgmSeqId = SEQ_ID_DISABLED;
 }
 
 void Audio_PlayFanfare(u16 seqId) {
@@ -4727,7 +4734,7 @@ void Audio_PlayFanfare(u16 seqId) {
     sp26 = AudioSeq_GetActiveSeqId(SEQ_PLAYER_FANFARE);
     sp1C = AudioThread_GetFontsForSequence(sp26 & 0xFF, &sp20);
     sp18 = AudioThread_GetFontsForSequence(seqId & 0xFF, &sp20);
-    if ((sp26 == NA_BGM_DISABLED) || (*sp1C == *sp18)) {
+    if ((sp26 == SEQ_ID_DISABLED) || (*sp1C == *sp18)) {
         D_8016B9F4 = 1;
     } else {
         D_8016B9F4 = 5;
@@ -4752,7 +4759,7 @@ void func_800F5CF8(void) {
             seqIdBgmSub = AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB);
 
             (void)seqIdBgmMain; // suppresses set but unused warning
-            if (seqIdFanfare == NA_BGM_DISABLED) {
+            if (seqIdFanfare == SEQ_ID_DISABLED) {
                 AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_FANFARE, 0, 5);
                 AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_SUB, VOL_SCALE_INDEX_FANFARE, 0, 5);
                 SEQCMD_SETUP_RESTORE_PLAYER_VOLUME_WITH_SCALE_INDEX(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN,
@@ -4760,20 +4767,20 @@ void func_800F5CF8(void) {
                 SEQCMD_SETUP_RESTORE_PLAYER_VOLUME_WITH_SCALE_INDEX(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_SUB,
                                                                     VOL_SCALE_INDEX_FANFARE, 10);
                 SEQCMD_SETUP_SET_CHANNEL_DISABLE_MASK(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, 0);
-                if (seqIdBgmSub != NA_BGM_LONLON) {
+                if (seqIdBgmSub != SEQ_ID_LONLON) {
                     SEQCMD_SETUP_SET_CHANNEL_DISABLE_MASK(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_SUB, 0);
                 }
             }
             SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_FANFARE, 1, 0, D_8016B9F6);
             SEQCMD_SET_CHANNEL_DISABLE_MASK(SEQ_PLAYER_BGM_MAIN, 0xFFFF);
-            if (seqIdBgmSub != NA_BGM_LONLON) {
+            if (seqIdBgmSub != SEQ_ID_LONLON) {
                 SEQCMD_SET_CHANNEL_DISABLE_MASK(SEQ_PLAYER_BGM_SUB, 0xFFFF);
             }
         }
     }
 }
 
-void func_800F5E18(u8 seqPlayerIndex, u16 seqId, u8 fadeTimer, s8 ioPort, s8 ioData) {
+void Audio_PlaySequenceWithSeqPlayerIO(u8 seqPlayerIndex, u16 seqId, u8 fadeTimer, s8 ioPort, s8 ioData) {
     SEQCMD_SET_PLAYER_IO(seqPlayerIndex, ioPort, ioData);
     SEQCMD_PLAY_SEQUENCE(seqPlayerIndex, fadeTimer, 0, seqId);
 }
@@ -4784,18 +4791,18 @@ void Audio_SetSequenceMode(u8 seqMode) {
     u8 volumeFadeOutTimer;
 
     sSeqModeInput = seqMode;
-    if (sPrevMainBgmSeqId == NA_BGM_DISABLED) {
+    if (sPrevMainBgmSeqId == SEQ_ID_DISABLED) {
         if (sAudioCutsceneFlag) {
             seqMode = SEQ_MODE_IGNORE;
         }
 
         seqId = gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId;
 
-        if (seqId == NA_BGM_FIELD_LOGIC && AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) == (NA_BGM_ENEMY | 0x800)) {
+        if (seqId == SEQ_ID_FIELD_LOGIC && AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) == (SEQ_ID_ENEMY | 0x800)) {
             seqMode = SEQ_MODE_IGNORE;
         }
 
-        if ((seqId == NA_BGM_DISABLED) || (sSeqFlags[(u8)(seqId & 0xFF)] & SEQ_FLAG_ENEMY) ||
+        if ((seqId == SEQ_ID_DISABLED) || (sSeqFlags[(u8)(seqId & 0xFF)] & SEQ_FLAG_ENEMY) ||
             ((sPrevSeqMode & 0x7F) == SEQ_MODE_ENEMY)) {
             if (seqMode != (sPrevSeqMode & 0x7F)) {
                 if (seqMode == SEQ_MODE_ENEMY) {
@@ -4810,9 +4817,9 @@ void Audio_SetSequenceMode(u8 seqMode) {
 
                     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_SUB, VOL_SCALE_INDEX_BGM_SUB, sAudioEnemyVol,
                                             volumeFadeInTimer);
-                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_SUB, 10, 8, NA_BGM_ENEMY);
+                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_SUB, 10, 8, SEQ_ID_ENEMY);
 
-                    if (seqId != NA_BGM_NATURE_AMBIENCE) {
+                    if (seqId != SEQ_ID_NATURE_AMBIENCE) {
                         AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_BGM_SUB,
                                                 (0x7F - sAudioEnemyVol) & 0xFF, 0xA);
                         Audio_SplitBgmChannels(sAudioEnemyVol);
@@ -4855,7 +4862,7 @@ void Audio_SetSequenceMode(u8 seqMode) {
     }
 }
 
-void Audio_SetBgmEnemyVolume(f32 dist) {
+void Audio_UpdateEnemyBgmVolume(f32 dist) {
     f32 adjDist;
 
     if (sPrevSeqMode == (0x80 | SEQ_MODE_ENEMY)) {
@@ -4870,11 +4877,11 @@ void Audio_SetBgmEnemyVolume(f32 dist) {
 
             sAudioEnemyVol = ((350.0f - adjDist) * 127.0f) / 350.0f;
             AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_SUB, VOL_SCALE_INDEX_BGM_SUB, sAudioEnemyVol, 10);
-            if (gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId != NA_BGM_NATURE_AMBIENCE) {
+            if (gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId != SEQ_ID_NATURE_AMBIENCE) {
                 AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_BGM_SUB, (0x7F - sAudioEnemyVol), 10);
             }
         }
-        if (gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId != NA_BGM_NATURE_AMBIENCE) {
+        if (gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId != SEQ_ID_NATURE_AMBIENCE) {
             Audio_SplitBgmChannels(sAudioEnemyVol);
         }
     }
@@ -4891,7 +4898,7 @@ void func_800F6268(f32 dist, u16 arg1) {
     if (D_8016B9F2 == 0) {
         temp_a0 = (s8)(AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) & 0xFF);
         if (temp_a0 == (arg1 & 0xFF)) {
-            if ((arg1 & 0xFF) == NA_BGM_LONLON) {
+            if ((arg1 & 0xFF) == SEQ_ID_LONLON) {
 
                 if (dist > 2000.0f) {
                     phi_v1 = 127;
@@ -4908,10 +4915,10 @@ void func_800F6268(f32 dist, u16 arg1) {
                     D_8016B9D8++;
                 }
             }
-        } else if ((temp_a0 == NA_BGM_NATURE_AMBIENCE) && ((arg1 & 0xFF) == NA_BGM_LONLON)) {
+        } else if ((temp_a0 == SEQ_ID_NATURE_AMBIENCE) && ((arg1 & 0xFF) == SEQ_ID_LONLON)) {
             temp_a0 = (s8)(AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) & 0xFF);
             if ((temp_a0 != (arg1 & 0xFF)) && (D_8016B9D8 < 10)) {
-                func_800F5E18(SEQ_PLAYER_BGM_SUB, NA_BGM_LONLON, 0, 0, 0);
+                Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_SUB, SEQ_ID_LONLON, 0, 0, 0);
                 SEQCMD_SET_CHANNEL_DISABLE_MASK(SEQ_PLAYER_BGM_SUB, 0xFFFC);
                 D_8016B9D8 = 10;
             }
@@ -4934,7 +4941,7 @@ void func_800F6268(f32 dist, u16 arg1) {
     }
 }
 
-void func_800F64E0(u8 arg0) {
+void Audio_PlaySfx_Window(u8 arg0) {
     D_80130608 = arg0;
     if (arg0 != 0) {
         AudioSfx_PlaySfx(NA_SE_SY_WIN_OPEN, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
@@ -4952,10 +4959,10 @@ void func_800F6584(u8 arg0) {
     u16 sp34;
 
     D_8016B9F2 = arg0;
-    if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) & 0xFF) == NA_BGM_LONLON) {
+    if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) & 0xFF) == SEQ_ID_LONLON) {
         seqPlayerIndex = SEQ_PLAYER_BGM_MAIN;
         sp34 = 0;
-    } else if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) & 0xFF) == NA_BGM_LONLON) {
+    } else if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) & 0xFF) == SEQ_ID_LONLON) {
         seqPlayerIndex = SEQ_PLAYER_BGM_SUB;
         sp34 = 0xFFFC;
     } else {
@@ -4970,7 +4977,7 @@ void func_800F6584(u8 arg0) {
         }
     } else {
         if (seqPlayerIndex == SEQ_PLAYER_BGM_SUB) {
-            func_800F5E18(SEQ_PLAYER_BGM_SUB, NA_BGM_LONLON, 0, 0, 0);
+            Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_SUB, SEQ_ID_LONLON, 0, 0, 0);
         }
         SEQCMD_SET_CHANNEL_VOLUME(seqPlayerIndex, 0, 1, 0x7F);
         SEQCMD_SET_CHANNEL_VOLUME(seqPlayerIndex, 1, 1, 0x7F);
@@ -4990,7 +4997,7 @@ void Audio_SetCodeReverb(s8 reverb) {
     }
 }
 
-void func_800F6700(s8 audioSetting) {
+void Audio_SetFileSelectSettings(s8 audioSetting) {
     s8 soundModeIndex;
 
     switch (audioSetting) {
@@ -5037,7 +5044,7 @@ void Audio_SetExtraFilter(u8 filter) {
 
     sAudioExtraFilter2 = filter;
     sAudioExtraFilter = filter;
-    if (gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId == NA_BGM_NATURE_AMBIENCE) {
+    if (gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId == SEQ_ID_NATURE_AMBIENCE) {
         for (i = 0; i < 16; i++) {
             t = i;
             // CHAN_UPD_SCRIPT_IO (seq player 0, all channels, slot 6)
@@ -5050,23 +5057,23 @@ void Audio_SetCutsceneFlag(s8 flag) {
     sAudioCutsceneFlag = flag;
 }
 
-void Audio_PlaySfxGeneralIfNotInCutscene(u16 sfxId, Vec3f* pos, u8 arg2, f32* freqScale, f32* arg4, s8* reverbAdd) {
+void Audio_PlaySfx_IfNotInCutsceneImpl(u16 sfxId, Vec3f* pos, u8 arg2, f32* freqScale, f32* arg4, s8* reverbAdd) {
     if (!sAudioCutsceneFlag) {
         AudioSfx_PlaySfx(sfxId, pos, arg2, freqScale, arg4, reverbAdd);
     }
 }
 
-void Audio_PlaySfxIfNotInCutscene(u16 sfxId) {
-    Audio_PlaySfxGeneralIfNotInCutscene(sfxId, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                        &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+void Audio_PlaySfx_IfNotInCutscene(u16 sfxId) {
+    Audio_PlaySfx_IfNotInCutsceneImpl(sfxId, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 }
 
-void func_800F6964(u16 arg0) {
+void Audio_MuteAllSeqExceptSysAndOca(u16 duration) {
     s32 skip;
     u8 channelIndex;
 
-    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, (arg0 * 3) / 2);
-    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, (arg0 * 3) / 2);
+    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, (duration * 3) / 2);
+    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, (duration * 3) / 2);
     for (channelIndex = 0; channelIndex < 16; channelIndex++) {
         skip = false;
         switch (channelIndex) {
@@ -5082,23 +5089,27 @@ void func_800F6964(u16 arg0) {
         }
 
         if (!skip) {
-            SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_SFX, channelIndex, arg0 >> 1, 0);
+            SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_SFX, channelIndex, duration >> 1, 0);
         }
     }
 
-    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_SUB, (arg0 * 3) / 2);
+    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_SUB, (duration * 3) / 2);
 }
 
-void func_800F6AB0(u16 arg0) {
-    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, arg0);
-    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, arg0);
-    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_SUB, arg0);
+void func_800F6AB0(u16 duration) {
+    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, duration);
+    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, duration);
+    SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_SUB, duration);
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_BGM_SUB, 0x7F, 0);
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_FANFARE, 0x7F, 0);
 }
 
-void func_800F6B3C(void) {
-    AudioSeq_StartSequence(SEQ_PLAYER_SFX, 0, 0xFF, 5);
+/**
+ * The flag 0xFF makes the sequence process SkipTicks and SkipForwardSequence
+ * Unused
+ */
+void Audio_StartSfxPlayer(void) {
+    AudioSeq_StartSequence(SEQ_PLAYER_SFX, SEQ_ID_GENERAL_SFX, 0xFF, 5);
 }
 
 void Audio_DisableAllSeq(void) {
@@ -5109,15 +5120,18 @@ void Audio_DisableAllSeq(void) {
     AudioThread_ScheduleProcessCmds();
 }
 
-s8 func_800F6BB8(void) {
+s8 Audio_GetEnabledNotesCount(void) {
     return AudioThread_GetEnabledNotesCount();
 }
 
+// Unused
 void func_800F6BDC(void) {
     Audio_DisableAllSeq();
     AudioThread_ScheduleProcessCmds();
+
+    // Wait for all notes to be finished
     while (true) {
-        if (!func_800F6BB8()) {
+        if (Audio_GetEnabledNotesCount() == 0) {
             return;
         }
     }
@@ -5127,10 +5141,10 @@ void Audio_PreNMI(void) {
     AudioThread_PreNMIInternal();
 }
 
-void func_800F6C34(void) {
+void Audio_ResetData(void) {
     sPrevSeqMode = 0;
-    D_8016B7A8 = 1.0f;
-    D_8016B7B0 = 1.0f;
+    sSfxSyncedVolume = 1.0f;
+    sSfxSyncedFreq = 1.0f;
     sAudioBaseFilter = 0;
     sAudioExtraFilter = 0;
     sAudioBaseFilter2 = 0;
@@ -5149,7 +5163,7 @@ void func_800F6C34(void) {
     D_8016B9D8 = 0;
     sSpecReverb = sSpecReverbs[gAudioSpecId];
     D_80130608 = 0;
-    sPrevMainBgmSeqId = NA_BGM_DISABLED;
+    sPrevMainBgmSeqId = SEQ_ID_DISABLED;
     AudioThread_QueueCmdS8(0x46 << 24 | SEQ_PLAYER_BGM_MAIN << 16, -1);
     sSariaBgmPtr = NULL;
     D_8016B9F4 = 0;
@@ -5157,40 +5171,40 @@ void func_800F6C34(void) {
     D_8016B9F2 = 0;
 }
 
-void Audio_SetNatureAmbienceChannelIO(u8 channelIdxRange, u8 ioPort, u8 ioData) {
-    u8 firstChannelIdx;
-    u8 lastChannelIdx;
+void Audio_SetAmbienceChannelIO(u8 channelIndexRange, u8 ioPort, u8 ioData) {
+    u8 firstChannelIndex;
+    u8 lastChannelIndex;
     u8 channelIndex;
 
-    if ((gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId != NA_BGM_NATURE_AMBIENCE) &&
-        AudioSeq_IsSeqCmdNotQueued(SEQCMD_OP_PLAY_SEQUENCE << 28 | NA_BGM_NATURE_AMBIENCE, SEQCMD_OP_MASK | 0xFF)) {
+    if ((gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId != SEQ_ID_NATURE_AMBIENCE) &&
+        AudioSeq_IsSeqCmdNotQueued(SEQCMD_OP_PLAY_SEQUENCE << 28 | SEQ_ID_NATURE_AMBIENCE, SEQCMD_OP_MASK | 0xFF)) {
         sAudioNatureFailed = true;
         return;
     }
 
-    // channelIdxRange = 01 on ioPort 1
-    if (((channelIdxRange << 8) + ioPort) == ((NATURE_CHANNEL_CRITTER_0 << 8) + CHANNEL_IO_PORT_1)) {
-        if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) != NA_BGM_LONLON) {
+    // channelIndexRange = 01 on ioPort 1
+    if (((channelIndexRange << 8) + ioPort) == ((NATURE_CHANNEL_CRITTER_0 << 8) + CHANNEL_IO_PORT_1)) {
+        if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) != SEQ_ID_LONLON) {
             D_8016B9D8 = 0;
         }
     }
 
-    firstChannelIdx = channelIdxRange >> 4;
-    lastChannelIdx = channelIdxRange & 0xF;
+    firstChannelIndex = channelIndexRange >> 4;
+    lastChannelIndex = channelIndexRange & 0xF;
 
-    if (firstChannelIdx == 0) {
-        firstChannelIdx = channelIdxRange & 0xF;
+    if (firstChannelIndex == 0) {
+        firstChannelIndex = channelIndexRange & 0xF;
     }
 
-    for (channelIndex = firstChannelIdx; channelIndex <= lastChannelIdx; channelIndex++) {
+    for (channelIndex = firstChannelIndex; channelIndex <= lastChannelIndex; channelIndex++) {
         SEQCMD_SET_CHANNEL_IO(SEQ_PLAYER_BGM_MAIN, channelIndex, ioPort, ioData);
     }
 }
 
-void Audio_StartNatureAmbienceSequence(u16 playerIO, u16 channelMask) {
+void Audio_StartAmbience(u16 playerIO, u16 channelMask) {
     u8 channelIndex;
 
-    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == NA_BGM_WINDMILL) {
+    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == SEQ_ID_SONG_OF_STORMS) {
         Audio_PlayCutsceneEffectsSequence(SEQ_CS_EFFECTS_RAINFALL);
         return;
     }
@@ -5206,7 +5220,7 @@ void Audio_StartNatureAmbienceSequence(u16 playerIO, u16 channelMask) {
         SEQCMD_DISABLE_PLAY_SEQUENCES(false);
     }
 
-    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_NATURE_AMBIENCE);
+    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_NATURE_AMBIENCE);
 
     if (channelIndex) {
         SEQCMD_DISABLE_PLAY_SEQUENCES(true);
@@ -5219,22 +5233,21 @@ void Audio_StartNatureAmbienceSequence(u16 playerIO, u16 channelMask) {
     }
 }
 
-void Audio_PlayNatureAmbienceSequence(u8 natureAmbienceId) {
+void Audio_PlayAmbience(u8 ambienceId) {
     u8 i = 0;
     u8 channelIndex;
     u8 ioPort;
     u8 ioData;
 
-    if ((gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId == NA_BGM_DISABLED) ||
+    if ((gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId == SEQ_ID_DISABLED) ||
         !(sSeqFlags[((u8)gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId) & 0xFF] & SEQ_FLAG_NO_AMBIENCE)) {
 
-        Audio_StartNatureAmbienceSequence(sNatureAmbienceDataIO[natureAmbienceId].playerIO,
-                                          sNatureAmbienceDataIO[natureAmbienceId].channelMask);
+        Audio_StartAmbience(sAmbienceData[ambienceId].playerIO, sAmbienceData[ambienceId].channelMask);
 
-        while ((sNatureAmbienceDataIO[natureAmbienceId].channelIO[i] != 0xFF) && (i < 100)) {
-            channelIndex = sNatureAmbienceDataIO[natureAmbienceId].channelIO[i++];
-            ioPort = sNatureAmbienceDataIO[natureAmbienceId].channelIO[i++];
-            ioData = sNatureAmbienceDataIO[natureAmbienceId].channelIO[i++];
+        while ((sAmbienceData[ambienceId].channelIO[i] != 0xFF) && (i < 100)) {
+            channelIndex = sAmbienceData[ambienceId].channelIO[i++];
+            ioPort = sAmbienceData[ambienceId].channelIO[i++];
+            ioData = sAmbienceData[ambienceId].channelIO[i++];
             SEQCMD_SET_CHANNEL_IO(SEQ_PLAYER_BGM_MAIN, channelIndex, ioPort, ioData);
         }
 
@@ -5247,7 +5260,7 @@ void Audio_Init(void) {
 }
 
 void Audio_InitSound(void) {
-    func_800F6C34();
+    Audio_ResetData();
     AudioOcarina_ResetStaffs();
     AudioSfx_ResetSfxChannelState();
     AudioSeq_ResetActiveSequencesAndVolume();
@@ -5264,7 +5277,7 @@ void Audio_ResetForAudioHeapStep2(void) {
 
 void Audio_ResetForAudioHeapStep1(s32 specId) {
     gAudioHeapResetState = 1;
-    func_800F6C34();
+    Audio_ResetData();
     AudioOcarina_ResetStaffs();
     AudioSfx_ResetSfxChannelState();
     AudioSeq_ResetActiveSequences();
@@ -5274,7 +5287,7 @@ void Audio_ResetForAudioHeapStep1(s32 specId) {
 void Audio_UnusedReset(void) {
     AudioSeq_ResetActiveSequences();
     AudioThread_QueueCmdS32(0xF2000000, 1);
-    func_800F6C34();
+    Audio_ResetData();
     AudioSfx_ResetSfxChannelState();
     AudioSeq_StartSequence(SEQ_PLAYER_SFX, 0, 0x70, 1);
 }

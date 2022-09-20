@@ -310,7 +310,7 @@ void func_8086C618(BgBdanObjects* this, PlayState* play) {
         this->actionFunc = func_8086C6EC;
     } else {
         this->dyna.actor.shape.rot.y += this->dyna.actor.world.rot.y;
-        func_800F436C(&this->dyna.actor.projectedPos, 0x2063, ABS(this->dyna.actor.world.rot.y) / 512.0f);
+        Audio_PlaySfx_AtPosWithFreq(&this->dyna.actor.projectedPos, 0x2063, ABS(this->dyna.actor.world.rot.y) / 512.0f);
     }
 }
 

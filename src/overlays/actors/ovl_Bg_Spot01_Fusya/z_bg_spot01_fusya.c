@@ -64,7 +64,7 @@ void func_808AAA50(BgSpot01Fusya* this, PlayState* play) {
     }
     thisx->shape.rot.z += this->unk_154;
     temp = ((this->unk_154 - 100.0f) / 1700.0f) + 1.0f;
-    func_800F436C(&thisx->projectedPos, 0x2085, temp);
+    Audio_PlaySfx_AtPosWithFreq(&thisx->projectedPos, 0x2085, temp);
     Math_ApproachF(&this->unk_154, this->unk_158, this->unk_15C, 100.0f);
 }
 

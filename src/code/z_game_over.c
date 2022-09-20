@@ -62,8 +62,8 @@ void GameOver_Update(PlayState* play) {
 
             gSaveContext.nayrusLoveTimer = 2000;
             gSaveContext.naviTimer = 0;
-            gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-            gSaveContext.natureAmbienceId = NATURE_ID_DISABLED;
+            gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
+            gSaveContext.ambienceId = NATURE_ID_DISABLED;
             gSaveContext.eventInf[0] = 0;
             gSaveContext.eventInf[1] = 0;
             gSaveContext.eventInf[2] = 0;

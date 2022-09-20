@@ -957,7 +957,7 @@ void BossVa_BodyIntro(BossVa* this, PlayState* play) {
                 play->envCtx.lightSettingOverride = 1;
                 func_8002DF54(play, &this->actor, 8);
             } else if (this->timer >= 35000) {
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
             }
 
             this->timer += this->unk_1F2;
@@ -1024,7 +1024,7 @@ void BossVa_BodyIntro(BossVa* this, PlayState* play) {
     }
 
     if (sCsState >= INTRO_BODY_SOUND) {
-        func_800F436C(&this->actor.projectedPos, NA_SE_EN_BALINADE_LEVEL - SFX_FLAG, 1.0f);
+        Audio_PlaySfx_AtPosWithFreq(&this->actor.projectedPos, NA_SE_EN_BALINADE_LEVEL - SFX_FLAG, 1.0f);
         if ((sCsState >= INTRO_CALL_BARI) && ((play->gameplayFrames % 4) == 0)) {
             BossVa_Spark(play, this, 1, 100, 50.0f, 10.0f, SPARK_BODY, 10.0f, false);
         }
@@ -1099,7 +1099,7 @@ void BossVa_BodyPhase1(BossVa* this, PlayState* play) {
     Collider_UpdateCylinder(&this->actor, &this->colliderBody);
     CollisionCheck_SetOC(play, &play->colChkCtx, &this->colliderBody.base);
     CollisionCheck_SetAT(play, &play->colChkCtx, &this->colliderBody.base);
-    func_800F436C(&this->actor.projectedPos, NA_SE_EN_BALINADE_LEVEL - SFX_FLAG, 1.0f);
+    Audio_PlaySfx_AtPosWithFreq(&this->actor.projectedPos, NA_SE_EN_BALINADE_LEVEL - SFX_FLAG, 1.0f);
 }
 
 void BossVa_SetupBodyPhase2(BossVa* this, PlayState* play) {
@@ -1212,8 +1212,8 @@ void BossVa_BodyPhase2(BossVa* this, PlayState* play) {
         CollisionCheck_SetAC(play, &play->colChkCtx, &this->colliderBody.base);
     }
 
-    func_800F436C(&this->actor.projectedPos, NA_SE_EN_BALINADE_LEVEL - SFX_FLAG,
-                  (this->vaBodySpinRate * 0.00025f) + 1.0f);
+    Audio_PlaySfx_AtPosWithFreq(&this->actor.projectedPos, NA_SE_EN_BALINADE_LEVEL - SFX_FLAG,
+                                (this->vaBodySpinRate * 0.00025f) + 1.0f);
 }
 
 void BossVa_SetupBodyPhase3(BossVa* this) {
@@ -1326,8 +1326,8 @@ void BossVa_BodyPhase3(BossVa* this, PlayState* play) {
         CollisionCheck_SetAC(play, &play->colChkCtx, &this->colliderBody.base);
     }
 
-    func_800F436C(&this->actor.projectedPos, NA_SE_EN_BALINADE_LEVEL - SFX_FLAG,
-                  (this->vaBodySpinRate * 0.00025f) + 1.0f);
+    Audio_PlaySfx_AtPosWithFreq(&this->actor.projectedPos, NA_SE_EN_BALINADE_LEVEL - SFX_FLAG,
+                                (this->vaBodySpinRate * 0.00025f) + 1.0f);
 }
 
 void BossVa_SetupBodyPhase4(BossVa* this, PlayState* play) {
@@ -1499,8 +1499,8 @@ void BossVa_BodyPhase4(BossVa* this, PlayState* play) {
     if ((this->vaBodySpinRate > 0x3E8) || (this->actor.shape.yOffset < -1200.0f)) {
         CollisionCheck_SetAT(play, &play->colChkCtx, &this->colliderBody.base);
     }
-    func_800F436C(&this->actor.projectedPos, NA_SE_EN_BALINADE_LEVEL - SFX_FLAG,
-                  (this->vaBodySpinRate * 0.00025f) + 1.0f);
+    Audio_PlaySfx_AtPosWithFreq(&this->actor.projectedPos, NA_SE_EN_BALINADE_LEVEL - SFX_FLAG,
+                                (this->vaBodySpinRate * 0.00025f) + 1.0f);
     if (this->invincibilityTimer != 0) {
         this->invincibilityTimer--;
         sBodyState = (sBodyState & 0x80) | 2;
@@ -1510,7 +1510,7 @@ void BossVa_BodyPhase4(BossVa* this, PlayState* play) {
 }
 
 void BossVa_SetupBodyDeath(BossVa* this, PlayState* play) {
-    func_800F436C(&this->actor.projectedPos, NA_SE_EN_BALINADE_LEVEL - SFX_FLAG, 1.0f);
+    Audio_PlaySfx_AtPosWithFreq(&this->actor.projectedPos, NA_SE_EN_BALINADE_LEVEL - SFX_FLAG, 1.0f);
     this->actor.flags &= ~(ACTOR_FLAG_0 | ACTOR_FLAG_2);
     SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 1);
     this->vaCamRotMod = 0xC31;
@@ -1597,7 +1597,7 @@ void BossVa_BodyDeath(BossVa* this, PlayState* play) {
             break;
         case DEATH_CORE_BURST:
             if (this->timer == 13) {
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS_CLEAR);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS_CLEAR);
             }
 
             this->timer--;

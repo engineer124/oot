@@ -579,7 +579,7 @@ s16 func_80A70058(PlayState* play, Actor* thisx) {
                 case 0x70F3:
                     if (this->skelAnime.animation != &gObjOsAnim_33B4) {
                         Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ENHY_ANIM_23);
-                        Audio_PlayFanfare(NA_BGM_ITEM_GET | 0x900);
+                        Audio_PlayFanfare(SEQ_ID_ITEM_GET | 0x900);
                     }
                     break;
             }

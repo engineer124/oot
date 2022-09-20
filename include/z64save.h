@@ -175,7 +175,7 @@ typedef struct {
     /* 0x13DA */ s16 timerY[2];
     /* 0x13DE */ char unk_13DE[0x0002];
     /* 0x13E0 */ u8 seqId;
-    /* 0x13E1 */ u8 natureAmbienceId;
+    /* 0x13E1 */ u8 ambienceId;
     /* 0x13E2 */ u8 buttonStatus[5];
     /* 0x13E7 */ u8 unk_13E7; // alpha related
     /* 0x13E8 */ u16 unk_13E8; // alpha type?

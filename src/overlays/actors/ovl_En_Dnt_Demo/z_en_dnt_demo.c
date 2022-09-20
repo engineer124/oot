@@ -146,7 +146,7 @@ void EnDntDemo_Judge(EnDntDemo* this, PlayState* play) {
         if (this->judgeTimer > 40) {
             // "gera gera" [onomatopoeia for loud giggling]
             osSyncPrintf(VT_FGCOL(RED) "☆☆☆☆☆ げらげら ☆☆☆☆☆ \n" VT_RST);
-            func_800F436C(&this->actor.projectedPos, NA_SE_EV_CROWD - SFX_FLAG, 2.0f);
+            Audio_PlaySfx_AtPosWithFreq(&this->actor.projectedPos, NA_SE_EV_CROWD - SFX_FLAG, 2.0f);
         }
         if (this->judgeTimer < 120) {
             this->judgeTimer++;
@@ -159,7 +159,7 @@ void EnDntDemo_Judge(EnDntDemo* this, PlayState* play) {
                     if (!GET_ITEMGETINF(ITEMGETINF_1E)) {
                         reaction = DNT_SIGNAL_CELEBRATE;
                         this->prize = DNT_PRIZE_STICK;
-                        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_SARIA_THEME);
+                        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_SARIA_THEME);
                         break;
                     }
                     FALLTHROUGH;
@@ -208,17 +208,17 @@ void EnDntDemo_Judge(EnDntDemo* this, PlayState* play) {
                         this->action = sResultValues[resultIdx][1];
                         switch (this->action) {
                             case DNT_ACTION_LOW_RUPEES:
-                                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_COURTYARD);
+                                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_COURTYARD);
                                 break;
                             case DNT_ACTION_ATTACK:
                                 if (this->subCamId != SUB_CAM_ID_DONE) {
                                     this->subCamId = SUB_CAM_ID_DONE;
                                     OnePointCutscene_Init(play, 2350, -99, &this->scrubs[3]->actor, CAM_ID_MAIN);
                                 }
-                                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 8, NA_BGM_ENEMY);
+                                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 8, SEQ_ID_ENEMY);
                                 break;
                             case DNT_ACTION_DANCE:
-                                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_SHOP);
+                                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_SHOP);
                                 break;
                         }
                         osSyncPrintf("\n\n");

@@ -1074,7 +1074,7 @@ void BossGanon_IntroCutscene(BossGanon* this, PlayState* play) {
                 sCape->attachShouldersTimer = 18.0f;
                 Actor_PlaySfx(&this->actor, NA_SE_EV_GANON_MANTLE);
                 this->unk_198 = 0;
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_GANONDORF_BOSS);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_GANONDORF_BOSS);
             }
 
             if (this->csTimer == 50) {

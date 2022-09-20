@@ -2910,7 +2910,7 @@ void KaleidoScope_Update(PlayState* play) {
                         Interface_SetDoAction(play, DO_ACTION_NONE);
                         pauseCtx->state = 0x12;
                         WREG(2) = -6240;
-                        func_800F64E0(0);
+                        Audio_PlaySfx_Window(0);
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
                         pauseCtx->mode = 0;
                         pauseCtx->promptChoice = 0;
@@ -2953,7 +2953,7 @@ void KaleidoScope_Update(PlayState* play) {
                         Interface_SetDoAction(play, DO_ACTION_NONE);
                         pauseCtx->state = 0x12;
                         WREG(2) = -6240;
-                        func_800F64E0(0);
+                        Audio_PlaySfx_Window(0);
                         pauseCtx->unk_1E4 = 0;
                         break;
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
@@ -3004,7 +3004,7 @@ void KaleidoScope_Update(PlayState* play) {
                         Interface_SetDoAction(play, DO_ACTION_NONE);
                         pauseCtx->state = 0x12;
                         WREG(2) = -6240;
-                        func_800F64E0(0);
+                        Audio_PlaySfx_Window(0);
                         pauseCtx->unk_1E4 = 0;
                     } else if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
                         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
@@ -3055,7 +3055,7 @@ void KaleidoScope_Update(PlayState* play) {
                             pauseCtx->unk_1EC = 2;
                             WREG(2) = -6240;
                             YREG(8) = pauseCtx->unk_204;
-                            func_800F64E0(0);
+                            Audio_PlaySfx_Window(0);
                         } else {
                             AudioSfx_PlaySfx(NA_SE_SY_PIECE_OF_HEART, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -3071,7 +3071,7 @@ void KaleidoScope_Update(PlayState* play) {
                         pauseCtx->unk_1EC = 2;
                         WREG(2) = -6240;
                         YREG(8) = pauseCtx->unk_204;
-                        func_800F64E0(0);
+                        Audio_PlaySfx_Window(0);
                         gSaveContext.buttonStatus[0] = gSaveContext.buttonStatus[1] = gSaveContext.buttonStatus[2] =
                             gSaveContext.buttonStatus[3] = BTN_ENABLED;
                         gSaveContext.unk_13EA = 0;
@@ -3090,7 +3090,7 @@ void KaleidoScope_Update(PlayState* play) {
                         pauseCtx->unk_1EC = 5;
                         WREG(2) = -6240;
                         YREG(8) = pauseCtx->unk_204;
-                        func_800F64E0(0);
+                        Audio_PlaySfx_Window(0);
                     }
                     break;
 
@@ -3316,7 +3316,7 @@ void KaleidoScope_Update(PlayState* play) {
                        (CHECK_BTN_ALL(input->press.button, BTN_A) || CHECK_BTN_ALL(input->press.button, BTN_START))) {
                 pauseCtx->state = 0x10;
                 gameOverCtx->state++;
-                func_800F64E0(0);
+                Audio_PlaySfx_Window(0);
             }
             break;
 

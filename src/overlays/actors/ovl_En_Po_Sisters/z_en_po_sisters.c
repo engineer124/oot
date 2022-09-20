@@ -897,7 +897,7 @@ void func_80ADB51C(EnPoSisters* this, PlayState* play) {
     if (this->unk_19A == 0) {
         this->actor.world.rot.y = this->actor.shape.rot.y += 0x4000 * (s32)(Rand_ZeroOne() * 4.0f);
         if (this->unk_195 == 0) {
-            func_800F5ACC(NA_BGM_MINI_BOSS);
+            func_800F5ACC(SEQ_ID_MINI_BOSS);
         }
         func_80AD9F1C(this);
     } else {

@@ -610,8 +610,8 @@ void func_80A79FB0(EnIn* this, PlayState* play) {
 void func_80A7A304(EnIn* this, PlayState* play) {
     if (this->skelAnime.animation == &object_in_Anim_015814 || this->skelAnime.animation == &object_in_Anim_01646C) {
         if (this->skelAnime.curFrame == 8.0f) {
-            Audio_PlaySfxRandom(&this->actor.projectedPos, NA_SE_VO_IN_LASH_0,
-                                NA_SE_VO_IN_LASH_1 - NA_SE_VO_IN_LASH_0 + 1);
+            Audio_PlaySfx_Randomized(&this->actor.projectedPos, NA_SE_VO_IN_LASH_0,
+                                     NA_SE_VO_IN_LASH_1 - NA_SE_VO_IN_LASH_0 + 1);
         }
     }
     if (this->skelAnime.animation == &object_in_Anim_018C38 && this->skelAnime.curFrame == 20.0f) {
@@ -642,7 +642,7 @@ void func_80A7A4C8(EnIn* this, PlayState* play) {
         SET_EVENTINF_HORSES_STATE(EVENTINF_HORSES_STATE_1);
         SET_EVENTINF_HORSES_0F(1);
         CLEAR_INFTABLE(INFTABLE_A2);
-        Environment_ForcePlaySequence(NA_BGM_HORSE);
+        Environment_ForcePlaySequence(SEQ_ID_HORSE);
         play->msgCtx.stateTimer = 0;
         play->msgCtx.msgMode = MSGMODE_TEXT_CLOSING;
         this->unk_308.unk_00 = 0;

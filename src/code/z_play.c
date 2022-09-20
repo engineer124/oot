@@ -429,7 +429,7 @@ void Play_Init(GameState* thisx) {
     Interface_SetSceneRestrictions(this);
     Environment_PlaySceneSequence(this);
     gSaveContext.seqId = this->sequenceCtx.seqId;
-    gSaveContext.natureAmbienceId = this->sequenceCtx.natureAmbienceId;
+    gSaveContext.ambienceId = this->sequenceCtx.ambienceId;
     func_8002DF18(this, GET_PLAYER(this));
     AnimationContext_Update(this, &this->animationCtx);
     gSaveContext.respawnFlag = 0;
@@ -522,9 +522,9 @@ void Play_Update(PlayState* this) {
                             if ((this->transitionType < TRANS_TYPE_MAX) && !Environment_IsForcedSequenceDisabled()) {
                                 // "Sound initialized. 222"
                                 osSyncPrintf("\n\n\nサウンドイニシャル来ました。222");
-                                func_800F6964(0x14);
-                                gSaveContext.seqId = (u8)NA_BGM_DISABLED;
-                                gSaveContext.natureAmbienceId = NATURE_ID_DISABLED;
+                                Audio_MuteAllSeqExceptSysAndOca(0x14);
+                                gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
+                                gSaveContext.ambienceId = NATURE_ID_DISABLED;
                             }
                         }
                     }

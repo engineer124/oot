@@ -360,7 +360,7 @@ void BossMo_Init(Actor* thisx, PlayState* play2) {
             return;
         }
         if (GET_EVENTCHKINF(EVENTCHKINF_74)) {
-            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
+            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
             this->tentMaxAngle = 5.0f;
             this->timers[0] = 50;
         } else {
@@ -490,7 +490,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
             swingRateAccel = 30.0f;
             swingSizeAccel = 60.0f;
             if (((this->sfxTimer % 16) == 0) && (this->timers[0] < 30)) {
-                Audio_PlaySfxIncreasinglyTransposed(&this->tentTipPos, NA_SE_EN_MOFER_WAVE, gMorphaTransposeTable);
+                Audio_PlaySfx_IncreasinglyTransposed(&this->tentTipPos, NA_SE_EN_MOFER_WAVE, gMorphaTransposeTable);
             }
         } else if (this->work[MO_TENT_ACTION_STATE] == MO_TENT_SHAKE) {
             if (this->timers[0] > 40) {
@@ -503,7 +503,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
                 swingRateAccel = 30.0f;
                 swingSizeAccel = 60.0f;
                 if ((this->sfxTimer % 32) == 0) {
-                    Audio_PlaySfxIncreasinglyTransposed(&this->tentTipPos, NA_SE_EN_MOFER_WAVE, gMorphaTransposeTable);
+                    Audio_PlaySfx_IncreasinglyTransposed(&this->tentTipPos, NA_SE_EN_MOFER_WAVE, gMorphaTransposeTable);
                     func_800AA000(0, 100, 5, 2);
                     Player_PlaySfx(&player->actor, NA_SE_VO_LI_FREEZE + player->ageProperties->unk_92);
                 }
@@ -517,7 +517,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
                 swingRateAccel = 70.0f;
                 swingSizeAccel = 70.0f;
                 if ((this->sfxTimer % 16) == 0) {
-                    Audio_PlaySfxIncreasinglyTransposed(&this->tentTipPos, NA_SE_EN_MOFER_WAVE, gMorphaTransposeTable);
+                    Audio_PlaySfx_IncreasinglyTransposed(&this->tentTipPos, NA_SE_EN_MOFER_WAVE, gMorphaTransposeTable);
                     func_800AA000(0, 160, 5, 4);
                     Player_PlaySfx(&player->actor, NA_SE_VO_LI_FREEZE + player->ageProperties->unk_92);
                 }
@@ -1100,7 +1100,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
                                        -280.0f, this->actor.world.pos.z, 0, 0, 0, WARP_DUNGEON_ADULT);
                     Actor_Spawn(&play->actorCtx, play, ACTOR_ITEM_B_HEART, this->actor.world.pos.x + 200.0f, -280.0f,
                                 this->actor.world.pos.z, 0, 0, 0, 0);
-                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS_CLEAR);
+                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS_CLEAR);
                     Flags_SetClear(play, play->roomCtx.curRoom.num);
                 }
             }
@@ -1416,7 +1416,7 @@ void BossMo_IntroCs(BossMo* this, PlayState* play) {
                 this->subCamAccel = 0.01f;
             }
             if (this->timers[2] == 150) {
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
             }
             if (this->timers[2] == 130) {
                 TitleCard_InitBossName(play, &play->actorCtx.titleCtx, SEGMENTED_TO_VIRTUAL(gMorphaTitleCardTex), 0xA0,

@@ -86,7 +86,7 @@ void EnZl3_Destroy(Actor* thisx, PlayState* play) {
 }
 
 void func_80B53468(void) {
-    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_ESCAPE);
+    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_ESCAPE);
 }
 
 BossGanon2* func_80B53488(EnZl3* this, PlayState* play) {
@@ -1017,7 +1017,7 @@ void func_80B55808(EnZl3* this) {
 }
 
 void func_80B5582C(EnZl3* this) {
-    Audio_PlaySfxRandom(&D_80B5A488, NA_SE_VO_Z1_CRY_0, NA_SE_VO_Z1_CRY_1 - NA_SE_VO_Z1_CRY_0 + 1);
+    Audio_PlaySfx_Randomized(&D_80B5A488, NA_SE_VO_Z1_CRY_0, NA_SE_VO_Z1_CRY_1 - NA_SE_VO_Z1_CRY_0 + 1);
 }
 
 void func_80B5585C(EnZl3* this) {

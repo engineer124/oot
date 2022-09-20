@@ -387,7 +387,7 @@ void EnWf_WaitToAppear(EnWf* this, PlayState* play) {
             this->actor.flags |= ACTOR_FLAG_0;
 
             if ((this->actor.params != WOLFOS_NORMAL) && (this->switchFlag != 0xFF)) {
-                func_800F5ACC(NA_BGM_MINI_BOSS);
+                func_800F5ACC(SEQ_ID_MINI_BOSS);
             }
         }
     } else if (this->actionTimer != 0) {

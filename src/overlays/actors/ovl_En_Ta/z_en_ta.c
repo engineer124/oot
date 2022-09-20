@@ -710,7 +710,7 @@ void func_80B154FC(EnTa* this, PlayState* play) {
                             SET_EVENTINF(EVENTINF_HORSES_08);
                             SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
                             this->unk_2E0 &= ~0x200;
-                            Audio_PlayFanfare(NA_BGM_SMALL_ITEM_GET);
+                            Audio_PlayFanfare(SEQ_ID_SMALL_ITEM_GET);
                             return;
                         case 2:
                             this->actor.textId = 0x2083;
@@ -733,7 +733,7 @@ void func_80B154FC(EnTa* this, PlayState* play) {
     }
 
     if (gSaveContext.timer1Value == 10) {
-        func_800F5918();
+        Audio_IncreaseTempoForTimedMinigame();
     }
 
     if (gSaveContext.timer1Value == 0 && !Play_InCsMode(play)) {
@@ -806,7 +806,7 @@ void func_80B15AD4(EnTa* this, PlayState* play) {
                          Animation_GetLastFrame(&gTalonSitHandsUpAnim), ANIMMODE_ONCE, 0.0f);
         this->unk_2CC = 50;
         func_80088B34(0x1E);
-        func_800F5ACC(NA_BGM_TIMED_MINI_GAME);
+        func_800F5ACC(SEQ_ID_TIMED_MINI_GAME);
         this->unk_2E0 |= 0x200;
         Message_CloseTextbox(play);
         func_8002DF54(play, &this->actor, 1);

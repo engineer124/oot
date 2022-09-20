@@ -924,7 +924,7 @@ void BossGoma_Encounter(BossGoma* this, PlayState* play) {
                                            0xA0, 0xB4, 0x80, 0x28);
                 }
 
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
                 SET_EVENTCHKINF(EVENTCHKINF_70);
             }
 
@@ -1108,7 +1108,7 @@ void BossGoma_Defeated(BossGoma* this, PlayState* play) {
             Math_SmoothStepToF(&this->subCamAt.z, this->firstTailLimbWorldPos.z, 0.2f, 50.0f, 0.1f);
 
             if (this->timer == 80) {
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS_CLEAR);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS_CLEAR);
             }
 
             if (this->timer == 0) {

@@ -93,9 +93,9 @@ void EnOkarinaEffect_ManageStorm(EnOkarinaEffect* this, PlayState* play) {
         play->envCtx.precipitation[PRECIP_SOS_MAX] = 0;
         if (play->csCtx.state == CS_STATE_IDLE) {
             Environment_StopStormNatureAmbience(play);
-        } else if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == NA_BGM_NATURE_AMBIENCE) {
-            Audio_SetNatureAmbienceChannelIO(NATURE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_1, 0);
-            Audio_SetNatureAmbienceChannelIO(NATURE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 0);
+        } else if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == SEQ_ID_NATURE_AMBIENCE) {
+            Audio_SetAmbienceChannelIO(NATURE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_1, 0);
+            Audio_SetAmbienceChannelIO(NATURE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 0);
         }
         osSyncPrintf("\n\n\nE_wether_flg=[%d]", gWeatherMode);
         osSyncPrintf("\nrain_evt_trg=[%d]\n\n", play->envCtx.stormRequest);

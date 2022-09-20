@@ -414,7 +414,7 @@ void EnBox_WaitOpen(EnBox* this, PlayState* play) {
                                        this->dyna.actor.world.pos.x, this->dyna.actor.world.pos.y,
                                        this->dyna.actor.world.pos.z, this->dyna.actor.shape.rot.x,
                                        this->dyna.actor.shape.rot.y, this->dyna.actor.shape.rot.z, 0xFFFF);
-                    Audio_PlayFanfare(NA_BGM_OPEN_TRE_BOX | 0x900);
+                    Audio_PlayFanfare(SEQ_ID_OPEN_TRE_BOX | 0x900);
             }
         }
         osSyncPrintf("Actor_Environment_Tbox_On() %d\n", this->dyna.actor.params & 0x1F);

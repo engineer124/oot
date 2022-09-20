@@ -285,7 +285,7 @@ void func_808B7D50(BgSpot18Basket* this, PlayState* play) {
 
     tempValue = CLAMP(tempValue2, 0.0f, 1.5f);
 
-    func_800F436C(&this->dyna.actor.projectedPos, NA_SE_EV_WALL_MOVE_SP - SFX_FLAG, tempValue);
+    Audio_PlaySfx_AtPosWithFreq(&this->dyna.actor.projectedPos, NA_SE_EV_WALL_MOVE_SP - SFX_FLAG, tempValue);
 }
 
 void func_808B7F74(BgSpot18Basket* this) {
@@ -347,7 +347,7 @@ void func_808B7FC0(BgSpot18Basket* this, PlayState* play) {
 
     clampedTempUnk210 = CLAMP(tempUnk210, 0.0f, 1.5f);
 
-    func_800F436C(&this->dyna.actor.projectedPos, NA_SE_EV_WALL_MOVE_SP - SFX_FLAG, clampedTempUnk210);
+    Audio_PlaySfx_AtPosWithFreq(&this->dyna.actor.projectedPos, NA_SE_EV_WALL_MOVE_SP - SFX_FLAG, clampedTempUnk210);
 }
 
 void func_808B818C(BgSpot18Basket* this) {

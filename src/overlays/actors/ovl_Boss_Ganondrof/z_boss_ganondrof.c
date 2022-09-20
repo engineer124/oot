@@ -1101,7 +1101,7 @@ void BossGanondrof_Death(BossGanondrof* this, PlayState* play) {
             holdCamera = true;
             bodyDecayLevel = 10;
             if (this->timers[0] == 150) {
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS_CLEAR);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS_CLEAR);
                 Actor_Spawn(&play->actorCtx, play, ACTOR_DOOR_WARP1, GND_BOSSROOM_CENTER_X, GND_BOSSROOM_CENTER_Y,
                             GND_BOSSROOM_CENTER_Z, 0, 0, 0, WARP_DUNGEON_ADULT);
             }

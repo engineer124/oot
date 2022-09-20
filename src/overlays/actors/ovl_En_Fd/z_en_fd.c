@@ -651,7 +651,7 @@ void EnFd_Update(Actor* thisx, PlayState* play) {
     s32 pad;
 
     if (this->firstUpdateFlag) {
-        func_800F5ACC(NA_BGM_MINI_BOSS);
+        func_800F5ACC(SEQ_ID_MINI_BOSS);
         this->firstUpdateFlag = false;
     }
 

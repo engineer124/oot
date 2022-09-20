@@ -186,7 +186,7 @@ void func_80B4B010(EnZl1* this, PlayState* play) {
         player->actor.speedXZ = 0.0f;
         this->unk_1E2 = 0;
         this->actionFunc = func_80B4B240;
-        Audio_PlayFanfare(NA_BGM_APPEAR);
+        Audio_PlayFanfare(SEQ_ID_APPEAR);
     } else {
         if (1) {} // necessary to match
         rotDiff = ABS(this->actor.yawTowardsPlayer - this->actor.shape.rot.y);

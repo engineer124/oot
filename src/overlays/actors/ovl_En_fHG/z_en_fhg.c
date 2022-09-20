@@ -142,7 +142,7 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 }
                 if (this->timers[0] == 51) {
                     Actor_PlaySfx(this->actor.child, NA_SE_EV_SPEAR_FENCE);
-                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
+                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
                 }
                 if (this->timers[0] == 0) {
                     EnfHG_SetupApproach(this, play, Rand_ZeroOne() * 5.99f);
@@ -195,7 +195,7 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 func_8002DF54(play, &this->actor, 9);
             }
             if (this->timers[0] == 1) {
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_OPENING_GANON);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_OPENING_GANON);
             }
             Math_ApproachF(&this->subCamEye.x, GND_BOSSROOM_CENTER_X + 40.0f, 0.05f, this->subCamVelFactor * 20.0f);
             Math_ApproachF(&this->subCamEye.y, GND_BOSSROOM_CENTER_Y + 37.0f, 0.05f, this->subCamVelFactor * 20.0f);
@@ -297,7 +297,7 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 func_80078914(&audioVec, NA_SE_EN_FANTOM_ST_LAUGH);
             }
             if (this->timers[0] == 20) {
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
             }
             if (this->timers[0] == 2) {
                 this->subCamVelFactor = 0.0f;

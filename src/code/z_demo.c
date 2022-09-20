@@ -226,14 +226,14 @@ void func_80064824(PlayState* play, CutsceneContext* csCtx, CsCmdBase* cmd) {
     switch (cmd->base) {
         case 1:
             if (sp3F != 0) {
-                Audio_SetNatureAmbienceChannelIO(NATURE_CHANNEL_RAIN, CHANNEL_IO_PORT_4, 0x3F);
-                Audio_SetNatureAmbienceChannelIO(NATURE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 1);
+                Audio_SetAmbienceChannelIO(NATURE_CHANNEL_RAIN, CHANNEL_IO_PORT_4, 0x3F);
+                Audio_SetAmbienceChannelIO(NATURE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 1);
                 play->envCtx.precipitation[PRECIP_RAIN_MAX] = 20;
             }
             break;
         case 2:
             if (sp3F != 0) {
-                Audio_SetNatureAmbienceChannelIO(NATURE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_0, 0);
+                Audio_SetAmbienceChannelIO(NATURE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_0, 0);
                 Environment_AddLightningBolts(play, 3);
                 gLightningStrike.state = LIGHTNING_STRIKE_START;
             }
@@ -330,7 +330,7 @@ void func_80064824(PlayState* play, CutsceneContext* csCtx, CsCmdBase* cmd) {
             }
             if (play->envCtx.precipitation[PRECIP_RAIN_CUR] == 0) {
                 gWeatherMode = WEATHER_MODE_CLEAR;
-                Audio_SetNatureAmbienceChannelIO(NATURE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 0);
+                Audio_SetAmbienceChannelIO(NATURE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 0);
             }
             break;
         case 19:
@@ -436,14 +436,14 @@ void Cutscene_Command_SetLighting(PlayState* play, CutsceneContext* csCtx, CsCmd
 // Command 0x56: Play Background Music
 void Cutscene_Command_PlayBGM(PlayState* play, CutsceneContext* csCtx, CsCmdMusicChange* cmd) {
     if (csCtx->frames == cmd->startFrame) {
-        func_800F595C(cmd->sequence - 1);
+        Audio_PlaySequenceInCutscene(cmd->sequence - 1);
     }
 }
 
 // Command 0x57: Stop Background Music
 void Cutscene_Command_StopBGM(PlayState* play, CutsceneContext* csCtx, CsCmdMusicChange* cmd) {
     if (csCtx->frames == cmd->startFrame) {
-        func_800F59E8(cmd->sequence - 1);
+        Audio_StopSequenceInCutscene(cmd->sequence - 1);
     }
 }
 

@@ -360,7 +360,7 @@ void EnGeldB_Wait(EnGeldB* this, PlayState* play) {
     } else {
         this->invisible = false;
         this->actor.shape.shadowScale = 90.0f;
-        func_800F5ACC(NA_BGM_MINI_BOSS);
+        func_800F5ACC(SEQ_ID_MINI_BOSS);
     }
     if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND_TOUCH) {
         Actor_PlaySfx(&this->actor, NA_SE_EN_RIZA_DOWN);

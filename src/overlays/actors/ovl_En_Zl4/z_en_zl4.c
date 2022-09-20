@@ -1148,7 +1148,7 @@ void EnZl4_Cutscene(EnZl4* this, PlayState* play) {
             this->blinkTimer = 0;
             this->eyeExpression = ZL4_EYES_NEUTRAL;
             this->mouthExpression = ZL4_MOUTH_SURPRISED;
-            Audio_PlayFanfare(NA_BGM_APPEAR);
+            Audio_PlayFanfare(SEQ_ID_APPEAR);
             EnZl4_SetActiveCamDir(play, 0);
             Interface_ChangeAlpha(2);
             Letterbox_SetSizeTarget(32);

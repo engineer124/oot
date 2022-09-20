@@ -470,7 +470,7 @@ void EnXc_SetColossusWindSFX(PlayState* play) {
                     osSyncPrintf("MAX speed = %f\n", sMaxSpeed);
 
                     speed = CLAMP_MAX(speed, 2.0f);
-                    func_800F436C(&sPos, NA_SE_EV_FLYING_AIR - SFX_FLAG, 0.6f + (0.4f * speed));
+                    Audio_PlaySfx_AtPosWithFreq(&sPos, NA_SE_EV_FLYING_AIR - SFX_FLAG, 0.6f + (0.4f * speed));
                 }
 
                 D_80B42DB0.x = eye->x;

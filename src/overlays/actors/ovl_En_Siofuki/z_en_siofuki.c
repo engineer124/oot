@@ -299,12 +299,12 @@ void EnSiofuki_Draw(Actor* thisx, PlayState* play) {
         switch (((u16)thisx->params >> 0xC) & 0xF) {
             case EN_SIOFUKI_RAISING:
                 heightRatio = (this->currentHeight - 10.0f) / (400.0f - 10.0f);
-                func_800F436C(&thisx->projectedPos, NA_SE_EV_FOUNTAIN - SFX_FLAG, 1.0f + heightRatio);
+                Audio_PlaySfx_AtPosWithFreq(&thisx->projectedPos, NA_SE_EV_FOUNTAIN - SFX_FLAG, 1.0f + heightRatio);
                 break;
             case EN_SIOFUKI_LOWERING:
                 if (this->currentHeight > -35.0f) {
                     heightRatio = (this->currentHeight - -35.0f) / (this->maxHeight - -35.0f);
-                    func_800F436C(&thisx->projectedPos, NA_SE_EV_FOUNTAIN - SFX_FLAG, 1.0f + heightRatio);
+                    Audio_PlaySfx_AtPosWithFreq(&thisx->projectedPos, NA_SE_EV_FOUNTAIN - SFX_FLAG, 1.0f + heightRatio);
                 }
                 break;
         }
