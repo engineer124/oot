@@ -176,10 +176,14 @@ typedef struct {
     /* 0x10 */ s16 predictorState[16]; // only exists if count != 0. 8-byte aligned
 } AdpcmLoop; // size = 0x30 (or 0x10)
 
+/**
+ * The procedure used to design the codeBook is based on an adaptive clustering algorithm.
+ * The size of the codeBook is (8 * order * numPredictors) and is 8-byte aligned
+ */
 typedef struct {
     /* 0x00 */ s32 order;
     /* 0x04 */ s32 numPredictors;
-    /* 0x08 */ s16 book[1]; // size 8 * order * numPredictors. 8-byte aligned
+    /* 0x08 */ s16 codeBook[1]; // a table of prediction coefficients that the coder selects from to optimize sound quality.
 } AdpcmBook; // size >= 0x8
 
 typedef struct {
@@ -259,24 +263,21 @@ typedef struct {
     /* 0x008 */ s16 mixReverbStrength;
     /* 0x00A */ s16 volume;
     /* 0x00C */ u16 decayRatio; // determines how much reverb persists
-    /* 0x00E */ u16 unk_0E;
+    /* 0x00E */ u16 downsamplePitch;
     /* 0x010 */ s16 leakRtl;
     /* 0x012 */ s16 leakLtr;
     /* 0x014 */ u16 subDelay;
-    /* 0x016 */ s16 unk_16;
+    /* 0x016 */ s16 subVolume;
     /* 0x018 */ u8 resampleEffectOn; // turning on will crash the game (Unimplented in OoT, name taking from MM implementation)
-    /* 0x019 */ u8 unk_19;
-    /* 0x01A */ u8 unk_1A;
-    /* 0x01B */ u8 unk_1B;
-    /* 0x01C */ s32 nextRingBufPos;
+    /* 0x01C */ s32 nextReverbBufPos;
     /* 0x020 */ s32 unk_20;
     /* 0x024 */ s32 delayNumSamples;
     /* 0x028 */ s16* leftRingBuf;
     /* 0x02C */ s16* rightRingBuf;
-    /* 0x030 */ void* unk_30;
-    /* 0x034 */ void* unk_34;
-    /* 0x038 */ void* unk_38;
-    /* 0x03C */ void* unk_3C;
+    /* 0x030 */ s16* leftLoadResampleBuf;
+    /* 0x034 */ s16* rightLoadResampleBuf;
+    /* 0x038 */ s16* leftSaveResampleBuf;
+    /* 0x03C */ s16* rightSaveResampleBuf;
     /* 0x040 */ ReverbSampleBufferEntry bufEntry[2][5];
     /* 0x158 */ ReverbSampleBufferEntry subBufEntry[2][5];
     /* 0x270 */ s16* filterLeft;
@@ -510,11 +511,11 @@ typedef struct {
 } NoteSynthesisBuffers; // size = 0x1E0
 
 typedef struct {
-    /* 0x00 */ u8 restart;
+    /* 0x00 */ u8 atLoopPoint;
     /* 0x01 */ u8 sampleDmaIndex;
     /* 0x02 */ u8 prevHaasEffectLeftDelaySize;
     /* 0x03 */ u8 prevHaasEffectRightDelaySize;
-    /* 0x04 */ u8 targetReverbVol;
+    /* 0x04 */ u8 curReverbVol;
     /* 0x05 */ u8 numParts;
     /* 0x06 */ u16 samplePosFrac;
     /* 0x08 */ s32 samplePosInt;
@@ -557,7 +558,9 @@ typedef struct {
     /* 0x40 */ AdsrState adsr;
     /* 0x60 */ Portamento portamento;
     /* 0x6C */ VibratoState vibratoState;
-} NotePlaybackState; // size = 0x88
+    /* 0x88 */ char unk_88[0x4];
+    /* 0x8C */ u32 startSamplePos; // initial position/index to start processing s16 samples
+} NotePlaybackState; // size = 0xC0
 
 typedef struct {
     struct {
@@ -585,23 +588,21 @@ typedef struct {
     /* 0x07 */ u8 combFilterSize;
     /* 0x08 */ u16 targetVolLeft;
     /* 0x0A */ u16 targetVolRight;
-    /* 0x0C */ u16 resamplingRateFixedPoint;
+    /* 0x0C */ u16 frequencyFixedPoint;
     /* 0x0E */ u16 combFilterGain;
     /* 0x10 */ union {
                  TunedSample* tunedSample;
                  s16* waveSampleAddr; // used for synthetic waves
              };
     /* 0x14 */ s16* filter;
-    /* 0x18 */ char pad_18[0x8];
+    /* 0x18 */ char unk_18[0x8];
 } NoteSampleState; // size = 0x20
 
 typedef struct Note {
     /* 0x00 */ AudioListItem listItem;
     /* 0x10 */ NoteSynthesisState synthesisState;
     /* 0x30 */ NotePlaybackState playbackState;
-    /* 0xB8 */ char unk_B8[0x4];
-    /* 0xBC */ u32 startSamplePos; // initial position/index to start processing s16 samples
-    /* 0xC0 */ NoteSampleState noteSubEu;
+    /* 0xC0 */ NoteSampleState sampleState;
 } Note; // size = 0xE0
 
 typedef struct {
@@ -609,12 +610,12 @@ typedef struct {
     /* 0x02 */ u16 windowSize;
     /* 0x04 */ u16 decayRatio; // determines how much reverb persists
     /* 0x06 */ u16 subDelay;
-    /* 0x08 */ u16 unk_8;
+    /* 0x08 */ u16 subVolume;
     /* 0x0A */ u16 volume;
     /* 0x0C */ u16 leakRtl;
     /* 0x0E */ u16 leakLtr;
-    /* 0x10 */ s8 unk_10;
-    /* 0x12 */ u16 unk_12;
+    /* 0x10 */ s8 mixReverbIndex;
+    /* 0x12 */ u16 mixReverbStrength;
     /* 0x14 */ s16 lowPassFilterCutoffLeft;
     /* 0x16 */ s16 lowPassFilterCutoffRight;
 } ReverbSettings; // size = 0x18
@@ -654,13 +655,13 @@ typedef struct {
     /* 0x00 */ s16 specUnk4;
     /* 0x02 */ u16 samplingFrequency; // Target sampling rate in Hz
     /* 0x04 */ u16 aiSamplingFrequency; // True sampling rate of the audio interface (AI), see `osAiSetFrequency`
-    /* 0x06 */ s16 samplesPerFrameTarget;
-    /* 0x08 */ s16 maxAiBufferLength;
-    /* 0x0A */ s16 minAiBufferLength;
+    /* 0x06 */ s16 numSamplesPerFrameTarget;
+    /* 0x08 */ s16 numSamplesPerFrameMax;
+    /* 0x0A */ s16 numSamplesPerFrameMin;
     /* 0x0C */ s16 updatesPerFrame; // for each frame of the audio thread (default 60 fps), number of updates to process audio
-    /* 0x0E */ s16 samplesPerUpdate;
-    /* 0x10 */ s16 samplesPerUpdateMax;
-    /* 0x12 */ s16 samplesPerUpdateMin;
+    /* 0x0E */ s16 numSamplesPerUpdate;
+    /* 0x10 */ s16 numSamplesPerUpdateMax;
+    /* 0x12 */ s16 numSamplesPerUpdateMin;
     /* 0x14 */ s16 numSequencePlayers;
     /* 0x18 */ f32 resampleRate;
     /* 0x1C */ f32 updatesPerFrameInv; // inverse (reciprocal) of updatesPerFrame
@@ -895,7 +896,7 @@ typedef struct {
     /* 0x2840 */ u16 numSequences;
     /* 0x2844 */ SoundFont* soundFontList;
     /* 0x2848 */ AudioBufferParameters audioBufParams;
-    /* 0x2870 */ f32 unk_2870;
+    /* 0x2870 */ f32 scaledRefreshRate;
     /* 0x2874 */ s32 sampleDmaBufSize1;
     /* 0x2874 */ s32 sampleDmaBufSize2;
     /* 0x287C */ char unk_287C[0x10];
@@ -913,7 +914,7 @@ typedef struct {
     /* 0x28B8 */ AudioTask* curTask;
     /* 0x28BC */ char unk_28BC[0x4];
     /* 0x28C0 */ AudioTask rspTask[2];
-    /* 0x2960 */ f32 unk_2960;
+    /* 0x2960 */ f32 osTvTypeTempoFactor;
     /* 0x2964 */ s32 refreshRate;
     /* 0x2968 */ s16* aiBuffers[3];
     /* 0x2974 */ s16 aiBufLengths[3];
@@ -953,13 +954,13 @@ typedef struct {
     /* 0x3530 */ SequencePlayer seqPlayers[4];
     /* 0x3AB0 */ SequenceLayer sequenceLayers[64];
     /* 0x5AB0 */ SequenceChannel sequenceChannelNone;
-    /* 0x5B84 */ s32 noteSubEuOffset;
+    /* 0x5B84 */ s32 sampleStateBaseIndex; // Start of the list of sample states for this update. Resets after each audio frame.
     /* 0x5B88 */ AudioListItem layerFreeList;
     /* 0x5B98 */ NotePool noteFreeLists;
     /* 0x5BD8 */ u8 cmdWritePos;
     /* 0x5BD9 */ u8 cmdReadPos;
     /* 0x5BDA */ u8 cmdQueueFinished;
-    /* 0x5BDC */ u16 activeChannelFlags[4];
+    /* 0x5BDC */ u16 activeChannelsFlags[4]; // bitfield for 16 channels. Only channels with bit turned on will be processed
     /* 0x5BE4 */ OSMesgQueue* audioResetQueueP;
     /* 0x5BE8 */ OSMesgQueue* taskStartQueueP;
     /* 0x5BEC */ OSMesgQueue* cmdProcQueueP;

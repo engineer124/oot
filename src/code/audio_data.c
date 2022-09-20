@@ -550,10 +550,24 @@ EnvelopePoint gDefaultEnvelope[] = {
     { ADSR_DISABLE, 0 },
 };
 
-NoteSampleState gZeroNoteSub = { 0 };
+NoteSampleState gZeroedSampleState = { 0 };
 
-NoteSampleState gDefaultNoteSub = {
-    { 1, 1, 0, 0, 0, 0, 0, 0 }, { 0 }, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+NoteSampleState gDefaultSampleState = {
+    { true, true, false, false, false, false, false, false },
+    { 0 },
+    0,    // gain
+    0,    // haasEffectLeftDelaySize
+    0,    // haasEffectRightDelaySize
+    0,    // targetReverbVol
+    0,    // harmonicIndexCurAndPrev
+    0,    // combFilterSize
+    0,    // targetVolLeft
+    0,    // targetVolRight
+    0,    // frequencyFixedPoint
+    0,    // combFilterGain
+    NULL, // tunedSample
+    0,    // filter
+    0,    // pad_18
 };
 
 u16 gHaasEffectDelaySizes[64] = {

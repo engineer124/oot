@@ -118,16 +118,16 @@ AudioTask* AudioThread_UpdateImpl(void) {
     index = gAudioCtx.curAiBufIndex;
     currAiBuffer = gAudioCtx.aiBuffers[index];
 
-    gAudioCtx.aiBufLengths[index] = (s16)(
-        (((gAudioCtx.audioBufParams.samplesPerFrameTarget - samplesRemainingInAi) + EXTRA_BUFFERED_AI_SAMPLES_TARGET) &
-         ~0xF) +
-        SAMPLES_TO_OVERPRODUCE);
-    if (gAudioCtx.aiBufLengths[index] < gAudioCtx.audioBufParams.minAiBufferLength) {
-        gAudioCtx.aiBufLengths[index] = gAudioCtx.audioBufParams.minAiBufferLength;
+    gAudioCtx.aiBufLengths[index] = (s16)((((gAudioCtx.audioBufParams.numSamplesPerFrameTarget - samplesRemainingInAi) +
+                                            EXTRA_BUFFERED_AI_SAMPLES_TARGET) &
+                                           ~0xF) +
+                                          SAMPLES_TO_OVERPRODUCE);
+    if (gAudioCtx.aiBufLengths[index] < gAudioCtx.audioBufParams.numSamplesPerFrameMin) {
+        gAudioCtx.aiBufLengths[index] = gAudioCtx.audioBufParams.numSamplesPerFrameMin;
     }
 
-    if (gAudioCtx.aiBufLengths[index] > gAudioCtx.audioBufParams.maxAiBufferLength) {
-        gAudioCtx.aiBufLengths[index] = gAudioCtx.audioBufParams.maxAiBufferLength;
+    if (gAudioCtx.aiBufLengths[index] > gAudioCtx.audioBufParams.numSamplesPerFrameMax) {
+        gAudioCtx.aiBufLengths[index] = gAudioCtx.audioBufParams.numSamplesPerFrameMax;
     }
 
     j = 0;
@@ -238,7 +238,7 @@ void AudioThread_ProcessGlobalCmd(AudioCmd* cmd) {
             if (cmd->asUInt == 1) {
                 for (i = 0; i < gAudioCtx.numNotes; i++) {
                     Note* note = &gAudioCtx.notes[i];
-                    NoteSampleState* subEu = &note->noteSubEu;
+                    NoteSampleState* subEu = &note->sampleState;
 
                     if (subEu->bitField0.enabled && note->playbackState.unk_04 == 0) {
                         if (note->playbackState.parentLayer->channel->muteFlags & MUTE_FLAGS_3) {
@@ -277,7 +277,7 @@ void AudioThread_ProcessGlobalCmd(AudioCmd* cmd) {
             break;
 
         case AUDIOCMD_OP_GLOBAL_SET_ACTIVE_CHANNEL_FLAGS:
-            gAudioCtx.activeChannelFlags[cmd->arg0] = cmd->asUShort;
+            gAudioCtx.activeChannelsFlags[cmd->arg0] = cmd->asUShort;
             break;
 
         case AUDIOCMD_OP_GLOBAL_RESET_AUDIO_HEAP:
@@ -440,7 +440,7 @@ void AudioThread_ProcessCmd(AudioCmd* cmd) {
             return;
         }
         if (cmd->arg1 == 0xFF) {
-            phi_v0 = gAudioCtx.activeChannelFlags[cmd->arg0];
+            phi_v0 = gAudioCtx.activeChannelsFlags[cmd->arg0];
             for (i = 0; i < 16; i++) {
                 if (phi_v0 & 1) {
                     AudioThread_ProcessChannelCmd(seqPlayer->channels[i], cmd);
@@ -782,7 +782,7 @@ s32 AudioThread_GetNumSamplesUntilEnd(s32 seqPlayerIndex, s32 channelIndex, s32 
 
             note = layer->note;
             if (layer == note->playbackState.parentLayer) {
-                tunedSample = note->noteSubEu.tunedSample;
+                tunedSample = note->sampleState.tunedSample;
                 if (tunedSample == NULL) {
                     return 0;
                 }
@@ -810,7 +810,7 @@ s32 AudioThread_GetEnabledSampledNotesCount(void) {
 s32 AudioThread_CountAndReleaseNotes(s32 flags) {
     s32 noteCount;
     NotePlaybackState* playbackState;
-    NoteSampleState* noteSubEu;
+    NoteSampleState* noteSampleState;
     s32 i;
     Note* note;
     TunedSample* tunedSample;
@@ -819,12 +819,12 @@ s32 AudioThread_CountAndReleaseNotes(s32 flags) {
     for (i = 0; i < gAudioCtx.numNotes; i++) {
         note = &gAudioCtx.notes[i];
         playbackState = &note->playbackState;
-        if (note->noteSubEu.bitField0.enabled) {
-            noteSubEu = &note->noteSubEu;
+        if (note->sampleState.bitField0.enabled) {
+            noteSampleState = &note->sampleState;
             if (playbackState->adsr.action.s.state != 0) {
                 if (flags >= 2) {
-                    tunedSample = noteSubEu->tunedSample;
-                    if ((tunedSample == NULL) || noteSubEu->bitField1.isSyntheticWave) {
+                    tunedSample = noteSampleState->tunedSample;
+                    if ((tunedSample == NULL) || noteSampleState->bitField1.isSyntheticWave) {
                         continue;
                     }
                     if (tunedSample->sample->medium == MEDIUM_RAM) {

@@ -953,7 +953,7 @@ s32 AudioScript_SeqLayerProcessScriptStep4(SequenceLayer* layer, s32 cmd) {
             time = 0.0f;
         }
         time *= seqPlayer->tempo;
-        time *= gAudioCtx.unk_2870;
+        time *= gAudioCtx.scaledRefreshRate;
         time /= layer->freqScale;
         if (time > 0x7FFE) {
             time = 0x7FFE;
@@ -2039,7 +2039,7 @@ void AudioScript_ProcessSequences(s32 arg0) {
     SequencePlayer* seqPlayer;
     u32 i;
 
-    gAudioCtx.noteSubEuOffset = (gAudioCtx.audioBufParams.updatesPerFrame - arg0 - 1) * gAudioCtx.numNotes;
+    gAudioCtx.sampleStateBaseIndex = (gAudioCtx.audioBufParams.updatesPerFrame - arg0 - 1) * gAudioCtx.numNotes;
 
     for (i = 0; i < (u32)gAudioCtx.audioBufParams.numSequencePlayers; i++) {
         seqPlayer = &gAudioCtx.seqPlayers[i];
