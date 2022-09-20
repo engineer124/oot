@@ -1,6 +1,6 @@
 #include "global.h"
 
-void AudioNote_InitSampleState(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs) {
+void AudioNote_InitSampleState(Note* note, NoteSampleState* sub, NoteSubAttributes* attrs) {
     f32 volLeft;
     f32 volRight;
     s32 halfPanIndex;
@@ -105,7 +105,7 @@ void AudioNote_InitSampleState(Note* note, NoteSubEu* sub, NoteSubAttributes* at
     sub->reverbVol = reverbVol;
 }
 
-void AudioNote_SetResamplingRate(NoteSubEu* noteSubEu, f32 frequency) {
+void AudioNote_SetResamplingRate(NoteSampleState* noteSubEu, f32 frequency) {
     f32 resamplingRate = 0.0f;
 
     if (frequency < 2.0f) {
@@ -154,8 +154,8 @@ void AudioNote_Disable(Note* note) {
 void AudioNote_Update(void) {
     s32 pad[2];
     NoteAttributes* attrs;
-    NoteSubEu* noteSubEu2;
-    NoteSubEu* noteSubEu;
+    NoteSampleState* noteSubEu2;
+    NoteSampleState* noteSubEu;
     Note* note;
     NotePlaybackState* playbackState;
     NoteSubAttributes subAttrs;
@@ -165,7 +165,7 @@ void AudioNote_Update(void) {
 
     for (i = 0; i < gAudioCtx.numNotes; i++) {
         note = &gAudioCtx.notes[i];
-        noteSubEu2 = &gAudioCtx.noteSubsEu[gAudioCtx.noteSubEuOffset + i];
+        noteSubEu2 = &gAudioCtx.sampleStateList[gAudioCtx.noteSubEuOffset + i];
         playbackState = &note->playbackState;
         if (playbackState->parentLayer != NO_LAYER) {
             if ((u32)playbackState->parentLayer < 0x7FFFFFFF) {
@@ -765,7 +765,7 @@ void AudioPlayback_NoteInitForLayer(Note* note, SequenceLayer* layer) {
     s32 pad[3];
     s16 instId;
     NotePlaybackState* playbackState = &note->playbackState;
-    NoteSubEu* sub = &note->noteSubEu;
+    NoteSampleState* sub = &note->noteSubEu;
 
     note->playbackState.prevParentLayer = NO_LAYER;
     note->playbackState.parentLayer = layer;

@@ -237,16 +237,16 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ s16 numSamplesAfterDownsampling; // never read
-    /* 0x02 */ s16 chunkLen; // never read
+    /* 0x02 */ s16 numSamples; // never read
     /* 0x04 */ s16* toDownsampleLeft;
     /* 0x08 */ s16* toDownsampleRight; // data pointed to by left and right are adjacent in memory
     /* 0x0C */ s32 startPos; // start pos in ring buffer
-    /* 0x10 */ s16 lengthA; // first length in ring buffer (from startPos, at most until end)
-    /* 0x12 */ s16 lengthB; // second length in ring buffer (from pos 0)
+    /* 0x10 */ s16 size; // first length in ring buffer (from startPos, at most until end)
+    /* 0x12 */ s16 wrappedSize; // second length in ring buffer (from pos 0)
     /* 0x14 */ u16 unk_14;
     /* 0x16 */ u16 unk_16;
     /* 0x18 */ u16 unk_18;
-} ReverbRingBufferItem; // size = 0x1C
+} ReverbSampleBufferEntry; // size = 0x1C
 
 typedef struct {
     /* 0x000 */ u8 resampleFlags;
@@ -254,31 +254,31 @@ typedef struct {
     /* 0x002 */ u8 framesToIgnore;
     /* 0x003 */ u8 curFrame;
     /* 0x004 */ u8 downsampleRate;
-    /* 0x005 */ s8 unk_05;
+    /* 0x005 */ s8 mixReverbIndex;
     /* 0x006 */ u16 windowSize;
-    /* 0x008 */ s16 unk_08;
+    /* 0x008 */ s16 mixReverbStrength;
     /* 0x00A */ s16 volume;
     /* 0x00C */ u16 decayRatio; // determines how much reverb persists
     /* 0x00E */ u16 unk_0E;
     /* 0x010 */ s16 leakRtl;
     /* 0x012 */ s16 leakLtr;
-    /* 0x014 */ u16 unk_14;
+    /* 0x014 */ u16 subDelay;
     /* 0x016 */ s16 unk_16;
-    /* 0x018 */ u8 unk_18;
+    /* 0x018 */ u8 resampleEffectOn; // turning on will crash the game (Unimplented in OoT, name taking from MM implementation)
     /* 0x019 */ u8 unk_19;
     /* 0x01A */ u8 unk_1A;
     /* 0x01B */ u8 unk_1B;
     /* 0x01C */ s32 nextRingBufPos;
     /* 0x020 */ s32 unk_20;
-    /* 0x024 */ s32 bufSizePerChan;
+    /* 0x024 */ s32 delayNumSamples;
     /* 0x028 */ s16* leftRingBuf;
     /* 0x02C */ s16* rightRingBuf;
     /* 0x030 */ void* unk_30;
     /* 0x034 */ void* unk_34;
     /* 0x038 */ void* unk_38;
     /* 0x03C */ void* unk_3C;
-    /* 0x040 */ ReverbRingBufferItem items[2][5];
-    /* 0x158 */ ReverbRingBufferItem items2[2][5];
+    /* 0x040 */ ReverbSampleBufferEntry bufEntry[2][5];
+    /* 0x158 */ ReverbSampleBufferEntry subBufEntry[2][5];
     /* 0x270 */ s16* filterLeft;
     /* 0x274 */ s16* filterRight;
     /* 0x278 */ s16* filterLeftState;
@@ -506,7 +506,7 @@ typedef struct {
     /* 0x040 */ s16 mixEnvelopeState[32];
     /* 0x080 */ s16 unusedState[16];
     /* 0x0A0 */ s16 haasEffectDelayState[32];
-    /* 0x0E0 */ s16 unkState[128];
+    /* 0x0E0 */ s16 combFilterState[128];
 } NoteSynthesisBuffers; // size = 0x1E0
 
 typedef struct {
@@ -594,7 +594,7 @@ typedef struct {
              };
     /* 0x14 */ s16* filter;
     /* 0x18 */ char pad_18[0x8];
-} NoteSubEu; // size = 0x20
+} NoteSampleState; // size = 0x20
 
 typedef struct Note {
     /* 0x00 */ AudioListItem listItem;
@@ -602,14 +602,14 @@ typedef struct Note {
     /* 0x30 */ NotePlaybackState playbackState;
     /* 0xB8 */ char unk_B8[0x4];
     /* 0xBC */ u32 startSamplePos; // initial position/index to start processing s16 samples
-    /* 0xC0 */ NoteSubEu noteSubEu;
+    /* 0xC0 */ NoteSampleState noteSubEu;
 } Note; // size = 0xE0
 
 typedef struct {
     /* 0x00 */ u8 downsampleRate;
     /* 0x02 */ u16 windowSize;
     /* 0x04 */ u16 decayRatio; // determines how much reverb persists
-    /* 0x06 */ u16 unk_6;
+    /* 0x06 */ u16 subDelay;
     /* 0x08 */ u16 unk_8;
     /* 0x0A */ u16 volume;
     /* 0x0C */ u16 leakRtl;
@@ -853,8 +853,8 @@ typedef struct {
     /* 0x0002 */ u16 unk_2; // reads from audio spec unk_14, never used, always set to 0x7FFF
     /* 0x0004 */ u16 unk_4;
     /* 0x0006 */ char unk_0006[0x0A];
-    /* 0x0010 */ s16* curLoadedBook;
-    /* 0x0014 */ NoteSubEu* noteSubsEu;
+    /* 0x0010 */ s16* adpcmCodeBook;
+    /* 0x0014 */ NoteSampleState* sampleStateList;
     /* 0x0018 */ SynthesisReverb synthesisReverbs[4];
     /* 0x0B38 */ char unk_0B38[0x30];
     /* 0x0B68 */ Sample* usedSamples[128];

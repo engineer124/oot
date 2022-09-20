@@ -1747,7 +1747,7 @@ void* AudioHeap_AllocSampleCache(u32 size, s32 fontId, void* sampleAddr, s8 medi
 void AudioHeap_ApplySampleBankCache(s32 sampleBankId);
 
 void AudioLoad_DecreaseSampleDmaTtls(void);
-void* AudioLoad_DmaSampleData(u32 devAddr, u32 size, s32 arg2, u8* dmaIndexRef, s32 medium);
+void* AudioLoad_DmaSampleData(uintptr_t devAddr, u32 size, s32 arg2, u8* dmaIndexRef, s32 medium);
 void AudioLoad_InitSampleDmaBuffers(s32 numNotes);
 s32 AudioLoad_IsFontLoadComplete(s32 fontId);
 s32 AudioLoad_IsSeqLoadComplete(s32 seqId);
@@ -1793,8 +1793,8 @@ void Audio_InvalDCache(void* buf, s32 size);
 void Audio_WritebackDCache(void* buf, s32 size);
 s32 osAiSetNextBuffer(void*, u32);
 
-void AudioNote_InitSampleState(Note* note, NoteSubEu* sub, NoteSubAttributes* attrs);
-void AudioNote_SetResamplingRate(NoteSubEu* noteSubEu, f32 resamplingRateInput);
+void AudioNote_InitSampleState(Note* note, NoteSampleState* sub, NoteSubAttributes* attrs);
+void AudioNote_SetResamplingRate(NoteSampleState* noteSubEu, f32 resamplingRateInput);
 void AudioNote_Init(Note* note);
 void AudioNote_Disable(Note* note);
 void AudioNote_Update(void);

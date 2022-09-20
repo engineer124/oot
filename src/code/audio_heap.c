@@ -949,8 +949,9 @@ void AudioHeap_Init(void) {
     gAudioCtx.notes = AudioHeap_AllocZeroed(&gAudioCtx.miscPool, gAudioCtx.numNotes * sizeof(Note));
     AudioNote_InitAll();
     AudioList_InitNoteFreeList();
-    gAudioCtx.noteSubsEu = AudioHeap_AllocZeroed(&gAudioCtx.miscPool, gAudioCtx.audioBufferParameters.updatesPerFrame *
-                                                                          gAudioCtx.numNotes * sizeof(NoteSubEu));
+    gAudioCtx.sampleStateList =
+        AudioHeap_AllocZeroed(&gAudioCtx.miscPool, gAudioCtx.audioBufferParameters.updatesPerFrame *
+                                                       gAudioCtx.numNotes * sizeof(NoteSampleState));
     // Initialize audio binary interface command list buffers
     for (i = 0; i != 2; i++) {
         gAudioCtx.abiCmdBufs[i] =
@@ -976,13 +977,13 @@ void AudioHeap_Init(void) {
         reverb->windowSize /= reverb->downsampleRate;
         reverb->decayRatio = settings->decayRatio;
         reverb->volume = settings->volume;
-        reverb->unk_14 = settings->unk_6 * 64;
+        reverb->subDelay = settings->subDelay * 64;
         reverb->unk_16 = settings->unk_8;
-        reverb->unk_18 = 0;
+        reverb->resampleEffectOn = false;
         reverb->leakRtl = settings->leakRtl;
         reverb->leakLtr = settings->leakLtr;
-        reverb->unk_05 = settings->unk_10;
-        reverb->unk_08 = settings->unk_12;
+        reverb->mixReverbIndex = settings->unk_10;
+        reverb->mixReverbStrength = settings->unk_12;
         reverb->useReverb = 8;
         reverb->leftRingBuf =
             AudioHeap_AllocZeroedAttemptExternal(&gAudioCtx.miscPool, reverb->windowSize * SAMPLE_SIZE);
@@ -991,7 +992,7 @@ void AudioHeap_Init(void) {
         reverb->nextRingBufPos = 0;
         reverb->unk_20 = 0;
         reverb->curFrame = 0;
-        reverb->bufSizePerChan = reverb->windowSize;
+        reverb->delayNumSamples = reverb->windowSize;
         reverb->framesToIgnore = 2;
         reverb->resampleFlags = 1;
         reverb->tunedSample.sample = &reverb->sample;
@@ -1013,12 +1014,12 @@ void AudioHeap_Init(void) {
             reverb->unk_3C = AudioHeap_AllocZeroed(&gAudioCtx.miscPool, sizeof(RESAMPLE_STATE));
             for (j = 0; j < gAudioCtx.audioBufferParameters.updatesPerFrame; j++) {
                 ramAddr = AudioHeap_AllocZeroedAttemptExternal(&gAudioCtx.miscPool, DMEM_2CH_SIZE);
-                reverb->items[0][j].toDownsampleLeft = ramAddr;
-                reverb->items[0][j].toDownsampleRight = ramAddr + DMEM_1CH_SIZE / SAMPLE_SIZE;
+                reverb->bufEntry[0][j].toDownsampleLeft = ramAddr;
+                reverb->bufEntry[0][j].toDownsampleRight = ramAddr + DMEM_1CH_SIZE / SAMPLE_SIZE;
 
                 ramAddr = AudioHeap_AllocZeroedAttemptExternal(&gAudioCtx.miscPool, DMEM_2CH_SIZE);
-                reverb->items[1][j].toDownsampleLeft = ramAddr;
-                reverb->items[1][j].toDownsampleRight = ramAddr + DMEM_1CH_SIZE / SAMPLE_SIZE;
+                reverb->bufEntry[1][j].toDownsampleLeft = ramAddr;
+                reverb->bufEntry[1][j].toDownsampleRight = ramAddr + DMEM_1CH_SIZE / SAMPLE_SIZE;
             }
         }
 

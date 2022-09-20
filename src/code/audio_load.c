@@ -104,7 +104,7 @@ void AudioLoad_DecreaseSampleDmaTtls(void) {
     gAudioCtx.unused2628 = 0;
 }
 
-void* AudioLoad_DmaSampleData(u32 devAddr, u32 size, s32 arg2, u8* dmaIndexRef, s32 medium) {
+void* AudioLoad_DmaSampleData(uintptr_t devAddr, u32 size, s32 arg2, u8* dmaIndexRef, s32 medium) {
     s32 pad1;
     SampleDma* dma;
     s32 hasDma = false;

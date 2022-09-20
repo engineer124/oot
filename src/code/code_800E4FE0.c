@@ -258,7 +258,7 @@ void AudioThread_ProcessGlobalCmd(AudioCmd* cmd) {
             if (cmd->asUInt == 1) {
                 for (i = 0; i < gAudioCtx.numNotes; i++) {
                     Note* note = &gAudioCtx.notes[i];
-                    NoteSubEu* subEu = &note->noteSubEu;
+                    NoteSampleState* subEu = &note->noteSubEu;
 
                     if (subEu->bitField0.enabled && note->playbackState.unk_04 == 0) {
                         if (note->playbackState.parentLayer->channel->muteFlags & MUTE_FLAGS_3) {
@@ -570,23 +570,23 @@ void AudioThread_PreNMIInternal(void) {
     }
 }
 
-s8 AudioThread_GetChannelIO(s32 seqPlayerIndex, s32 channelIndex, s32 scriptIdx) {
+s8 AudioThread_GetChannelIO(s32 seqPlayerIndex, s32 channelIndex, s32 ioPort) {
     SequencePlayer* seqPlayer = &gAudioCtx.seqPlayers[seqPlayerIndex];
     SequenceChannel* channel;
 
     if (seqPlayer->enabled) {
         channel = seqPlayer->channels[channelIndex];
-        return channel->seqScriptIO[scriptIdx];
+        return channel->seqScriptIO[ioPort];
     } else {
-        return -1;
+        return SEQ_IO_VAL_NONE;
     }
 }
 
-s8 AudioThread_GetSeqPlayerIO(s32 seqPlayerIndex, s32 port) {
-    return gAudioCtx.seqPlayers[seqPlayerIndex].seqScriptIO[port];
+s8 AudioThread_GetSeqPlayerIO(s32 seqPlayerIndex, s32 ioPort) {
+    return gAudioCtx.seqPlayers[seqPlayerIndex].seqScriptIO[ioPort];
 }
 
-void AudioThread_InitExternalPool(void* ramAddr, u32 size) {
+void AudioThread_InitExternalPool(void* ramAddr, size_t size) {
     AudioHeap_InitPool(&gAudioCtx.externalPool, ramAddr, size);
 }
 
@@ -829,7 +829,7 @@ s32 AudioThread_GetEnabledSampledNotesCount(void) {
 s32 AudioThread_CountAndReleaseNotes(s32 flags) {
     s32 noteCount;
     NotePlaybackState* playbackState;
-    NoteSubEu* noteSubEu;
+    NoteSampleState* noteSubEu;
     s32 i;
     Note* note;
     TunedSample* tunedSample;

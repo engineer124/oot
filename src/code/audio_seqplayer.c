@@ -1618,7 +1618,7 @@ void AudioScript_SequenceChannelProcessScript(SequenceChannel* channel) {
                     if (channel->layers[lowBits] != NULL) {
                         scriptState->value = channel->layers[lowBits]->finished;
                     } else {
-                        scriptState->value = -1;
+                        scriptState->value = SEQ_IO_VAL_NONE;
                     }
                     break;
 
@@ -1917,7 +1917,7 @@ void AudioScript_SequencePlayerProcessSequence(SequencePlayer* seqPlayer) {
 
                     case 0xCD: // `dyncall(addr)`, seqPlayer: dyncall
                         temp = AudioScript_ScriptReadS16(seqScript);
-                        if ((seqScript->value != -1) && (seqScript->depth != 3)) {
+                        if ((seqScript->value != SEQ_IO_VAL_NONE) && (seqScript->depth != 3)) {
                             data = seqPlayer->seqData + (u32)(temp + (seqScript->value << 1));
                             seqScript->stack[seqScript->depth] = seqScript->pc;
                             seqScript->depth++;
