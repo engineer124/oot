@@ -149,7 +149,7 @@ void EnHeishi1_Walk(EnHeishi1* this, PlayState* play) {
     SkelAnime_Update(&this->skelAnime);
 
     if (Animation_OnFrame(&this->skelAnime, 1.0f) || Animation_OnFrame(&this->skelAnime, 17.0f)) {
-        Actor_PlaySfx(&this->actor, NA_SE_EV_KNIGHT_WALK);
+        Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_KNIGHT_WALK);
     }
 
     if (!sPlayerIsCaught) {
@@ -370,7 +370,7 @@ void EnHeishi1_WaitNight(EnHeishi1* this, PlayState* play) {
 
     if (this->actor.xzDistToPlayer < 100.0f) {
         Message_StartTextbox(play, 0x702D, &this->actor);
-        func_80078884(NA_SE_SY_FOUND);
+        func_80078884(SFX_ID_SYSTEM_FOUND);
         osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ 発見！ ☆☆☆☆☆ \n" VT_RST); // "Discovered!"
         func_8002DF54(play, &this->actor, 1);
         this->actionFunc = EnHeishi1_SetupKick;
@@ -453,7 +453,7 @@ void EnHeishi1_Update(Actor* thisx, PlayState* play) {
                                 this->linkDetected = false;
                                 // this 60 unit height check is so the player doesnt get caught when on the upper path
                                 if (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 60.0f) {
-                                    func_80078884(NA_SE_SY_FOUND);
+                                    func_80078884(SFX_ID_SYSTEM_FOUND);
                                     // "Discovered!"
                                     osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ 発見！ ☆☆☆☆☆ \n" VT_RST);
                                     func_8002DF54(play, &this->actor, 1);

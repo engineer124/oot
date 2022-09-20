@@ -1818,11 +1818,11 @@ void AudioOcarina_PlayControllerInput(u8 unused) {
                                    sOcarinaInstrumentId - 1);
             // Sets pitch to io port 5
             AudioThread_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | SFX_CHANNEL_OCARINA << 8 | 5, sCurOcarinaPitch);
-            AudioSfx_PlaySfx(NA_SE_OC_OCARINA, &gSfxDefaultPos, 4, &sCurOcarinaBendFreq, &sRelativeOcarinaVolume,
+            AudioSfx_PlaySfx(SFX_ID_OCARINA_OCARINA, &gSfxDefaultPos, 4, &sCurOcarinaBendFreq, &sRelativeOcarinaVolume,
                              &gSfxDefaultReverb);
         } else if ((sPrevOcarinaPitch != OCARINA_PITCH_NONE) && (sCurOcarinaPitch == OCARINA_PITCH_NONE)) {
             // Stops ocarina sound when transitioning from playing to not playing a note
-            AudioSfx_StopById(NA_SE_OC_OCARINA);
+            AudioSfx_StopById(SFX_ID_OCARINA_OCARINA);
         }
     }
 }
@@ -1856,7 +1856,7 @@ void AudioOcarina_SetInstrument(u8 ocarinaInstrumentId) {
         sOcarinaInputButtonStart = 0xFFFF;
 
         AudioOcarina_PlayControllerInput(false);
-        AudioSfx_StopById(NA_SE_OC_OCARINA);
+        AudioSfx_StopById(SFX_ID_OCARINA_OCARINA);
         AudioSfx_MuteBanks(0);
         sPlaybackState = 0;
         sPlaybackStaffPos = 0;
@@ -1877,7 +1877,7 @@ void AudioOcarina_SetInstrument(u8 ocarinaInstrumentId) {
 void AudioOcarina_SetPlaybackSong(s8 songIndexPlusOne, s8 playbackState) {
     if (songIndexPlusOne == 0) {
         sPlaybackState = 0;
-        AudioSfx_StopById(NA_SE_OC_OCARINA);
+        AudioSfx_StopById(SFX_ID_OCARINA_OCARINA);
         return;
     }
 
@@ -1938,7 +1938,7 @@ void AudioOcarina_PlaybackSong(void) {
                 sPlaybackStaffPos = 0;
                 sPlaybackPitch = OCARINA_PITCH_NONE;
             } else {
-                AudioSfx_StopById(NA_SE_OC_OCARINA);
+                AudioSfx_StopById(SFX_ID_OCARINA_OCARINA);
             }
             return;
         } else {
@@ -1992,10 +1992,10 @@ void AudioOcarina_PlaybackSong(void) {
                 // Sets sPlaybackPitch to channelIndex io port 5
                 AudioThread_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | SFX_CHANNEL_OCARINA << 8 | 5,
                                        sPlaybackPitch & 0x3F);
-                AudioSfx_PlaySfx(NA_SE_OC_OCARINA, &gSfxDefaultPos, 4, &sRelativeNotePlaybackBend,
+                AudioSfx_PlaySfx(SFX_ID_OCARINA_OCARINA, &gSfxDefaultPos, 4, &sRelativeNotePlaybackBend,
                                  &sRelativeNotePlaybackVolume, &gSfxDefaultReverb);
             } else {
-                AudioSfx_StopById(NA_SE_OC_OCARINA);
+                AudioSfx_StopById(SFX_ID_OCARINA_OCARINA);
             }
         }
         sPlaybackNotePos++;
@@ -4066,7 +4066,8 @@ void AudioSfx_SetProperties(u8 bankId, u8 entryIndex, u8 channelIndex) {
             freqScale = AudioSfx_ComputeFreqScale(bankId, entryIndex) * *entry->freqScale;
 
             if (sSoundMode == SOUNDMODE_SURROUND) {
-                behindScreenZ = sBehindScreenZ[(entry->sfxParams & SFX_FLAG_10) >> SFX_FLAG_10_SHIFT];
+                behindScreenZ = sBehindScreenZ[(entry->sfxParams & SFX_FLAG_BEHIND_SCREEN_Z_INDEX) >>
+                                               SFX_FLAG_BEHIND_SCREEN_Z_INDEX_SHIFT];
                 if (!(entry->sfxParams & SFX_PARAM_RAND_FREQ_SCALE)) {
                     if (*entry->posZ < behindScreenZ) {
                         stereoBits = 0x10;
@@ -4208,9 +4209,9 @@ void Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(Vec3f* pos, u16 s
 
     if ((phi_f0 < arg2) && (phi_v0 != 0)) {
         if ((sfxId & 0x80) != 0) {
-            sfxId2 = NA_SE_PL_METALEFFECT_ADULT;
+            sfxId2 = SFX_ID_PLAYER_METALEFFECT_ADULT;
         } else {
-            sfxId2 = NA_SE_PL_METALEFFECT_KID;
+            sfxId2 = SFX_ID_PLAYER_METALEFFECT_KID;
         }
         D_8016B7AC = (sp24 * 0.7) + 0.3;
         AudioSfx_PlaySfx(sfxId2, pos, 4, &sSfxSyncedFreq, &D_8016B7AC, &gSfxDefaultReverb);
@@ -4242,11 +4243,11 @@ void Audio_PlaySfx_SwordCharge(Vec3f* pos, u8 level) {
         D_801305F4 = D_801305E4[level];
         switch (level) {
             case 1:
-                AudioSfx_PlaySfx(NA_SE_PL_SWORD_CHARGE, pos, 4, &D_801305F4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_PLAYER_SWORD_CHARGE, pos, 4, &D_801305F4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultReverb);
                 break;
             case 2:
-                AudioSfx_PlaySfx(NA_SE_PL_SWORD_CHARGE, pos, 4, &D_801305F4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_PLAYER_SWORD_CHARGE, pos, 4, &D_801305F4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultReverb);
                 break;
         }
@@ -4255,7 +4256,7 @@ void Audio_PlaySfx_SwordCharge(Vec3f* pos, u8 level) {
     }
 
     if (level != 0) {
-        AudioSfx_PlaySfx(NA_SE_IT_SWORD_CHARGE - SFX_FLAG, pos, 4, &D_801305F4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(SFX_ID_ITEM_SWORD_CHARGE - SFX_FLAG, pos, 4, &D_801305F4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultReverb);
     }
 }
@@ -4301,31 +4302,31 @@ void Audio_PlaySfx_AtPosWithVolume(Vec3f* pos, u16 sfxId, f32 volume) {
 }
 
 void Audio_PlaySfx_FishingReel(f32 arg0) {
-    Audio_PlaySfx_AtPosWithTimer(&gSfxDefaultPos, NA_SE_IT_FISHING_REEL_SLOW - SFX_FLAG, arg0);
+    Audio_PlaySfx_AtPosWithTimer(&gSfxDefaultPos, SFX_ID_ITEM_FISHING_REEL_SLOW - SFX_FLAG, arg0);
     Audio_PlaySfx_AtPosWithFreq(&gSfxDefaultPos, 0, (0.15f * arg0) + 1.4f);
 }
 
 void Audio_PlaySfx_River(Vec3f* pos, f32 freqScale) {
-    if (!AudioSfx_IsPlaying(NA_SE_EV_RIVER_STREAM - SFX_FLAG)) {
+    if (!AudioSfx_IsPlaying(SFX_ID_ENVIRONMENT_RIVER_STREAM - SFX_FLAG)) {
         sRiverFreqScaleLerp.value = freqScale;
     } else if (freqScale != sRiverFreqScaleLerp.value) {
         sRiverFreqScaleLerp.target = freqScale;
         sRiverFreqScaleLerp.remainingFrames = 40;
         sRiverFreqScaleLerp.step = (sRiverFreqScaleLerp.target - sRiverFreqScaleLerp.value) / 40;
     }
-    AudioSfx_PlaySfx(NA_SE_EV_RIVER_STREAM - SFX_FLAG, pos, 4, &sRiverFreqScaleLerp.value, &gSfxDefaultFreqAndVolScale,
-                     &gSfxDefaultReverb);
+    AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_RIVER_STREAM - SFX_FLAG, pos, 4, &sRiverFreqScaleLerp.value,
+                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 }
 
 void Audio_PlaySfx_Waterfall(Vec3f* pos, f32 freqScale) {
-    if (!AudioSfx_IsPlaying(NA_SE_EV_WATER_WALL_BIG - SFX_FLAG)) {
+    if (!AudioSfx_IsPlaying(SFX_ID_ENVIRONMENT_WATER_WALL_BIG - SFX_FLAG)) {
         sWaterfallFreqScaleLerp.value = freqScale;
     } else if (freqScale != sWaterfallFreqScaleLerp.value) {
         sWaterfallFreqScaleLerp.target = freqScale;
         sWaterfallFreqScaleLerp.remainingFrames = 40;
         sWaterfallFreqScaleLerp.step = (sWaterfallFreqScaleLerp.target - sWaterfallFreqScaleLerp.value) / 40;
     }
-    AudioSfx_PlaySfx(NA_SE_EV_WATER_WALL_BIG - SFX_FLAG, pos, 4, &sWaterfallFreqScaleLerp.value,
+    AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_WATER_WALL_BIG - SFX_FLAG, pos, 4, &sWaterfallFreqScaleLerp.value,
                      &sWaterfallFreqScaleLerp.value, &gSfxDefaultReverb);
 }
 
@@ -5048,11 +5049,11 @@ void func_800F6268(f32 dist, u16 arg1) {
 void Audio_PlaySfx_Window(u8 arg0) {
     D_80130608 = arg0;
     if (arg0 != 0) {
-        AudioSfx_PlaySfx(NA_SE_SY_WIN_OPEN, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(SFX_ID_SYSTEM_WIN_OPEN, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         AudioThread_QueueCmdS32(0xF1000000, 0);
     } else {
-        AudioSfx_PlaySfx(NA_SE_SY_WIN_CLOSE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(SFX_ID_SYSTEM_WIN_CLOSE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         AudioThread_QueueCmdS32(0xF2000000, 0);
     }
@@ -5132,9 +5133,9 @@ void Audio_SetFileSelectSettings(s8 audioSetting) {
 void Audio_SetBaseFilter(u8 filter) {
     if (sAudioBaseFilter != filter) {
         if (filter == 0) {
-            AudioSfx_StopById(NA_SE_PL_IN_BUBBLE);
+            AudioSfx_StopById(SFX_ID_PLAYER_IN_BUBBLE);
         } else if (sAudioBaseFilter == 0) {
-            AudioSfx_PlaySfx(NA_SE_PL_IN_BUBBLE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(SFX_ID_PLAYER_IN_BUBBLE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
     }

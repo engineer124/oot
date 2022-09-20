@@ -146,7 +146,7 @@ void EnDntDemo_Judge(EnDntDemo* this, PlayState* play) {
         if (this->judgeTimer > 40) {
             // "gera gera" [onomatopoeia for loud giggling]
             osSyncPrintf(VT_FGCOL(RED) "☆☆☆☆☆ げらげら ☆☆☆☆☆ \n" VT_RST);
-            Audio_PlaySfx_AtPosWithFreq(&this->actor.projectedPos, NA_SE_EV_CROWD - SFX_FLAG, 2.0f);
+            Audio_PlaySfx_AtPosWithFreq(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_CROWD - SFX_FLAG, 2.0f);
         }
         if (this->judgeTimer < 120) {
             this->judgeTimer++;
@@ -165,7 +165,7 @@ void EnDntDemo_Judge(EnDntDemo* this, PlayState* play) {
                     FALLTHROUGH;
                 case PLAYER_MASK_TRUTH:
                     if (!GET_ITEMGETINF(ITEMGETINF_1F) && (Player_GetMask(play) != PLAYER_MASK_SKULL)) {
-                        AudioSfx_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                        AudioSfx_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                         this->prize = DNT_PRIZE_NUTS;
                         this->leader->stageSignal = DNT_LEADER_SIGNAL_UP;

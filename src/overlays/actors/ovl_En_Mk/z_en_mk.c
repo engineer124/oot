@@ -254,7 +254,7 @@ void EnMk_Wait(EnMk* this, PlayState* play) {
                                          Animation_GetLastFrame(&object_mk_Anim_000368), ANIMMODE_ONCE, -4.0f);
                         this->flags &= ~2;
                         gSaveContext.timer2State = 0;
-                        func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                        func_80078884(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
                         break;
                     default:
                         player->actor.textId = 0x4018;
@@ -334,7 +334,7 @@ void EnMk_Update(Actor* thisx, PlayState* play) {
 
                     if (!(this->flags & 4) && (this->swimFlag >= 8)) {
                         this->flags |= 4;
-                        func_80078884(NA_SE_SY_CORRECT_CHIME);
+                        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
                     }
                 }
             }

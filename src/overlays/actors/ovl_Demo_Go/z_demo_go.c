@@ -75,7 +75,7 @@ void func_8097C8A8(DemoGo* this, PlayState* play) {
 
     if ((thisx->params == 0) || (thisx->params == 1)) {
         SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &thisx->world.pos, &sp20, &sp1C);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &sp20, 20, NA_SE_EV_OBJECT_FALL);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &sp20, 20, SFX_ID_ENVIRONMENT_OBJECT_FALL);
     }
 }
 
@@ -100,14 +100,14 @@ void func_8097C930(DemoGo* this) {
 }
 
 void func_8097C9B8(DemoGo* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_EN_DODO_M_GND);
+    func_80078914(&this->actor.projectedPos, SFX_ID_ENEMY_DODO_M_GND);
 }
 
 void func_8097C9DC(DemoGo* this) {
     s32 pad[2];
 
     if (Animation_OnFrame(&this->skelAnime, 12.0f) || Animation_OnFrame(&this->skelAnime, 25.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_EN_MORIBLIN_WALK);
+        func_80078914(&this->actor.projectedPos, SFX_ID_ENEMY_MORIBLIN_WALK);
     }
 }
 

@@ -144,7 +144,7 @@ void func_8088E5D0(BgHidanSima* this, PlayState* play) {
     }
     if (!(this->timer % 4)) {
         func_800AA000(this->dyna.actor.xyzDistToPlayerSq, 180, 10, 100);
-        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BLOCK_SHAKE);
+        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCK_SHAKE);
     }
 }
 
@@ -188,7 +188,7 @@ void func_8088E7A8(BgHidanSima* this, PlayState* play) {
         this->timer = 20;
         this->actionFunc = func_8088E760;
     }
-    func_8002F974(&this->dyna.actor, NA_SE_EV_FIRE_PILLAR - SFX_FLAG);
+    func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_FIRE_PILLAR - SFX_FLAG);
 }
 
 void func_8088E90C(BgHidanSima* this) {

@@ -178,7 +178,7 @@ void DemoKekkai_TowerBarrier(DemoKekkai* this, PlayState* play) {
         }
     }
     if (!(this->sfxFlag & 1)) {
-        func_8002F974(&this->actor, NA_SE_EV_TOWER_BARRIER - SFX_FLAG);
+        func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_TOWER_BARRIER - SFX_FLAG);
     }
 }
 
@@ -220,13 +220,13 @@ void DemoKekkai_TrialBarrierDispel(Actor* thisx, PlayState* play) {
     } else if (this->timer < 50) {
         this->orbScale = 2.0f;
     } else if (this->timer == 50) {
-        Actor_PlaySfx(&this->actor, NA_SE_IT_DM_RING_EXPLOSION);
+        Actor_PlaySfx(&this->actor, SFX_ID_ITEM_DM_RING_EXPLOSION);
         DemoKekkai_SpawnParticles(this, play);
     } else {
         this->orbScale = 0.0f;
     }
     if (this->orbScale != 0.0f) {
-        func_8002F974(&this->actor, NA_SE_EV_TOWER_ENERGY - SFX_FLAG);
+        func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_TOWER_ENERGY - SFX_FLAG);
     }
     this->timer++;
 }
@@ -251,7 +251,7 @@ void DemoKekkai_TrialBarrierIdle(Actor* thisx, PlayState* play) {
     CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider1.base);
     CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider1.base);
     if (this->collider2.base.acFlags & AC_HIT) {
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
         // "I got it"
         LOG_STRING("当ったよ", "../z_demo_kekkai.c", 572);
         this->actor.update = DemoKekkai_TrialBarrierDispel;
@@ -260,7 +260,7 @@ void DemoKekkai_TrialBarrierIdle(Actor* thisx, PlayState* play) {
         gSaveContext.cutsceneTrigger = 1;
     }
     CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider2.base);
-    func_8002F974(&this->actor, NA_SE_EV_TOWER_ENERGY - SFX_FLAG);
+    func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_TOWER_ENERGY - SFX_FLAG);
 }
 
 void DemoKekkai_DrawTrialBarrier(Actor* thisx, PlayState* play2) {

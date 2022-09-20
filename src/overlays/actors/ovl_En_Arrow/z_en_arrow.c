@@ -163,19 +163,19 @@ void EnArrow_Shoot(EnArrow* this, PlayState* play) {
 
         switch (this->actor.params) {
             case ARROW_SEED:
-                Player_PlaySfx(&player->actor, NA_SE_IT_SLING_SHOT);
+                Player_PlaySfx(&player->actor, SFX_ID_ITEM_SLING_SHOT);
                 break;
 
             case ARROW_NORMAL_LIT:
             case ARROW_NORMAL_HORSE:
             case ARROW_NORMAL:
-                Player_PlaySfx(&player->actor, NA_SE_IT_ARROW_SHOT);
+                Player_PlaySfx(&player->actor, SFX_ID_ITEM_ARROW_SHOT);
                 break;
 
             case ARROW_FIRE:
             case ARROW_ICE:
             case ARROW_LIGHT:
-                Player_PlaySfx(&player->actor, NA_SE_IT_MAGIC_ARROW_SHOT);
+                Player_PlaySfx(&player->actor, SFX_ID_ITEM_MAGIC_ARROW_SHOT);
                 break;
         }
 
@@ -273,9 +273,9 @@ void EnArrow_Fly(EnArrow* this, PlayState* play) {
                 iREG(50) = -1;
                 Actor_Spawn(&play->actorCtx, play, ACTOR_EN_M_FIRE1, this->actor.world.pos.x, this->actor.world.pos.y,
                             this->actor.world.pos.z, 0, 0, 0, 0);
-                sfxId = NA_SE_IT_DEKU;
+                sfxId = SFX_ID_ITEM_DEKU;
             } else {
-                sfxId = NA_SE_IT_SLING_REFLECT;
+                sfxId = SFX_ID_ITEM_SLING_REFLECT;
             }
 
             EffectSsStone1_Spawn(play, &this->actor.world.pos, 0);
@@ -307,7 +307,7 @@ void EnArrow_Fly(EnArrow* this, PlayState* play) {
                     }
 
                     func_809B3CEC(play, this);
-                    Actor_PlaySfx(&this->actor, NA_SE_IT_ARROW_STICK_CRE);
+                    Actor_PlaySfx(&this->actor, SFX_ID_ITEM_ARROW_STICK_CRE);
                 }
             } else if (this->touchedPoly) {
                 EnArrow_SetupAction(this, func_809B45E0);
@@ -319,7 +319,7 @@ void EnArrow_Fly(EnArrow* this, PlayState* play) {
                     this->timer = 20;
                 }
 
-                Actor_PlaySfx(&this->actor, NA_SE_IT_ARROW_STICK_OBJ);
+                Actor_PlaySfx(&this->actor, SFX_ID_ITEM_ARROW_STICK_OBJ);
                 this->hitFlags |= 1;
             }
         }

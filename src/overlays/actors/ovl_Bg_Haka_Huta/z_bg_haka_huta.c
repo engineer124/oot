@@ -148,7 +148,7 @@ void BgHakaHuta_Open(BgHakaHuta* this, PlayState* play) {
     Math_StepToF(&this->dyna.actor.world.pos.x, this->dyna.actor.home.pos.x + posOffset, 2.0f);
     if (this->counter == 0) {
         this->counter = 37;
-        BgHakaHuta_PlaySfx(this, play, NA_SE_EV_COFFIN_CAP_OPEN);
+        BgHakaHuta_PlaySfx(this, play, SFX_ID_ENVIRONMENT_COFFIN_CAP_OPEN);
         this->actionFunc = BgHakaHuta_SlideOpen;
     }
 }
@@ -164,7 +164,7 @@ void BgHakaHuta_SlideOpen(BgHakaHuta* this, PlayState* play) {
         BgHakaHuta_SpawnDust(this, play);
     }
     if (this->counter == 0) {
-        BgHakaHuta_PlaySfx(this, play, NA_SE_EV_COFFIN_CAP_BOUND);
+        BgHakaHuta_PlaySfx(this, play, SFX_ID_ENVIRONMENT_COFFIN_CAP_BOUND);
         this->actionFunc = func_8087D720;
     }
 }

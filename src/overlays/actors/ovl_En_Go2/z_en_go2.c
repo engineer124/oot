@@ -527,12 +527,12 @@ s16 EnGo2_GetStateGoronCityLink(PlayState* play, EnGo2* this) {
                     if (play->msgCtx.choiceIndex == 0) {
                         this->actor.textId = GET_INFTABLE(INFTABLE_10B) ? 0x3033 : 0x3035;
                         if (this->actor.textId == 0x3035) {
-                            AudioSfx_StopById(NA_SE_EN_GOLON_CRY);
+                            AudioSfx_StopById(SFX_ID_ENEMY_GOLON_CRY);
                         }
                     } else {
                         this->actor.textId = GET_INFTABLE(INFTABLE_10B) ? 0x3036 : 0x3033;
                         if (this->actor.textId == 0x3036) {
-                            AudioSfx_StopById(NA_SE_EN_GOLON_CRY);
+                            AudioSfx_StopById(SFX_ID_ENEMY_GOLON_CRY);
                         }
                     }
                     Message_ContinueTextbox(play, this->actor.textId);
@@ -606,12 +606,12 @@ s16 EnGo2_GetStateGoronDmtBiggoron(PlayState* play, EnGo2* this) {
                     FALLTHROUGH;
                 case 0x3059:
                     if (dialogState == TEXT_STATE_NONE) {
-                        Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_EN_GOLON_WAKE_UP, 60);
+                        Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, SFX_ID_ENEMY_GOLON_WAKE_UP, 60);
                     }
                     FALLTHROUGH;
                 case 0x3054:
                     if (dialogState == TEXT_STATE_NONE) {
-                        AudioSfx_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                        AudioSfx_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     }
                     break;
@@ -893,7 +893,7 @@ s32 func_80A44AB0(EnGo2* this, PlayState* play) {
             return false;
         } else {
             if (this->collider.base.acFlags & AC_HIT) {
-                AudioSfx_PlaySfx(NA_SE_SY_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 this->actor.flags &= ~ACTOR_FLAG_24;
                 this->collider.base.acFlags &= ~AC_HIT;
@@ -912,7 +912,7 @@ s32 func_80A44AB0(EnGo2* this, PlayState* play) {
 
                 play->damagePlayer(play, -4);
                 func_8002F71C(play, &this->actor, arg2, this->actor.yawTowardsPlayer, 6.0f);
-                Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
+                Actor_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
                 this->collider.base.ocFlags1 &= ~OC1_TYPE_PLAYER;
             }
         }
@@ -1000,14 +1000,14 @@ s32 EnGo2_IsRollingOnGround(EnGo2* this, s16 arg1, f32 arg2, s16 arg3) {
         } else {
             this->actor.world.pos.y =
                 (this->unk_590 & 1) ? this->actor.world.pos.y + 1.5f : this->actor.world.pos.y - 1.5f;
-            Actor_PlaySfx(&this->actor, NA_SE_EV_BIGBALL_ROLL - SFX_FLAG);
+            Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_BIGBALL_ROLL - SFX_FLAG);
             return true;
         }
     }
 
     if (this->unk_59C >= 2) {
-        Actor_PlaySfx(&this->actor, (this->actor.params & 0x1F) == GORON_CITY_ROLLING_BIG ? NA_SE_EN_GOLON_LAND_BIG
-                                                                                          : NA_SE_EN_DODO_M_GND);
+        Actor_PlaySfx(&this->actor, (this->actor.params & 0x1F) == GORON_CITY_ROLLING_BIG ? SFX_ID_ENEMY_GOLON_LAND_BIG
+                                                                                          : SFX_ID_ENEMY_DODO_M_GND);
     }
 
     this->unk_59C--;
@@ -1275,17 +1275,17 @@ void EnGo2_SitDownAnimation(EnGo2* this) {
     if ((this->skelAnime.playSpeed != 0.0f) && (this->skelAnime.animation == &gGoronAnim_004930)) {
         if (this->skelAnime.playSpeed > 0.0f && this->skelAnime.curFrame == 14.0f) {
             if ((this->actor.params & 0x1F) != GORON_DMT_BIGGORON) {
-                Actor_PlaySfx(&this->actor, NA_SE_EN_GOLON_SIT_DOWN);
+                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOLON_SIT_DOWN);
             } else {
-                Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_EN_GOLON_SIT_DOWN, 60);
+                Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, SFX_ID_ENEMY_GOLON_SIT_DOWN, 60);
             }
         }
         if (this->skelAnime.playSpeed < 0.0f) {
             if (this->skelAnime.curFrame == 1.0f) {
-                Actor_PlaySfx(&this->actor, NA_SE_EN_DODO_M_GND);
+                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_DODO_M_GND);
             }
             if (this->skelAnime.curFrame == 40.0f) {
-                Actor_PlaySfx(&this->actor, NA_SE_EN_GOLON_SIT_DOWN);
+                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOLON_SIT_DOWN);
             }
         }
     }
@@ -1318,9 +1318,9 @@ void EnGo2_RollingAnimation(EnGo2* this, PlayState* play) {
 void EnGo2_WakeUp(EnGo2* this, PlayState* play) {
     if (this->skelAnime.playSpeed == 0.0f) {
         if ((this->actor.params & 0x1F) != GORON_DMT_BIGGORON) {
-            Actor_PlaySfx(&this->actor, NA_SE_EN_GOLON_WAKE_UP);
+            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOLON_WAKE_UP);
         } else {
-            Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_EN_GOLON_WAKE_UP, 60);
+            Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, SFX_ID_ENEMY_GOLON_WAKE_UP, 60);
         }
     }
     if ((this->actor.params & 0x1F) == GORON_DMT_BIGGORON) {
@@ -1467,7 +1467,7 @@ void EnGo2_GoronLinkAnimation(EnGo2* this, PlayState* play) {
 
         if (this->skelAnime.animation == &gGoronAnim_000750) {
             if (this->skelAnime.curFrame == 20.0f) {
-                Actor_PlaySfx(&this->actor, NA_SE_EN_GOLON_CRY);
+                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOLON_CRY);
             }
         }
 
@@ -1504,7 +1504,7 @@ void EnGo2_BiggoronAnimation(EnGo2* this) {
         (this->actor.params & 0x1F) == GORON_DMT_BIGGORON && this->unk_194.unk_00 == 0) {
         if (DECR(this->animTimer) == 0) {
             this->animTimer = Rand_S16Offset(30, 30);
-            Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_EN_GOLON_EYE_BIG, 60);
+            Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, SFX_ID_ENEMY_GOLON_EYE_BIG, 60);
         }
     }
 }
@@ -1838,10 +1838,10 @@ void EnGo2_BiggoronEyedrops(EnGo2* this, PlayState* play) {
             if (DECR(this->animTimer)) {
                 if (this->animTimer == 60 || this->animTimer == 120) {
                     func_8005B1A4(GET_ACTIVE_CAM(play));
-                    Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_EV_GORON_WATER_DROP, 60);
+                    Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, SFX_ID_ENVIRONMENT_GORON_WATER_DROP, 60);
                 }
             } else {
-                Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_EN_GOLON_GOOD_BIG, 60);
+                Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, SFX_ID_ENEMY_GOLON_GOOD_BIG, 60);
                 Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ENGO2_ANIM_6);
                 Message_ContinueTextbox(play, 0x305A);
                 this->eyeMouthTexState = 3;
@@ -1930,7 +1930,7 @@ void EnGo2_GoronFireGenericAction(EnGo2* this, PlayState* play) {
         case 2: // Walking away
             if (DECR(this->animTimer)) {
                 if (!(this->animTimer % 8)) {
-                    Actor_PlaySfx(&this->actor, NA_SE_EN_MORIBLIN_WALK);
+                    Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_MORIBLIN_WALK);
                 }
                 Actor_MoveForward(&this->actor);
             } else {
@@ -1947,13 +1947,13 @@ void EnGo2_GoronFireGenericAction(EnGo2* this, PlayState* play) {
         case 3: // Walking away
             this->animTimer++;
             if (!(this->animTimer % 8) && (this->animTimer < 10)) {
-                Actor_PlaySfx(&this->actor, NA_SE_EN_MORIBLIN_WALK);
+                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_MORIBLIN_WALK);
             }
             if (this->animTimer == 10) {
-                Actor_PlaySfx(&this->actor, NA_SE_EV_IRON_DOOR_OPEN);
+                Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_IRON_DOOR_OPEN);
             }
             if (this->animTimer > 44) {
-                SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, NA_SE_EV_IRON_DOOR_CLOSE);
+                SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, SFX_ID_ENVIRONMENT_IRON_DOOR_CLOSE);
             } else {
                 break;
             }

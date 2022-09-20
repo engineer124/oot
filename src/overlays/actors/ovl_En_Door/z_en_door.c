@@ -228,7 +228,7 @@ void EnDoor_Idle(EnDoor* this, PlayState* play) {
         if (this->lockTimer != 0) {
             gSaveContext.inventory.dungeonKeys[gSaveContext.mapIndex]--;
             Flags_SetSwitch(play, ENDOOR_GET_LOCKED_SWITCH_FLAG(&this->actor));
-            Actor_PlaySfx(&this->actor, NA_SE_EV_CHAIN_KEY_UNLOCK);
+            Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_CHAIN_KEY_UNLOCK);
         }
     } else if (!Player_InCsMode(play)) {
         if (fabsf(playerPosRelToDoor.y) < 20.0f && fabsf(playerPosRelToDoor.x) < 20.0f &&
@@ -303,8 +303,8 @@ void EnDoor_Open(EnDoor* this, PlayState* play) {
         } else if (Animation_OnFrame(&this->skelAnime, sDoorAnimOpenFrames[this->openAnim])) {
             Actor_PlaySfx(&this->actor, (play->sceneId == SCENE_HAKADAN || play->sceneId == SCENE_HAKADANCH ||
                                          play->sceneId == SCENE_HIDAN)
-                                            ? NA_SE_EV_IRON_DOOR_OPEN
-                                            : NA_SE_OC_DOOR_OPEN);
+                                            ? SFX_ID_ENVIRONMENT_IRON_DOOR_OPEN
+                                            : SFX_ID_OCARINA_DOOR_OPEN);
             if (this->skelAnime.playSpeed < 1.5f) {
                 numEffects = (s32)(Rand_ZeroOne() * 30.0f) + 50;
                 for (i = 0; i < numEffects; i++) {
@@ -314,8 +314,8 @@ void EnDoor_Open(EnDoor* this, PlayState* play) {
         } else if (Animation_OnFrame(&this->skelAnime, sDoorAnimCloseFrames[this->openAnim])) {
             Actor_PlaySfx(&this->actor, (play->sceneId == SCENE_HAKADAN || play->sceneId == SCENE_HAKADANCH ||
                                          play->sceneId == SCENE_HIDAN)
-                                            ? NA_SE_EV_IRON_DOOR_CLOSE
-                                            : NA_SE_EV_DOOR_CLOSE);
+                                            ? SFX_ID_ENVIRONMENT_IRON_DOOR_CLOSE
+                                            : SFX_ID_ENVIRONMENT_DOOR_CLOSE);
         }
     }
 }

@@ -111,7 +111,7 @@ void MagicFire_UpdateBeforeCast(Actor* thisx, PlayState* play) {
         this->actionTimer--;
     } else {
         this->actor.update = MagicFire_Update;
-        Player_PlaySfx(&player->actor, NA_SE_PL_MAGIC_FIRE);
+        Player_PlaySfx(&player->actor, SFX_ID_PLAYER_MAGIC_FIRE);
     }
     this->actor.world.pos = player->actor.world.pos;
 }

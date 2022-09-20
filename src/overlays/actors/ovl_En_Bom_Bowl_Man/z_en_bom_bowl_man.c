@@ -366,7 +366,7 @@ void EnBomBowMan_SetupChooseShowPrize(EnBomBowlMan* this, PlayState* play) {
         pos.y = 40.0f;
         pos.z = 300.0f;
         EffectSsBomb2_SpawnLayered(play, &pos, &velocity, &accel, 50, 15);
-        Actor_PlaySfx(&this->actor, NA_SE_IT_GOODS_APPEAR);
+        Actor_PlaySfx(&this->actor, SFX_ID_ITEM_GOODS_APPEAR);
         this->prizeRevealTimer = 10;
         this->actionFunc = EnBomBowMan_ChooseShowPrize;
     }

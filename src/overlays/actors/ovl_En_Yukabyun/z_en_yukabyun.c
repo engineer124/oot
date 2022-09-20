@@ -94,7 +94,7 @@ void func_80B43AD4(EnYukabyun* this, PlayState* play) {
         this->actionfunc = func_80B43B6C;
     }
     Math_StepToF(&this->actor.world.pos.y, this->actor.home.pos.y + 30.0f, 1.0f);
-    func_8002F974(&this->actor, NA_SE_EN_YUKABYUN_FLY - SFX_FLAG);
+    func_8002F974(&this->actor, SFX_ID_ENEMY_YUKABYUN_FLY - SFX_FLAG);
 }
 
 void func_80B43B6C(EnYukabyun* this, PlayState* play) {
@@ -103,7 +103,7 @@ void func_80B43B6C(EnYukabyun* this, PlayState* play) {
         Actor_Kill(&this->actor);
         return;
     }
-    func_8002F974(&this->actor, NA_SE_EN_YUKABYUN_FLY - SFX_FLAG);
+    func_8002F974(&this->actor, SFX_ID_ENEMY_YUKABYUN_FLY - SFX_FLAG);
 }
 
 void EnYukabyun_Break(EnYukabyun* this, PlayState* play) {
@@ -123,7 +123,7 @@ void EnYukabyun_Update(Actor* thisx, PlayState* play) {
         this->collider.base.acFlags &= ~AC_HIT;
         this->collider.base.ocFlags1 &= ~OC1_HIT;
         this->actor.flags &= ~(ACTOR_FLAG_0 | ACTOR_FLAG_2);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 30, NA_SE_EN_OCTAROCK_ROCK);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 30, SFX_ID_ENEMY_OCTAROCK_ROCK);
         this->actionfunc = EnYukabyun_Break;
     }
 

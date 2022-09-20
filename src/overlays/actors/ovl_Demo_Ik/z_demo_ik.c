@@ -90,19 +90,19 @@ void DemoIk_Type1PlaySfx(DemoIk* this) {
     switch (this->actor.params) {
         case 0:
             if (Animation_OnFrame(&this->skelAnime, 5.0f)) {
-                AudioSfx_PlaySfx(NA_SE_EN_IRONNACK_ARMOR_LAND1_DEMO, &this->actor.projectedPos, 4,
+                AudioSfx_PlaySfx(SFX_ID_ENEMY_IRONNACK_ARMOR_LAND1_DEMO, &this->actor.projectedPos, 4,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
             break;
         case 1:
             if (Animation_OnFrame(&this->skelAnime, 10.0f)) {
-                AudioSfx_PlaySfx(NA_SE_EN_IRONNACK_ARMOR_LAND3_DEMO, &this->actor.projectedPos, 4,
+                AudioSfx_PlaySfx(SFX_ID_ENEMY_IRONNACK_ARMOR_LAND3_DEMO, &this->actor.projectedPos, 4,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
             break;
         case 2:
             if (Animation_OnFrame(&this->skelAnime, 9.0f)) {
-                AudioSfx_PlaySfx(NA_SE_EN_IRONNACK_ARMOR_LAND2_DEMO, &this->actor.projectedPos, 4,
+                AudioSfx_PlaySfx(SFX_ID_ENEMY_IRONNACK_ARMOR_LAND2_DEMO, &this->actor.projectedPos, 4,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
             break;
@@ -324,8 +324,8 @@ void DemoIk_Type2Init(DemoIk* this, PlayState* play) {
 
 void DemoIk_Type2PlaySfxOnFrame(DemoIk* this, f32 frame) {
     if (Animation_OnFrame(&this->skelAnime, frame)) {
-        AudioSfx_PlaySfx(NA_SE_EN_IRONNACK_ARMOR_OFF_DEMO, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        AudioSfx_PlaySfx(SFX_ID_ENEMY_IRONNACK_ARMOR_OFF_DEMO, &this->actor.projectedPos, 4,
+                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 }
 

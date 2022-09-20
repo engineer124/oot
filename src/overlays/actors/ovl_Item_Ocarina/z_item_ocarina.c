@@ -108,7 +108,7 @@ void ItemOcarina_Fly(ItemOcarina* this, PlayState* play) {
         this->actor.gravity = -0.1f;
         this->actor.minVelocityY = -0.5f;
         this->spinRotOffset = 0;
-        Actor_PlaySfx(&this->actor, NA_SE_EV_BOMB_DROP_WATER);
+        Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_BOMB_DROP_WATER);
     }
 
     // landed in water

@@ -338,7 +338,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
                             EnTorch2_SwingSword(play, input, this);
                             sSwordJumpState++;
                         } else if (sSwordJumpTimer == 19) {
-                            func_800F4190(&this->actor.projectedPos, NA_SE_VO_LI_AUTO_JUMP);
+                            func_800F4190(&this->actor.projectedPos, SFX_ID_VOICE_LI_AUTO_JUMP);
                         }
                     }
                 } else {
@@ -653,7 +653,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
         }
         if (staggerThreshold < sStaggerCount) {
             this->skelAnime.playSpeed *= 0.6f;
-            func_800F4190(&this->actor.projectedPos, NA_SE_PL_DAMAGE);
+            func_800F4190(&this->actor.projectedPos, SFX_ID_PLAYER_DAMAGE);
             sStaggerTimer = 0;
             sStaggerCount = 0;
         }

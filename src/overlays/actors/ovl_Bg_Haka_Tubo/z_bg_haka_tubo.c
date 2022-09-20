@@ -127,7 +127,7 @@ void BgHakaTubo_Idle(BgHakaTubo* this, PlayState* play) {
             pos.z = this->dyna.actor.world.pos.z;
             pos.y = this->dyna.actor.world.pos.y + 80.0f;
             EffectSsBomb2_SpawnLayered(play, &pos, &sZeroVector, &sZeroVector, 100, 45);
-            SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 50, NA_SE_EV_BOX_BREAK);
+            SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 50, SFX_ID_ENVIRONMENT_BOX_BREAK);
             EffectSsHahen_SpawnBurst(play, &pos, 20.0f, 0, 350, 100, 50, OBJECT_HAKA_OBJECTS, 40, gEffFragments2DL);
             this->dropTimer = 5;
             this->dyna.actor.draw = NULL;
@@ -161,7 +161,7 @@ void BgHakaTubo_DropCollectible(BgHakaTubo* this, PlayState* play) {
             if (sPotsDestroyed == 3) {
                 // All 3 pots destroyed
                 collectibleParams = -1;
-                func_80078884(NA_SE_SY_CORRECT_CHIME);
+                func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
                 // Drop rupees
                 for (i = 0; i < 9; i++) {
                     collectible = Item_DropCollectible(
@@ -177,7 +177,7 @@ void BgHakaTubo_DropCollectible(BgHakaTubo* this, PlayState* play) {
                 Actor_Spawn(&play->actorCtx, play, ACTOR_EN_FIREFLY, this->dyna.actor.world.pos.x,
                             this->dyna.actor.world.pos.y + 80.0f, this->dyna.actor.world.pos.z, 0,
                             this->dyna.actor.shape.rot.y, 0, 2);
-                func_80078884(NA_SE_SY_ERROR);
+                func_80078884(SFX_ID_SYSTEM_ERROR);
             } else {
                 // Random rewards
                 if (rnd < 0.4f) {
@@ -189,16 +189,16 @@ void BgHakaTubo_DropCollectible(BgHakaTubo* this, PlayState* play) {
                 } else {
                     collectibleParams = ITEM00_ARROWS_SMALL;
                 }
-                func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                func_80078884(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
             }
         } else if (Flags_GetCollectible(play, this->dyna.actor.params) != 0) {
             // If small key already collected, drop recovery heart instead
             collectibleParams = ITEM00_RECOVERY_HEART;
-            func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+            func_80078884(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
         } else {
             // Drops a small key and sets a collect flag
             collectibleParams = ((this->dyna.actor.params & 0x3F) << 8) | ITEM00_SMALL_KEY;
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
         }
         if (collectibleParams != -1) {
             collectible = Item_DropCollectible(play, &spawnPos, collectibleParams);

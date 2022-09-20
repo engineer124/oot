@@ -663,7 +663,7 @@ Acmd* AudioSynth_ProcessSamples(s16* aiBuf, s32 numSamplesPerUpdate, Acmd* cmd, 
             aMix(cmd++, DMEM_2CH_SIZE >> 4, reverb->decayRatio + 0x8000, DMEM_WET_LEFT_CH, DMEM_WET_LEFT_CH);
 
             // Leak reverb between the left and right channels
-            if (reverb->leakRtl != 0 || reverb->leakLtr != 0) {
+            if ((reverb->leakRtl != 0) || (reverb->leakLtr != 0)) {
                 cmd = AudioSynth_LeakReverb(cmd, reverb);
             }
 

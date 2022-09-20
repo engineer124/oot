@@ -101,7 +101,7 @@ typedef struct EnGo2 {
     /* 0x04B8 */ Vec3s jointTable[18];
     /* 0x0524 */ Vec3s morphTable[18];
     /* 0x0590 */ s16 unk_590; // timer
-    /* 0x0592 */ s16 animTimer; // animTimer. Plays NA_SE_EN_MORIBLIN_WALK, NA_SE_EV_IRON_DOOR_OPEN, NA_SE_EV_IRON_DOOR_CLOSE
+    /* 0x0592 */ s16 animTimer; // animTimer. Plays SFX_ID_ENEMY_MORIBLIN_WALK, SFX_ID_ENVIRONMENT_IRON_DOOR_OPEN, SFX_ID_ENVIRONMENT_IRON_DOOR_CLOSE
     /* 0x0594 */ s32 getItemId;
     /* 0x0598 */ char unk_598[0x02];
     /* 0x059A */ s16 subCamId;

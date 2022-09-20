@@ -49,11 +49,11 @@ const ActorInit Bg_Spot01_Idohashira_InitVars = {
 };
 
 void BgSpot01Idohashira_PlayBreakSfx1(BgSpot01Idohashira* this) {
-    func_80078914(&this->dyna.actor.projectedPos, NA_SE_EV_BOX_BREAK);
+    func_80078914(&this->dyna.actor.projectedPos, SFX_ID_ENVIRONMENT_BOX_BREAK);
 }
 
 void BgSpot01Idohashira_PlayBreakSfx2(BgSpot01Idohashira* this, PlayState* play) {
-    SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 60, NA_SE_EV_WOODBOX_BREAK);
+    SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 60, SFX_ID_ENVIRONMENT_WOODBOX_BREAK);
 }
 
 void func_808AAD3C(PlayState* play, Vec3f* vec, u32 arg2) {

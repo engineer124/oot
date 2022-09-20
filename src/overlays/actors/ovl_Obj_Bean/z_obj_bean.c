@@ -581,7 +581,7 @@ void func_80B8FEAC(ObjBean* this, PlayState* play) {
     } else {
         this->timer = 1;
     }
-    func_8002F974(&this->dyna.actor, NA_SE_PL_PLANT_GROW_UP - SFX_FLAG);
+    func_8002F974(&this->dyna.actor, SFX_ID_PLAYER_PLANT_GROW_UP - SFX_FLAG);
 }
 
 void func_80B8FF50(ObjBean* this) {
@@ -677,7 +677,7 @@ void ObjBean_GrowWaterPhase2(ObjBean* this, PlayState* play) {
     if (this->stalkSizeMultiplier >= 0.1f) { // 100 Frames
         ObjBean_SetupGrowWaterPhase3(this);
     }
-    func_8002F974(&this->dyna.actor, NA_SE_PL_PLANT_TALLER - SFX_FLAG);
+    func_8002F974(&this->dyna.actor, SFX_ID_PLAYER_PLANT_TALLER - SFX_FLAG);
 }
 
 void ObjBean_SetupGrowWaterPhase3(ObjBean* this) {
@@ -703,8 +703,8 @@ void ObjBean_GrowWaterPhase3(ObjBean* this, PlayState* play) {
                 Item_DropCollectible(play, &itemDropPos, ITEM00_FLEXIBLE);
             }
             this->stateFlags |= BEAN_STATE_BEEN_WATERED;
-            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BUTTERFRY_TO_FAIRY);
-            func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BUTTERFRY_TO_FAIRY);
+            func_80078884(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
         }
     } else if (this->timer <= 0) {
         ObjBean_SetupGrowWaterPhase4(this);
@@ -786,7 +786,7 @@ void ObjBean_Fly(ObjBean* this, PlayState* play) {
 
     } else if (DynaPolyActor_IsPlayerOnTop(&this->dyna)) {
 
-        func_8002F974(&this->dyna.actor, NA_SE_PL_PLANT_MOVE - SFX_FLAG);
+        func_8002F974(&this->dyna.actor, SFX_ID_PLAYER_PLANT_MOVE - SFX_FLAG);
 
         if (play->sceneId == SCENE_SPOT10) {
             Camera_ChangeSetting(play->cameraPtrs[CAM_ID_MAIN], CAM_SET_BEAN_LOST_WOODS);

@@ -307,12 +307,12 @@ void BgHidanKowarerukabe_Update(Actor* thisx, PlayState* play) {
         Flags_SetSwitch(play, (this->dyna.actor.params >> 8) & 0x3F);
 
         if ((this->dyna.actor.params & 0xFF) == 0) {
-            SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 40, NA_SE_EV_EXPLOSION);
+            SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 40, SFX_ID_ENVIRONMENT_EXPLOSION);
         } else {
-            SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 40, NA_SE_EV_WALL_BROKEN);
+            SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 40, SFX_ID_ENVIRONMENT_WALL_BROKEN);
         }
 
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
         Actor_Kill(&this->dyna.actor);
         return;
     }

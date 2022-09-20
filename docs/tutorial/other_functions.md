@@ -404,7 +404,7 @@ func_8005B1A4(GET_ACTIVE_CAM(play));
 gSaveContext.unkEDA |= 0x400
 ```
 
-- The last function is an audio function: we can look up the argument in `sfx.h` and find it is `NA_SE_SY_CORRECT_CHIME`
+- The last function is an audio function: we can look up the argument in `sfx.h` and find it is `SFX_ID_SYSTEM_CORRECT_CHIME`
 
 It remains to work out which, if any, of the temps are real. Based on our previous experience, we expect `temp_v1` to be real. `sp1C` is unused and hence unlikely to be real. `temp_v0` is only used in the short if and so probably not real. Checking the diff shows that our suspicions were correct:
 ```C
@@ -420,7 +420,7 @@ void func_80A87CEC(EnJj *this, PlayState *play) {
     func_8003EBF8(play, &play->colCtx.dyna, child->bgId);
     func_8005B1A4(GET_ACTIVE_CAM(play));
     gSaveContext.eventChkInf[3] |= 0x400;
-    func_80078884(NA_SE_SY_CORRECT_CHIME);
+    func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
 }
 ```
 
@@ -439,7 +439,7 @@ void func_80A87CEC(EnJj* this, PlayState* play) {
         func_8003EBF8(play, &play->colCtx.dyna, child->bgId);
         func_8005B1A4(GET_ACTIVE_CAM(play));
         gSaveContext.eventChkInf[3] |= 0x400;
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
     }
 }
 ```
@@ -526,7 +526,7 @@ void EnJj_Update(Actor *thisx, PlayState *play) {
     } else {
         this->actionFunc(this, play);
         if (this->skelAnime.curFrame == 41.0f) {
-            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_JABJAB_GROAN);
+            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_JABJAB_GROAN);
         }
     }
     func_80A87B1C(this);
@@ -771,9 +771,9 @@ void func_80A87D94(EnJj *this, PlayState *play) {
     }
 }
 ```
-(notice that this time we need a `default` to deal with the innermost if contents). If you try to replace `0x206D` in the `Actor_PlaySfx`, you will find there is no such sfxId in the list: this is because some sound effects have an extra offset of `0x800` to do with setting flags. Adding `0x800` to the sfxId shows that this sound effect is `NA_SE_EV_JABJAB_BREATHE`. To correct this to the id in the function, we have a macro `SFX_FLAG`, and it should therefore be
+(notice that this time we need a `default` to deal with the innermost if contents). If you try to replace `0x206D` in the `Actor_PlaySfx`, you will find there is no such sfxId in the list: this is because some sound effects have an extra offset of `0x800` to do with setting flags. Adding `0x800` to the sfxId shows that this sound effect is `SFX_ID_ENVIRONMENT_JABJAB_BREATHE`. To correct this to the id in the function, we have a macro `SFX_FLAG`, and it should therefore be
 ```C
-Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_JABJAB_BREATHE - SFX_FLAG);
+Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_JABJAB_BREATHE - SFX_FLAG);
 ```
 
 As usual, most of the remaining temps look fake. The only one that does not is possibly `phi_v1`. However, the way in which they are used here makes it hard to tell if they are fake, and if so, how to replace them. I encourage you to try this yourself, with the aid of the diff script; the final, matching result, with other cleanup, is hidden below
@@ -814,7 +814,7 @@ void func_80A87D94(EnJj* this, PlayState* play) {
             break;
     }
     if ((this->unk_30A & 1) != 0) {
-        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_JABJAB_BREATHE - SFX_FLAG);
+        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_JABJAB_BREATHE - SFX_FLAG);
         if (this->unk_308 >= -5200) {
             this->unk_308 -= 102;
         }

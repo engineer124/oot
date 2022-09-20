@@ -363,7 +363,7 @@ void func_800B44E0(DbCamera* dbCamera, Camera* cam) {
 
     if (dbCamera->sub.nPoints < 6) {
         if (sDbCamAnim.unk_0A != 0) {
-            AudioSfx_PlaySfx(NA_SE_SY_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(SFX_ID_SYSTEM_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             sDbCamAnim.unk_0A = 0;
         }
@@ -378,7 +378,7 @@ void func_800B44E0(DbCamera* dbCamera, Camera* cam) {
         !func_800BB2B4(&sDbCamAnim.lookAtPos, &sDbCamAnim.roll, &sDbCamAnim.fov, dbCamera->sub.lookAt,
                        &sDbCamAnim.keyframe, &sDbCamAnim.curFrame) &&
         sDbCamAnim.unk_0A == 1) {
-        AudioSfx_PlaySfx(NA_SE_SY_HP_RECOVER, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(SFX_ID_SYSTEM_HP_RECOVER, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         sDbCamAnim.unk_04++;
 
@@ -607,8 +607,8 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
         dbCamera->unk_40 = -1;
         dbCamera->sub.demoCtrlActionIdx = 0;
         sDbCamAnim.unk_0A = 0;
-        AudioSfx_PlaySfx(NA_SE_SY_LOCK_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultReverb);
+        AudioSfx_PlaySfx(SFX_ID_SYSTEM_LOCK_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     } else if (dbCamera->unk_38 == -1) {
         dbCamera->unk_38 = 1;
     } else {
@@ -928,7 +928,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
             dbCamera->unk_1C.z = 0.0f;
             dbCamera->unk_1C.y = 1.0f;
         } else if (dbCamera->sub.unk_08 == 2) {
-            AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             dbCamera->sub.unk_08 = 0;
             func_800B41DC(dbCamera, dbCamera->sub.unkIdx, cam);
@@ -936,16 +936,16 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
 
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_R) &&
                 CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
-                AudioSfx_PlaySfx(NA_SE_SY_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_SYSTEM_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 dbCamera->sub.nPoints = dbCamera->sub.unkIdx + 1;
                 func_800B4088(dbCamera, cam);
             } else if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_R)) {
                 if (dbCamera->sub.unkIdx == 0x80) {
-                    AudioSfx_PlaySfx(NA_SE_SY_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                    AudioSfx_PlaySfx(SFX_ID_SYSTEM_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 } else {
-                    AudioSfx_PlaySfx(NA_SE_IT_SWORD_PUTAWAY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                    AudioSfx_PlaySfx(SFX_ID_ITEM_SWORD_PUTAWAY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     func_800B42C0(dbCamera, cam);
                     if (dbCamera->sub.unkIdx == (dbCamera->sub.nPoints - 1)) {
@@ -999,7 +999,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
         } else {
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CRIGHT) &&
                 CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
-                AudioSfx_PlaySfx(NA_SE_SY_GET_RUPY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_SYSTEM_GET_RUPY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 osSyncPrintf("@@@\n@@@\n@@@/* *** spline point data ** start here *** */\n@@@\n");
                 DbCamera_PrintPoints("Lookat", dbCamera->sub.nPoints, dbCamera->sub.lookAt);
@@ -1009,14 +1009,14 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                 osSyncPrintf("@@@static short  Mode = %d;\n@@@\n", dbCamera->sub.mode);
                 osSyncPrintf("@@@\n@@@\n@@@/* *** spline point data ** finish! *** */\n@@@\n");
             } else if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CLEFT)) {
-                AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 dbCamera->sub.unk_08 = (dbCamera->sub.unk_08 + 1) % 3;
             }
 
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CUP) &&
                 CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
-                AudioSfx_PlaySfx(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_ITEM_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 if (dbCamera->sub.unkIdx > 0) {
                     dbCamera->sub.unkIdx--;
@@ -1025,7 +1025,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                 }
             } else {
                 if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CUP)) {
-                    AudioSfx_PlaySfx(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                    AudioSfx_PlaySfx(SFX_ID_ITEM_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     if (dbCamera->sub.unkIdx > 0) {
                         dbCamera->sub.unkIdx--;
@@ -1047,7 +1047,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
             }
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L) &&
                 CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CDOWN)) {
-                AudioSfx_PlaySfx(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_ITEM_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 if (dbCamera->sub.unkIdx < (dbCamera->sub.nPoints - 1)) {
                     dbCamera->sub.unkIdx++;
@@ -1056,7 +1056,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                 }
             } else {
                 if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CDOWN)) {
-                    AudioSfx_PlaySfx(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                    AudioSfx_PlaySfx(SFX_ID_ITEM_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     if (dbCamera->sub.unkIdx < (dbCamera->sub.nPoints - 1)) {
                         dbCamera->sub.unkIdx++;
@@ -1126,7 +1126,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                 case 1:
                     dbCamera->unk_3C = true;
                     if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DUP)) {
-                        AudioSfx_PlaySfx(NA_SE_SY_ATTENTION_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                        AudioSfx_PlaySfx(SFX_ID_SYSTEM_ATTENTION_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                         if (dbCamera->sub.unk_0A == 0) {
                             dbCamera->sub.unk_0A = 5;
@@ -1135,7 +1135,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                         }
                     }
                     if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DDOWN)) {
-                        AudioSfx_PlaySfx(NA_SE_SY_ATTENTION_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                        AudioSfx_PlaySfx(SFX_ID_SYSTEM_ATTENTION_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                         if (dbCamera->sub.unk_0A == 5) {
                             dbCamera->sub.unk_0A = 0;
@@ -1144,7 +1144,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                         }
                     }
                     if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DLEFT)) {
-                        AudioSfx_PlaySfx(NA_SE_SY_ATTENTION_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                        AudioSfx_PlaySfx(SFX_ID_SYSTEM_ATTENTION_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                         switch (dbCamera->sub.unk_0A) {
                             case 1:
@@ -1194,8 +1194,9 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
 
                     if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_DLEFT)) {
                         if ((D_8012D10C++ % 5) == 0) {
-                            AudioSfx_PlaySfx(NA_SE_SY_ATTENTION_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_ATTENTION_ON, &gSfxDefaultPos, 4,
+                                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
+                                             &gSfxDefaultReverb);
                         }
 
                         switch (dbCamera->sub.unk_0A) {
@@ -1232,7 +1233,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                     }
 
                     if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DRIGHT)) {
-                        AudioSfx_PlaySfx(NA_SE_SY_ATTENTION_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                        AudioSfx_PlaySfx(SFX_ID_SYSTEM_ATTENTION_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
                         switch (dbCamera->sub.unk_0A) {
@@ -1282,8 +1283,9 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                     }
                     if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_DRIGHT)) {
                         if ((D_8012D10C++ % 5) == 0) {
-                            AudioSfx_PlaySfx(NA_SE_SY_ATTENTION_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_ATTENTION_ON, &gSfxDefaultPos, 4,
+                                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
+                                             &gSfxDefaultReverb);
                         }
 
                         switch (dbCamera->sub.unk_0A) {
@@ -1435,7 +1437,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
         dbCamera->fov = 60.0f;
         dbCamera->rollDegrees = dbCamera->roll * 1.40625f;
         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CLEFT)) {
-            AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             dbCamera->unk_78 = (dbCamera->unk_78 + 1) % 3;
             dbCamera->unk_38 = -1;
@@ -1717,8 +1719,8 @@ void DbCamera_DrawSlotLetters(char* str, s16 y, s16 x, s32 colorIndex) {
 void DbCamera_PrintAllCuts(Camera* cam) {
     s32 i;
 
-    AudioSfx_PlaySfx(NA_SE_SY_GET_RUPY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
-                     &gSfxDefaultReverb);
+    AudioSfx_PlaySfx(SFX_ID_SYSTEM_GET_RUPY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     osSyncPrintf("@@@\n@@@\n@@@/* ****** spline point data ** start here ***** */\n@@@\n");
 
     for (i = 0; i < ARRAY_COUNT(sDbCameraCuts) - 1; i++) {
@@ -1865,7 +1867,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                     if ((1 << sCurFileIdx) & sMempakFiles) {
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DLEFT) ||
                             CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DRIGHT)) {
-                            AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             dbCamera->sub.demoCtrlToggleSwitch ^= 1;
                         }
@@ -1879,11 +1881,11 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
 
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_A)) {
                             if (dbCamera->sub.demoCtrlToggleSwitch == 0) {
-                                AudioSfx_PlaySfx(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                                AudioSfx_PlaySfx(SFX_ID_SYSTEM_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                                 dbCamera->sub.demoCtrlMenu++;
                             } else {
-                                AudioSfx_PlaySfx(NA_SE_SY_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                                AudioSfx_PlaySfx(SFX_ID_SYSTEM_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                                 dbCamera->sub.demoCtrlMenu = 0;
                             }
@@ -1900,7 +1902,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                         }
                     }
                     if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_B)) {
-                        AudioSfx_PlaySfx(NA_SE_SY_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                        AudioSfx_PlaySfx(SFX_ID_SYSTEM_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                         dbCamera->sub.demoCtrlMenu = 0;
                         return 1;
@@ -1937,7 +1939,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
 
                     if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_A) ||
                         CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_B)) {
-                        AudioSfx_PlaySfx(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                        AudioSfx_PlaySfx(SFX_ID_SYSTEM_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                         if (dbCamera->sub.demoCtrlMenu == DEMO_CTRL_MENU(ACTION_LOAD, MENU_SUCCESS)) {
                             dbCamera->sub.demoCtrlActionIdx = ACTION_E;
@@ -1960,7 +1962,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
 
                     if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_A) ||
                         CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_B)) {
-                        AudioSfx_PlaySfx(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                        AudioSfx_PlaySfx(SFX_ID_SYSTEM_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                         dbCamera->sub.demoCtrlMenu -= 9;
                     }
@@ -1995,7 +1997,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                         sp74[i * 2 + 1] = '\0';
 
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DRIGHT)) {
-                            AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             if (sCurFileIdx >= 4) {
                                 sCurFileIdx = 0;
@@ -2012,7 +2014,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                             }
                         }
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DLEFT)) {
-                            AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             if (sCurFileIdx <= 0) {
                                 sCurFileIdx = 4;
@@ -2055,24 +2057,24 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                         func_8006376C(0x14, 0x1A, 5, D_8012CF70);
 
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DUP)) {
-                            AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             dbCamera->sub.demoCtrlActionIdx = (dbCamera->sub.demoCtrlActionIdx - 1) % 4u;
                         }
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DDOWN)) {
-                            AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             dbCamera->sub.demoCtrlActionIdx = (dbCamera->sub.demoCtrlActionIdx + 1) % 4u;
                         }
 
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_A)) {
-                            AudioSfx_PlaySfx(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             dbCamera->sub.demoCtrlToggleSwitch = 0;
                             dbCamera->sub.demoCtrlMenu = DEMO_CTRL_MENU(dbCamera->sub.demoCtrlActionIdx, MENU_INFO);
                         }
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_B)) {
-                            AudioSfx_PlaySfx(NA_SE_SY_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             dbCamera->sub.demoCtrlActionIdx = ACTION_E;
                             return 1;
@@ -2085,7 +2087,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                             CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DUP) ||
                             CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DDOWN)) {
 
-                            AudioSfx_PlaySfx(NA_SE_SY_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             dbCamera->sub.demoCtrlActionIdx = ACTION_E;
                         }
@@ -2098,14 +2100,14 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
 
         default: {
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DUP)) {
-                AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 dbCamera->sub.demoCtrlMenu = DEMO_CTRL_MENU(ACTION_E, MENU_INFO);
                 dbCamera->sub.demoCtrlActionIdx = (dbCamera->sub.demoCtrlActionIdx - 1) % 4u;
                 sCurFileIdx = 0;
             }
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DDOWN)) {
-                AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 dbCamera->sub.demoCtrlMenu = DEMO_CTRL_MENU(ACTION_E, MENU_INFO);
                 dbCamera->sub.demoCtrlActionIdx = (dbCamera->sub.demoCtrlActionIdx + 1) % 4u;
@@ -2145,7 +2147,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                 if (func_800B91B0(cam, dbCamera) == 0) {
                     Interface_ChangeAlpha(2);
                     Letterbox_SetSizeTarget(0);
-                    AudioSfx_PlaySfx(NA_SE_SY_GET_RUPY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                    AudioSfx_PlaySfx(SFX_ID_SYSTEM_GET_RUPY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 }
                 OLib_Vec3fDiffToVecSphGeo(&sp5C, &dbCamera->eye, &dbCamera->at);
@@ -2164,7 +2166,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                 sDbCamAnim.unk_0A = 1;
                 sDbCamAnim.unk_0C = 0;
                 D_8016110C = 0;
-                AudioSfx_PlaySfx(NA_SE_SY_HP_RECOVER, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_SYSTEM_HP_RECOVER, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
 
@@ -2181,14 +2183,14 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                 if (sLastFileIdx != -1) {
                     switch (sp74[sCurFileIdx]) {
                         case '?':
-                            AudioSfx_PlaySfx(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             sDbCameraCuts[idx1] = sDbCameraCuts[idx2];
                             sp74[sCurFileIdx] = '?'; // useless
                             DbCamera_ResetCut(idx2, false);
                             break;
                         case '-':
-                            AudioSfx_PlaySfx(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
                             sp64 = sDbCameraCuts[idx2];
@@ -2211,7 +2213,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                             }
                             break;
                         default:
-                            AudioSfx_PlaySfx(NA_SE_SY_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             break;
                     }
@@ -2221,7 +2223,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
 
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_A)) {
                 if (sp74[sCurFileIdx] == '?') {
-                    AudioSfx_PlaySfx(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                    AudioSfx_PlaySfx(SFX_ID_SYSTEM_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     sp74[sCurFileIdx] = DbCamera_InitCut(idx1, &dbCamera->sub);
                     if (sp74[sCurFileIdx] == '?') {
@@ -2232,7 +2234,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
 
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_B)) {
                 if (sp74[sCurFileIdx] != '?' && sp74[sCurFileIdx] != '-') {
-                    AudioSfx_PlaySfx(NA_SE_SY_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                    AudioSfx_PlaySfx(SFX_ID_SYSTEM_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     sp74[sCurFileIdx] = '?';
                     DbCamera_ResetCut(idx1, true);
@@ -2241,7 +2243,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
 
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_R)) {
                 if (sp74[sCurFileIdx] != '?' && sp74[sCurFileIdx] != '-') {
-                    AudioSfx_PlaySfx(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                    AudioSfx_PlaySfx(SFX_ID_SYSTEM_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
                     for (i = 0; i < sDbCameraCuts[idx1].nPoints; i++) {
@@ -2264,7 +2266,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
             }
 
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DRIGHT)) {
-                AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 if (sCurFileIdx == 0x1E) {
                     sCurFileIdx = 0;
@@ -2273,7 +2275,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                 }
             }
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DLEFT)) {
-                AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 sCurFileIdx = (sCurFileIdx == 0) ? 0x1E : sCurFileIdx - 1;
             }
@@ -2288,7 +2290,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                 DbCamera_PrintAllCuts(cam);
             } else if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L) &&
                        CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CLEFT)) {
-                AudioSfx_PlaySfx(NA_SE_SY_GET_RUPY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_SYSTEM_GET_RUPY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 for (i = 0; i < ARRAY_COUNT(sDbCameraCuts) - 1; i++) {
                     if (sDbCameraCuts[i].nPoints != 0) {
@@ -2305,7 +2307,7 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                 Interface_ChangeAlpha(50);
                 Letterbox_SetSizeTarget(32);
                 D_8016110C = 0;
-                AudioSfx_PlaySfx(NA_SE_SY_HP_RECOVER, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(SFX_ID_SYSTEM_HP_RECOVER, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
 

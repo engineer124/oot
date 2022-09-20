@@ -157,7 +157,7 @@ void func_8088B268(BgHidanRock* this, PlayState* play) {
                 this->timer = 5;
             }
 
-            func_8002F974(&this->dyna.actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
+            func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_ROCK_SLIDE - SFX_FLAG);
         } else {
             player->stateFlags2 &= ~PLAYER_STATE2_4;
             this->dyna.unk_150 = 0.0f;
@@ -234,7 +234,7 @@ void func_8088B69C(BgHidanRock* this, PlayState* play) {
 
     if (!(this->timer % 4)) {
         func_800AA000(this->dyna.actor.xyzDistToPlayerSq, 0xB4, 0x0A, 0x64);
-        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BLOCK_SHAKE);
+        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCK_SHAKE);
     }
 }
 
@@ -250,7 +250,7 @@ void func_8088B79C(BgHidanRock* this, PlayState* play) {
             this->dyna.actor.flags &= ~(ACTOR_FLAG_4 | ACTOR_FLAG_5);
         }
 
-        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
+        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCK_BOUND);
         Actor_PlaySfx(&this->dyna.actor,
                       SurfaceType_GetSfxId(&play->colCtx, this->dyna.actor.floorPoly, this->dyna.actor.floorBgId) +
                           SFX_FLAG);
@@ -305,7 +305,7 @@ void func_8088B990(BgHidanRock* this, PlayState* play) {
         ((this->type != 0) && (Math_SmoothStepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y + 480.0,
                                                   0.25f, 20.0f, 0.5f) < 0.1f))) {
         if (this->type == 0) {
-            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
+            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCK_BOUND);
         }
         this->timer = 20;
         this->actionFunc = func_8088B954;
@@ -393,7 +393,7 @@ void BgHidanRock_Draw(Actor* thisx, PlayState* play) {
             SkinMatrix_Vec3fMtxFMultXYZ(&play->viewProjectionMtxF, &this->dyna.actor.home.pos, &this->unk_170);
         }
 
-        func_80078914(&this->unk_170, NA_SE_EV_FIRE_PILLAR - SFX_FLAG);
+        func_80078914(&this->unk_170, SFX_ID_ENVIRONMENT_FIRE_PILLAR - SFX_FLAG);
         func_8088BC40(play, this);
     }
 }

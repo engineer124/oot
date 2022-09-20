@@ -113,7 +113,7 @@ void ObjMakeoshihiki_Draw(Actor* thisx, PlayState* play) {
                 }
 
                 if (sfxCond1 || sfxCond2) {
-                    func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                    func_80078884(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
                 }
             }
 

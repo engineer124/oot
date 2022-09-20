@@ -202,7 +202,8 @@ void AudioSfx_ProcessRequest(void) {
             // If the new sfx has equal importance to the existing sfx,
             // drop the request if the existing sfx has the "SFX_FLAG_BLOCK_EQUAL_IMPORTANCE" flag.
             // Otherwise, keep processing the new sfx request
-            if ((gSfxParams[SFX_BANK_SHIFT(req->sfxId)][SFX_INDEX(req->sfxId)].params & SFX_FLAG_5) &&
+            if ((gSfxParams[SFX_BANK_SHIFT(req->sfxId)][SFX_INDEX(req->sfxId)].params &
+                 SFX_FLAG_BLOCK_EQUAL_IMPORTANCE) &&
                 gSfxParams[SFX_BANK_SHIFT(req->sfxId)][SFX_INDEX(req->sfxId)].importance ==
                     gSfxBanks[bankId][index].sfxImportance) {
                 // Drop the new request
@@ -245,7 +246,7 @@ void AudioSfx_ProcessRequest(void) {
                 sfxParams = &gSfxParams[SFX_BANK_SHIFT(req->sfxId)][SFX_INDEX(req->sfxId)];
 
                 // Interrupt existing sfx and play the new sfx instead.
-                if ((req->sfxId & 0xC00) || (sfxParams->params & SFX_FLAG_2) || (index == evictIndex)) {
+                if ((req->sfxId & 0xC00) || (sfxParams->params & SFX_FLAG_FORCE_RESET) || (index == evictIndex)) {
 
                     // Restore bgm if the sfx about to be replaced has the right flag
                     if ((gSfxBanks[bankId][index].sfxParams & SFX_FLAG_LOWER_VOLUME_BGM) &&
@@ -380,7 +381,7 @@ void AudioSfx_ChooseActiveSfx(u8 bankId) {
                 entry->dist = (SQ(*entry->posX) + SQ(tempf1) + SQ(*entry->posZ)) * 1;
             }
             sfxImportance = entry->sfxImportance;
-            if (entry->sfxParams & SFX_FLAG_4) {
+            if (entry->sfxParams & SFX_FLAG_PRIORITY_NO_DIST) {
                 entry->priority = SQ(0xFF - sfxImportance) * SQ(76);
             } else {
                 if (entry->dist > 0x7FFFFFD0) {

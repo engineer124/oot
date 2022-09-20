@@ -137,8 +137,8 @@ void BgSpot11Bakudankabe_Update(Actor* thisx, PlayState* play) {
     if (this->collider.base.acFlags & AC_HIT) {
         func_808B2218(this, play);
         Flags_SetSwitch(play, (this->dyna.actor.params & 0x3F));
-        SfxSource_PlaySfxAtFixedWorldPos(play, &D_808B2738, 40, NA_SE_EV_WALL_BROKEN);
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &D_808B2738, 40, SFX_ID_ENVIRONMENT_WALL_BROKEN);
+        func_80078884(SFX_ID_SYSTEM_CORRECT_CHIME);
         Actor_Kill(&this->dyna.actor);
         return;
     }

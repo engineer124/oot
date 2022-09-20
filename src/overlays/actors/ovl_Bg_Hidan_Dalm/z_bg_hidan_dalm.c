@@ -145,8 +145,8 @@ void BgHidanDalm_Wait(BgHidanDalm* this, PlayState* play) {
         this->dyna.actor.bgCheckFlags &= ~BGCHECKFLAG_WALL;
         this->dyna.actor.speedXZ = 10.0f;
         Flags_SetSwitch(play, this->switchFlag);
-        Player_PlaySfx(&GET_PLAYER(play)->actor, NA_SE_IT_HAMMER_HIT);
-        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_DARUMA_VANISH);
+        Player_PlaySfx(&GET_PLAYER(play)->actor, SFX_ID_ITEM_HAMMER_HIT);
+        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_DARUMA_VANISH);
     } else {
         CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
     }

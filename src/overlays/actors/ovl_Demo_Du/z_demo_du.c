@@ -303,14 +303,14 @@ void DemoDu_InitCs_GoronsRuby(DemoDu* this, PlayState* play) {
 // Cutscene: Darunia gives Link the Goron's Ruby.
 // Sfx played when Darunia lands at the floor at the start of the cutscene.
 void DemoDu_CsPlaySfx_GoronLanding(DemoDu* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_EN_GOLON_LAND_BIG);
+    func_80078914(&this->actor.projectedPos, SFX_ID_ENEMY_GOLON_LAND_BIG);
 }
 
 // Cutscene: Darunia gives Link the Goron's Ruby.
 // Sfx played when Darunia is falling at the start of the cutscene.
 void DemoDu_CsPlaySfx_DaruniaFalling(PlayState* play) {
     if (play->csCtx.frames == 160) {
-        func_800788CC(NA_SE_EV_OBJECT_FALL);
+        func_800788CC(SFX_ID_ENVIRONMENT_OBJECT_FALL);
     }
 }
 
@@ -319,14 +319,14 @@ void DemoDu_CsPlaySfx_DaruniaHitsLink(PlayState* play) {
     Player* player = GET_PLAYER(play);
     s32 pad;
 
-    func_80078914(&player->actor.projectedPos, NA_SE_EN_DARUNIA_HIT_LINK);
-    AudioSfx_PlaySfx(NA_SE_VO_LI_DAMAGE_S_KID, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+    func_80078914(&player->actor.projectedPos, SFX_ID_ENEMY_DARUNIA_HIT_LINK);
+    AudioSfx_PlaySfx(SFX_ID_VOICE_LI_DAMAGE_S_KID, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 }
 
 // Cutscene: Darunia gives Link the Goron's Ruby.
 void DemoDu_CsPlaySfx_HitBreast(DemoDu* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_EN_DARUNIA_HIT_BREAST - SFX_FLAG);
+    func_80078914(&this->actor.projectedPos, SFX_ID_ENEMY_DARUNIA_HIT_BREAST - SFX_FLAG);
 }
 
 // Cutscene: Darunia gives Link the Goron's Ruby.
@@ -335,7 +335,7 @@ void DemoDu_CsPlaySfx_LinkEscapeFromGorons(PlayState* play) {
     if (play->csCtx.frames == 1400) {
         Player* player = GET_PLAYER(play);
 
-        AudioSfx_PlaySfx(NA_SE_VO_LI_FALL_L_KID, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(SFX_ID_VOICE_LI_FALL_L_KID, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 }
@@ -346,7 +346,7 @@ void DemoDu_CsPlaySfx_LinkSurprised(PlayState* play) {
     if (play->csCtx.frames == 174) {
         Player* player = GET_PLAYER(play);
 
-        AudioSfx_PlaySfx(NA_SE_VO_LI_SURPRISE_KID, &player->actor.projectedPos, 4U, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(SFX_ID_VOICE_LI_SURPRISE_KID, &player->actor.projectedPos, 4U, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 }
@@ -709,7 +709,7 @@ void DemoDu_InitCs_AfterGanon(DemoDu* this, PlayState* play) {
 }
 
 void DemoDu_CsPlaySfx_WhiteOut(void) {
-    func_800788CC(NA_SE_SY_WHITE_OUT_T);
+    func_800788CC(SFX_ID_SYSTEM_WHITE_OUT_T);
 }
 
 void DemoDu_CsAfterGanon_SpawnDemo6K(DemoDu* this, PlayState* play) {

@@ -224,9 +224,9 @@ void func_8086D4B4(BgBdanSwitch* this, PlayState* play) {
         type = this->dyna.actor.params & 0xFF;
         Flags_SetSwitch(play, (this->dyna.actor.params >> 8) & 0x3F);
         if (type == BLUE || type == YELLOW_TALL_2) {
-            OnePointCutscene_AttentionSetSfx(play, &this->dyna.actor, NA_SE_SY_TRE_BOX_APPEAR);
+            OnePointCutscene_AttentionSetSfx(play, &this->dyna.actor, SFX_ID_SYSTEM_TRE_BOX_APPEAR);
         } else {
-            OnePointCutscene_AttentionSetSfx(play, &this->dyna.actor, NA_SE_SY_CORRECT_CHIME);
+            OnePointCutscene_AttentionSetSfx(play, &this->dyna.actor, SFX_ID_SYSTEM_CORRECT_CHIME);
         }
     }
 }
@@ -235,7 +235,7 @@ void func_8086D548(BgBdanSwitch* this, PlayState* play) {
     if (Flags_GetSwitch(play, (this->dyna.actor.params >> 8) & 0x3F)) {
         Flags_UnsetSwitch(play, (this->dyna.actor.params >> 8) & 0x3F);
         if ((this->dyna.actor.params & 0xFF) == YELLOW_TALL_2) {
-            OnePointCutscene_AttentionSetSfx(play, &this->dyna.actor, NA_SE_SY_TRE_BOX_APPEAR);
+            OnePointCutscene_AttentionSetSfx(play, &this->dyna.actor, SFX_ID_SYSTEM_TRE_BOX_APPEAR);
         }
     }
 }
@@ -272,7 +272,7 @@ void func_8086D694(BgBdanSwitch* this, PlayState* play) {
         this->unk_1C8 -= 0.2f;
         if (this->unk_1C8 <= 0.1f) {
             func_8086D730(this);
-            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_FOOT_SWITCH);
+            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_FOOT_SWITCH);
             func_800AA000(this->dyna.actor.xyzDistToPlayerSq, 0x78, 0x14, 0xA);
         }
     }
@@ -312,7 +312,7 @@ void func_8086D80C(BgBdanSwitch* this, PlayState* play) {
     this->unk_1C8 += 0.2f;
     if (this->unk_1C8 >= 1.0f) {
         func_8086D5C4(this);
-        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_FOOT_SWITCH);
+        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_FOOT_SWITCH);
     }
 }
 
@@ -335,7 +335,7 @@ void func_8086D8CC(BgBdanSwitch* this, PlayState* play) {
     this->unk_1C8 -= 0.2f;
     if (this->unk_1C8 <= 0.6f) {
         func_8086D9F8(this);
-        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_FOOT_SWITCH);
+        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_FOOT_SWITCH);
         func_800AA000(this->dyna.actor.xyzDistToPlayerSq, 0x78, 0x14, 0xA);
     }
 }
@@ -350,7 +350,7 @@ void func_8086D95C(BgBdanSwitch* this, PlayState* play) {
         this->unk_1C8 -= 0.2f;
         if (this->unk_1C8 <= 0.1f) {
             func_8086DB24(this);
-            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_FOOT_SWITCH);
+            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_FOOT_SWITCH);
             func_800AA000(this->dyna.actor.xyzDistToPlayerSq, 0x78, 0x14, 0xA);
         }
     }
@@ -389,7 +389,7 @@ void func_8086DAC4(BgBdanSwitch* this, PlayState* play) {
     this->unk_1C8 += 0.2f;
     if (this->unk_1C8 >= 1.0f) {
         func_8086D86C(this);
-        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_FOOT_SWITCH);
+        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_FOOT_SWITCH);
     }
 }
 
@@ -437,7 +437,7 @@ void func_8086DC48(BgBdanSwitch* this, PlayState* play) {
         this->unk_1C8 -= 0.3f;
         if (this->unk_1C8 <= 1.0f) {
             func_8086DCCC(this);
-            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_FOOT_SWITCH);
+            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_FOOT_SWITCH);
         }
     }
 }
@@ -475,7 +475,7 @@ void func_8086DDC0(BgBdanSwitch* this, PlayState* play) {
         this->unk_1C8 += 0.3f;
         if (this->unk_1C8 >= 2.0f) {
             func_8086DB4C(this);
-            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_FOOT_SWITCH);
+            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_FOOT_SWITCH);
         }
     }
 }

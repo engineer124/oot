@@ -589,34 +589,34 @@ void func_80B4FD90(EnZl2* this, PlayState* play) {
 
 void func_80B4FDD4(EnZl2* this) {
     if (Animation_OnFrame(&this->skelAnime, 14.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_PL_WALK_CONCRETE);
+        func_80078914(&this->actor.projectedPos, SFX_ID_PLAYER_WALK_CONCRETE);
     }
 }
 
 void func_80B4FE10(PlayState* play) {
     if ((play->csCtx.frames >= 830) && (play->csCtx.frames < 1081)) {
-        func_800788CC(NA_SE_EV_EARTHQUAKE - SFX_FLAG);
+        func_800788CC(SFX_ID_ENVIRONMENT_EARTHQUAKE - SFX_FLAG);
     }
 }
 
 void func_80B4FE48(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_EV_GOTO_HEAVEN - SFX_FLAG);
+    func_80078914(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_GOTO_HEAVEN - SFX_FLAG);
 }
 
 void func_80B4FE6C(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_EN_GANON_LAUGH);
+    func_80078914(&this->actor.projectedPos, SFX_ID_ENEMY_GANON_LAUGH);
 }
 
 void func_80B4FE90(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_VO_Z1_SURPRISE);
+    func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_Z1_SURPRISE);
 }
 
 void func_80B4FEB4(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
+    func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
 }
 
 void func_80B4FED8(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_VO_Z1_CRY_0);
+    func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_Z1_CRY_0);
 }
 
 void EnZl2_GiveLightArrows(EnZl2* this, PlayState* play) {

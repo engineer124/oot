@@ -391,7 +391,7 @@ void EnXc_SetNutThrowSFX(EnXc* this, PlayState* play) {
         }
     }
     if (Animation_OnFrame(&this->skelAnime, 20.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_VO_SK_SHOUT);
+        func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_SK_SHOUT);
     }
 }
 
@@ -423,13 +423,13 @@ void EnXc_SetColossusAppearSFX(EnXc* this, PlayState* play) {
                 Vec3f pos = { -611.0f, 728.0f, -2.0f };
 
                 SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &pos, &sXyzDist, wDest);
-                func_80078914(&sXyzDist, NA_SE_EV_JUMP_CONC);
+                func_80078914(&sXyzDist, SFX_ID_ENVIRONMENT_JUMP_CONC);
             } else if (frameCount == 164) {
                 Vec3f pos = { -1069.0f, 38.0f, 0.0f };
                 s32 pad;
 
                 SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &pos, &sXyzDist, wDest);
-                func_80078914(&sXyzDist, NA_SE_PL_WALK_CONCRETE);
+                func_80078914(&sXyzDist, SFX_ID_PLAYER_WALK_CONCRETE);
             }
         }
     }
@@ -439,7 +439,7 @@ void func_80B3D118(PlayState* play) {
     s16 sceneId;
 
     if ((gSaveContext.sceneLayer != 4) || (sceneId = play->sceneId, sceneId != SCENE_SPOT11)) {
-        func_800788CC(NA_SE_PL_SKIP);
+        func_800788CC(SFX_ID_PLAYER_SKIP);
     }
 }
 
@@ -470,7 +470,7 @@ void EnXc_SetColossusWindSFX(PlayState* play) {
                     osSyncPrintf("MAX speed = %f\n", sMaxSpeed);
 
                     speed = CLAMP_MAX(speed, 2.0f);
-                    Audio_PlaySfx_AtPosWithFreq(&sPos, NA_SE_EV_FLYING_AIR - SFX_FLAG, 0.6f + (0.4f * speed));
+                    Audio_PlaySfx_AtPosWithFreq(&sPos, SFX_ID_ENVIRONMENT_FLYING_AIR - SFX_FLAG, 0.6f + (0.4f * speed));
                 }
 
                 D_80B42DB0.x = eye->x;
@@ -1361,14 +1361,14 @@ void func_80B3F3C8(EnXc* this, PlayState* play) {
 }
 
 void func_80B3F3D8(void) {
-    func_800788CC(NA_SE_PL_SKIP);
+    func_800788CC(SFX_ID_PLAYER_SKIP);
 }
 
 void EnXc_PlayDiveSFX(Vec3f* src, PlayState* play) {
     f32 wDest[2];
 
     SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, src, &D_80B42DA0, wDest);
-    func_80078914(&D_80B42DA0, NA_SE_EV_DIVE_INTO_WATER);
+    func_80078914(&D_80B42DA0, SFX_ID_ENVIRONMENT_DIVE_INTO_WATER);
 }
 
 void EnXc_LakeHyliaDive(PlayState* play) {
@@ -1537,14 +1537,14 @@ void EnXc_PlayTriforceSFX(Actor* thisx, PlayState* play) {
 
         Matrix_MultVec3f(&sp1C, &src);
         SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &src, &pos, &wDest);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &pos, 80, NA_SE_EV_TRIFORCE_MARK);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &pos, 80, SFX_ID_ENVIRONMENT_TRIFORCE_MARK);
         this->unk_2A8 = 0;
     }
 }
 
 void func_80B3FAE0(EnXc* this) {
     if (Animation_OnFrame(&this->skelAnime, 38.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_VO_SK_SHOUT);
+        func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_SK_SHOUT);
         func_80B3FA2C();
     }
 }
@@ -1746,14 +1746,14 @@ void EnXc_SetThrownAroundSFX(EnXc* this) {
     SkelAnime* skelAnime = &this->skelAnime;
 
     if (Animation_OnFrame(skelAnime, 9.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_PL_BOUND_GRASS);
-        func_80078914(&this->actor.projectedPos, NA_SE_VO_SK_CRASH);
+        func_80078914(&this->actor.projectedPos, SFX_ID_PLAYER_BOUND_GRASS);
+        func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_SK_CRASH);
     } else if (Animation_OnFrame(skelAnime, 26.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_PL_BOUND_GRASS);
+        func_80078914(&this->actor.projectedPos, SFX_ID_PLAYER_BOUND_GRASS);
     } else if (Animation_OnFrame(skelAnime, 28.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_PL_WALK_GRASS);
+        func_80078914(&this->actor.projectedPos, SFX_ID_PLAYER_WALK_GRASS);
     } else if (Animation_OnFrame(skelAnime, 34.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_PL_WALK_GRASS);
+        func_80078914(&this->actor.projectedPos, SFX_ID_PLAYER_WALK_GRASS);
     }
 }
 
@@ -1767,9 +1767,9 @@ void EnXc_SetCrySFX(EnXc* this, PlayState* play) {
     CutsceneContext* csCtx = &play->csCtx;
 
     if (csCtx->frames == 869) {
-        func_80078914(&this->actor.projectedPos, NA_SE_VO_SK_CRY_0);
+        func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_SK_CRY_0);
     } else if (csCtx->frames == 939) {
-        func_80078914(&this->actor.projectedPos, NA_SE_VO_SK_CRY_1);
+        func_80078914(&this->actor.projectedPos, SFX_ID_VOICE_SK_CRY_1);
     }
 }
 

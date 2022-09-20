@@ -150,7 +150,7 @@ void EnBoom_Fly(EnBoom* this, PlayState* play) {
     // Set xyz speed, move forward, and play the boomerang sound effect
     func_8002D9A4(&this->actor, 12.0f);
     Actor_MoveForward(&this->actor);
-    func_8002F974(&this->actor, NA_SE_IT_BOOMERANG_FLY - SFX_FLAG);
+    func_8002F974(&this->actor, SFX_ID_ITEM_BOOMERANG_FLY - SFX_FLAG);
 
     // If the boomerang collides with EnItem00 or a Skulltula token, set grabbed pointer to pick it up
     collided = this->collider.base.atFlags & AT_HIT;

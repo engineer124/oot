@@ -236,9 +236,9 @@ void BgHidanFwbig_Update(Actor* thisx, PlayState* play) {
 
     if ((this->actor.home.pos.y - 200.0f) < this->actor.world.pos.y) {
         if (!IS_CUTSCENE_LAYER) {
-            func_8002F974(&this->actor, NA_SE_EV_BURNING - SFX_FLAG);
+            func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_BURNING - SFX_FLAG);
         } else if ((s16)this->actor.world.pos.x == -513) {
-            func_8002F974(&this->actor, NA_SE_EV_FLAME_OF_FIRE - SFX_FLAG);
+            func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_FLAME_OF_FIRE - SFX_FLAG);
         }
         BgHidanFwbig_MoveCollider(this, play);
         CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider.base);

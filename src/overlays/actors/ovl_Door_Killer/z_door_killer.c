@@ -353,13 +353,13 @@ void DoorKiller_FallOver(DoorKiller* this, PlayState* play) {
             (playerPosRelToDoor.z < 100.0f) && (playerPosRelToDoor.z > 0.0f)) {
             this->hasHitPlayerOrGround |= 1;
             func_8002F6D4(play, &this->actor, 6.0f, this->actor.yawTowardsPlayer, 6.0f, 16);
-            Actor_PlaySfx(&this->actor, NA_SE_EN_KDOOR_HIT);
-            Player_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
+            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_KDOOR_HIT);
+            Player_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
         }
     }
     if (!(this->hasHitPlayerOrGround & 1) && (this->timer == 2)) {
         this->hasHitPlayerOrGround |= 1;
-        Actor_PlaySfx(&this->actor, NA_SE_EN_KDOOR_HIT_GND);
+        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_KDOOR_HIT_GND);
     }
 }
 
@@ -371,7 +371,7 @@ void DoorKiller_Wobble(DoorKiller* this, PlayState* play) {
     s32 i;
 
     if ((this->timer == 16) || (this->timer == 8)) {
-        Actor_PlaySfx(&this->actor, NA_SE_EN_KDOOR_WAVE);
+        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_KDOOR_WAVE);
     }
 
     if (this->timer > 0) {
@@ -428,13 +428,13 @@ void DoorKiller_Wait(DoorKiller* this, PlayState* play) {
         } else if (this->colliderCylinder.info.acHitInfo->toucher.dmgFlags & (DMG_HAMMER_SWING | DMG_EXPLOSIVE)) {
             DoorKiller_SpawnRubble(&this->actor, play);
             this->actionFunc = DoorKiller_Die;
-            SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, NA_SE_EN_KDOOR_BREAK);
+            SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, SFX_ID_ENEMY_KDOOR_BREAK);
         }
     } else if (Actor_GetCollidedExplosive(play, &this->colliderJntSph.base) != NULL) {
         // AC sphere: die if hit by explosive
         DoorKiller_SpawnRubble(&this->actor, play);
         this->actionFunc = DoorKiller_Die;
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, NA_SE_EN_KDOOR_BREAK);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, SFX_ID_ENEMY_KDOOR_BREAK);
     } else if (!Player_InCsMode(play) && (fabsf(playerPosRelToDoor.y) < 20.0f) &&
                (fabsf(playerPosRelToDoor.x) < 20.0f) && (playerPosRelToDoor.z < 50.0f) &&
                (playerPosRelToDoor.z > 0.0f)) {

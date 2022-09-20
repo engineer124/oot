@@ -1242,7 +1242,7 @@ void Scene_DrawConfigSpot10(PlayState* play) {
 
     if ((play->roomCtx.unk_74[0] == 0) && (INV_CONTENT(ITEM_COJIRO) == ITEM_COJIRO)) {
         if (play->roomCtx.unk_74[1] == 50) {
-            Player_PlaySfx(&GET_PLAYER(play)->actor, NA_SE_EV_CHICKEN_CRY_M);
+            Player_PlaySfx(&GET_PLAYER(play)->actor, SFX_ID_ENVIRONMENT_CHICKEN_CRY_M);
             play->roomCtx.unk_74[0] = 1;
         }
         play->roomCtx.unk_74[1]++;

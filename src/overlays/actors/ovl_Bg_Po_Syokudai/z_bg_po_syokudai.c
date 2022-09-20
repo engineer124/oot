@@ -135,7 +135,7 @@ void BgPoSyokudai_Update(Actor* thisx, PlayState* play) {
     CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
     CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
     if (Flags_GetSwitch(play, this->actor.params)) {
-        func_8002F974(&this->actor, NA_SE_EV_TORCH - SFX_FLAG);
+        func_8002F974(&this->actor, SFX_ID_ENVIRONMENT_TORCH - SFX_FLAG);
     }
     this->flameTextureScroll++;
 }

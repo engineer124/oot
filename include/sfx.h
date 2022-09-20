@@ -58,21 +58,22 @@ typedef struct {
 #define DEFINE_SFX(enum, _1, _2, _3, _4) enum,
 
 typedef enum {
-    NA_SE_PL_BASE = 0x7FF,
+    SFX_ID_NONE,
+    SFX_ID_PLAYER_BASE = 0x7FF,
     #include "tables/sfx/playerbank_table.h"
-    NA_SE_IT_BASE = 0x17FF,
+    SFX_ID_ITEM_BASE = 0x17FF,
     #include "tables/sfx/itembank_table.h"
-    NA_SE_EV_BASE = 0x27FF,
+    SFX_ID_ENVIRONMENT_BASE = 0x27FF,
     #include "tables/sfx/environmentbank_table.h"
-    NA_SE_EN_BASE = 0x37FF,
+    SFX_ID_ENEMY_BASE = 0x37FF,
     #include "tables/sfx/enemybank_table.h"
-    NA_SE_SY_BASE = 0x47FF,
+    SFX_ID_SYSTEM_BASE = 0x47FF,
     #include "tables/sfx/systembank_table.h"
-    NA_SE_OC_BASE = 0x57FF,
+    SFX_ID_OCARINA_BASE = 0x57FF,
     #include "tables/sfx/ocarinabank_table.h"
-    NA_SE_VO_BASE = 0x67FF,
+    SFX_ID_VOICE_BASE = 0x67FF,
     #include "tables/sfx/voicebank_table.h"
-    NA_SE_MAX
+    SFX_ID_MAX
 } SfxId;
 
 #undef DEFINE_SFX
@@ -87,35 +88,58 @@ typedef enum {
 #define SFX_FLAG 0x800
 
 typedef struct {
-    u32 priority; // lower is more prioritized
-    u8 entryIndex;
-} ActiveSfx;
+    /* 0x0 */ u32 priority; // lower is more prioritized
+    /* 0x4 */ u8 entryIndex;
+} ActiveSfx; // size = 0x8
 
 // SfxParams bit-packing
 
+// Slows the decay of volume with distance (a 2-bit number ranging from 0-3)
 #define SFX_PARAM_DIST_RANGE_SHIFT 0
 #define SFX_PARAM_DIST_RANGE_MASK (3 << SFX_PARAM_DIST_RANGE_SHIFT)
 
-#define SFX_FLAG_2 (1 << 2)
-#define SFX_FLAG_LOWER_VOLUME_BGM (1 << 3)
-#define SFX_FLAG_4 (1 << 4)
-#define SFX_FLAG_5 (1 << 5)
+// Force the sfx to reset from the beginning when requested again
+#define SFX_FLAG_FORCE_RESET (1 << 2)
 
+// Lower SEQ_PLAYER_BGM_MAIN and SEQ_PLAYER_BGM_SUB while the sfx is playing
+#define SFX_FLAG_LOWER_VOLUME_BGM (1 << 3)
+
+// Sfx priority is not raised with distance (making it more likely to be ejected)
+#define SFX_FLAG_PRIORITY_NO_DIST (1 << 4)
+
+// If a new sfx is requested at both the same position with the same importance,
+// Block that new sfx from replacing the current sfx
+// Note: Only 1 sfx can be played at a specific position at once
+#define SFX_FLAG_BLOCK_EQUAL_IMPORTANCE (1 << 5)
+
+// Applies increasingly random offsets to frequency (a 2-bit number ranging from 0-3)
 #define SFX_PARAM_RAND_FREQ_RAISE_SHIFT 6
 #define SFX_PARAM_RAND_FREQ_RAISE_MASK (3 << SFX_PARAM_RAND_FREQ_RAISE_SHIFT)
 
+// Use lowpass filter on surround sound
 #define SFX_FLAG_SURROUND_LOWPASS_FILTER (1 << 9)
-#define SFX_FLAG_10_SHIFT 10
-#define SFX_FLAG_10 (1 << SFX_FLAG_10_SHIFT)
+
+#define SFX_FLAG_BEHIND_SCREEN_Z_INDEX_SHIFT 10
+#define SFX_FLAG_BEHIND_SCREEN_Z_INDEX (1 << SFX_FLAG_BEHIND_SCREEN_Z_INDEX_SHIFT)
+
+// Randomly scale base frequency each frame through multiplicative offset
 #define SFX_PARAM_RAND_FREQ_SCALE (1 << 11)
+
+// Sfx reverb is not raised with distance
 #define SFX_FLAG_REVERB_NO_DIST (1 << 12)
+
+// Sfx volume is not lowered with distance
 #define SFX_FLAG_VOLUME_NO_DIST (1 << 13)
+
+// Randomly lower base frequency each frame through additive offset
 #define SFX_PARAM_RAND_FREQ_LOWER (1 << 14)
+
+// Sfx frequency is not raised with distance
 #define SFX_FLAG_FREQ_NO_DIST (1 << 15)
 
 typedef struct {
-    u8 importance;
-    u16 params;
-} SfxParams;
+    /* 0x0 */ u8 importance;
+    /* 0x2 */ u16 params;
+} SfxParams; // size = 0x4
 
 #endif

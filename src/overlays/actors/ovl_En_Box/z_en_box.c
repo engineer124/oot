@@ -251,8 +251,8 @@ void EnBox_Fall(EnBox* this, PlayState* play) {
             EnBox_SetupAction(this, EnBox_WaitOpen);
             OnePointCutscene_EndCutscene(play, this->subCamId);
         }
-        AudioSfx_PlaySfx(NA_SE_EV_COFFIN_CAP_BOUND, &this->dyna.actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_COFFIN_CAP_BOUND, &this->dyna.actor.projectedPos, 4,
+                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         EnBox_SpawnDust(this, play);
     }
     yDiff = this->dyna.actor.world.pos.y - this->dyna.actor.floorHeight;
@@ -361,8 +361,8 @@ void EnBox_AppearInit(EnBox* this, PlayState* play) {
         this->unk_1A8 = 0;
         Actor_Spawn(&play->actorCtx, play, ACTOR_DEMO_KANKYO, this->dyna.actor.home.pos.x, this->dyna.actor.home.pos.y,
                     this->dyna.actor.home.pos.z, 0, 0, 0, DEMOKANKYO_SPARKLES);
-        AudioSfx_PlaySfx(NA_SE_EV_TRE_BOX_APPEAR, &this->dyna.actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_TRE_BOX_APPEAR, &this->dyna.actor.projectedPos, 4,
+                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 }
 
@@ -458,9 +458,9 @@ void EnBox_Open(EnBox* this, PlayState* play) {
         sfxId = 0;
 
         if (Animation_OnFrame(&this->skelanime, 30.0f)) {
-            sfxId = NA_SE_EV_TBOX_UNLOCK;
+            sfxId = SFX_ID_ENVIRONMENT_TBOX_UNLOCK;
         } else if (Animation_OnFrame(&this->skelanime, 90.0f)) {
-            sfxId = NA_SE_EV_TBOX_OPEN;
+            sfxId = SFX_ID_ENVIRONMENT_TBOX_OPEN;
         }
 
         if (sfxId != 0) {
@@ -486,7 +486,7 @@ void EnBox_SpawnIceSmoke(EnBox* this, PlayState* play) {
     f32 f0;
 
     this->iceSmokeTimer++;
-    func_8002F974(&this->dyna.actor, NA_SE_EN_MIMICK_BREATH - SFX_FLAG);
+    func_8002F974(&this->dyna.actor, SFX_ID_ENEMY_MIMICK_BREATH - SFX_FLAG);
     if (Rand_ZeroOne() < 0.3f) {
         f0 = 2.0f * Rand_ZeroOne() - 1.0f;
         pos = this->dyna.actor.world.pos;

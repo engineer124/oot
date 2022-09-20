@@ -135,7 +135,7 @@ void EnVbBall_UpdateBones(EnVbBall* this, PlayState* play) {
         this->actor.velocity.z = cosf(angle) * 10.0f;
         this->actor.velocity.y *= -0.5f;
         if (this->actor.params & 1) {
-            AudioSfx_PlaySfx(NA_SE_EN_VALVAISA_LAND, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(SFX_ID_ENEMY_VALVAISA_LAND, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
         for (i = 0; i < 10; i++) {
@@ -218,7 +218,7 @@ void EnVbBall_Update(Actor* thisx, PlayState* play2) {
                         this->actor.world.rot.z * 0.5f, this->actor.params + 1);
                     if (newActor != NULL) {
                         if ((i == 0) && (this->actor.params == 100)) {
-                            AudioSfx_PlaySfx(NA_SE_EN_VALVAISA_ROCK, &newActor->actor.projectedPos, 4,
+                            AudioSfx_PlaySfx(SFX_ID_ENEMY_VALVAISA_ROCK, &newActor->actor.projectedPos, 4,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultReverb);
                         }
@@ -289,7 +289,7 @@ void EnVbBall_Update(Actor* thisx, PlayState* play2) {
             Player* player = GET_PLAYER(play);
 
             this->collider.base.atFlags &= ~AT_HIT;
-            Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
+            Actor_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
         }
         Collider_UpdateCylinder(&this->actor, &this->collider);
         CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider.base);

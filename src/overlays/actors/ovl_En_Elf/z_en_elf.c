@@ -728,7 +728,7 @@ void func_80A03610(EnElf* this, PlayState* play) {
 
     this->unk_2BC = Math_Atan2S(this->actor.velocity.z, this->actor.velocity.x);
     EnElf_SpawnSparkles(this, play, 32);
-    Actor_PlaySfx(&this->actor, NA_SE_EV_FIATY_HEAL - SFX_FLAG);
+    Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_FIATY_HEAL - SFX_FLAG);
 }
 
 void func_80A03814(EnElf* this, PlayState* play) {
@@ -763,7 +763,7 @@ void func_80A03814(EnElf* this, PlayState* play) {
     func_80A02E30(this, &player->bodyPartsPos[PLAYER_BODYPART_WAIST]);
     this->unk_2BC = Math_Atan2S(this->actor.velocity.z, this->actor.velocity.x);
     EnElf_SpawnSparkles(this, play, 32);
-    Actor_PlaySfx(&this->actor, NA_SE_EV_FIATY_HEAL - SFX_FLAG);
+    Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_FIATY_HEAL - SFX_FLAG);
 }
 
 void func_80A03990(EnElf* this, PlayState* play) {
@@ -788,7 +788,7 @@ void func_80A03990(EnElf* this, PlayState* play) {
     Actor_SetScale(&this->actor, (1.0f - (SQ(this->unk_2B4) * SQ(1.0f / 9.0f))) * 0.008f);
     this->unk_2BC = Math_Atan2S(this->actor.velocity.z, this->actor.velocity.x);
     EnElf_SpawnSparkles(this, play, 32);
-    Actor_PlaySfx(&this->actor, NA_SE_EV_FIATY_HEAL - SFX_FLAG);
+    Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_FIATY_HEAL - SFX_FLAG);
 }
 
 void func_80A03AB0(EnElf* this, PlayState* play) {
@@ -866,7 +866,7 @@ void func_80A03CF8(EnElf* this, PlayState* play) {
             // play dash sound effect as Navi enters Links house in the intro
             if (1) {}
             if (play->csCtx.frames == 55) {
-                Actor_PlaySfx(&this->actor, NA_SE_EV_FAIRY_DASH);
+                Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_FAIRY_DASH);
             }
 
             // play dash sound effect in intervals as Navi is waking up Link in the intro
@@ -878,7 +878,7 @@ void func_80A03CF8(EnElf* this, PlayState* play) {
                 } else {
                     if (this->actor.world.pos.y < prevPos.y) {
                         this->fairyFlags |= 0x40;
-                        Actor_PlaySfx(&this->actor, NA_SE_EV_FAIRY_DASH);
+                        Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_FAIRY_DASH);
                     }
                 }
             }
@@ -961,7 +961,7 @@ void func_80A03CF8(EnElf* this, PlayState* play) {
                             this->fairyFlags |= 2;
 
                             if (this->unk_2C7 == 0) {
-                                Actor_PlaySfx(&this->actor, NA_SE_EV_FAIRY_DASH);
+                                Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_FAIRY_DASH);
                             }
 
                             this->unk_2C0 = 0x64;
@@ -1009,7 +1009,7 @@ void func_80A04414(EnElf* this, PlayState* play) {
         this->unk_29C = 1.0f;
 
         if (this->unk_2C7 == 0) {
-            Actor_PlaySfx(&this->actor, NA_SE_EV_FAIRY_DASH);
+            Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_FAIRY_DASH);
         }
 
     } else {
@@ -1039,9 +1039,10 @@ void func_80A04414(EnElf* this, PlayState* play) {
     } else {
         if ((arrowPointedActor != NULL) && (player->unk_664 != NULL)) {
             if (arrowPointedActor->category == ACTORCAT_NPC) {
-                sfxId = NA_SE_VO_NAVY_HELLO;
+                sfxId = SFX_ID_VOICE_NAVY_HELLO;
             } else {
-                sfxId = (arrowPointedActor->category == ACTORCAT_ENEMY) ? NA_SE_VO_NAVY_ENEMY : NA_SE_VO_NAVY_HEAR;
+                sfxId =
+                    (arrowPointedActor->category == ACTORCAT_ENEMY) ? SFX_ID_VOICE_NAVY_ENEMY : SFX_ID_VOICE_NAVY_HEAR;
             }
 
             if (this->unk_2C7 == 0) {
@@ -1104,7 +1105,7 @@ void func_80A0461C(EnElf* this, PlayState* play) {
                             temp = 0;
                         } else {
                             if (this->unk_2C7 == 0) {
-                                Actor_PlaySfx(&this->actor, NA_SE_EV_NAVY_VANISH);
+                                Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_NAVY_VANISH);
                             }
                             temp = 7;
                         }
@@ -1148,7 +1149,7 @@ void func_80A0461C(EnElf* this, PlayState* play) {
                 if (!(player->stateFlags2 & PLAYER_STATE2_20)) {
                     temp = 7;
                     if (this->unk_2C7 == 0) {
-                        Actor_PlaySfx(&this->actor, NA_SE_EV_NAVY_VANISH);
+                        Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_NAVY_VANISH);
                     }
                 }
                 break;
@@ -1158,7 +1159,7 @@ void func_80A0461C(EnElf* this, PlayState* play) {
                     this->unk_2C0 = 42;
                     temp = 11;
                     if (this->unk_2C7 == 0) {
-                        Actor_PlaySfx(&this->actor, NA_SE_EV_FAIRY_DASH);
+                        Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_FAIRY_DASH);
                     }
                 }
                 break;
@@ -1392,7 +1393,7 @@ void func_80A053F0(Actor* thisx, PlayState* play) {
     }
 
     if (Actor_ProcessTalkRequest(thisx, play)) {
-        Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_VO_SK_LAUGH, 0x20);
+        Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, SFX_ID_VOICE_SK_LAUGH, 0x20);
         thisx->focus.pos = thisx->world.pos;
 
         if (thisx->textId == ElfMessage_GetCUpText(play)) {

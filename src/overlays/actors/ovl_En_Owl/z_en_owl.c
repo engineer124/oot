@@ -742,22 +742,22 @@ void func_80ACB748(EnOwl* this, PlayState* play) {
 
     switch (owlType) {
         case 7:
-            Audio_PlaySfx_AtPosWithFreq(&D_80ACD62C, NA_SE_EV_FLYING_AIR - SFX_FLAG, weight * 2.0f);
+            Audio_PlaySfx_AtPosWithFreq(&D_80ACD62C, SFX_ID_ENVIRONMENT_FLYING_AIR - SFX_FLAG, weight * 2.0f);
             if ((play->csCtx.frames > 324) || ((play->csCtx.frames >= 142 && (play->csCtx.frames <= 266)))) {
-                Audio_PlaySfx_AtPosWithTimer(&D_80ACD62C, NA_SE_EN_OWL_FLUTTER, weight * 2.0f);
+                Audio_PlaySfx_AtPosWithTimer(&D_80ACD62C, SFX_ID_ENEMY_OWL_FLUTTER, weight * 2.0f);
             }
             if (play->csCtx.frames == 85) {
-                Audio_PlaySfx_AtPosWithFreq(&D_80ACD62C, NA_SE_EV_PASS_AIR, weight * 2.0f);
+                Audio_PlaySfx_AtPosWithFreq(&D_80ACD62C, SFX_ID_ENVIRONMENT_PASS_AIR, weight * 2.0f);
             }
             break;
         case 8:
         case 9:
-            Audio_PlaySfx_AtPosWithFreq(&D_80ACD62C, NA_SE_EV_FLYING_AIR - SFX_FLAG, weight * 2.0f);
+            Audio_PlaySfx_AtPosWithFreq(&D_80ACD62C, SFX_ID_ENVIRONMENT_FLYING_AIR - SFX_FLAG, weight * 2.0f);
             if ((play->csCtx.frames >= 420) || ((0xC1 < play->csCtx.frames && (play->csCtx.frames <= 280)))) {
-                Audio_PlaySfx_AtPosWithTimer(&D_80ACD62C, NA_SE_EN_OWL_FLUTTER, weight * 2.0f);
+                Audio_PlaySfx_AtPosWithTimer(&D_80ACD62C, SFX_ID_ENEMY_OWL_FLUTTER, weight * 2.0f);
             }
             if (play->csCtx.frames == 217) {
-                Audio_PlaySfx_AtPosWithFreq(&D_80ACD62C, NA_SE_EV_PASS_AIR, weight * 2.0f);
+                Audio_PlaySfx_AtPosWithFreq(&D_80ACD62C, SFX_ID_ENVIRONMENT_PASS_AIR, weight * 2.0f);
             }
             break;
     }
@@ -948,7 +948,7 @@ void func_80ACC00C(EnOwl* this, PlayState* play) {
                     break;
             }
 
-            func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+            func_80078884(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
             gSaveContext.cutsceneTrigger = 1;
             Audio_SetSfxTimerLerpInterval(0x14, 0xA);
             this->actionFunc = EnOwl_WaitDefault;
@@ -1095,7 +1095,7 @@ void EnOwl_Update(Actor* thisx, PlayState* play) {
               this->skelAnime.curFrame == 23.0f || this->skelAnime.curFrame == 40.0f ||
               this->skelAnime.curFrame == 58.0f)) ||
             (this->skelAnime.animation == &gOwlFlyAnim && this->skelAnime.curFrame == 4.0f)) {
-            Actor_PlaySfx(&this->actor, NA_SE_EN_OWL_FLUTTER);
+            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_OWL_FLUTTER);
         }
     }
 

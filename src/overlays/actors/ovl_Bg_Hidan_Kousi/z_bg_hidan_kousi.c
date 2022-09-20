@@ -125,7 +125,7 @@ void func_80889C18(BgHidanKousi* this, PlayState* play) {
         BgHidanKousi_SetupAction(this, func_80889C90);
     }
     Actor_MoveForward(&this->dyna.actor);
-    func_8002F974(&this->dyna.actor, NA_SE_EV_METALDOOR_SLIDE - SFX_FLAG);
+    func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_SLIDE - SFX_FLAG);
 }
 
 void func_80889C90(BgHidanKousi* this, PlayState* play) {
@@ -134,9 +134,9 @@ void func_80889C90(BgHidanKousi* this, PlayState* play) {
         Math_Vec3f_DistXYZ(&this->dyna.actor.home.pos, &this->dyna.actor.world.pos)) {
         func_80889ACC(this);
         BgHidanKousi_SetupAction(this, func_80889D28);
-        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_METALDOOR_STOP);
+        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_STOP);
     } else {
-        func_8002F974(&this->dyna.actor, NA_SE_EV_METALDOOR_SLIDE - SFX_FLAG);
+        func_8002F974(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_SLIDE - SFX_FLAG);
     }
 }
 

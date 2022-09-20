@@ -189,12 +189,12 @@ void ObjKibako_Idle(ObjKibako* this, PlayState* play) {
         ObjKibako_SetupHeld(this);
     } else if ((this->actor.bgCheckFlags & BGCHECKFLAG_WATER) && (this->actor.yDistToWater > 19.0f)) {
         ObjKibako_WaterBreak(this, play);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, NA_SE_EV_WOODBOX_BREAK);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, SFX_ID_ENVIRONMENT_WOODBOX_BREAK);
         ObjKibako_SpawnCollectible(this, play);
         Actor_Kill(&this->actor);
     } else if (this->collider.base.acFlags & AC_HIT) {
         ObjKibako_AirBreak(this, play);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, NA_SE_EV_WOODBOX_BREAK);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, SFX_ID_ENVIRONMENT_WOODBOX_BREAK);
         ObjKibako_SpawnCollectible(this, play);
         Actor_Kill(&this->actor);
     } else {
@@ -219,14 +219,14 @@ void ObjKibako_Idle(ObjKibako* this, PlayState* play) {
 void ObjKibako_SetupHeld(ObjKibako* this) {
     this->actionFunc = ObjKibako_Held;
     this->actor.room = -1;
-    Player_PlaySfx(&this->actor, NA_SE_PL_PULL_UP_WOODBOX);
+    Player_PlaySfx(&this->actor, SFX_ID_PLAYER_PULL_UP_WOODBOX);
 }
 
 void ObjKibako_Held(ObjKibako* this, PlayState* play) {
     if (Actor_HasNoParent(&this->actor, play)) {
         this->actor.room = play->roomCtx.curRoom.num;
         if (fabsf(this->actor.speedXZ) < 0.1f) {
-            Actor_PlaySfx(&this->actor, NA_SE_EV_PUT_DOWN_WOODBOX);
+            Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_PUT_DOWN_WOODBOX);
             ObjKibako_SetupIdle(this);
             this->collider.base.ocFlags1 &= ~OC1_TYPE_PLAYER;
         } else {
@@ -252,12 +252,12 @@ void ObjKibako_Thrown(ObjKibako* this, PlayState* play) {
     if ((this->actor.bgCheckFlags & (BGCHECKFLAG_GROUND | BGCHECKFLAG_GROUND_TOUCH | BGCHECKFLAG_WALL)) ||
         (this->collider.base.atFlags & AT_HIT)) {
         ObjKibako_AirBreak(this, play);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, NA_SE_EV_WOODBOX_BREAK);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, SFX_ID_ENVIRONMENT_WOODBOX_BREAK);
         ObjKibako_SpawnCollectible(this, play);
         Actor_Kill(&this->actor);
     } else if (this->actor.bgCheckFlags & BGCHECKFLAG_WATER_TOUCH) {
         ObjKibako_WaterBreak(this, play);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, NA_SE_EV_WOODBOX_BREAK);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, SFX_ID_ENVIRONMENT_WOODBOX_BREAK);
         ObjKibako_SpawnCollectible(this, play);
         Actor_Kill(&this->actor);
     } else {

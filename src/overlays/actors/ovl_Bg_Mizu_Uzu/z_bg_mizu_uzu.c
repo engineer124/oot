@@ -61,7 +61,7 @@ void func_8089F788(BgMizuUzu* this, PlayState* play) {
     } else {
         DynaPoly_EnableCollision(play, &play->colCtx.dyna, this->dyna.bgId);
     }
-    Actor_PlaySfx(thisx, NA_SE_EV_WATER_CONVECTION - SFX_FLAG);
+    Actor_PlaySfx(thisx, SFX_ID_ENVIRONMENT_WATER_CONVECTION - SFX_FLAG);
     thisx->shape.rot.y += 0x1C0;
 }
 

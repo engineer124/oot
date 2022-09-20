@@ -170,7 +170,7 @@ void EnTuboTrap_HandleImpact(EnTuboTrap* this, PlayState* play) {
 
     if ((this->actor.bgCheckFlags & BGCHECKFLAG_WATER) && (this->actor.yDistToWater > 15.0f)) {
         EnTuboTrap_SpawnEffectsInWater(this, play);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EV_BOMB_DROP_WATER);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, SFX_ID_ENVIRONMENT_BOMB_DROP_WATER);
         EnTuboTrap_DropCollectible(this, play);
         Actor_Kill(&this->actor);
         return;
@@ -179,8 +179,8 @@ void EnTuboTrap_HandleImpact(EnTuboTrap* this, PlayState* play) {
     if (this->collider.base.atFlags & AT_BOUNCED) {
         this->collider.base.atFlags &= ~AT_BOUNCED;
         EnTuboTrap_SpawnEffectsOnLand(this, play);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_IT_SHIELD_REFLECT_SW);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EV_POT_BROKEN);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, SFX_ID_ITEM_SHIELD_REFLECT_SW);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, SFX_ID_ENVIRONMENT_POT_BROKEN);
         EnTuboTrap_DropCollectible(this, play);
         Actor_Kill(&this->actor);
         return;
@@ -189,8 +189,8 @@ void EnTuboTrap_HandleImpact(EnTuboTrap* this, PlayState* play) {
     if (this->collider.base.acFlags & AC_HIT) {
         this->collider.base.acFlags &= ~AC_HIT;
         EnTuboTrap_SpawnEffectsOnLand(this, play);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EV_EXPLOSION);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EV_POT_BROKEN);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, SFX_ID_ENVIRONMENT_EXPLOSION);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, SFX_ID_ENVIRONMENT_POT_BROKEN);
         EnTuboTrap_DropCollectible(this, play);
         Actor_Kill(&this->actor);
         return;
@@ -200,8 +200,8 @@ void EnTuboTrap_HandleImpact(EnTuboTrap* this, PlayState* play) {
         this->collider.base.atFlags &= ~AT_HIT;
         if (this->collider.base.at == &player->actor) {
             EnTuboTrap_SpawnEffectsOnLand(this, play);
-            SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EV_POT_BROKEN);
-            SfxSource_PlaySfxAtFixedWorldPos(play, &player2->actor.world.pos, 40, NA_SE_PL_BODY_HIT);
+            SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, SFX_ID_ENVIRONMENT_POT_BROKEN);
+            SfxSource_PlaySfxAtFixedWorldPos(play, &player2->actor.world.pos, 40, SFX_ID_PLAYER_BODY_HIT);
             EnTuboTrap_DropCollectible(this, play);
             Actor_Kill(&this->actor);
             return;
@@ -210,7 +210,7 @@ void EnTuboTrap_HandleImpact(EnTuboTrap* this, PlayState* play) {
 
     if ((this->actor.bgCheckFlags & BGCHECKFLAG_WALL) || (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
         EnTuboTrap_SpawnEffectsOnLand(this, play);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EV_POT_BROKEN);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, SFX_ID_ENVIRONMENT_POT_BROKEN);
         EnTuboTrap_DropCollectible(this, play);
         Actor_Kill(&this->actor);
         return;
@@ -238,7 +238,7 @@ void EnTuboTrap_WaitForProximity(EnTuboTrap* this, PlayState* play) {
         }
 
         this->originPos = this->actor.world.pos;
-        Actor_PlaySfx(&this->actor, NA_SE_EV_POT_MOVE_START);
+        Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_POT_MOVE_START);
         this->actionFunc = EnTuboTrap_Levitate;
     }
 }
@@ -259,7 +259,7 @@ void EnTuboTrap_Fly(EnTuboTrap* this, PlayState* play) {
     f32 dy = this->originPos.y - this->actor.world.pos.y;
     f32 dz = this->originPos.z - this->actor.world.pos.z;
 
-    Actor_PlaySfx(&this->actor, NA_SE_EN_TUBOOCK_FLY - SFX_FLAG);
+    Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_TUBOOCK_FLY - SFX_FLAG);
 
     if (240.0f < sqrtf(SQ(dx) + SQ(dy) + SQ(dz))) {
         Math_ApproachF(&this->actor.gravity, -3.0f, 0.2f, 0.5f);

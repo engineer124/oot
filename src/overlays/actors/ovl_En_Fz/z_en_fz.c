@@ -346,15 +346,15 @@ void EnFz_ApplyDamage(EnFz* this, PlayState* play) {
                     Actor_ApplyDamage(&this->actor);
                     Actor_SetColorFilter(&this->actor, 0x4000, 0xFF, 0x2000, 8);
                     if (this->actor.colChkInfo.health) {
-                        Actor_PlaySfx(&this->actor, NA_SE_EN_FREEZAD_DAMAGE);
+                        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_FREEZAD_DAMAGE);
                         vec.x = this->actor.world.pos.x;
                         vec.y = this->actor.world.pos.y;
                         vec.z = this->actor.world.pos.z;
                         EnFz_Damaged(this, play, &vec, 10, 0.0f);
                         this->unusedCounter++;
                     } else {
-                        Actor_PlaySfx(&this->actor, NA_SE_EN_FREEZAD_DEAD);
-                        Actor_PlaySfx(&this->actor, NA_SE_EV_ICE_BROKEN);
+                        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_FREEZAD_DEAD);
+                        Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_ICE_BROKEN);
                         vec.x = this->actor.world.pos.x;
                         vec.y = this->actor.world.pos.y;
                         vec.z = this->actor.world.pos.z;
@@ -366,10 +366,10 @@ void EnFz_ApplyDamage(EnFz* this, PlayState* play) {
                 Actor_ApplyDamage(&this->actor);
                 Actor_SetColorFilter(&this->actor, 0x4000, 0xFF, 0x2000, 8);
                 if (this->actor.colChkInfo.health == 0) {
-                    Actor_PlaySfx(&this->actor, NA_SE_EN_FREEZAD_DEAD);
+                    Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_FREEZAD_DEAD);
                     EnFz_SetupMelt(this);
                 } else {
-                    Actor_PlaySfx(&this->actor, NA_SE_EN_FREEZAD_DAMAGE);
+                    Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_FREEZAD_DAMAGE);
                 }
             }
         }
@@ -505,7 +505,7 @@ void EnFz_BlowSmoke(EnFz* this, PlayState* play) {
     } else if (this->timer >= 11) {
         isTimerMod8 = false;
         primAlpha = 150;
-        func_8002F974(&this->actor, NA_SE_EN_FREEZAD_BREATH - SFX_FLAG);
+        func_8002F974(&this->actor, SFX_ID_ENEMY_FREEZAD_BREATH - SFX_FLAG);
 
         if ((this->timer - 10) < 16) { // t < 26
             primAlpha = (this->timer * 10) - 100;
@@ -617,7 +617,7 @@ void EnFz_BlowSmokeStationary(EnFz* this, PlayState* play) {
     } else {
         isTimerMod8 = false;
         primAlpha = 150;
-        func_8002F974(&this->actor, NA_SE_EN_FREEZAD_BREATH - SFX_FLAG);
+        func_8002F974(&this->actor, SFX_ID_ENEMY_FREEZAD_BREATH - SFX_FLAG);
 
         if ((this->counter & 0x3F) >= 48) {
             primAlpha = 630 - ((this->counter & 0x3F) * 10);

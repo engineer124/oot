@@ -243,7 +243,7 @@ void EnTp_Head_ApproachPlayer(EnTp* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     Math_SmoothStepToF(&this->actor.world.pos.y, player->actor.world.pos.y + 30.0f, 1.0f, 0.5f, 0.0f);
-    AudioSfx_PlaySfx(NA_SE_EN_TAIL_FLY - SFX_FLAG, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+    AudioSfx_PlaySfx(SFX_ID_ENEMY_TAIL_FLY - SFX_FLAG, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
     if (this->collider.base.atFlags & AT_HIT) {
@@ -286,7 +286,7 @@ void EnTp_SetupDie(EnTp* this) {
         }
 
         this->timer = 13;
-        Actor_PlaySfx(&this->actor, NA_SE_EN_TAIL_DEAD);
+        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_TAIL_DEAD);
     }
     this->actionIndex = TAILPASARAN_ACTION_DIE;
     EnTp_SetupAction(this, EnTp_Die);
@@ -380,7 +380,7 @@ void EnTp_Head_TakeOff(EnTp* this, PlayState* play) {
     Math_SmoothStepToF(&this->actor.speedXZ, 2.5f, 0.1f, 0.2f, 0.0f);
     Math_SmoothStepToF(&this->actor.world.pos.y, player->actor.world.pos.y + 85.0f + this->horizontalVariation, 1.0f,
                        this->actor.speedXZ * 0.25f, 0.0f);
-    AudioSfx_PlaySfx(NA_SE_EN_TAIL_FLY - SFX_FLAG, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+    AudioSfx_PlaySfx(SFX_ID_ENEMY_TAIL_FLY - SFX_FLAG, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
     if (this->collider.base.atFlags & AT_HIT) {
@@ -478,7 +478,7 @@ void EnTp_Head_Wait(EnTp* this, PlayState* play) {
     this->actor.shape.rot.y = this->actor.world.rot.y;
 
     if (this->actor.world.pos.y != this->actor.home.pos.y) {
-        AudioSfx_PlaySfx(NA_SE_EN_TAIL_FLY - SFX_FLAG, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(SFX_ID_ENEMY_TAIL_FLY - SFX_FLAG, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 }
@@ -548,8 +548,8 @@ void EnTp_Head_BurrowReturnHome(EnTp* this, PlayState* play) {
         }
 
         if (this->actor.world.pos.y != this->actor.home.pos.y) {
-            AudioSfx_PlaySfx(NA_SE_EN_TAIL_FLY - SFX_FLAG, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
-                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+            AudioSfx_PlaySfx(SFX_ID_ENEMY_TAIL_FLY - SFX_FLAG, &this->actor.projectedPos, 4,
+                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
 
         if (closeToFloor && ((play->gameplayFrames & 1) != 0)) {
@@ -605,7 +605,7 @@ void EnTp_UpdateDamage(EnTp* this, PlayState* play) {
             } else {
                 if (phi_s4 != 0) {
                     this->actor.freezeTimer = 80;
-                    Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
+                    Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_JR_FREEZE);
                     if (phi_s2 != 0) {
                         Actor_SetColorFilter(&this->actor, 0, 0xFF, 0, 0x50);
                     } else {
@@ -618,7 +618,7 @@ void EnTp_UpdateDamage(EnTp* this, PlayState* play) {
 
                     if (phi_s4 != 0) {
                         now->actor.freezeTimer = 80;
-                        Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
+                        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_JR_FREEZE);
 
                         if (phi_s2 != 0) {
                             Actor_SetColorFilter(&now->actor, 0, 0xFF, 0, 0x50);
@@ -692,7 +692,7 @@ void EnTp_Update(Actor* thisx, PlayState* play) {
         this->actor.shape.rot.z += 0x800;
 
         if (this->actor.shape.rot.z == 0) {
-            AudioSfx_PlaySfx(NA_SE_EN_TAIL_CRY, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(SFX_ID_ENEMY_TAIL_CRY, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
 
