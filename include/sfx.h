@@ -42,17 +42,14 @@ typedef struct {
 } SfxBankEntry; // size = 0x30
 
 /*
- * SFX IDs
+ * SfxId Bitbacking:
  *
- * index    0000000111111111    observed in audio code
- * & 200    0000001000000000    single bit
- * & 400    0000010000000000    single bit
- * & 800    0000100000000000    single bit, what we currently call SFX_FLAG
- * & 600    0000011000000000    2 bits
- * & A00    0000101000000000    2 bits
- * & C00    0000110000000000    2 bits, observed in audio code
- * & E00    0000111000000000    all 3 bits
- * bank     1111000000000000    observed in audio code
+ * & 0x1FF    0000000111111111    index
+ * & 0x200    0000001000000000    unused bit
+ * & 0x400    0000010000000000    unused bit
+ * & 0x800    0000100000000000    SFX_FLAG
+ * & 0xC00    0000110000000000    Flag Mask
+ * & 0xF000   1111000000000000    bankId
  */
 
 #define DEFINE_SFX(enum, _1, _2, _3, _4) enum,
