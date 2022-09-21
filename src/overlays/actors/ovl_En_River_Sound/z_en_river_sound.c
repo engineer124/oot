@@ -277,7 +277,7 @@ void EnRiverSound_Draw(Actor* thisx, PlayState* play) {
     } else if (this->actor.params == RS_LOST_WOODS_SARIAS_SONG) {
         // Play Sarias Song at the next correct Lost Woods path to Sacred Forest Meadow
         // Volume depends on distance to source
-        func_800F4E30(&this->actor.projectedPos, this->actor.xzDistToPlayer);
+        Audio_UpdateRiverSoundParameters(&this->actor.projectedPos, this->actor.xzDistToPlayer);
     } else if (this->actor.params == RS_GORON_CITY_SARIAS_SONG) {
         // Play Sarias Song in Goron City at the entrance to lost woods
         // Volume depends on distance to source

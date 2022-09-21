@@ -10,7 +10,7 @@ AudioTask* AudioThread_UpdateImpl(void);
 void AudioThread_ProcessCmds(u32);
 void AudioThread_ProcessSeqPlayerCmd(SequencePlayer* seqPlayer, AudioCmd* cmd);
 void AudioThread_SetFadeOutTimer(s32 seqPlayerIndex, s32 fadeTimer);
-s32 AudioThread_CountAndReleaseNotes(s32 arg0);
+s32 AudioThread_CountAndReleaseNotes(s32 flags);
 
 // AudioMgr_Retrace
 AudioTask* AudioThread_Update(void) {
