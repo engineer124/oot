@@ -44,7 +44,7 @@ s8 gSfxDefaultReverb = 0;
 
 s32 D_801333EC = 0; // unused
 
-u8 D_801333F0 = 0;
+u8 gAudioDebugPrintSfxRequest = 0;
 
 u8 gAudioSfxSwapOff = 0;
 
@@ -66,4 +66,4 @@ u8 gSoundModeList[] = {
 
 u8 gAudioSpecId = 0;
 
-u8 gAudioHeapResetState = 0;
+u8 gAudioHeapResetState = AUDIO_HEAP_RESET_STATE_NONE;

@@ -11,7 +11,7 @@ void AudioEffects_SequenceChannelProcessSound(SequenceChannel* channel, s32 reca
         if (channel->seqPlayer->muted && (channel->muteFlags & MUTE_FLAGS_SOFTEN)) {
             channelVolume = channel->seqPlayer->muteVolumeScale * channelVolume;
         }
-        channel->appliedVolume = channelVolume * channelVolume;
+        channel->appliedVolume = SQ(channelVolume);
     }
 
     if (channel->changes.s.pan) {
@@ -64,7 +64,7 @@ void AudioEffects_SequencePlayerProcessSound(SequencePlayer* seqPlayer) {
         }
 
         seqPlayer->fadeTimer--;
-        if ((seqPlayer->fadeTimer == 0) && (seqPlayer->state == 2)) {
+        if ((seqPlayer->fadeTimer == 0) && (seqPlayer->state == SEQPLAYER_STATE_2)) {
             AudioScript_SequencePlayerDisable(seqPlayer);
             return;
         }
@@ -160,13 +160,13 @@ f32 AudioEffects_GetVibratoFreqScale(VibratoState* vib) {
         return 1.0f;
     }
 
-    pitchChange = AudioEffects_GetVibratoPitchChange(vib) + 32768.0f;
+    pitchChange = (f32)AudioEffects_GetVibratoPitchChange(vib) + 0x8000;
     scaledExtent = vib->extent / 4096.0f;
     extent = scaledExtent + 1.0f;
     invExtent = 1.0f / extent;
 
     // Inverse linear interpolation
-    result = 1.0f / ((extent - invExtent) * pitchChange / 65536.0f + invExtent);
+    result = 1.0f / ((extent - invExtent) * pitchChange / 0x10000 + invExtent);
 
     sActiveVibratoFreqScaleSum += result;
     sActiveVibratoCount++;

@@ -1829,15 +1829,15 @@ void AudioScript_SequencePlayerProcessSequence(SequencePlayer* seqPlayer) {
                         cmd = AudioScript_ScriptReadU8(seqScript);
                         temp = AudioScript_ScriptReadS16(seqScript);
                         switch (cmd) {
-                            case 0:
-                            case 1:
-                                if (seqPlayer->state != 2) {
+                            case SEQPLAYER_STATE_0:
+                            case SEQPLAYER_STATE_1:
+                                if (seqPlayer->state != SEQPLAYER_STATE_2) {
                                     seqPlayer->fadeTimerUnkEu = temp;
                                     seqPlayer->state = cmd;
                                 }
                                 break;
 
-                            case 2:
+                            case SEQPLAYER_STATE_2:
                                 seqPlayer->fadeTimer = temp;
                                 seqPlayer->state = cmd;
                                 seqPlayer->fadeVelocity = (0.0f - seqPlayer->fadeVolume) / (s32)seqPlayer->fadeTimer;
@@ -1848,11 +1848,11 @@ void AudioScript_SequencePlayerProcessSequence(SequencePlayer* seqPlayer) {
                     case 0xDB: // `vol(u8)`, seqPlayer: set volume
                         value = AudioScript_ScriptReadU8(seqScript);
                         switch (seqPlayer->state) {
-                            case 1:
-                                seqPlayer->state = 0;
+                            case SEQPLAYER_STATE_1:
+                                seqPlayer->state = SEQPLAYER_STATE_0;
                                 seqPlayer->fadeVolume = 0.0f;
                                 FALLTHROUGH;
-                            case 0:
+                            case SEQPLAYER_STATE_0:
                                 seqPlayer->fadeTimer = seqPlayer->fadeTimerUnkEu;
                                 if (seqPlayer->fadeTimerUnkEu != 0) {
                                     seqPlayer->fadeVelocity =
@@ -1862,7 +1862,7 @@ void AudioScript_SequencePlayerProcessSequence(SequencePlayer* seqPlayer) {
                                 }
                                 break;
 
-                            case 2:
+                            case SEQPLAYER_STATE_2:
                                 break;
                         }
                         break;
@@ -2066,7 +2066,7 @@ void AudioScript_ResetSequencePlayer(SequencePlayer* seqPlayer) {
     AudioScript_SequencePlayerDisable(seqPlayer);
     seqPlayer->stopScript = false;
     seqPlayer->delay = 0;
-    seqPlayer->state = 1;
+    seqPlayer->state = SEQPLAYER_STATE_1;
     seqPlayer->fadeTimer = 0;
     seqPlayer->fadeTimerUnkEu = 0;
     seqPlayer->tempoAcc = 0;
@@ -2090,31 +2090,31 @@ void AudioScript_ResetSequencePlayer(SequencePlayer* seqPlayer) {
 void AudioScript_InitSequencePlayerChannels(s32 seqPlayerIndex) {
     SequenceChannel* channel;
     SequencePlayer* seqPlayer = &gAudioCtx.seqPlayers[seqPlayerIndex];
-    s32 i;
+    s32 channelIndex;
     s32 j;
 
-    for (i = 0; i < SEQ_NUM_CHANNELS; i++) {
-        seqPlayer->channels[i] = AudioHeap_AllocZeroed(&gAudioCtx.miscPool, sizeof(SequenceChannel));
-        if (seqPlayer->channels[i] == NULL) {
-            seqPlayer->channels[i] = &gAudioCtx.sequenceChannelNone;
+    for (channelIndex = 0; channelIndex < SEQ_NUM_CHANNELS; channelIndex++) {
+        seqPlayer->channels[channelIndex] = AudioHeap_AllocZeroed(&gAudioCtx.miscPool, sizeof(SequenceChannel));
+        if (seqPlayer->channels[channelIndex] == NULL) {
+            seqPlayer->channels[channelIndex] = &gAudioCtx.sequenceChannelNone;
         } else {
-            channel = seqPlayer->channels[i];
+            channel = seqPlayer->channels[channelIndex];
             channel->seqPlayer = seqPlayer;
             channel->enabled = false;
             for (j = 0; j < ARRAY_COUNT(channel->layers); j++) {
                 channel->layers[j] = NULL;
             }
         }
-        AudioScript_InitSequenceChannel(seqPlayer->channels[i]);
+        AudioScript_InitSequenceChannel(seqPlayer->channels[channelIndex]);
     }
 }
 
 void AudioScript_InitSequencePlayer(SequencePlayer* seqPlayer) {
-    s32 i;
+    s32 channelIndex;
     s32 j;
 
-    for (i = 0; i < SEQ_NUM_CHANNELS; i++) {
-        seqPlayer->channels[i] = &gAudioCtx.sequenceChannelNone;
+    for (channelIndex = 0; channelIndex < SEQ_NUM_CHANNELS; channelIndex++) {
+        seqPlayer->channels[channelIndex] = &gAudioCtx.sequenceChannelNone;
     }
 
     seqPlayer->enabled = false;
@@ -2130,6 +2130,7 @@ void AudioScript_InitSequencePlayer(SequencePlayer* seqPlayer) {
     seqPlayer->muteFlags = MUTE_FLAGS_SOFTEN | MUTE_FLAGS_STOP_NOTES;
     seqPlayer->fadeVolumeScale = 1.0f;
     seqPlayer->bend = 1.0f;
+
     AudioList_InitNoteLists(&seqPlayer->notePool);
     AudioScript_ResetSequencePlayer(seqPlayer);
 }

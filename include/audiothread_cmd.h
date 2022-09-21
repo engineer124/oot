@@ -353,11 +353,11 @@ typedef enum {
  * Set active channel flags.
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
- * @param activeChannelsFlags
+ * @param activeChannelsBits
  */
-#define AUDIOCMD_GLOBAL_SET_ACTIVE_CHANNEL_FLAGS(seqPlayerIndex, activeChannelsFlags)                  \
+#define AUDIOCMD_GLOBAL_SET_ACTIVE_CHANNEL_FLAGS(seqPlayerIndex, activeChannelsBits)                  \
     AudioThread_QueueCmdU16(MK_CMD(AUDIOCMD_OP_GLOBAL_SET_ACTIVE_CHANNEL_FLAGS, seqPlayerIndex, 0, 0), \
-                            activeChannelsFlags)
+                            activeChannelsBits)
 
 /**
  * Pop the persistent cache of the specified table.

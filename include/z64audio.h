@@ -8,7 +8,6 @@
 #define TATUMS_PER_BEAT 48
 
 #define IS_SEQUENCE_CHANNEL_VALID(ptr) ((u32)(ptr) != (u32)&gAudioCtx.sequenceChannelNone)
-#define SEQ_ALL_SEQPLAYERS 0xFF
 #define SEQ_NUM_CHANNELS 16
 #define SEQ_ALL_CHANNELS 0xFF
 #define SEQ_IO_VAL_NONE -1
@@ -960,7 +959,7 @@ typedef struct {
     /* 0x5BD8 */ u8 cmdWritePos;
     /* 0x5BD9 */ u8 cmdReadPos;
     /* 0x5BDA */ u8 cmdQueueFinished;
-    /* 0x5BDC */ u16 activeChannelsFlags[4]; // bitfield for 16 channels. Only channels with bit turned on will be processed
+    /* 0x5BDC */ u16 activeChannelsBits[4]; // bitfield for 16 channels. Only channels with bit turned on will be processed
     /* 0x5BE4 */ OSMesgQueue* audioResetQueueP;
     /* 0x5BE8 */ OSMesgQueue* taskStartQueueP;
     /* 0x5BEC */ OSMesgQueue* cmdProcQueueP;

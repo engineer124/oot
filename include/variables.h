@@ -147,7 +147,7 @@ extern u16 gSfxChannelLowVolumeFlag;
 extern Vec3f gSfxDefaultPos;
 extern f32 gSfxDefaultFreqAndVolScale;
 extern s8 gSfxDefaultReverb;
-extern u8 D_801333F0;
+extern u8 gAudioDebugPrintSfxRequest;
 extern u8 gAudioSfxSwapOff;
 extern u8 D_801333F8;
 extern u8 gSeqCmdWritePos;

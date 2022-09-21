@@ -11,7 +11,7 @@ typedef struct {
     /* 0xA */ s8 stereoBits;
     /* 0xB */ u8 filter;
     /* 0xC */ u8 combFilterGain;
-} SfxPlayerState;
+} SfxPlayerState; // size = 0x10
 
 typedef enum {
     /* 0x0 */ SFX_CHANNEL_PLAYER0, // SfxPlayerBank
@@ -37,7 +37,7 @@ typedef struct {
     /* 0x4 */ f32 target;
     /* 0x8 */ f32 step;
     /* 0xC */ s32 remainingFrames;
-} FreqLerp;
+} FreqLerp; // size = 0x10
 
 typedef enum {
     /* 0x0 */ PAGE_NON,
@@ -61,12 +61,9 @@ typedef enum {
 #define SCROLL_PRINT_BUF_SIZE 25
 
 typedef struct {
-    s8 x;
-    s8 y;
-} OcarinaStick;
-
-void Audio_UpdateRiverSoundVolumes(void);
-void Audio_UpdateFanfare(void);
+    /* 0x0 */ s8 x;
+    /* 0x1 */ s8 y;
+} OcarinaStick; // 0x2
 
 u8 gIsLargeSfxBank[7] = { 0, 0, 0, 1, 0, 0, 0 };
 
@@ -93,7 +90,7 @@ f32 sBehindScreenZ[2] = { -15.0f, -65.0f };
 u8 sAudioIncreasingTranspose = 0;
 u8 gMorphaTransposeTable[16] = { 0, 0, 0, 1, 1, 2, 4, 6, 8, 8, 8, 8, 8, 8, 8, 8 };
 u8 sPrevChargeLevel = 0;
-f32 D_801305E4[4] = { 1.0f, 1.12246f, 1.33484f, 1.33484f }; // 2**({0, 2, 5, 5}/12)
+f32 sChargeLevelsSfxFreq[4] = { 1.0f, 1.12246f, 1.33484f, 1.33484f }; // 2**({0, 2, 5, 5}/12)
 f32 sCurChargeLevelSfxFreq = 1.0f;
 u8 sGanonsTowerLevelsVol[8] = { 127, 80, 75, 73, 70, 68, 65, 60 };
 u8 sEnterGanonsTowerTimer = 0;
@@ -1295,13 +1292,11 @@ u32 sAudioUpdateEndTime;
 f32 sSfxSyncedVolume;
 f32 sSfxSyncedVolumeForMetalEffects;
 f32 sSfxSyncedFreq;
-f32 D_8016B7B4;
 FreqLerp sRiverFreqScaleLerp;
 FreqLerp sWaterfallFreqScaleLerp;
 f32 sSfxAdjustedFreq;
 s8 sSfxCustomReverb;
 f32 gSfxVolume;
-u16 D_8016B7E4;
 struct {
     char str[5];
     u16 num;
@@ -1311,7 +1306,7 @@ u8 sRiverSoundMainBgmCurrentVol;
 u8 sRiverSoundMainBgmLower;
 u8 sRiverSoundMainBgmRestore;
 u8 sGanonsTowerVol;
-SfxPlayerState sSfxChannelState[0x10];
+SfxPlayerState sSfxChannelState[SEQ_NUM_CHANNELS];
 char sBinToStrBuf[0x20];
 u8 sMalonsSingingTimer;
 u8 sAudioSpecPeakNumNotes[0x12];
@@ -1351,6 +1346,9 @@ void Audio_StepFreqLerp(FreqLerp* lerp);
 void Audio_UpdateSceneSequenceResumePoint(void);
 void Audio_PlayAmbience(u8 ambienceId);
 s32 Audio_SetGanonsTowerBgmVolume(u8 targetVol);
+
+void Audio_UpdateRiverSoundVolumes(void);
+void Audio_UpdateFanfare(void);
 
 // =========== Audio Ocarina ===========
 
@@ -1458,7 +1456,7 @@ void AudioOcarina_MapNotesToScarecrowButtons(u8 noteSongIndex) {
     u8 noteSongPos = 0;
     u8 pitch;
 
-    while (buttonSongPos < 8 && noteSongPos < 16) {
+    while ((buttonSongPos < 8) && (noteSongPos < 16)) {
         pitch = sOcarinaSongNotes[noteSongIndex][noteSongPos++].pitch;
 
         if (pitch != OCARINA_PITCH_NONE) {
@@ -2381,7 +2379,7 @@ void AudioOcarina_ResetStaffs(void) {
     sOcarinaDropInputTimer = 0;
 }
 
-f32 D_80131C8C = 0.0f;
+f32 sMetalEffectsFreqVolParam = 0.0f;
 
 // =========== Audio Debugging ===========
 
@@ -2779,7 +2777,7 @@ void AudioDebug_Draw(GfxPrint* printer) {
             GfxPrint_Printf(printer, "OPENNOTE");
 
             ctr2 = 0;
-            for (i = 0; i < 16; i++) {
+            for (i = 0; i < SEQ_NUM_CHANNELS; i++) {
                 if (i == sAudioSubTrackInfoChannelSel) {
                     SETCOL(255, 255, 255);
                 } else {
@@ -3406,8 +3404,9 @@ void AudioDebug_ProcessInput_ScrPrt(void) {
         }
     }
 
-    D_801333F0 = sAudioScrPrtWork[3] + (sAudioScrPrtWork[4] * 2) + (sAudioScrPrtWork[5] * 4) +
-                 (sAudioScrPrtWork[6] * 8) + (sAudioScrPrtWork[7] * 0x10) + (sAudioScrPrtWork[8] * 0x20);
+    gAudioDebugPrintSfxRequest = sAudioScrPrtWork[3] + (sAudioScrPrtWork[4] * 2) + (sAudioScrPrtWork[5] * 4) +
+                                 (sAudioScrPrtWork[6] * 8) + (sAudioScrPrtWork[7] * 0x10) +
+                                 (sAudioScrPrtWork[8] * 0x20);
 }
 
 void AudioDebug_ProcessInput_SfxSwap(void) {
@@ -3986,7 +3985,7 @@ f32 AudioSfx_ComputeFreqScale(u8 bankId, u8 entryIndex) {
     }
 
     if ((entry->sfxParams & SFX_PARAM_RAND_FREQ_RAISE_MASK) != (0 << SFX_PARAM_RAND_FREQ_RAISE_SHIFT)) {
-        freq += (entry->unk_2F / 192.0f);
+        freq += (entry->randFreq / 192.0f);
     }
 
     return freq;
@@ -4214,7 +4213,7 @@ void Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(Vec3f* pos, u16 s
     u8 phi_v0;
     u16 metalSfxId;
 
-    D_80131C8C = freqVolParam;
+    sMetalEffectsFreqVolParam = freqVolParam;
     sp24 = Audio_SetSyncedSfxFreqAndVolume(freqVolParam);
     AudioSfx_PlaySfx(sfxId, pos, 4, &sSfxSyncedFreq, &sSfxSyncedVolume, &gSfxDefaultReverb);
 
@@ -4262,7 +4261,7 @@ void Audio_PlaySfx_Randomized(Vec3f* pos, u16 baseSfxId, u8 randLim) {
 void Audio_PlaySfx_SwordCharge(Vec3f* pos, u8 chargeLevel) {
     chargeLevel &= 3;
     if (chargeLevel != sPrevChargeLevel) {
-        sCurChargeLevelSfxFreq = D_801305E4[chargeLevel];
+        sCurChargeLevelSfxFreq = sChargeLevelsSfxFreq[chargeLevel];
         switch (chargeLevel) {
             case 1:
                 AudioSfx_PlaySfx(SFX_ID_PLAYER_SWORD_CHARGE, pos, 4, &sCurChargeLevelSfxFreq,
@@ -5426,7 +5425,7 @@ void Audio_ResetForAudioHeapStep2(void) {
 }
 
 void Audio_ResetForAudioHeapStep1(s32 specId) {
-    gAudioHeapResetState = 1;
+    gAudioHeapResetState = AUDIO_HEAP_RESET_STATE_RESETTING;
     Audio_ResetData();
     AudioOcarina_ResetStaffs();
     AudioSfx_ResetSfxChannelState();

@@ -183,7 +183,7 @@ void AudioSfx_ProcessRequest(void) {
     }
 
     bankId = SFX_BANK(req->sfxId);
-    if ((1 << bankId) & D_801333F0) {
+    if ((1 << bankId) & gAudioDebugPrintSfxRequest) {
         AudioDebug_ScrPrt("SE", req->sfxId);
         bankId = SFX_BANK(req->sfxId);
     }
@@ -566,16 +566,16 @@ void AudioSfx_PlayActiveSfx(u8 bankId) {
                 if ((entry->sfxParams & SFX_PARAM_RAND_FREQ_RAISE_MASK) != (0 << SFX_PARAM_RAND_FREQ_RAISE_SHIFT)) {
                     switch (entry->sfxParams & SFX_PARAM_RAND_FREQ_RAISE_MASK) {
                         case (1 << SFX_PARAM_RAND_FREQ_RAISE_SHIFT):
-                            entry->unk_2F = AudioThread_NextRandom() & 0xF;
+                            entry->randFreq = AudioThread_NextRandom() & 0xF;
                             break;
                         case (2 << SFX_PARAM_RAND_FREQ_RAISE_SHIFT):
-                            entry->unk_2F = AudioThread_NextRandom() & 0x1F;
+                            entry->randFreq = AudioThread_NextRandom() & 0x1F;
                             break;
                         case (3 << SFX_PARAM_RAND_FREQ_RAISE_SHIFT):
-                            entry->unk_2F = AudioThread_NextRandom() & 0x3F;
+                            entry->randFreq = AudioThread_NextRandom() & 0x3F;
                             break;
                         default:
-                            entry->unk_2F = 0;
+                            entry->randFreq = 0;
                             break;
                     }
                 }

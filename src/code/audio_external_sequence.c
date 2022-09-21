@@ -765,16 +765,16 @@ void AudioSeq_UpdateActiveSequences(void) {
 }
 
 u8 AudioSeq_UpdateAudioHeapReset(void) {
-    if (gAudioHeapResetState != 0) {
-        if (gAudioHeapResetState == 1) {
+    if (gAudioHeapResetState != AUDIO_HEAP_RESET_STATE_NONE) {
+        if (gAudioHeapResetState == AUDIO_HEAP_RESET_STATE_RESETTING) {
             if (func_800E5EDC() == 1) {
-                gAudioHeapResetState = 0;
+                gAudioHeapResetState = AUDIO_HEAP_RESET_STATE_NONE;
                 AUDIOCMD_SEQPLAYER_SET_IO(SEQ_PLAYER_SFX, 0, gSfxChannelLayout);
                 Audio_ResetForAudioHeapStep2();
             }
-        } else if (gAudioHeapResetState == 2) {
+        } else if (gAudioHeapResetState == AUDIO_HEAP_RESET_STATE_RESETTING_ALT) {
             while (func_800E5EDC() != 1) {}
-            gAudioHeapResetState = 0;
+            gAudioHeapResetState = AUDIO_HEAP_RESET_STATE_NONE;
             AUDIOCMD_SEQPLAYER_SET_IO(SEQ_PLAYER_SFX, 0, gSfxChannelLayout);
             Audio_ResetForAudioHeapStep2();
         }
