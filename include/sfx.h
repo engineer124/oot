@@ -85,6 +85,7 @@ typedef enum {
 #define SFX_INDEX(sfxId)    ((sfxId) & 0x01FF)
 #define SFX_BANK(sfxId)     SFX_BANK_SHIFT(SFX_BANK_MASK(sfxId))
 
+#define SFX_FLAG_MASK 0xC00
 #define SFX_FLAG 0x800
 
 typedef struct {

@@ -1872,13 +1872,13 @@ void AudioDebug_Draw(GfxPrint* printer);
 void AudioDebug_ScrPrt(const char* str, u16 num);
 
 void AudioSfx_SetProperties(u8 bankId, u8 entryIndex, u8 channelIndex);
-void AudioSfx_SetChannelIO(Vec3f* pos, u16 sfxId, u8);
+void AudioSfx_SetChannelIO(Vec3f* pos, u16 sfxId, u8 ioData);
 
 // Various wrappers to AudioSfx_PlaySfx
-void Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(Vec3f* pos, u16 sfxId, f32);
+void Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(Vec3f* pos, u16 sfxId, f32 freqVolParam);
 void Audio_PlaySfx_DarkLink(Vec3f* pos, u16 sfxId);
 void Audio_PlaySfx_Randomized(Vec3f* pos, u16 baseSfxId, u8 randLim);
-void Audio_PlaySfx_AtPosWithSyncedFreqAndVolume(Vec3f* pos, u16 sfxId, f32);
+void Audio_PlaySfx_AtPosWithSyncedFreqAndVolume(Vec3f* pos, u16 sfxId, f32 freqVolParam);
 void Audio_PlaySfx_AtPosWithFreq(Vec3f* pos, u16 sfxId, f32 adjFreq);
 void Audio_PlaySfx_AtPosWithTimer(Vec3f* pos, u16 sfxId, f32);
 void Audio_PlaySfx_AtPosWithReverb(Vec3f* pos, u16 sfxId, s8 reverbAdd);
@@ -1895,10 +1895,10 @@ void Audio_PlaySariaBgm(Vec3f* pos, u16 seqId, u16 distMax);
 void Audio_PlayMorningSceneSequence(u16 seqId);
 void Audio_PlaySceneSequence(u16 seqId);
 void Audio_PlayBgmForSongOfStorms(void);
-void Audio_PlaySequenceInCutscene(u16);
+void Audio_PlaySequenceInCutscene(u16 seqId);
 void Audio_PlayBgm_StorePrevBgm(u16 seqId);
 void Audio_PlayAmbience_StorePrevBgm(u8 ambienceId);
-void Audio_PlayFanfare(u16);
+void Audio_PlayFanfare(u16 seqId);
 void Audio_PlaySequenceWithSeqPlayerIO(u8 seqPlayerIndex, u16 seqId, u8 fadeTimer, s8 ioPort, s8 ioData);
 void Audio_PlayAmbience(u8 ambienceId);
 
@@ -1933,7 +1933,7 @@ void Audio_RestorePrevBgm(void);
 void Audio_ForceRestorePreviousBgm(void);
 void Audio_UpdateEnemyBgmVolume(f32 dist);
 void Audio_UpdateMalonSinging(f32 dist, u16 seqId);
-void Audio_StopBgmAndFanfare(u16);
+void Audio_StopBgmAndFanfare(u16 fadeOutDuration);
 
 void AudioSfx_MuteBanks(u16 muteMask);
 void AudioSfx_LowerBgmVolume(u8 channelIndex);

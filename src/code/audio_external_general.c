@@ -2716,7 +2716,7 @@ void AudioDebug_Draw(GfxPrint* printer) {
         case PAGE_SFX_SWAP:
             GfxPrint_SetPos(printer, 3, 4);
             SETCOL(255, 255, 255);
-            if (gAudioSfxSwapOff) {
+            if (gAudioDebugSfxSwapOff) {
                 GfxPrint_Printf(printer, "SWAP OFF");
             }
 
@@ -2751,8 +2751,8 @@ void AudioDebug_Draw(GfxPrint* printer) {
                     SETCOL(96, 96, 96);
                 }
                 GfxPrint_SetPos(printer, 3, 6 + i);
-                GfxPrint_Printf(printer, "%04x %04x %s", gAudioSfxSwapSource[i], gAudioSfxSwapTarget[i],
-                                sAudioSfxSwapModeNames[gAudioSfxSwapMode[i]]);
+                GfxPrint_Printf(printer, "%04x %04x %s", gAudioDebugSfxSwapSource[i], gAudioDebugSfxSwapTarget[i],
+                                sAudioSfxSwapModeNames[gAudioDebugSfxSwapMode[i]]);
             }
             break;
 
@@ -3436,8 +3436,8 @@ void AudioDebug_ProcessInput_SfxSwap(void) {
         }
 
         if (CHECK_BTN_ANY(sDebugPadPress, BTN_B)) {
-            gAudioSfxSwapSource[sAudioSfxSwapSel] = 0;
-            gAudioSfxSwapTarget[sAudioSfxSwapSel] = 0;
+            gAudioDebugSfxSwapSource[sAudioSfxSwapSel] = 0;
+            gAudioDebugSfxSwapTarget[sAudioSfxSwapSel] = 0;
         }
 
         if (CHECK_BTN_ANY(sDebugPadPress, BTN_START)) {
@@ -3446,8 +3446,8 @@ void AudioDebug_ProcessInput_SfxSwap(void) {
             } else {
                 prev = 9;
             }
-            gAudioSfxSwapSource[sAudioSfxSwapSel] = gAudioSfxSwapSource[prev];
-            gAudioSfxSwapTarget[sAudioSfxSwapSel] = gAudioSfxSwapTarget[prev];
+            gAudioDebugSfxSwapSource[sAudioSfxSwapSel] = gAudioDebugSfxSwapSource[prev];
+            gAudioDebugSfxSwapTarget[sAudioSfxSwapSel] = gAudioDebugSfxSwapTarget[prev];
         }
     } else {
         if (CHECK_BTN_ANY(sDebugPadPress, BTN_DLEFT)) {
@@ -3475,17 +3475,17 @@ void AudioDebug_ProcessInput_SfxSwap(void) {
             }
 
             if (sAudioSfxSwapNibbleSel < 4) {
-                val = gAudioSfxSwapSource[sAudioSfxSwapSel] >> ((3 - sAudioSfxSwapNibbleSel) * 4);
+                val = gAudioDebugSfxSwapSource[sAudioSfxSwapSel] >> ((3 - sAudioSfxSwapNibbleSel) * 4);
                 val = (val + step) & 0xF;
-                gAudioSfxSwapSource[sAudioSfxSwapSel] =
-                    (gAudioSfxSwapSource[sAudioSfxSwapSel] & ((0xF << ((3 - sAudioSfxSwapNibbleSel) * 4)) ^ 0xFFFF)) +
-                    (val << ((3 - sAudioSfxSwapNibbleSel) * 4));
+                gAudioDebugSfxSwapSource[sAudioSfxSwapSel] = (gAudioDebugSfxSwapSource[sAudioSfxSwapSel] &
+                                                              ((0xF << ((3 - sAudioSfxSwapNibbleSel) * 4)) ^ 0xFFFF)) +
+                                                             (val << ((3 - sAudioSfxSwapNibbleSel) * 4));
             } else {
-                val = gAudioSfxSwapTarget[sAudioSfxSwapSel] >> ((7 - sAudioSfxSwapNibbleSel) * 4);
+                val = gAudioDebugSfxSwapTarget[sAudioSfxSwapSel] >> ((7 - sAudioSfxSwapNibbleSel) * 4);
                 val = (val + step) & 0xF;
-                gAudioSfxSwapTarget[sAudioSfxSwapSel] =
-                    (gAudioSfxSwapTarget[sAudioSfxSwapSel] & ((0xF << ((7 - sAudioSfxSwapNibbleSel) * 4)) ^ 0xFFFF)) +
-                    (val << ((7 - sAudioSfxSwapNibbleSel) * 4));
+                gAudioDebugSfxSwapTarget[sAudioSfxSwapSel] = (gAudioDebugSfxSwapTarget[sAudioSfxSwapSel] &
+                                                              ((0xF << ((7 - sAudioSfxSwapNibbleSel) * 4)) ^ 0xFFFF)) +
+                                                             (val << ((7 - sAudioSfxSwapNibbleSel) * 4));
             }
         }
 
@@ -3495,19 +3495,19 @@ void AudioDebug_ProcessInput_SfxSwap(void) {
 
         if (CHECK_BTN_ANY(sDebugPadPress, BTN_B)) {
             if (sAudioSfxSwapNibbleSel < 4) {
-                gAudioSfxSwapSource[sAudioSfxSwapSel] = 0;
+                gAudioDebugSfxSwapSource[sAudioSfxSwapSel] = 0;
             } else {
-                gAudioSfxSwapTarget[sAudioSfxSwapSel] = 0;
+                gAudioDebugSfxSwapTarget[sAudioSfxSwapSel] = 0;
             }
         }
     }
 
     if (CHECK_BTN_ANY(sDebugPadPress, BTN_CLEFT)) {
-        gAudioSfxSwapOff ^= 1;
+        gAudioDebugSfxSwapOff ^= 1;
     }
 
     if (CHECK_BTN_ANY(sDebugPadPress, BTN_CDOWN)) {
-        gAudioSfxSwapMode[sAudioSfxSwapSel] ^= 1;
+        gAudioDebugSfxSwapMode[sAudioSfxSwapSel] ^= 1;
     }
 }
 

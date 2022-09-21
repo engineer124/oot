@@ -46,9 +46,9 @@ s32 D_801333EC = 0; // unused
 
 u8 gAudioDebugPrintSfxRequest = 0;
 
-u8 gAudioSfxSwapOff = 0;
+u8 gAudioDebugSfxSwapOff = 0;
 
-u8 D_801333F8 = 0;
+u8 gAudioDebugSfxSwapInitialized = false;
 
 s32 D_801333FC = 0; // unused
 
