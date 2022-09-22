@@ -1,7 +1,15 @@
 #ifndef Z64_AUDIO_H
 #define Z64_AUDIO_H
 
-#define MK_CMD(b0,b1,b2,b3) ((((b0) & 0xFF) << 0x18) | (((b1) & 0xFF) << 0x10) | (((b2) & 0xFF) << 0x8) | (((b3) & 0xFF) << 0))
+#define TATUMS_PER_UPDATE_PAL 1.001521f
+#define TATUMS_PER_UPDATE_MPAL 0.99276f
+#define TATUMS_PER_UPDATE_NTSC 1.00278f
+
+#define REFRESH_RATE_PAL 50
+#define REFRESH_RATE_MPAL 60
+#define REFRESH_RATE_NTSC 60
+
+#define AUDIO_MK_CMD(b0,b1,b2,b3) ((((b0) & 0xFF) << 0x18) | (((b1) & 0xFF) << 0x10) | (((b2) & 0xFF) << 0x8) | (((b3) & 0xFF) << 0))
 
 #define NO_LAYER ((SequenceLayer*)(-1))
 
@@ -26,11 +34,16 @@ typedef enum {
 
 #define MAX_CHANNELS_PER_BANK 3
 
-#define MUTE_FLAGS_3 (1 << 3)           // prevent further noteSubEus from playing
-#define MUTE_FLAGS_4 (1 << 4)           // stop something in seqLayer scripts
-#define MUTE_FLAGS_SOFTEN (1 << 5)      // lower volume, by default to half
-#define MUTE_FLAGS_STOP_NOTES (1 << 6)  // prevent further notes from playing
-#define MUTE_FLAGS_STOP_SCRIPT (1 << 7) // stop processing sequence/channel scripts
+#define MUTE_FLAGS_STOP_SAMPLES (1 << 3) // Immediately stops playing notes when muted.
+#define MUTE_FLAGS_STOP_LAYER (1 << 4)   // All note layers will stop playing any new notes when muted. Old notes will play for their remaining duration.
+#define MUTE_FLAGS_SOFTEN (1 << 5)       // lower volume, by default to half
+#define MUTE_FLAGS_STOP_NOTES (1 << 6)   // prevent further notes from playing
+#define MUTE_FLAGS_STOP_SCRIPT (1 << 7)  // stop processing sequence/channel scripts
+
+#define NOTE_ALLOC_POLICY_0 (1 << 0)
+#define NOTE_ALLOC_POLICY_1 (1 << 1)
+#define NOTE_ALLOC_POLICY_2 (1 << 2)
+#define NOTE_ALLOC_POLICY_3 (1 << 3)
 
 #define AUDIO_LERPIMP(v0, v1, t) (v0 + ((v1 - v0) * t))
 
@@ -62,6 +75,16 @@ typedef enum {
 #define WAVE_SAMPLE_COUNT 64
 
 #define AUDIO_RELOCATED_ADDRESS_START K0BASE
+
+typedef enum {
+    /*  0x1 */ AUDIO_ERROR_NO_INST = 1,
+    /*  0x3 */ AUDIO_ERROR_INVALID_INST_ID = 3,
+    /*  0x4 */ AUDIO_ERROR_INVALID_DRUM_SFX_ID,
+    /*  0x5 */ AUDIO_ERROR_NO_DRUM_SFX,
+    /* 0x10 */ AUDIO_ERROR_FONT_NOT_LOADED = 0x10
+} AudioError;
+
+#define AUDIO_ERROR(fontId, id, err) (((fontId << 8) + id) + (err << 24))
 
 typedef enum {
     /* 0 */ SOUNDMODE_STEREO,
@@ -314,8 +337,8 @@ typedef struct {
     /* 0x006 */ u8 unk_06[1];
     /* 0x007 */ s8 seqPlayerIndex;
     /* 0x008 */ u16 tempo; // tatums per minute
-    /* 0x00A */ u16 tempoAcc;
-    /* 0x00C */ u16 unk_0C;
+    /* 0x00A */ u16 tempoAcc; // tempo accumulation, used in a discretized algorithm to apply tempo.
+    /* 0x00C */ u16 tempoChange; // Used to adjust the tempo without altering the base tempo.
     /* 0x00E */ s16 transposition;
     /* 0x010 */ u16 delay;
     /* 0x012 */ u16 fadeTimer;
@@ -369,7 +392,7 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ u8 unused : 2;
-    /* 0x00 */ u8 bit2 : 2;
+    /* 0x00 */ u8 type : 2;
     /* 0x00 */ u8 strongRight : 1;
     /* 0x00 */ u8 strongLeft : 1;
     /* 0x00 */ u8 strongReverbRight : 1;
@@ -435,7 +458,7 @@ typedef struct SequenceChannel {
     /* 0x1C */ u16 vibratoDelay;
     /* 0x1E */ u16 delay;
     /* 0x20 */ u16 combFilterGain;
-    /* 0x22 */ u16 unk_22;
+    /* 0x22 */ u16 seqPtr;
     /* 0x24 */ s16 instOrWave; // either 0 (none), instrument index + 1, or
                              // 0x80..0x83 for sawtooth/triangle/sine/square waves.
     /* 0x26 */ s16 transposition;
@@ -540,12 +563,18 @@ typedef struct {
     /* 0x1A */ u16 delay;
 } VibratoState; // size = 0x1C
 
+typedef enum {
+    /* 0 */ PLAYBACK_STATUS_0,
+    /* 1 */ PLAYBACK_STATUS_1,
+    /* 2 */ PLAYBACK_STATUS_2
+} NotePlaybackStatus;
+
 typedef struct {
     /* 0x00 */ u8 priority;
     /* 0x01 */ u8 waveId;
     /* 0x02 */ u8 harmonicIndex; // the harmonic index for the synthetic wave contained in gWaveSamples (also matches the base 2 logarithm of the harmonic order)
     /* 0x03 */ u8 fontId;
-    /* 0x04 */ u8 unk_04;
+    /* 0x04 */ u8 status;
     /* 0x05 */ u8 stereoHeadsetEffects;
     /* 0x06 */ s16 adsrVolScaleUnused;
     /* 0x08 */ f32 portamentoFreqScale;
@@ -902,7 +931,7 @@ typedef struct {
     /* 0x288C */ s32 sampleDmaBufSize;
     /* 0x2890 */ s32 maxAudioCmds;
     /* 0x2894 */ s32 numNotes;
-    /* 0x2898 */ s16 tempoInternalToExternal;
+    /* 0x2898 */ s16 maxTempo; // Maximum possible tempo using every possible update to process a .seq file
     /* 0x289A */ s8 soundMode;
     /* 0x289C */ s32 totalTaskCount; // The total number of times the top-level function on the audio thread has run since audio was initialized
     /* 0x28A0 */ s32 curAudioFrameDmaCount;
@@ -913,7 +942,7 @@ typedef struct {
     /* 0x28B8 */ AudioTask* curTask;
     /* 0x28BC */ char unk_28BC[0x4];
     /* 0x28C0 */ AudioTask rspTask[2];
-    /* 0x2960 */ f32 osTvTypeTempoFactor;
+    /* 0x2960 */ f32 maxTempoTvTypeFactors;
     /* 0x2964 */ s32 refreshRate;
     /* 0x2968 */ s16* aiBuffers[3];
     /* 0x2974 */ s16 aiBufLengths[3];

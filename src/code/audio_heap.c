@@ -75,7 +75,7 @@ void AudioHeap_DiscardFont(s32 fontId) {
         Note* note = &gAudioCtx.notes[i];
 
         if (note->playbackState.fontId == fontId) {
-            if (note->playbackState.unk_04 == 0 && note->playbackState.priority != 0) {
+            if ((note->playbackState.status == PLAYBACK_STATUS_0) && (note->playbackState.priority != 0)) {
                 note->playbackState.parentLayer->enabled = false;
                 note->playbackState.parentLayer->finished = true;
             }
@@ -905,13 +905,15 @@ void AudioHeap_Init(void) {
         gAudioCtx.audioBufParams.numSequencePlayers = 4;
     }
     gAudioCtx.unk_2 = spec->unk_14;
-    gAudioCtx.tempoInternalToExternal =
-        (u32)(gAudioCtx.audioBufParams.updatesPerFrame * 2880000.0f / gTatumsPerBeat / gAudioCtx.osTvTypeTempoFactor);
+
+    // 60 (s / min)
+    gAudioCtx.maxTempo = (u32)(gAudioCtx.audioBufParams.updatesPerFrame * (60.0f * 1000 * TATUMS_PER_BEAT) /
+                               gTatumsPerBeat / gAudioCtx.maxTempoTvTypeFactors);
 
     gAudioCtx.scaledRefreshRate = gAudioCtx.refreshRate;
     gAudioCtx.scaledRefreshRate *= gAudioCtx.audioBufParams.updatesPerFrame;
     gAudioCtx.scaledRefreshRate /= gAudioCtx.audioBufParams.aiSamplingFrequency;
-    gAudioCtx.scaledRefreshRate /= gAudioCtx.tempoInternalToExternal;
+    gAudioCtx.scaledRefreshRate /= gAudioCtx.maxTempo;
 
     gAudioCtx.audioBufParams.specUnk4 = spec->unk_04;
     gAudioCtx.audioBufParams.numSamplesPerFrameTarget *= gAudioCtx.audioBufParams.specUnk4;

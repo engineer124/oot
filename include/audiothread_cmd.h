@@ -25,12 +25,12 @@ typedef enum {
     /* 0x46 */ AUDIOCMD_OP_SEQPLAYER_SET_IO = 0x46,
     /* 0x47 */ AUDIOCMD_OP_SEQPLAYER_SET_TEMPO,
     /* 0x48 */ AUDIOCMD_OP_SEQPLAYER_SET_TRANSPOSITION,
-    /* 0x49 */ AUDIOCMD_OP_SEQPLAYER_SET_SCALED_UNK_0C,
+    /* 0x49 */ AUDIOCMD_OP_SEQPLAYER_CHANGE_TEMPO,
     /* 0x4A */ AUDIOCMD_OP_SEQPLAYER_SET_FADE_VOLUME,
     /* 0x4B */ AUDIOCMD_OP_SEQPLAYER_SCALE_FADE_VOLUME,
     /* 0x4C */ AUDIOCMD_OP_SEQPLAYER_SET_FADE_TIMER,
     /* 0x4D */ AUDIOCMD_OP_SEQPLAYER_SET_BEND,
-    /* 0x4E */ AUDIOCMD_OP_SEQPLAYER_SET_UNK_0C,
+    /* 0x4E */ AUDIOCMD_OP_SEQPLAYER_CHANGE_TATUM_TEMPO,
     /* 0x81 */ AUDIOCMD_OP_GLOBAL_SYNC_LOAD_SEQ_PARTS = 0x81,
     /* 0x82 */ AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER,
     /* 0x83 */ AUDIOCMD_OP_GLOBAL_DISABLE_SEQPLAYER,
@@ -67,7 +67,7 @@ typedef enum {
  * @param volume the target volume for the sequence. Ranged from 0-0xFF, with 0x7F mapping to 1.0f
  */
 #define AUDIOCMD_CHANNEL_VOL_SCALE(seqPlayerIndex, channelIndex, volumeScale) \
-    AudioThread_QueueCmdF32(MK_CMD(AUDIOCMD_OP_CHANNEL_VOL_SCALE, seqPlayerIndex, channelIndex, 0), volumeScale)
+    AudioThread_QueueCmdF32(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_VOL_SCALE, seqPlayerIndex, channelIndex, 0), volumeScale)
 
 /**
  * Set the volume on a given channel
@@ -81,7 +81,7 @@ typedef enum {
  * @param volume the target volume for the sequence. Ranged from 0-0xFF, with 0x7F mapping to 1.0f
  */
 #define AUDIOCMD_CHANNEL_VOL(seqPlayerIndex, channelIndex, volume) \
-    AudioThread_QueueCmdF32(MK_CMD(AUDIOCMD_OP_CHANNEL_VOL, seqPlayerIndex, channelIndex, 0), volume)
+    AudioThread_QueueCmdF32(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_VOL, seqPlayerIndex, channelIndex, 0), volume)
 
 /**
  * Set pan signed.
@@ -91,7 +91,7 @@ typedef enum {
  * @param panSigned
  */
 #define AUDIOCMD_CHANNEL_PAN_SIGNED(seqPlayerIndex, channelIndex, panSigned) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_CHANNEL_PAN_SIGNED, seqPlayerIndex, channelIndex, 0), panSigned)
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_PAN_SIGNED, seqPlayerIndex, channelIndex, 0), panSigned)
 
 /**
  * Set frequency scale.
@@ -101,7 +101,7 @@ typedef enum {
  * @param freqScale
  */
 #define AUDIOCMD_CHANNEL_FREQ_SCALE(seqPlayerIndex, channelIndex, freqScale) \
-    AudioThread_QueueCmdF32(MK_CMD(AUDIOCMD_OP_CHANNEL_FREQ_SCALE, seqPlayerIndex, channelIndex, 0), freqScale)
+    AudioThread_QueueCmdF32(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_FREQ_SCALE, seqPlayerIndex, channelIndex, 0), freqScale)
 
 /**
  * Set reverb volume.
@@ -111,7 +111,7 @@ typedef enum {
  * @param reverbVolume
  */
 #define AUDIOCMD_CHANNEL_REVERB_VOLUME(seqPlayerIndex, channelIndex, reverbVolume) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_CHANNEL_REVERB_VOLUME, seqPlayerIndex, channelIndex, 0), reverbVolume)
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_REVERB_VOLUME, seqPlayerIndex, channelIndex, 0), reverbVolume)
 
 /**
  * Set channel io.
@@ -122,7 +122,7 @@ typedef enum {
  * @param ioData
  */
 #define AUDIOCMD_CHANNEL_IO(seqPlayerIndex, channelIndex, ioPort, ioData) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_CHANNEL_IO, (seqPlayerIndex), (channelIndex), (ioPort)), (ioData))
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_IO, (seqPlayerIndex), (channelIndex), (ioPort)), (ioData))
 
 /**
  * Set pan unsigned.
@@ -132,7 +132,7 @@ typedef enum {
  * @param panUnsigned
  */
 #define AUDIOCMD_CHANNEL_PAN_UNSIGNED(seqPlayerIndex, channelIndex, panUnsigned) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_CHANNEL_PAN_UNSIGNED, seqPlayerIndex, channelIndex, 0), panUnsigned)
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_PAN_UNSIGNED, seqPlayerIndex, channelIndex, 0), panUnsigned)
 
 /**
  * Mute a specified channel.
@@ -142,7 +142,7 @@ typedef enum {
  * @param muted
  */
 #define AUDIOCMD_CHANNEL_MUTE(seqPlayerIndex, channelIndex, muted) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_CHANNEL_MUTE, seqPlayerIndex, channelIndex, 0), muted)
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_MUTE, seqPlayerIndex, channelIndex, 0), muted)
 
 /**
  * Set the muteFlags for a specified channel.
@@ -152,7 +152,7 @@ typedef enum {
  * @param muteFlags
  */
 #define AUDIOCMD_CHANNEL_MUTE_FLAGS(seqPlayerIndex, channelIndex, muteFlags) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_CHANNEL_MUTE_FLAGS, seqPlayerIndex, channelIndex, 0), muteFlags)
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_MUTE_FLAGS, seqPlayerIndex, channelIndex, 0), muteFlags)
 
 /**
  * Apply a small amount of vibrato (x8).
@@ -162,7 +162,7 @@ typedef enum {
  * @param vibratoExtentTarget
  */
 #define AUDIOCMD_CHANNEL_VIBRATO_SMALL(seqPlayerIndex, channelIndex, vibratoExtentTarget)              \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_CHANNEL_VIBRATO_SMALL, seqPlayerIndex, channelIndex, 0), \
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_VIBRATO_SMALL, seqPlayerIndex, channelIndex, 0), \
                            vibratoExtentTarget)
 
 /**
@@ -173,7 +173,7 @@ typedef enum {
  * @param vibratoExtentTarget
  */
 #define AUDIOCMD_CHANNEL_VIBRATO_LARGE(seqPlayerIndex, channelIndex, vibratoExtentTarget)              \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_CHANNEL_VIBRATO_LARGE, seqPlayerIndex, channelIndex, 0), \
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_VIBRATO_LARGE, seqPlayerIndex, channelIndex, 0), \
                            vibratoExtentTarget)
 
 /**
@@ -184,7 +184,7 @@ typedef enum {
  * @param combFilterSize
  */
 #define AUDIOCMD_CHANNEL_COMB_FILTER_SIZE(seqPlayerIndex, channelIndex, combFilterSize)                   \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_CHANNEL_COMB_FILTER_SIZE, seqPlayerIndex, channelIndex, 0), \
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_COMB_FILTER_SIZE, seqPlayerIndex, channelIndex, 0), \
                            combFilterSize)
 
 /**
@@ -195,7 +195,7 @@ typedef enum {
  * @param combFilterGain
  */
 #define AUDIOCMD_CHANNEL_COMB_FILTER_GAIN(seqPlayerIndex, channelIndex, combFilterGain)                    \
-    AudioThread_QueueCmdU16(MK_CMD(AUDIOCMD_OP_CHANNEL_COMB_FILTER_GAIN, seqPlayerIndex, channelIndex, 0), \
+    AudioThread_QueueCmdU16(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_COMB_FILTER_GAIN, seqPlayerIndex, channelIndex, 0), \
                             combFilterGain)
 
 /**
@@ -206,7 +206,7 @@ typedef enum {
  * @param stereoData
  */
 #define AUDIOCMD_CHANNEL_STEREO(seqPlayerIndex, channelIndex, stereoData) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_CHANNEL_STEREO, seqPlayerIndex, channelIndex, 0), stereoData)
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_STEREO, seqPlayerIndex, channelIndex, 0), stereoData)
 
 // ==== Audio Thread SeqPlayer Commands ====
 
@@ -217,7 +217,7 @@ typedef enum {
  * @param fadeVolumeScale
  */
 #define AUDIOCMD_SEQPLAYER_FADE_VOLUME_SCALE(seqPlayerIndex, fadeVolumeScale) \
-    AudioThread_QueueCmdF32(MK_CMD(AUDIOCMD_OP_SEQPLAYER_FADE_VOLUME_SCALE, seqPlayerIndex, 0, 0), fadeVolumeScale)
+    AudioThread_QueueCmdF32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_FADE_VOLUME_SCALE, seqPlayerIndex, 0, 0), fadeVolumeScale)
 
 /**
  * Set the sequence player global io
@@ -227,7 +227,7 @@ typedef enum {
  * @param ioData
  */
 #define AUDIOCMD_SEQPLAYER_SET_IO(seqPlayerIndex, ioPort, ioData) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_IO, seqPlayerIndex, 0, ioPort), ioData)
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_IO, seqPlayerIndex, 0, ioPort), ioData)
 
 /**
  * Set the tempo.
@@ -236,7 +236,7 @@ typedef enum {
  * @param tempo
  */
 #define AUDIOCMD_SEQPLAYER_SET_TEMPO(seqPlayerIndex, tempo) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_TEMPO, seqPlayerIndex, 0, 0), tempo)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_TEMPO, seqPlayerIndex, 0, 0), tempo)
 
 /**
  * Set the transposition.
@@ -245,25 +245,25 @@ typedef enum {
  * @param transposition
  */
 #define AUDIOCMD_SEQPLAYER_SET_TRANSPOSITION(seqPlayerIndex, transposition) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_TRANSPOSITION, seqPlayerIndex, 0, 0), transposition)
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_TRANSPOSITION, seqPlayerIndex, 0, 0), transposition)
 
 /**
- * Set unk_0C and scale (tempo-related).
+ * Set tempoChange in bpm.
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
- * @param unk_0C
+ * @param tempoChange difference in tempo to change, in bpm
  */
-#define AUDIOCMD_SEQPLAYER_SET_SCALED_UNK_0C(seqPlayerIndex, unk_0C) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_SCALED_UNK_0C, seqPlayerIndex, 0, 0), unk_0C)
+#define AUDIOCMD_SEQPLAYER_CHANGE_TEMPO(seqPlayerIndex, tempoChange) \
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_CHANGE_TEMPO, seqPlayerIndex, 0, 0), tempoChange)
 
 /**
- * Set unk_0C (tempo-related).
+ * Set tempoChange in tatums per minute.
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
- * @param unk_0C
+ * @param tempoChange difference in tempo to change, in tatums per minute
  */
-#define AUDIOCMD_SEQPLAYER_SET_UNK_0C(seqPlayerIndex, unk_0C) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_UNK_0C, seqPlayerIndex, 0, 0), unk_0C)
+#define AUDIOCMD_SEQPLAYER_CHANGE_TATUM_TEMPO(seqPlayerIndex, tempoChange) \
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_CHANGE_TATUM_TEMPO, seqPlayerIndex, 0, 0), tempoChange)
 
 /**
  * Set the fade volume.
@@ -273,7 +273,7 @@ typedef enum {
  * @param fadeTimer
  */
 #define AUDIOCMD_SEQPLAYER_SET_FADE_VOLUME(seqPlayerIndex, fadeVolume, fadeTimer) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_FADE_VOLUME, seqPlayerIndex, fadeVolume, 0), fadeTimer)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_FADE_VOLUME, seqPlayerIndex, fadeVolume, 0), fadeTimer)
 
 /**
  * Set the fade volume and scale.
@@ -283,7 +283,7 @@ typedef enum {
  * @param fadeTimer
  */
 #define AUDIOCMD_SEQPLAYER_SCALE_FADE_VOLUME(seqPlayerIndex, fadeVolume, fadeTimer) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_SEQPLAYER_SCALE_FADE_VOLUME, seqPlayerIndex, fadeVolume, 0), fadeTimer)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_SCALE_FADE_VOLUME, seqPlayerIndex, fadeVolume, 0), fadeTimer)
 
 /**
  * Set the fade timer.
@@ -292,7 +292,7 @@ typedef enum {
  * @param fadeTimer
  */
 #define AUDIOCMD_SEQPLAYER_SET_FADE_TIMER(seqPlayerIndex, fadeTimer) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_FADE_TIMER, seqPlayerIndex, 0, 0), fadeTimer)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_FADE_TIMER, seqPlayerIndex, 0, 0), fadeTimer)
 
 /**
  * Set the bend.
@@ -301,7 +301,7 @@ typedef enum {
  * @param bend
  */
 #define AUDIOCMD_SEQPLAYER_SET_BEND(seqPlayerIndex, bend) \
-    AudioThread_QueueCmdF32(MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_BEND, seqPlayerIndex, 0, 0), bend)
+    AudioThread_QueueCmdF32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_BEND, seqPlayerIndex, 0, 0), bend)
 
 
 
@@ -316,7 +316,7 @@ typedef enum {
  * @param data
  */
 #define AUDIOCMD_GLOBAL_SYNC_LOAD_SEQ_PARTS(seqPlayerIndex, seqId, arg2, data) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_SYNC_LOAD_SEQ_PARTS, seqPlayerIndex, seqId, arg2), data)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_SYNC_LOAD_SEQ_PARTS, seqPlayerIndex, seqId, arg2), data)
 
 /**
  * Synchronously initialize a sequence player
@@ -327,7 +327,7 @@ typedef enum {
  * @param fadeTimer
  */
 #define AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER(seqPlayerIndex, seqId, arg2, fadeTimer) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER, seqPlayerIndex, seqId, arg2), fadeTimer)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER, seqPlayerIndex, seqId, arg2), fadeTimer)
 
 /**
  * Disable a sequence player.
@@ -336,7 +336,7 @@ typedef enum {
  * @param fadeTimer
  */
 #define AUDIOCMD_GLOBAL_DISABLE_SEQPLAYER(seqPlayerIndex, fadeTimer) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_DISABLE_SEQPLAYER, seqPlayerIndex, 0, 0), fadeTimer)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_DISABLE_SEQPLAYER, seqPlayerIndex, 0, 0), fadeTimer)
 
 /**
  * Synchronously initialize a sequence player and skip ticks.
@@ -346,7 +346,7 @@ typedef enum {
  * @param skipTicks
  */
 #define AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER_SKIP_TICKS(seqPlayerIndex, seqId, skipTicks)                         \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER_SKIP_TICKS, seqPlayerIndex, seqId, 0), \
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER_SKIP_TICKS, seqPlayerIndex, seqId, 0), \
                             skipTicks)
 
 /**
@@ -356,7 +356,7 @@ typedef enum {
  * @param activeChannelsBits
  */
 #define AUDIOCMD_GLOBAL_SET_ACTIVE_CHANNEL_FLAGS(seqPlayerIndex, activeChannelsBits)                  \
-    AudioThread_QueueCmdU16(MK_CMD(AUDIOCMD_OP_GLOBAL_SET_ACTIVE_CHANNEL_FLAGS, seqPlayerIndex, 0, 0), \
+    AudioThread_QueueCmdU16(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_SET_ACTIVE_CHANNEL_FLAGS, seqPlayerIndex, 0, 0), \
                             activeChannelsBits)
 
 /**
@@ -365,7 +365,7 @@ typedef enum {
  * @param tableType
  */
 #define AUDIOCMD_GLOBAL_POP_PERSISTENT_CACHE(tableType) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_POP_PERSISTENT_CACHE, 0, 0, 0), tableType)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_POP_PERSISTENT_CACHE, 0, 0, 0), tableType)
 
 /**
  * Set sound mode.
@@ -373,7 +373,7 @@ typedef enum {
  * @param soundMode
  */
 #define AUDIOCMD_GLOBAL_SET_SOUND_MODE(soundMode) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_SET_SOUND_MODE, 0, 0, 0), soundMode)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_SET_SOUND_MODE, 0, 0, 0), soundMode)
 
 /**
  * Mute a sequence player.
@@ -381,7 +381,7 @@ typedef enum {
  * @param seqPlayerIndex the index of the seqPlayer to modify
  */
 #define AUDIOCMD_GLOBAL_MUTE(seqPlayerIndex) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_MUTE, seqPlayerIndex, 0, 0), 0)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_MUTE, seqPlayerIndex, 0, 0), 0)
 
 /**
  * Unmute a sequence player.
@@ -390,7 +390,7 @@ typedef enum {
  * @param restart
  */
 #define AUDIOCMD_GLOBAL_UNMUTE(seqPlayerIndex, restart) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_UNMUTE, seqPlayerIndex, 0, 0), restart)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_UNMUTE, seqPlayerIndex, 0, 0), restart)
 
 /**
  * Synchronously load an instrument.
@@ -400,7 +400,7 @@ typedef enum {
  * @param drumId
  */
 #define AUDIOCMD_GLOBAL_SYNC_LOAD_INSTRUMENT(fontId, instId, drumId) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_GLOBAL_SYNC_LOAD_INSTRUMENT, fontId, instId, drumId), 0)
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_SYNC_LOAD_INSTRUMENT, fontId, instId, drumId), 0)
 
 /**
  * Asynchronously load a sample bank.
@@ -410,7 +410,7 @@ typedef enum {
  * @param retData
  */
 #define AUDIOCMD_GLOBAL_ASYNC_LOAD_SAMPLE_BANK(sampleBankId, arg1, retData) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_GLOBAL_ASYNC_LOAD_SAMPLE_BANK, sampleBankId, arg1, retData), 0)
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_ASYNC_LOAD_SAMPLE_BANK, sampleBankId, arg1, retData), 0)
 
 /**
  * Asynchronously load a font.
@@ -420,7 +420,7 @@ typedef enum {
  * @param retData
  */
 #define AUDIOCMD_GLOBAL_ASYNC_LOAD_FONT(fontId, arg1, retData) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_GLOBAL_ASYNC_LOAD_FONT, fontId, arg1, retData), 0)
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_ASYNC_LOAD_FONT, fontId, arg1, retData), 0)
 
 /**
  * Discard sequence fonts.
@@ -428,12 +428,12 @@ typedef enum {
  * @param seqId
  */
 #define AUDIOCMD_GLOBAL_DISCARD_SEQ_FONTS(seqId) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_DISCARD_SEQ_FONTS, 0, seqId, 0), 0)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_DISCARD_SEQ_FONTS, 0, seqId, 0), 0)
 
 /**
  * Stop processing all audio thread commands.
  */
-#define AUDIOCMD_GLOBAL_STOP_AUDIOCMDS() AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_STOP_AUDIOCMDS, 0, 0, 0), 0)
+#define AUDIOCMD_GLOBAL_STOP_AUDIOCMDS() AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_STOP_AUDIOCMDS, 0, 0, 0), 0)
 
 /**
  * Reset Audio Heap.
@@ -441,7 +441,7 @@ typedef enum {
  * @param specId
  */
 #define AUDIOCMD_GLOBAL_RESET_AUDIO_HEAP(specId) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_RESET_AUDIO_HEAP, 0, 0, 0), specId)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_RESET_AUDIO_HEAP, 0, 0, 0), specId)
 
 /**
  * No Operation. No code is programmed for this operation.
@@ -452,7 +452,7 @@ typedef enum {
  * @param data
  */
 #define AUDIOCMD_GLOBAL_NOOP_1(arg0, arg1, arg2, data) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_NOOP_1, arg0, arg1, arg2), data)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_NOOP_1, arg0, arg1, arg2), data)
 
 /**
  * Set a custom function that runs every audio thread update.
@@ -460,7 +460,7 @@ typedef enum {
  * @param functionPtr
  */
 #define AUDIOCMD_GLOBAL_SET_CUSTOM_UPDATE_FUNCTION(functionPtr) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_SET_CUSTOM_UPDATE_FUNCTION, 0, 0, 0), functionPtr)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_SET_CUSTOM_UPDATE_FUNCTION, 0, 0, 0), functionPtr)
 
 /**
  * Asynchronously load a sequence.
@@ -470,7 +470,7 @@ typedef enum {
  * @param retData
  */
 #define AUDIOCMD_GLOBAL_ASYNC_LOAD_SEQ(seqId, arg1, retData) \
-    AudioThread_QueueCmdS8(MK_CMD(AUDIOCMD_OP_GLOBAL_ASYNC_LOAD_SEQ, seqId, arg1, retData), 0)
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_ASYNC_LOAD_SEQ, seqId, arg1, retData), 0)
 
 /**
  * No Operation. No code is programmed for this operation.
@@ -481,7 +481,7 @@ typedef enum {
  * @param data
  */
 #define AUDIOCMD_GLOBAL_NOOP_2(arg0, arg1, arg2, data) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_NOOP_2, arg0, arg1, arg2), data)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_NOOP_2, arg0, arg1, arg2), data)
 
 /**
  * Disable all sequence players.
@@ -489,6 +489,6 @@ typedef enum {
  * @param flags
  */
 #define AUDIOCMD_GLOBAL_DISABLE_ALL_SEQPLAYERS(flags) \
-    AudioThread_QueueCmdS32(MK_CMD(AUDIOCMD_OP_GLOBAL_DISABLE_ALL_SEQPLAYERS, 0, 0, 0), flags)
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_DISABLE_ALL_SEQPLAYERS, 0, 0, 0), flags)
 
 #endif

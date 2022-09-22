@@ -52,15 +52,16 @@ void AudioNote_InitSampleState(Note* note, NoteSampleState* sampleState, NoteSub
         volLeft = gStereoPanVolume[pan];
         volRight = gStereoPanVolume[0x7F - pan];
         if (pan < 0x20) {
-            strongLeft = 1;
+            strongLeft = true;
         } else if (pan > 0x60) {
-            strongRight = 1;
+            strongRight = true;
         }
 
+        // case 0:
         sampleState->bitField0.strongRight = strongRight;
         sampleState->bitField0.strongLeft = strongLeft;
 
-        switch (stereoData.bit2) {
+        switch (stereoData.type) {
             case 0:
                 break;
 
@@ -92,8 +93,9 @@ void AudioNote_InitSampleState(Note* note, NoteSampleState* sampleState, NoteSub
         volRight = gDefaultPanVolume[0x7F - pan];
     }
 
-    vel = 0.0f > vel ? 0.0f : vel;
-    vel = 1.0f < vel ? 1.0f : vel;
+    // Clamp velocity between 0.0f and 1.0f
+    vel = (0.0f > vel) ? 0.0f : vel;
+    vel = (1.0f < vel) ? 1.0f : vel;
 
     sampleState->targetVolLeft = (s32)((vel * volLeft) * (0x1000 - 0.001f));
     sampleState->targetVolRight = (s32)((vel * volRight) * (0x1000 - 0.001f));
@@ -132,7 +134,7 @@ void AudioNote_Init(Note* note) {
                               &note->playbackState.adsrVolScaleUnused);
     }
 
-    note->playbackState.unk_04 = 0;
+    note->playbackState.status = PLAYBACK_STATUS_0;
     note->playbackState.adsr.action.s.state = ADSR_STATE_INITIAL;
     note->sampleState = gDefaultSampleState;
 }
@@ -143,7 +145,7 @@ void AudioNote_Disable(Note* note) {
     }
     note->playbackState.priority = 0;
     note->sampleState.bitField0.enabled = false;
-    note->playbackState.unk_04 = 0;
+    note->playbackState.status = PLAYBACK_STATUS_0;
     note->sampleState.bitField0.finished = false;
     note->playbackState.parentLayer = NO_LAYER;
     note->playbackState.prevParentLayer = NO_LAYER;
@@ -168,23 +170,24 @@ void AudioNote_Update(void) {
         sampleState = &gAudioCtx.sampleStateList[gAudioCtx.sampleStateBaseIndex + i];
         playbackState = &note->playbackState;
         if (playbackState->parentLayer != NO_LAYER) {
-            if ((u32)playbackState->parentLayer < 0x7FFFFFFF) {
+            // Checks if parentLayer is a valid ram address
+            if ((u32)playbackState->parentLayer < (AUDIO_RELOCATED_ADDRESS_START - 1)) {
                 continue;
             }
 
-            if (note != playbackState->parentLayer->note && playbackState->unk_04 == 0) {
+            if ((note != playbackState->parentLayer->note) && (playbackState->status == PLAYBACK_STATUS_0)) {
                 playbackState->adsr.action.s.release = true;
                 playbackState->adsr.fadeOutVel = gAudioCtx.audioBufParams.updatesPerFrameInv;
                 playbackState->priority = 1;
-                playbackState->unk_04 = 2;
+                playbackState->status = PLAYBACK_STATUS_2;
                 goto out;
-            } else if (!playbackState->parentLayer->enabled && playbackState->unk_04 == 0 &&
-                       playbackState->priority >= 1) {
+            } else if (!playbackState->parentLayer->enabled && (playbackState->status == PLAYBACK_STATUS_0) &&
+                       (playbackState->priority >= 1)) {
                 // do nothing
             } else if (playbackState->parentLayer->channel->seqPlayer == NULL) {
                 AudioScript_SequenceChannelDisable(playbackState->parentLayer->channel);
                 playbackState->priority = 1;
-                playbackState->unk_04 = 1;
+                playbackState->status = PLAYBACK_STATUS_1;
                 continue;
             } else if (playbackState->parentLayer->channel->seqPlayer->muted &&
                        (playbackState->parentLayer->channel->muteFlags & MUTE_FLAGS_STOP_NOTES)) {
@@ -197,8 +200,8 @@ void AudioNote_Update(void) {
             AudioList_Remove(&note->listItem);
             AudioList_PushFront(&note->listItem.pool->decaying, &note->listItem);
             playbackState->priority = 1;
-            playbackState->unk_04 = 2;
-        } else if (playbackState->unk_04 == 0 && playbackState->priority >= 1) {
+            playbackState->status = PLAYBACK_STATUS_2;
+        } else if ((playbackState->status == PLAYBACK_STATUS_0) && (playbackState->priority >= 1)) {
             continue;
         }
 
@@ -206,8 +209,9 @@ void AudioNote_Update(void) {
         if (playbackState->priority != 0) {
             if (1) {}
             noteSampleState = &note->sampleState;
-            if (playbackState->unk_04 >= 1 || noteSampleState->bitField0.finished) {
-                if (playbackState->adsr.action.s.state == ADSR_STATE_DISABLED || noteSampleState->bitField0.finished) {
+            if ((playbackState->status >= PLAYBACK_STATUS_1) || noteSampleState->bitField0.finished) {
+                if ((playbackState->adsr.action.s.state == ADSR_STATE_DISABLED) ||
+                    noteSampleState->bitField0.finished) {
                     if (playbackState->wantedParentLayer != NO_LAYER) {
                         AudioNote_Disable(note);
                         if (playbackState->wantedParentLayer->channel != NULL) {
@@ -248,7 +252,7 @@ void AudioNote_Update(void) {
             scale = AudioEffects_UpdateAdsr(&playbackState->adsr);
             AudioEffects_UpdateVibrato(note);
             attrs = &playbackState->attributes;
-            if (playbackState->unk_04 == 1 || playbackState->unk_04 == 2) {
+            if ((playbackState->status == PLAYBACK_STATUS_1) || (playbackState->status == PLAYBACK_STATUS_2)) {
                 subAttrs.frequency = attrs->freqScale;
                 subAttrs.velocity = attrs->velocity;
                 subAttrs.pan = attrs->pan;
@@ -278,7 +282,7 @@ void AudioNote_Update(void) {
                 subAttrs.combFilterGain = channel->combFilterGain;
                 bookOffset = channel->bookOffset & 0x7;
 
-                if (channel->seqPlayer->muted && (channel->muteFlags & MUTE_FLAGS_3)) {
+                if (channel->seqPlayer->muted && (channel->muteFlags & MUTE_FLAGS_STOP_SAMPLES)) {
                     subAttrs.frequency = 0.0f;
                     subAttrs.velocity = 0.0f;
                 }
@@ -315,18 +319,18 @@ Instrument* AudioPlayback_GetInstrumentInner(s32 fontId, s32 instId) {
     }
 
     if (!AudioLoad_IsFontLoadComplete(fontId)) {
-        gAudioCtx.audioErrorFlags = fontId + 0x10000000;
+        gAudioCtx.audioErrorFlags = AUDIO_ERROR(0, fontId, AUDIO_ERROR_FONT_NOT_LOADED);
         return NULL;
     }
 
     if (instId >= gAudioCtx.soundFontList[fontId].numInstruments) {
-        gAudioCtx.audioErrorFlags = ((fontId << 8) + instId) + 0x3000000;
+        gAudioCtx.audioErrorFlags = AUDIO_ERROR(fontId, instId, AUDIO_ERROR_INVALID_INST_ID);
         return NULL;
     }
 
     inst = gAudioCtx.soundFontList[fontId].instruments[instId];
     if (inst == NULL) {
-        gAudioCtx.audioErrorFlags = ((fontId << 8) + instId) + 0x1000000;
+        gAudioCtx.audioErrorFlags = AUDIO_ERROR(fontId, instId, AUDIO_ERROR_NO_INST);
         return inst;
     }
 
@@ -341,12 +345,12 @@ Drum* AudioPlayback_GetDrum(s32 fontId, s32 drumId) {
     }
 
     if (!AudioLoad_IsFontLoadComplete(fontId)) {
-        gAudioCtx.audioErrorFlags = fontId + 0x10000000;
+        gAudioCtx.audioErrorFlags = AUDIO_ERROR(0, fontId, AUDIO_ERROR_FONT_NOT_LOADED);
         return NULL;
     }
 
     if (drumId >= gAudioCtx.soundFontList[fontId].numDrums) {
-        gAudioCtx.audioErrorFlags = ((fontId << 8) + drumId) + 0x4000000;
+        gAudioCtx.audioErrorFlags = AUDIO_ERROR(fontId, drumId, AUDIO_ERROR_INVALID_DRUM_SFX_ID);
         return NULL;
     }
     if ((u32)gAudioCtx.soundFontList[fontId].drums < AUDIO_RELOCATED_ADDRESS_START) {
@@ -355,7 +359,7 @@ Drum* AudioPlayback_GetDrum(s32 fontId, s32 drumId) {
     drum = gAudioCtx.soundFontList[fontId].drums[drumId];
 
     if (drum == NULL) {
-        gAudioCtx.audioErrorFlags = ((fontId << 8) + drumId) + 0x5000000;
+        gAudioCtx.audioErrorFlags = AUDIO_ERROR(fontId, drumId, AUDIO_ERROR_NO_DRUM_SFX);
     }
 
     return drum;
@@ -369,12 +373,12 @@ SoundEffect* AudioPlayback_GetSoundEffect(s32 fontId, s32 sfxId) {
     }
 
     if (!AudioLoad_IsFontLoadComplete(fontId)) {
-        gAudioCtx.audioErrorFlags = fontId + 0x10000000;
+        gAudioCtx.audioErrorFlags = AUDIO_ERROR(0, fontId, AUDIO_ERROR_FONT_NOT_LOADED);
         return NULL;
     }
 
     if (sfxId >= gAudioCtx.soundFontList[fontId].numSfx) {
-        gAudioCtx.audioErrorFlags = ((fontId << 8) + sfxId) + 0x4000000;
+        gAudioCtx.audioErrorFlags = AUDIO_ERROR(fontId, sfxId, AUDIO_ERROR_INVALID_DRUM_SFX_ID);
         return NULL;
     }
 
@@ -385,7 +389,7 @@ SoundEffect* AudioPlayback_GetSoundEffect(s32 fontId, s32 sfxId) {
     soundEffect = &gAudioCtx.soundFontList[fontId].soundEffects[sfxId];
 
     if (soundEffect == NULL) {
-        gAudioCtx.audioErrorFlags = ((fontId << 8) + sfxId) + 0x5000000;
+        gAudioCtx.audioErrorFlags = AUDIO_ERROR(fontId, sfxId, AUDIO_ERROR_NO_DRUM_SFX);
     }
 
     if (soundEffect->tunedSample.sample == NULL) {
@@ -430,7 +434,7 @@ s32 AudioPlayback_SetFontInstrument(s32 instrumentType, s32 fontId, s32 index, v
     return 0;
 }
 
-void AudioPlayback_SeqLayerDecayRelease(SequenceLayer* layer, s32 target) {
+void AudioPlayback_SeqLayerDecayRelease(SequenceLayer* layer, s32 adsrState) {
     Note* note;
     NoteAttributes* attrs;
     SequenceChannel* chan;
@@ -454,8 +458,8 @@ void AudioPlayback_SeqLayerDecayRelease(SequenceLayer* layer, s32 target) {
     }
 
     if (note->playbackState.parentLayer != layer) {
-        if (note->playbackState.parentLayer == NO_LAYER && note->playbackState.wantedParentLayer == NO_LAYER &&
-            note->playbackState.prevParentLayer == layer && target != ADSR_STATE_DECAY) {
+        if ((note->playbackState.parentLayer == NO_LAYER) && (note->playbackState.wantedParentLayer == NO_LAYER) &&
+            (note->playbackState.prevParentLayer == layer) && (adsrState != ADSR_STATE_DECAY)) {
             note->playbackState.adsr.fadeOutVel = gAudioCtx.audioBufParams.updatesPerFrameInv;
             note->playbackState.adsr.action.s.release = true;
         }
@@ -483,7 +487,7 @@ void AudioPlayback_SeqLayerDecayRelease(SequenceLayer* layer, s32 target) {
             attrs->combFilterGain = chan->combFilterGain;
             attrs->combFilterSize = chan->combFilterSize;
 
-            if (chan->seqPlayer->muted && (chan->muteFlags & MUTE_FLAGS_3)) {
+            if (chan->seqPlayer->muted && (chan->muteFlags & MUTE_FLAGS_STOP_SAMPLES)) {
                 note->sampleState.bitField0.finished = true;
             }
 
@@ -500,12 +504,12 @@ void AudioPlayback_SeqLayerDecayRelease(SequenceLayer* layer, s32 target) {
 
         note->playbackState.prevParentLayer = note->playbackState.parentLayer;
         note->playbackState.parentLayer = NO_LAYER;
-        if (target == ADSR_STATE_RELEASE) {
+        if (adsrState == ADSR_STATE_RELEASE) {
             note->playbackState.adsr.fadeOutVel = gAudioCtx.audioBufParams.updatesPerFrameInv;
             note->playbackState.adsr.action.s.release = true;
-            note->playbackState.unk_04 = 2;
+            note->playbackState.status = PLAYBACK_STATUS_2;
         } else {
-            note->playbackState.unk_04 = 1;
+            note->playbackState.status = PLAYBACK_STATUS_1;
             note->playbackState.adsr.action.s.decay = true;
             if (layer->adsr.decayIndex == 0) {
                 note->playbackState.adsr.fadeOutVel = gAudioCtx.adsrDecayTable[layer->channel->adsr.decayIndex];
@@ -517,7 +521,7 @@ void AudioPlayback_SeqLayerDecayRelease(SequenceLayer* layer, s32 target) {
         }
     }
 
-    if (target == ADSR_STATE_DECAY) {
+    if (adsrState == ADSR_STATE_DECAY) {
         AudioList_Remove(&note->listItem);
         AudioList_PushFront(&note->listItem.pool->decaying, &note->listItem);
     }
@@ -656,7 +660,7 @@ void AudioList_NotePoolClear(NotePool* pool) {
 
         while (true) {
             cur = source->next;
-            if (cur == source || cur == NULL) {
+            if ((cur == source) || (cur == NULL)) {
                 break;
             }
             AudioList_Remove(cur);
@@ -816,6 +820,7 @@ void AudioNote_ReleaseAndTakeOwnership(Note* note, SequenceLayer* layer) {
 
 Note* AudioNote_AllocFromDisabled(NotePool* pool, SequenceLayer* layer) {
     Note* note = AudioList_PopBack(&pool->disabled);
+
     if (note != NULL) {
         AudioPlayback_NoteInitForLayer(note, layer);
         AudioList_PushFront(&pool->active, &note->listItem);
@@ -825,6 +830,7 @@ Note* AudioNote_AllocFromDisabled(NotePool* pool, SequenceLayer* layer) {
 
 Note* AudioNote_AllocFromDecaying(NotePool* pool, SequenceLayer* layer) {
     Note* note = AudioList_PopBack(&pool->decaying);
+
     if (note != NULL) {
         AudioNote_ReleaseAndTakeOwnership(note, layer);
         AudioList_PushBack(&pool->releasing, &note->listItem);
@@ -871,10 +877,10 @@ Note* AudioNote_Alloc(SequenceLayer* layer) {
     Note* note;
     u32 policy = layer->channel->noteAllocPolicy;
 
-    if (policy & 1) {
+    if (policy & NOTE_ALLOC_POLICY_0) {
         note = layer->note;
-        if (note != NULL && note->playbackState.prevParentLayer == layer &&
-            note->playbackState.wantedParentLayer == NO_LAYER) {
+        if ((note != NULL) && (note->playbackState.prevParentLayer == layer) &&
+            (note->playbackState.wantedParentLayer == NO_LAYER)) {
             AudioNote_ReleaseAndTakeOwnership(note, layer);
             AudioList_Remove(&note->listItem);
             AudioList_PushBack(&note->listItem.pool->releasing, &note->listItem);
@@ -882,7 +888,7 @@ Note* AudioNote_Alloc(SequenceLayer* layer) {
         }
     }
 
-    if (policy & 2) {
+    if (policy & NOTE_ALLOC_POLICY_1) {
         if (!(note = AudioNote_AllocFromDisabled(&layer->channel->notePool, layer)) &&
             !(note = AudioNote_AllocFromDecaying(&layer->channel->notePool, layer)) &&
             !(note = AudioNote_AllocFromActive(&layer->channel->notePool, layer))) {
@@ -891,7 +897,7 @@ Note* AudioNote_Alloc(SequenceLayer* layer) {
         return note;
     }
 
-    if (policy & 4) {
+    if (policy & NOTE_ALLOC_POLICY_2) {
         if (!(note = AudioNote_AllocFromDisabled(&layer->channel->notePool, layer)) &&
             !(note = AudioNote_AllocFromDisabled(&layer->channel->seqPlayer->notePool, layer)) &&
             !(note = AudioNote_AllocFromDecaying(&layer->channel->notePool, layer)) &&
@@ -903,7 +909,7 @@ Note* AudioNote_Alloc(SequenceLayer* layer) {
         return note;
     }
 
-    if (policy & 8) {
+    if (policy & NOTE_ALLOC_POLICY_3) {
         if (!(note = AudioNote_AllocFromDisabled(&gAudioCtx.noteFreeLists, layer)) &&
             !(note = AudioNote_AllocFromDecaying(&gAudioCtx.noteFreeLists, layer)) &&
             !(note = AudioNote_AllocFromActive(&gAudioCtx.noteFreeLists, layer))) {
@@ -938,7 +944,7 @@ void AudioNote_InitAll(void) {
         note = &gAudioCtx.notes[i];
         note->sampleState = gZeroedSampleState;
         note->playbackState.priority = 0;
-        note->playbackState.unk_04 = 0;
+        note->playbackState.status = PLAYBACK_STATUS_0;
         note->playbackState.parentLayer = NO_LAYER;
         note->playbackState.wantedParentLayer = NO_LAYER;
         note->playbackState.prevParentLayer = NO_LAYER;
@@ -946,7 +952,7 @@ void AudioNote_InitAll(void) {
         note->playbackState.attributes.velocity = 0.0f;
         note->playbackState.adsrVolScaleUnused = 0;
         note->playbackState.adsr.action.asByte = 0;
-        note->playbackState.vibratoState.active = 0;
+        note->playbackState.vibratoState.active = false;
         note->playbackState.portamento.cur = 0;
         note->playbackState.portamento.speed = 0;
         note->playbackState.stereoHeadsetEffects = false;

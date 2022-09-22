@@ -238,12 +238,11 @@ void AudioThread_ProcessGlobalCmd(AudioCmd* cmd) {
             if (cmd->asUInt == 1) {
                 for (i = 0; i < gAudioCtx.numNotes; i++) {
                     Note* note = &gAudioCtx.notes[i];
-                    NoteSampleState* subEu = &note->sampleState;
+                    NoteSampleState* noteSampleState = &note->sampleState;
 
-                    if (subEu->bitField0.enabled && note->playbackState.unk_04 == 0) {
-                        if (note->playbackState.parentLayer->channel->muteFlags & MUTE_FLAGS_3) {
-                            subEu->bitField0.finished = true;
-                        }
+                    if (noteSampleState->bitField0.enabled && (note->playbackState.status == PLAYBACK_STATUS_0) &&
+                        (note->playbackState.parentLayer->channel->muteFlags & MUTE_FLAGS_STOP_SAMPLES)) {
+                        noteSampleState->bitField0.finished = true;
                     }
                 }
             }
@@ -587,15 +586,15 @@ void AudioThread_ProcessSeqPlayerCmd(SequencePlayer* seqPlayer, AudioCmd* cmd) {
             break;
 
         case AUDIOCMD_OP_SEQPLAYER_SET_TEMPO:
-            seqPlayer->tempo = cmd->asInt * 0x30;
+            seqPlayer->tempo = cmd->asInt * TATUMS_PER_BEAT;
             break;
 
-        case AUDIOCMD_OP_SEQPLAYER_SET_SCALED_UNK_0C:
-            seqPlayer->unk_0C = cmd->asInt * 0x30;
+        case AUDIOCMD_OP_SEQPLAYER_CHANGE_TEMPO:
+            seqPlayer->tempoChange = cmd->asInt * TATUMS_PER_BEAT;
             break;
 
-        case AUDIOCMD_OP_SEQPLAYER_SET_UNK_0C:
-            seqPlayer->unk_0C = cmd->asInt;
+        case AUDIOCMD_OP_SEQPLAYER_CHANGE_TATUM_TEMPO:
+            seqPlayer->tempoChange = cmd->asInt;
             break;
 
         case AUDIOCMD_OP_SEQPLAYER_SET_TRANSPOSITION:
