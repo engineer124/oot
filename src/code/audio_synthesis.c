@@ -63,7 +63,7 @@ void AudioSynth_AddReverbSampleBufferEntry(s32 numSamples, s32 updateIndex, s32 
     ReverbSampleBufferEntry* entry;
     s32 pad[3];
     SynthesisReverb* reverb = &gAudioCtx.synthesisReverbs[reverbIndex];
-    s32 temp_a0_2;
+    s32 reverbBufPos;
     s32 nextReverbSubBufPos;
     s32 numSamplesAfterDownsampling;
     s32 extraSamples;
@@ -90,7 +90,7 @@ void AudioSynth_AddReverbSampleBufferEntry(s32 numSamples, s32 updateIndex, s32 
     entry = &reverb->bufEntry[reverb->curFrame][updateIndex];
     numSamplesAfterDownsampling = numSamples / reverb->downsampleRate;
     extraSamples = (numSamplesAfterDownsampling + reverb->nextReverbBufPos) - reverb->delayNumSamples;
-    temp_a0_2 = reverb->nextReverbBufPos;
+    reverbBufPos = reverb->nextReverbBufPos;
 
     // Add a reverb entry
     if (extraSamples < 0) {
@@ -111,7 +111,7 @@ void AudioSynth_AddReverbSampleBufferEntry(s32 numSamples, s32 updateIndex, s32 
 
     // Add a sub-reverb entry
     if (reverb->subDelay != 0) {
-        nextReverbSubBufPos = reverb->subDelay + temp_a0_2;
+        nextReverbSubBufPos = reverb->subDelay + reverbBufPos;
         if (nextReverbSubBufPos >= reverb->delayNumSamples) {
             nextReverbSubBufPos -= reverb->delayNumSamples;
         }
@@ -217,11 +217,10 @@ void AudioSynth_DisableSampleStates(s32 updateIndex, s32 noteIndex) {
 
     for (i = updateIndex + 1; i < gAudioCtx.audioBufParams.updatesPerFrame; i++) {
         sampleState = &gAudioCtx.sampleStateList[(gAudioCtx.numNotes * i) + noteIndex];
-        if (!sampleState->bitField0.needsInit) {
-            sampleState->bitField0.enabled = false;
-        } else {
+        if (sampleState->bitField0.needsInit) {
             break;
         }
+        sampleState->bitField0.enabled = false;
     }
 }
 
@@ -254,35 +253,36 @@ Acmd* AudioSynth_LeakReverb(Acmd* cmd, SynthesisReverb* reverb) {
     aDMEMMove(cmd++, DMEM_WET_LEFT_CH, DMEM_WET_SCRATCH, DMEM_1CH_SIZE);
     aMix(cmd++, DMEM_1CH_SIZE >> 4, reverb->leakRtl, DMEM_WET_RIGHT_CH, DMEM_WET_LEFT_CH);
     aMix(cmd++, DMEM_1CH_SIZE >> 4, reverb->leakLtr, DMEM_WET_SCRATCH, DMEM_WET_RIGHT_CH);
+
     return cmd;
 }
 
 Acmd* AudioSynth_LoadReverbSampleAndResampleWithDownsample(Acmd* cmd, s32 numSamplesPerUpdate, SynthesisReverb* reverb,
                                                            s16 updateIndex) {
     ReverbSampleBufferEntry* entry = &reverb->bufEntry[reverb->curFrame][updateIndex];
-    s16 offsetA;
-    s16 offsetB;
+    s16 offsetA = (entry->startPos & 7) * SAMPLE_SIZE;
+    s16 offsetB = ALIGN16(offsetA + entry->size);
 
-    offsetA = (entry->startPos & 7) * SAMPLE_SIZE;
-    offsetB = ALIGN16(offsetA + entry->size);
     cmd = AudioSynth_LoadReverbSamplesImpl(cmd, DMEM_WET_TEMP, entry->startPos - (offsetA / (s32)SAMPLE_SIZE),
                                            DMEM_1CH_SIZE, reverb);
     if (entry->wrappedSize != 0) {
         // Ring buffer wrapped
         cmd = AudioSynth_LoadReverbSamplesImpl(cmd, DMEM_WET_TEMP + offsetB, 0, DMEM_1CH_SIZE - offsetB, reverb);
     }
+
     aSetBuffer(cmd++, 0, DMEM_WET_TEMP + offsetA, DMEM_WET_LEFT_CH, numSamplesPerUpdate * SAMPLE_SIZE);
     aResample(cmd++, reverb->resampleFlags, reverb->downsamplePitch, reverb->leftLoadResampleBuf);
     aSetBuffer(cmd++, 0, DMEM_WET_TEMP + DMEM_1CH_SIZE + offsetA, DMEM_WET_RIGHT_CH, numSamplesPerUpdate * SAMPLE_SIZE);
     aResample(cmd++, reverb->resampleFlags, reverb->downsamplePitch, reverb->rightLoadResampleBuf);
+
     return cmd;
 }
 
-Acmd* func_800DB680(Acmd* cmd, SynthesisReverb* reverb, s16 updateIndex) {
+Acmd* AudioSynth_SaveReverbSampleAndResampleWithoutDownsample(Acmd* cmd, SynthesisReverb* reverb, s16 updateIndex) {
     ReverbSampleBufferEntry* entry = &reverb->bufEntry[reverb->curFrame][updateIndex];
 
-    aSetBuffer(cmd++, 0, DMEM_WET_LEFT_CH, DMEM_WET_SCRATCH, entry->unk_18 * SAMPLE_SIZE);
-    aResample(cmd++, reverb->resampleFlags, entry->unk_16, reverb->leftSaveResampleBuf);
+    aSetBuffer(cmd++, 0, DMEM_WET_LEFT_CH, DMEM_WET_SCRATCH, entry->saveResampleNumSamples * SAMPLE_SIZE);
+    aResample(cmd++, reverb->resampleFlags, entry->saveResamplePitch, reverb->leftSaveResampleBuf);
 
     cmd = AudioSynth_SaveBufferOffset(cmd, DMEM_WET_SCRATCH, entry->startPos, entry->size, reverb->leftRingBuf);
     if (entry->wrappedSize != 0) {
@@ -290,8 +290,9 @@ Acmd* func_800DB680(Acmd* cmd, SynthesisReverb* reverb, s16 updateIndex) {
         cmd = AudioSynth_SaveBufferOffset(cmd, DMEM_WET_SCRATCH + entry->size, 0, entry->wrappedSize,
                                           reverb->leftRingBuf);
     }
-    aSetBuffer(cmd++, 0, DMEM_WET_RIGHT_CH, DMEM_WET_SCRATCH, entry->unk_18 * SAMPLE_SIZE);
-    aResample(cmd++, reverb->resampleFlags, entry->unk_16, reverb->rightSaveResampleBuf);
+
+    aSetBuffer(cmd++, 0, DMEM_WET_RIGHT_CH, DMEM_WET_SCRATCH, entry->saveResampleNumSamples * SAMPLE_SIZE);
+    aResample(cmd++, reverb->resampleFlags, entry->saveResamplePitch, reverb->rightSaveResampleBuf);
     cmd = AudioSynth_SaveBufferOffset(cmd, DMEM_WET_SCRATCH, entry->startPos, entry->size, reverb->rightRingBuf);
 
     if (entry->wrappedSize != 0) {
@@ -309,11 +310,11 @@ Acmd* AudioSynth_LoadReverbSampleAndResampleWithoutDownsample(Acmd* cmd, s32 num
     s16 offsetA;
     s16 offsetB;
 
-    entry->unk_14 = (entry->unk_18 << 0xF) / numSamplesPerUpdate;
+    entry->loadResamplePitch = (entry->saveResampleNumSamples << 0xF) / numSamplesPerUpdate;
     offsetA = (entry->startPos & 7) * SAMPLE_SIZE;
 
     //! @bug divide by zero.
-    entry->unk_16 = (numSamplesPerUpdate << 0xF) / entry->unk_18;
+    entry->saveResamplePitch = (numSamplesPerUpdate << 0xF) / entry->saveResampleNumSamples;
     offsetB = ALIGN16(offsetA + entry->size);
 
     cmd = AudioSynth_LoadReverbSamplesImpl(cmd, DMEM_WET_TEMP, entry->startPos - (offsetA / (s32)SAMPLE_SIZE),
@@ -322,10 +323,12 @@ Acmd* AudioSynth_LoadReverbSampleAndResampleWithoutDownsample(Acmd* cmd, s32 num
         // Ring buffer wrapped
         cmd = AudioSynth_LoadReverbSamplesImpl(cmd, DMEM_WET_TEMP + offsetB, 0, DMEM_1CH_SIZE - offsetB, reverb);
     }
+
     aSetBuffer(cmd++, 0, DMEM_WET_TEMP + offsetA, DMEM_WET_LEFT_CH, numSamplesPerUpdate * SAMPLE_SIZE);
-    aResample(cmd++, reverb->resampleFlags, entry->unk_14, reverb->leftLoadResampleBuf);
+    aResample(cmd++, reverb->resampleFlags, entry->loadResamplePitch, reverb->leftLoadResampleBuf);
     aSetBuffer(cmd++, 0, DMEM_WET_TEMP + DMEM_1CH_SIZE + offsetA, DMEM_WET_RIGHT_CH, numSamplesPerUpdate * SAMPLE_SIZE);
-    aResample(cmd++, reverb->resampleFlags, entry->unk_14, reverb->rightLoadResampleBuf);
+    aResample(cmd++, reverb->resampleFlags, entry->loadResamplePitch, reverb->rightLoadResampleBuf);
+
     return cmd;
 }
 
@@ -342,6 +345,7 @@ Acmd* AudioSynth_FilterReverb(Acmd* cmd, s32 size, SynthesisReverb* reverb) {
         aFilter(cmd++, 2, size, reverb->filterRight);
         aFilter(cmd++, reverb->resampleFlags, DMEM_WET_RIGHT_CH, reverb->filterRightState);
     }
+
     return cmd;
 }
 
@@ -540,6 +544,7 @@ Acmd* AudioSynth_SaveReverbSamplesImpl(Acmd* cmd, u16 dmem, u16 startPos, s32 si
 
 Acmd* AudioSynth_SaveBufferOffset(Acmd* cmd, u16 dmem, u16 offset, s32 size, s16* buf) {
     aSaveBuffer(cmd++, dmem, &buf[offset], size);
+
     return cmd;
 }
 
@@ -572,7 +577,7 @@ Acmd* AudioSynth_SaveReverbSamples(Acmd* cmd, SynthesisReverb* reverb, s16 updat
 
     if (reverb->downsampleRate == 1) {
         if (reverb->resampleEffectOn) {
-            cmd = func_800DB680(cmd, reverb, updateIndex);
+            cmd = AudioSynth_SaveReverbSampleAndResampleWithoutDownsample(cmd, reverb, updateIndex);
         } else {
             // Put the oldest samples in the ring buffer into the wet channels
             cmd = AudioSynth_SaveReverbSamplesImpl(cmd, DMEM_WET_LEFT_CH, entry->startPos, entry->size, reverb);
@@ -970,10 +975,10 @@ Acmd* AudioSynth_ProcessSample(s32 noteIndex, NoteSampleState* sampleState, Note
                         return cmd;
                     } else {
                         // This medium is not in ram, so dma the requested sample into ram
-                        sampleData =
-                            AudioLoad_DmaSampleData((uintptr_t)(sampleAddr + (sampleDataStart + sampleDataOffset)),
-                                                    ALIGN16((numFramesToDecode * frameSize) + SAMPLES_PER_FRAME), flags,
-                                                    &synthState->sampleDmaIndex, sample->medium);
+                        sampleData = AudioLoad_AllocSampleChunkCache(
+                            (uintptr_t)(sampleAddr + (sampleDataStart + sampleDataOffset)),
+                            ALIGN16((numFramesToDecode * frameSize) + SAMPLES_PER_FRAME), flags,
+                            &synthState->sampleDmaIndex, sample->medium);
                     }
 
                     if (sampleData == NULL) {

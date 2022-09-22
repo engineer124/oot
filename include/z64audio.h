@@ -15,7 +15,7 @@
 
 #define TATUMS_PER_BEAT 48
 
-#define IS_SEQUENCE_CHANNEL_VALID(ptr) ((u32)(ptr) != (u32)&gAudioCtx.sequenceChannelNone)
+#define IS_SEQUENCE_CHANNEL_VALID(ptr) ((uintptr_t)(ptr) != (uintptr_t)&gAudioCtx.sequenceChannelNone)
 #define SEQ_NUM_CHANNELS 16
 #define SEQ_ALL_CHANNELS 0xFF
 #define SEQ_IO_VAL_NONE -1
@@ -269,9 +269,9 @@ typedef struct {
     /* 0x0C */ s32 startPos; // start pos in ring buffer
     /* 0x10 */ s16 size; // first length in ring buffer (from startPos, at most until end)
     /* 0x12 */ s16 wrappedSize; // second length in ring buffer (from pos 0)
-    /* 0x14 */ u16 unk_14;
-    /* 0x16 */ u16 unk_16;
-    /* 0x18 */ u16 unk_18;
+    /* 0x14 */ u16 loadResamplePitch;
+    /* 0x16 */ u16 saveResamplePitch;
+    /* 0x18 */ u16 saveResampleNumSamples;
 } ReverbSampleBufferEntry; // size = 0x1C
 
 typedef struct {
@@ -371,7 +371,7 @@ typedef struct {
 typedef struct {
     /* 0x00 */ union {
         struct A {
-            /* 0x00 */ u8 unk_0b80 : 1;
+            /* 0x00 */ u8 unused : 1;
             /* 0x00 */ u8 hang : 1;
             /* 0x00 */ u8 decay : 1;
             /* 0x00 */ u8 release : 1;
@@ -544,11 +544,9 @@ typedef struct {
     /* 0x0C */ NoteSynthesisBuffers* synthesisBuffers;
     /* 0x10 */ s16 curVolLeft;
     /* 0x12 */ s16 curVolRight;
-    /* 0x14 */ u16 unk_14;
-    /* 0x16 */ u16 unk_16;
-    /* 0x18 */ u16 unk_18;
+    /* 0x14 */ char unk_14[0x6];
     /* 0x1A */ u8 combFilterNeedsInit;
-    /* 0x1C */ u16 unk_1C;
+    /* 0x1C */ char unk_1C[0x4];
 } NoteSynthesisState; // size = 0x20
 
 typedef struct {
@@ -661,17 +659,17 @@ typedef struct {
     /* 0x08 */ u8 unk_08; // unused, set to zero
     /* 0x09 */ u8 numReverbs;
     /* 0x0C */ ReverbSettings* reverbSettings;
-    /* 0x10 */ u16 sampleDmaBufSize1; // size of buffers in the audio misc pool to store small snippets of individual samples. Stored short-lived.
-    /* 0x12 */ u16 sampleDmaBufSize2; // size of buffers in the audio misc pool to store small snippets of individual samples. Stored long-lived.
+    /* 0x10 */ u16 sampleChunkShortTtlEntrySize; // size of buffers in the audio misc pool to store small snippets of individual samples. Stored short-lived.
+    /* 0x12 */ u16 sampleChunkLongTtlEntrySize; // size of buffers in the audio misc pool to store small snippets of individual samples. Stored long-lived.
     /* 0x14 */ u16 unk_14;
-    /* 0x18 */ u32 persistentSeqCacheSize;  // size of cache on audio pool to store sequences persistently
-    /* 0x1C */ u32 persistentFontCacheSize; // size of cache on audio pool to store soundFonts persistently
-    /* 0x20 */ u32 persistentSampleBankCacheSize; // size of cache on audio pool to store entire sample banks persistently
-    /* 0x24 */ u32 temporarySeqCacheSize;  // size of cache on audio pool to store sequences temporarily
-    /* 0x28 */ u32 temporaryFontCacheSize; // size of cache on audio pool to store soundFonts temporarily
-    /* 0x2C */ u32 temporarySampleBankCacheSize; // size of cache on audio pool to store entire sample banks temporarily
-    /* 0x30 */ s32 persistentSampleCacheSize; // size of cache in the audio misc pool to store individual samples persistently
-    /* 0x34 */ s32 temporarySampleCacheSize; // size of cache in the audio misc pool to store individual samples temporarily
+    /* 0x18 */ size_t persistentSeqCacheSize;  // size of cache on audio pool to store sequences persistently
+    /* 0x1C */ size_t persistentFontCacheSize; // size of cache on audio pool to store soundFonts persistently
+    /* 0x20 */ size_t persistentSampleBankCacheSize; // size of cache on audio pool to store entire sample banks persistently
+    /* 0x24 */ size_t temporarySeqCacheSize;  // size of cache on audio pool to store sequences temporarily
+    /* 0x28 */ size_t temporaryFontCacheSize; // size of cache on audio pool to store soundFonts temporarily
+    /* 0x2C */ size_t temporarySampleBankCacheSize; // size of cache on audio pool to store entire sample banks temporarily
+    /* 0x30 */ size_t persistentSampleCacheSize; // size of cache in the audio misc pool to store individual samples persistently
+    /* 0x34 */ size_t temporarySampleCacheSize; // size of cache in the audio misc pool to store individual samples temporarily
 } AudioSpec; // size = 0x38
 
 /**
@@ -703,7 +701,7 @@ typedef struct {
 typedef struct {
     /* 0x0 */ u8* startRamAddr; // start addr of the pool
     /* 0x4 */ u8* curRamAddr; // address of the next available memory for allocation
-    /* 0x8 */ s32 size; // size of the pool
+    /* 0x8 */ size_t size; // size of the pool
     /* 0xC */ s32 numEntries; // number of entries allocated to the pool
 } AudioAllocPool; // size = 0x10
 
@@ -712,7 +710,7 @@ typedef struct {
  */
 typedef struct {
     /* 0x0 */ u8* ramAddr;
-    /* 0x4 */ u32 size;
+    /* 0x4 */ size_t size;
     /* 0x8 */ s16 tableType;
     /* 0xA */ s16 id;
 } AudioCacheEntry; // size = 0xC
@@ -727,7 +725,7 @@ typedef struct {
     /* 0x03 */ char unk_03[0x5];
     /* 0x08 */ u8* allocatedAddr;
     /* 0x0C */ void* sampleAddr;
-    /* 0x10 */ u32 size;
+    /* 0x10 */ size_t size;
 } SampleCacheEntry; // size = 0x14
 
 /**
@@ -758,20 +756,20 @@ typedef struct {
 } AudioCache; // size = 0x110
 
 typedef struct {
-    /* 0x0 */ u32 persistentCommonPoolSize;
-    /* 0x4 */ u32 temporaryCommonPoolSize;
+    /* 0x0 */ size_t persistentCommonPoolSize;
+    /* 0x4 */ size_t temporaryCommonPoolSize;
 } AudioCachePoolSplit; // size = 0x8
 
 typedef struct {
-    /* 0x0 */ u32 seqCacheSize;
-    /* 0x4 */ u32 fontCacheSize;
-    /* 0x8 */ u32 sampleBankCacheSize;
+    /* 0x0 */ size_t seqCacheSize;
+    /* 0x4 */ size_t fontCacheSize;
+    /* 0x8 */ size_t sampleBankCacheSize;
 } AudioCommonPoolSplit; // size = 0xC
 
 typedef struct {
-    /* 0x0 */ u32 miscPoolSize;
-    /* 0x4 */ u32 unkSizes[2];
-    /* 0xC */ u32 cachePoolSize;
+    /* 0x0 */ size_t miscPoolSize;
+    /* 0x4 */ size_t unkSizes[2];
+    /* 0xC */ size_t cachePoolSize;
 } AudioSessionPoolSplit; // size = 0x10
 
 typedef struct {
@@ -811,10 +809,10 @@ typedef struct {
     /* 0x01 */ s8 delay;
     /* 0x02 */ s8 medium;
     /* 0x04 */ u8* ramAddr;
-    /* 0x08 */ u32 curDevAddr;
+    /* 0x08 */ uintptr_t curDevAddr;
     /* 0x0C */ u8* curRamAddr;
-    /* 0x10 */ u32 bytesRemaining;
-    /* 0x14 */ u32 chunkSize;
+    /* 0x10 */ size_t bytesRemaining;
+    /* 0x14 */ size_t chunkSize;
     /* 0x18 */ s32 unkMediumParam;
     /* 0x1C */ u32 retMsg;
     /* 0x20 */ OSMesgQueue* retQueue;
@@ -828,11 +826,11 @@ typedef struct {
     /* 0x01 */ u8 seqOrFontId;
     /* 0x02 */ u16 instId;
     /* 0x04 */ s32 unkMediumParam;
-    /* 0x08 */ u32 curDevAddr;
+    /* 0x08 */ uintptr_t curDevAddr;
     /* 0x0C */ u8* curRamAddr;
     /* 0x10 */ u8* ramAddr;
     /* 0x14 */ s32 state;
-    /* 0x18 */ s32 bytesRemaining;
+    /* 0x18 */ size_t bytesRemaining;
     /* 0x1C */ s8* status; // write-only
     /* 0x20 */ Sample sample;
     /* 0x30 */ OSMesgQueue msgQueue;
@@ -841,8 +839,8 @@ typedef struct {
 } AudioSlowLoad; // size = 0x64
 
 typedef struct {
-    /* 0x00 */ u32 romAddr;
-    /* 0x04 */ u32 size;
+    /* 0x00 */ uintptr_t romAddr;
+    /* 0x04 */ size_t size;
     /* 0x08 */ s8 medium;
     /* 0x09 */ s8 cachePolicy;
     /* 0x0A */ s16 shortData1;
@@ -853,7 +851,7 @@ typedef struct {
 typedef struct {
     /* 0x00 */ s16 numEntries;
     /* 0x02 */ s16 unkMediumParam;
-    /* 0x04 */ u32 romAddr;
+    /* 0x04 */ uintptr_t romAddr;
     /* 0x08 */ char pad[0x8];
     /* 0x10 */ AudioTableEntry entries[1]; // (dynamic size)
 } AudioTable; // size >= 0x20
@@ -867,13 +865,13 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ u8* ramAddr;
-    /* 0x04 */ u32 devAddr;
+    /* 0x04 */ uintptr_t devAddr;
     /* 0x08 */ u16 sizeUnused;
     /* 0x0A */ u16 size;
     /* 0x0C */ u8 unused;
     /* 0x0D */ u8 reuseIndex; // position in sSampleDmaReuseQueue1/2, if ttl == 0
     /* 0x0E */ u8 ttl;        // duration after which the DMA can be discarded
-} SampleDma; // size = 0x10
+} SampleChunkCacheEntry; // size = 0x10
 
 typedef struct {
     /* 0x0000 */ char unk_0000;
@@ -901,22 +899,22 @@ typedef struct {
     /* 0x1E38 */ OSMesg externalLoadMsgBuf[16];
     /* 0x1E78 */ OSMesgQueue preloadSampleQueue;
     /* 0x1E90 */ OSMesg preloadSampleMsgBuf[16];
-    /* 0x1ED0 */ OSMesgQueue currAudioFrameDmaQueue;
-    /* 0x1EE8 */ OSMesg currAudioFrameDmaMsgBuf[64];
-    /* 0x1FE8 */ OSIoMesg currAudioFrameDmaIoMsgBuf[64];
+    /* 0x1ED0 */ OSMesgQueue sampleChunkCacheMsgQueue;
+    /* 0x1EE8 */ OSMesg curAudioFrameDmaMsgBuf[64];
+    /* 0x1FE8 */ OSIoMesg sampleChunkCacheIoMsg[64];
     /* 0x25E8 */ OSMesgQueue syncDmaQueue;
     /* 0x2600 */ OSMesg syncDmaMesg;
     /* 0x2604 */ OSIoMesg syncDmaIoMesg;
-    /* 0x261C */ SampleDma* sampleDmas;
-    /* 0x2620 */ u32 sampleDmaCount;
-    /* 0x2624 */ u32 sampleDmaListSize1;
-    /* 0x2628 */ s32 unused2628;
-    /* 0x262C */ u8 sampleDmaReuseQueue1[0x100]; // read pos <= write pos, wrapping mod 256
-    /* 0x272C */ u8 sampleDmaReuseQueue2[0x100];
-    /* 0x282C */ u8 sampleDmaReuseQueue1RdPos; // Read position for short-lived sampleDma
-    /* 0x282D */ u8 sampleDmaReuseQueue2RdPos; // Read position for long-lived sampleDma
-    /* 0x282E */ u8 sampleDmaReuseQueue1WrPos; // Write position for short-lived sampleDma
-    /* 0x282F */ u8 sampleDmaReuseQueue2WrPos; // Write position for long-lived sampleDma
+    /* 0x261C */ SampleChunkCacheEntry* sampleChunkEntries;
+    /* 0x2620 */ u32 numSampleChunks;
+    /* 0x2624 */ u32 numShortTtlSampleChunks;
+    /* 0x2628 */ s32 sampleChunkUnused;
+    /* 0x262C */ u8 shortTtlSampleChunkReuseQueue[0x100]; // read pos <= write pos, wrapping mod 256
+    /* 0x272C */ u8 longTtlSampleChunkReuseQueue[0x100];
+    /* 0x282C */ u8 shortTtlSampleChunkReuseRdPos; // Read position for short-lived sampleDma
+    /* 0x282D */ u8 longTtlSampleChunkReuseRdPos; // Read position for long-lived sampleDma
+    /* 0x282E */ u8 shortTtlSampleChunkReuseWrPos; // Write position for short-lived sampleDma
+    /* 0x282F */ u8 longTtlSampleChunkReuseWrPos; // Write position for long-lived sampleDma
     /* 0x2830 */ AudioTable* sequenceTable;
     /* 0x2834 */ AudioTable* soundFontTable;
     /* 0x2838 */ AudioTable* sampleBankTable;
@@ -925,16 +923,16 @@ typedef struct {
     /* 0x2844 */ SoundFont* soundFontList;
     /* 0x2848 */ AudioBufferParameters audioBufParams;
     /* 0x2870 */ f32 scaledRefreshRate;
-    /* 0x2874 */ s32 sampleDmaBufSize1;
-    /* 0x2874 */ s32 sampleDmaBufSize2;
+    /* 0x2874 */ s32 sampleChunkShortTtlEntrySize;
+    /* 0x2874 */ s32 sampleChunkLongTtlEntrySize;
     /* 0x287C */ char unk_287C[0x10];
-    /* 0x288C */ s32 sampleDmaBufSize;
+    /* 0x288C */ s32 sampleChunkEntrySize;
     /* 0x2890 */ s32 maxAudioCmds;
     /* 0x2894 */ s32 numNotes;
     /* 0x2898 */ s16 maxTempo; // Maximum possible tempo using every possible update to process a .seq file
     /* 0x289A */ s8 soundMode;
     /* 0x289C */ s32 totalTaskCount; // The total number of times the top-level function on the audio thread has run since audio was initialized
-    /* 0x28A0 */ s32 curAudioFrameDmaCount;
+    /* 0x28A0 */ s32 sampleChunkDmaCount;
     /* 0x28A4 */ s32 rspTaskIndex;
     /* 0x28A8 */ s32 curAiBufIndex;
     /* 0x28AC */ Acmd* abiCmdBufs[2]; // Pointer to audio heap where the audio binary interface command lists (for the rsp) are stored. Two lists that alternate every frame
@@ -977,7 +975,7 @@ typedef struct {
     /* 0x351C */ s32 audioResetFadeOutFramesLeft;
     /* 0x3520 */ f32* adsrDecayTable; // A table on the audio heap that stores decay rates used for adsr
     /* 0x3524 */ u8* audioHeap;
-    /* 0x3528 */ u32 audioHeapSize;
+    /* 0x3528 */ size_t audioHeapSize;
     /* 0x352C */ Note* notes;
     /* 0x3530 */ SequencePlayer seqPlayers[4];
     /* 0x3AB0 */ SequenceLayer sequenceLayers[64];
@@ -1015,9 +1013,9 @@ typedef struct {
 } NoteSubAttributes; // size = 0x18
 
 typedef struct {
-    /* 0x00 */ u32 heapSize; // total number of bytes allocated to the audio heap. Must be <= the size of `gAudioHeap` (ideally about the same size)
-    /* 0x04 */ u32 initPoolSize; // The entire audio heap is split into two pools.
-    /* 0x08 */ u32 permanentPoolSize;
+    /* 0x00 */ size_t heapSize; // total number of bytes allocated to the audio heap. Must be <= the size of `gAudioHeap` (ideally about the same size)
+    /* 0x04 */ size_t initPoolSize; // The entire audio heap is split into two pools.
+    /* 0x08 */ size_t permanentPoolSize;
 } AudioHeapInitSizes; // size = 0xC
 
 #endif

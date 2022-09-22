@@ -69,28 +69,28 @@ AudioTask* AudioThread_UpdateImpl(void) {
         gCustomAudioUpdateFunction();
     }
 
-    sp5C = gAudioCtx.curAudioFrameDmaCount;
-    for (i = 0; i < gAudioCtx.curAudioFrameDmaCount; i++) {
-        if (osRecvMesg(&gAudioCtx.currAudioFrameDmaQueue, NULL, OS_MESG_NOBLOCK) == 0) {
+    sp5C = gAudioCtx.sampleChunkDmaCount;
+    for (i = 0; i < gAudioCtx.sampleChunkDmaCount; i++) {
+        if (osRecvMesg(&gAudioCtx.sampleChunkCacheMsgQueue, NULL, OS_MESG_NOBLOCK) == 0) {
             sp5C--;
         }
     }
 
     if (sp5C != 0) {
         for (i = 0; i < sp5C; i++) {
-            osRecvMesg(&gAudioCtx.currAudioFrameDmaQueue, NULL, OS_MESG_BLOCK);
+            osRecvMesg(&gAudioCtx.sampleChunkCacheMsgQueue, NULL, OS_MESG_BLOCK);
         }
     }
 
-    sp48 = MQ_GET_COUNT(&gAudioCtx.currAudioFrameDmaQueue);
+    sp48 = MQ_GET_COUNT(&gAudioCtx.sampleChunkCacheMsgQueue);
     if (sp48 != 0) {
         for (i = 0; i < sp48; i++) {
-            osRecvMesg(&gAudioCtx.currAudioFrameDmaQueue, NULL, OS_MESG_NOBLOCK);
+            osRecvMesg(&gAudioCtx.sampleChunkCacheMsgQueue, NULL, OS_MESG_NOBLOCK);
         }
     }
 
-    gAudioCtx.curAudioFrameDmaCount = 0;
-    AudioLoad_DecreaseSampleDmaTtls();
+    gAudioCtx.sampleChunkDmaCount = 0;
+    AudioLoad_DecreaseSampleChunkTtls();
     AudioLoad_ProcessLoads(gAudioCtx.resetStatus);
     AudioLoad_ProcessScriptLoads();
 
@@ -544,7 +544,7 @@ s32 AudioThread_ResetAudioHeap(s32 specId) {
 
 void AudioThread_PreNMIInternal(void) {
     gAudioCtx.resetTimer = 1;
-    if (gAudioContextInitialized) {
+    if (gAudioCtxInitialized) {
         AudioThread_ResetAudioHeap(0);
         gAudioCtx.resetStatus = 0;
     }

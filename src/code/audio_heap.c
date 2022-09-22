@@ -49,19 +49,19 @@ void AudioHeap_InitAdsrDecayTable(void) {
 void AudioHeap_ResetLoadStatus(void) {
     s32 i;
 
-    for (i = 0; i < 0x30; i++) {
+    for (i = 0; i < ARRAY_COUNT(gAudioCtx.fontLoadStatus); i++) {
         if (gAudioCtx.fontLoadStatus[i] != LOAD_STATUS_PERMANENTLY_LOADED) {
             gAudioCtx.fontLoadStatus[i] = LOAD_STATUS_NOT_LOADED;
         }
     }
 
-    for (i = 0; i < 0x30; i++) {
+    for (i = 0; i < ARRAY_COUNT(gAudioCtx.sampleFontLoadStatus); i++) {
         if (gAudioCtx.sampleFontLoadStatus[i] != LOAD_STATUS_PERMANENTLY_LOADED) {
             gAudioCtx.sampleFontLoadStatus[i] = LOAD_STATUS_NOT_LOADED;
         }
     }
 
-    for (i = 0; i < 0x80; i++) {
+    for (i = 0; i < ARRAY_COUNT(gAudioCtx.seqLoadStatus); i++) {
         if (gAudioCtx.seqLoadStatus[i] != LOAD_STATUS_PERMANENTLY_LOADED) {
             gAudioCtx.seqLoadStatus[i] = LOAD_STATUS_NOT_LOADED;
         }
@@ -107,7 +107,7 @@ void AudioHeap_DiscardSequence(s32 seqId) {
     s32 i;
 
     for (i = 0; i < gAudioCtx.audioBufParams.numSequencePlayers; i++) {
-        if (gAudioCtx.seqPlayers[i].enabled && gAudioCtx.seqPlayers[i].seqId == seqId) {
+        if (gAudioCtx.seqPlayers[i].enabled && (gAudioCtx.seqPlayers[i].seqId == seqId)) {
             AudioScript_SequencePlayerDisable(&gAudioCtx.seqPlayers[i]);
         }
     }
@@ -116,7 +116,7 @@ void AudioHeap_DiscardSequence(s32 seqId) {
 /**
  * Perform a writeback from the data cache to the ram.
  */
-void AudioHeap_WritebackDCache(void* ramAddr, u32 size) {
+void AudioHeap_WritebackDCache(void* ramAddr, size_t size) {
     Audio_WritebackDCache(ramAddr, size);
 }
 
@@ -125,7 +125,7 @@ void AudioHeap_WritebackDCache(void* ramAddr, u32 size) {
  * then allocate space on the pool provided in the argument.
  * The newly allocated space is zero'ed
  */
-void* AudioHeap_AllocZeroedAttemptExternal(AudioAllocPool* pool, u32 size) {
+void* AudioHeap_AllocZeroedAttemptExternal(AudioAllocPool* pool, size_t size) {
     void* ramAddr = NULL;
 
     if (gAudioCtx.externalPool.startRamAddr != NULL) {
@@ -137,7 +137,7 @@ void* AudioHeap_AllocZeroedAttemptExternal(AudioAllocPool* pool, u32 size) {
     return ramAddr;
 }
 
-void* AudioHeap_AllocAttemptExternal(AudioAllocPool* pool, u32 size) {
+void* AudioHeap_AllocAttemptExternal(AudioAllocPool* pool, size_t size) {
     void* ramAddr = NULL;
 
     if (gAudioCtx.externalPool.startRamAddr != NULL) {
@@ -149,7 +149,7 @@ void* AudioHeap_AllocAttemptExternal(AudioAllocPool* pool, u32 size) {
     return ramAddr;
 }
 
-void* AudioHeap_AllocDmaMemory(AudioAllocPool* pool, u32 size) {
+void* AudioHeap_AllocDmaMemory(AudioAllocPool* pool, size_t size) {
     void* ramAddr = AudioHeap_Alloc(pool, size);
 
     if (ramAddr != NULL) {
@@ -158,7 +158,7 @@ void* AudioHeap_AllocDmaMemory(AudioAllocPool* pool, u32 size) {
     return ramAddr;
 }
 
-void* AudioHeap_AllocDmaMemoryZeroed(AudioAllocPool* pool, u32 size) {
+void* AudioHeap_AllocDmaMemoryZeroed(AudioAllocPool* pool, size_t size) {
     void* ramAddr;
 
     ramAddr = AudioHeap_AllocZeroed(pool, size);
@@ -171,7 +171,7 @@ void* AudioHeap_AllocDmaMemoryZeroed(AudioAllocPool* pool, u32 size) {
 /**
  * Allocates space on a pool contained within the heap and sets all the allocated space to 0
  */
-void* AudioHeap_AllocZeroed(AudioAllocPool* pool, u32 size) {
+void* AudioHeap_AllocZeroed(AudioAllocPool* pool, size_t size) {
     u8* ramAddr = AudioHeap_Alloc(pool, size);
     u8* ptr;
 
@@ -184,15 +184,16 @@ void* AudioHeap_AllocZeroed(AudioAllocPool* pool, u32 size) {
     return ramAddr;
 }
 
-void* AudioHeap_Alloc(AudioAllocPool* pool, u32 size) {
-    u32 aligned = ALIGN16(size);
+void* AudioHeap_Alloc(AudioAllocPool* pool, size_t size) {
+    size_t alignedSize = ALIGN16(size);
     u8* ramAddr = pool->curRamAddr;
 
-    if (pool->startRamAddr + pool->size >= pool->curRamAddr + aligned) {
-        pool->curRamAddr += aligned;
+    if (pool->startRamAddr + pool->size >= pool->curRamAddr + alignedSize) {
+        pool->curRamAddr += alignedSize;
     } else {
         return NULL;
     }
+
     pool->numEntries++;
     return ramAddr;
 }
@@ -201,9 +202,9 @@ void* AudioHeap_Alloc(AudioAllocPool* pool, u32 size) {
  * Initialize a pool to allocate memory from the specified address, up to the specified size.
  * Store the metadata of this pool in AudioAllocPool* pool
  */
-void AudioHeap_InitPool(AudioAllocPool* pool, void* ramAddr, u32 size) {
-    pool->curRamAddr = pool->startRamAddr = (u8*)ALIGN16((u32)ramAddr);
-    pool->size = size - ((u32)ramAddr & 0xF);
+void AudioHeap_InitPool(AudioAllocPool* pool, void* ramAddr, size_t size) {
+    pool->curRamAddr = pool->startRamAddr = (u8*)ALIGN16((uintptr_t)ramAddr);
+    pool->size = size - ((uintptr_t)ramAddr & 0xF);
     pool->numEntries = 0;
 }
 
@@ -274,7 +275,7 @@ void AudioHeap_PopPersistentCache(s32 tableType) {
     persistent->numEntries--;
 }
 
-void AudioHeap_InitMainPools(s32 initPoolSize) {
+void AudioHeap_InitMainPools(size_t initPoolSize) {
     AudioHeap_InitPool(&gAudioCtx.initPool, gAudioCtx.audioHeap, initPoolSize);
     AudioHeap_InitPool(&gAudioCtx.sessionPool, gAudioCtx.audioHeap + initPoolSize,
                        gAudioCtx.audioHeapSize - initPoolSize);
@@ -327,7 +328,7 @@ void AudioHeap_InitTemporaryPoolsAndCaches(AudioCommonPoolSplit* split) {
     AudioHeap_InitTemporaryCache(&gAudioCtx.sampleBankCache.temporary);
 }
 
-void* AudioHeap_AllocCached(s32 tableType, s32 size, s32 cache, s32 id) {
+void* AudioHeap_AllocCached(s32 tableType, size_t size, s32 cache, s32 id) {
     AudioCache* loadedCache;
     AudioTemporaryCache* temporaryCache;
     AudioAllocPool* temporaryPool;
@@ -360,7 +361,7 @@ void* AudioHeap_AllocCached(s32 tableType, s32 size, s32 cache, s32 id) {
         temporaryCache = &loadedCache->temporary;
         temporaryPool = &temporaryCache->pool;
 
-        if (temporaryPool->size < size) {
+        if ((s32)temporaryPool->size < (s32)size) {
             return NULL;
         }
 
@@ -860,7 +861,7 @@ void AudioHeap_Init(void) {
     s32 pad2;
     AudioSpec* spec = &gAudioSpecs[gAudioCtx.specId]; // Audio Specifications
 
-    gAudioCtx.sampleDmaCount = 0;
+    gAudioCtx.numSampleChunks = 0;
 
     // Audio buffer parameters
 
@@ -894,9 +895,9 @@ void AudioHeap_Init(void) {
     gAudioCtx.audioBufParams.updatesPerFrameScaled = gAudioCtx.audioBufParams.updatesPerFrame / 4.0f;
     gAudioCtx.audioBufParams.updatesPerFrameInv = 1.0f / gAudioCtx.audioBufParams.updatesPerFrame;
 
-    // SampleDma buffer size
-    gAudioCtx.sampleDmaBufSize1 = spec->sampleDmaBufSize1;
-    gAudioCtx.sampleDmaBufSize2 = spec->sampleDmaBufSize2;
+    // SampleChunkCacheEntry buffer size
+    gAudioCtx.sampleChunkShortTtlEntrySize = spec->sampleChunkShortTtlEntrySize;
+    gAudioCtx.sampleChunkLongTtlEntrySize = spec->sampleChunkLongTtlEntrySize;
 
     gAudioCtx.numNotes = spec->numNotes;
     gAudioCtx.audioBufParams.numSequencePlayers = spec->numSequencePlayers;
@@ -1071,7 +1072,7 @@ void AudioHeap_Init(void) {
 
     // Initialize two additional sample caches for individual samples
     AudioHeap_InitSampleCaches(spec->persistentSampleCacheSize, spec->temporarySampleCacheSize);
-    AudioLoad_InitSampleDmaBuffers(gAudioCtx.numNotes);
+    AudioLoad_InitSampleChunkCache(gAudioCtx.numNotes);
 
     // Initialize Loads
     gAudioCtx.preloadSampleStackTop = 0;

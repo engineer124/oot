@@ -378,7 +378,7 @@ void AudioScript_SeqLayerFree(SequenceChannel* channel, s32 layerIndex) {
 void AudioScript_SequenceChannelDisable(SequenceChannel* channel) {
     s32 i;
 
-    for (i = 0; i < 4; i++) {
+    for (i = 0; i < ARRAY_COUNT(channel->layers); i++) {
         AudioScript_SeqLayerFree(channel, i);
     }
 
