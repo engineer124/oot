@@ -384,24 +384,24 @@ s32 AudioLoad_IsSampleLoadComplete(s32 sampleBankId) {
 }
 
 void AudioLoad_SetFontLoadStatus(s32 fontId, s32 loadStatus) {
-    if ((fontId != 0xFF) && (gAudioCtx.fontLoadStatus[fontId] != LOAD_STATUS_PERMANENTLY_LOADED)) {
+    if ((fontId != 0xFF) && (gAudioCtx.fontLoadStatus[fontId] != LOAD_STATUS_PERMANENT)) {
         gAudioCtx.fontLoadStatus[fontId] = loadStatus;
     }
 }
 
 void AudioLoad_SetSeqLoadStatus(s32 seqId, s32 loadStatus) {
-    if ((seqId != 0xFF) && (gAudioCtx.seqLoadStatus[seqId] != LOAD_STATUS_PERMANENTLY_LOADED)) {
+    if ((seqId != 0xFF) && (gAudioCtx.seqLoadStatus[seqId] != LOAD_STATUS_PERMANENT)) {
         gAudioCtx.seqLoadStatus[seqId] = loadStatus;
     }
 }
 
 void AudioLoad_SetSampleFontLoadStatusAndApplyCaches(s32 sampleBankId, s32 loadStatus) {
     if (sampleBankId != 0xFF) {
-        if (gAudioCtx.sampleFontLoadStatus[sampleBankId] != LOAD_STATUS_PERMANENTLY_LOADED) {
+        if (gAudioCtx.sampleFontLoadStatus[sampleBankId] != LOAD_STATUS_PERMANENT) {
             gAudioCtx.sampleFontLoadStatus[sampleBankId] = loadStatus;
         }
 
-        if ((gAudioCtx.sampleFontLoadStatus[sampleBankId] == LOAD_STATUS_PERMANENTLY_LOADED) ||
+        if ((gAudioCtx.sampleFontLoadStatus[sampleBankId] == LOAD_STATUS_PERMANENT) ||
             (gAudioCtx.sampleFontLoadStatus[sampleBankId] == LOAD_STATUS_COMPLETE)) {
             AudioHeap_ApplySampleBankCache(sampleBankId);
         }
@@ -409,7 +409,7 @@ void AudioLoad_SetSampleFontLoadStatusAndApplyCaches(s32 sampleBankId, s32 loadS
 }
 
 void AudioLoad_SetSampleFontLoadStatus(s32 sampleBankId, s32 loadStatus) {
-    if ((sampleBankId != 0xFF) && (gAudioCtx.sampleFontLoadStatus[sampleBankId] != LOAD_STATUS_PERMANENTLY_LOADED)) {
+    if ((sampleBankId != 0xFF) && (gAudioCtx.sampleFontLoadStatus[sampleBankId] != LOAD_STATUS_PERMANENT)) {
         gAudioCtx.sampleFontLoadStatus[sampleBankId] = loadStatus;
     }
 }
@@ -791,7 +791,7 @@ void* AudioLoad_SyncLoad(u32 tableType, u32 id, s32* didAllocate) {
             AudioLoad_SyncDma(romAddr, ramAddr, size, medium);
         }
 
-        loadStatus = (cachePolicy == 0) ? LOAD_STATUS_PERMANENTLY_LOADED : LOAD_STATUS_COMPLETE;
+        loadStatus = (cachePolicy == 0) ? LOAD_STATUS_PERMANENT : LOAD_STATUS_COMPLETE;
     }
 
     switch (tableType) {
@@ -1114,7 +1114,7 @@ void* AudioLoad_AsyncLoadInner(s32 tableType, s32 id, s32 nChunks, s32 retData, 
                 if (ramAddr == NULL) {
                     return ramAddr;
                 }
-                loadStatus = LOAD_STATUS_PERMANENTLY_LOADED;
+                loadStatus = LOAD_STATUS_PERMANENT;
                 break;
 
             case 1:
@@ -2146,8 +2146,8 @@ void AudioLoad_LoadPermanentSamples(void) {
     for (i = 0; i < gAudioCtx.permanentPool.numEntries; i++) {
         SampleBankRelocInfo sampleBankReloc;
 
-        if (gAudioCtx.permanentCache[i].tableType == FONT_TABLE) {
-            fontId = AudioLoad_GetRealTableIndex(FONT_TABLE, gAudioCtx.permanentCache[i].id);
+        if (gAudioCtx.permanentEntries[i].tableType == FONT_TABLE) {
+            fontId = AudioLoad_GetRealTableIndex(FONT_TABLE, gAudioCtx.permanentEntries[i].id);
             sampleBankReloc.sampleBankId1 = gAudioCtx.soundFontList[fontId].sampleBankId1;
             sampleBankReloc.sampleBankId2 = gAudioCtx.soundFontList[fontId].sampleBankId2;
 

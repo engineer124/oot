@@ -140,7 +140,7 @@ typedef enum {
     /* 2 */ LOAD_STATUS_COMPLETE, // the entry data is loaded, it may be discarded if not stored persistently, and either no longer in use, or the memory is needed for something else
     /* 3 */ LOAD_STATUS_DISCARDABLE, // the entry data is loaded, and can be discarded
     /* 4 */ LOAD_STATUS_MAYBE_DISCARDABLE, // only for font table entries, like COMPLETE but prefer discarding it over a COMPLETE entry
-    /* 5 */ LOAD_STATUS_PERMANENTLY_LOADED // the entry data is loaded in the permanent pool, it won't be discarded
+    /* 5 */ LOAD_STATUS_PERMANENT // the entry data is loaded in the permanent pool, it won't be discarded
 } AudioLoadStatus;
 
 typedef s32 (*DmaHandler)(OSPiHandle* handle, OSIoMesg* mb, s32 direction);
@@ -960,7 +960,7 @@ typedef struct {
     /* 0x2B30 */ AudioCache fontCache; // Cache to store soundFonts
     /* 0x2C40 */ AudioCache sampleBankCache; // Cache for loading entire sample banks
     /* 0x2D50 */ AudioAllocPool permanentPool; // Pool to store audio data that is always loaded. Used for sfxs
-    /* 0x2D60 */ AudioCacheEntry permanentCache[32]; // individual entries to the permanent pool
+    /* 0x2D60 */ AudioCacheEntry permanentEntries[32]; // individual entries to the permanent pool
     /* 0x2EE0 */ AudioSampleCache persistentSampleCache; // Stores individual samples persistently
     /* 0x3174 */ AudioSampleCache temporarySampleCache; // Stores individual samples temporarily
     /* 0x3408 */ AudioSessionPoolSplit sessionPoolSplit; // splits session pool into the cache pool and misc pool
