@@ -121,7 +121,8 @@ typedef enum {
     /* 0 */ SEQ_PLAYER_BGM_MAIN,
     /* 1 */ SEQ_PLAYER_FANFARE,
     /* 2 */ SEQ_PLAYER_SFX,
-    /* 3 */ SEQ_PLAYER_BGM_SUB
+    /* 3 */ SEQ_PLAYER_BGM_SUB,
+    /* 4 */ SEQ_PLAYER_MAX
 } SequencePlayerId;
 
 typedef enum {

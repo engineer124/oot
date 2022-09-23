@@ -1013,6 +1013,11 @@ typedef struct {
 } NoteSubAttributes; // size = 0x18
 
 typedef struct {
+    /* 0x0 */ s16 unk_00; // set to 0x1C00, unused
+    /* 0x2 */ s16 tatumsPerBeat;
+} TempoData; // size = 0x4
+
+typedef struct {
     /* 0x00 */ size_t heapSize; // total number of bytes allocated to the audio heap. Must be <= the size of `gAudioHeap` (ideally about the same size)
     /* 0x04 */ size_t initPoolSize; // The entire audio heap is split into two pools.
     /* 0x08 */ size_t permanentPoolSize;

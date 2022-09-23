@@ -5,9 +5,9 @@ AudioContext gAudioCtx;
 void (*gCustomAudioUpdateFunction)(void);
 s32 D_801755D8[3]; // unused
 
-const s16 gAudioTatumInit[] = {
-    0x1C00,          // unused
-    TATUMS_PER_BEAT, // gTatumsPerBeat
+const TempoData gTempoData = {
+    0x1C00,         // unk_00
+    TATUMS_PER_BEAT // tatumsPerBeat
 };
 
 // TODO: Extract from table?

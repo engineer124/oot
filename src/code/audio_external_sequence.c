@@ -486,7 +486,7 @@ void AudioSeq_UpdateActiveSequences(void) {
     u8 j;
     u8 channelIndex;
 
-    for (seqPlayerIndex = 0; seqPlayerIndex < 4; seqPlayerIndex++) {
+    for (seqPlayerIndex = 0; seqPlayerIndex < SEQ_PLAYER_MAX; seqPlayerIndex++) {
 
         // The setup for this block of code was not fully implemented until Majora's Mask.
         // The intent was to load soundfonts asynchronously before playing a
@@ -787,7 +787,7 @@ void AudioSeq_ResetActiveSequences(void) {
     u8 seqPlayerIndex;
     u8 scaleIndex;
 
-    for (seqPlayerIndex = 0; seqPlayerIndex < 4; seqPlayerIndex++) {
+    for (seqPlayerIndex = 0; seqPlayerIndex < SEQ_PLAYER_MAX; seqPlayerIndex++) {
         sNumSeqRequests[seqPlayerIndex] = 0;
 
         gActiveSeqs[seqPlayerIndex].seqId = SEQ_ID_DISABLED;
@@ -813,7 +813,7 @@ void AudioSeq_ResetActiveSequencesAndVolume(void) {
     u8 seqPlayerIndex;
     u8 scaleIndex;
 
-    for (seqPlayerIndex = 0; seqPlayerIndex < 4; seqPlayerIndex++) {
+    for (seqPlayerIndex = 0; seqPlayerIndex < SEQ_PLAYER_MAX; seqPlayerIndex++) {
         gActiveSeqs[seqPlayerIndex].volCur = 1.0f;
         gActiveSeqs[seqPlayerIndex].volTimer = 0;
         gActiveSeqs[seqPlayerIndex].fadeVolUpdate = false;

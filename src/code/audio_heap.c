@@ -10,8 +10,6 @@ void AudioHeap_DiscardSampleCaches(void);
 void AudioHeap_DiscardSampleBank(s32 sampleBankId);
 void AudioHeap_DiscardSampleBanks(void);
 
-#define gTatumsPerBeat (gAudioTatumInit[1])
-
 /**
  * Effectively scales `updatesPerFrameInv` by the reciprocal of `scaleInv`
  * `updatesPerFrameInvScaled` is just `updatesPerFrameInv` scaled down by a factor of 256.0f
@@ -911,14 +909,14 @@ void AudioHeap_Init(void) {
     gAudioCtx.numNotes = spec->numNotes;
     gAudioCtx.audioBufParams.numSequencePlayers = spec->numSequencePlayers;
 
-    if (gAudioCtx.audioBufParams.numSequencePlayers > 4) {
-        gAudioCtx.audioBufParams.numSequencePlayers = 4;
+    if (gAudioCtx.audioBufParams.numSequencePlayers > SEQ_PLAYER_MAX) {
+        gAudioCtx.audioBufParams.numSequencePlayers = SEQ_PLAYER_MAX;
     }
     gAudioCtx.unk_2 = spec->unk_14;
 
     // 60 (s / min)
-    gAudioCtx.maxTempo = (u32)(gAudioCtx.audioBufParams.updatesPerFrame * (60.0f * 1000 * TATUMS_PER_BEAT) /
-                               gTatumsPerBeat / gAudioCtx.maxTempoTvTypeFactors);
+    gAudioCtx.maxTempo = (u32)(gAudioCtx.audioBufParams.updatesPerFrame * (f32)(60 * 1000 * TATUMS_PER_BEAT) /
+                               gTempoData.tatumsPerBeat / gAudioCtx.maxTempoTvTypeFactors);
 
     gAudioCtx.scaledRefreshRate = gAudioCtx.refreshRate;
     gAudioCtx.scaledRefreshRate *= gAudioCtx.audioBufParams.updatesPerFrame;

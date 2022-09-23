@@ -163,7 +163,7 @@ extern s32 gSystemArenaLogSeverity;
 extern u8 __osPfsInodeCacheBank;
 extern s32 __osPfsLastChannel;
 
-extern const s16 gAudioTatumInit[];
+extern const TempoData gTempoData;
 extern const AudioHeapInitSizes gAudioHeapInitSizes;
 extern s16 gOcarinaSongItemMap[];
 extern u8 gSoundFontTable[];
