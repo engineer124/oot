@@ -770,7 +770,7 @@ void AudioHeap_ClearCurrentAiBuffer(void) {
     s32 curAiBufferIndex = gAudioCtx.curAiBufIndex;
     s32 i;
 
-    gAudioCtx.aiNumSamplesPerFrame[curAiBufferIndex] = gAudioCtx.audioBufParams.numSamplesPerFrameMin;
+    gAudioCtx.numSamplesPerFrame[curAiBufferIndex] = gAudioCtx.audioBufParams.numSamplesPerFrameMin;
 
     for (i = 0; i < AIBUF_LEN; i++) {
         gAudioCtx.aiBuffers[curAiBufferIndex][i] = 0;
@@ -839,7 +839,7 @@ s32 AudioHeap_ResetStep(void) {
             AudioHeap_Init();
             gAudioCtx.resetStatus = 0;
             for (i = 0; i < ARRAY_COUNT(gAudioCtx.aiBuffers); i++) {
-                gAudioCtx.aiNumSamplesPerFrame[i] = gAudioCtx.audioBufParams.numSamplesPerFrameMax;
+                gAudioCtx.numSamplesPerFrame[i] = gAudioCtx.audioBufParams.numSamplesPerFrameMax;
                 for (j = 0; j < AIBUF_LEN; j++) {
                     gAudioCtx.aiBuffers[i][j] = 0;
                 }

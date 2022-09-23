@@ -28,8 +28,8 @@ typedef enum {
 
 typedef enum {
     /* 0 */ SEQPLAYER_STATE_0,
-    /* 1 */ SEQPLAYER_STATE_1, // Fading in
-    /* 2 */ SEQPLAYER_STATE_2 // Fading out
+    /* 1 */ SEQPLAYER_STATE_FADE_IN, // Fading in
+    /* 2 */ SEQPLAYER_STATE_FADE_OUT // Fading out
 } SeqPlayerState;
 
 #define MAX_CHANNELS_PER_BANK 3
@@ -329,7 +329,7 @@ typedef struct {
     /* 0x000 */ u8 recalculateVolume : 1;
     /* 0x000 */ u8 stopScript : 1;
     /* 0x000 */ u8 applyBend : 1;
-    /* 0x001 */ u8 state;
+    /* 0x001 */ u8 state; // fadeState?
     /* 0x002 */ u8 noteAllocPolicy;
     /* 0x003 */ u8 muteFlags;
     /* 0x004 */ u8 seqId;
@@ -342,7 +342,7 @@ typedef struct {
     /* 0x00E */ s16 transposition;
     /* 0x010 */ u16 delay;
     /* 0x012 */ u16 fadeTimer;
-    /* 0x014 */ u16 fadeTimerUnkEu;
+    /* 0x014 */ u16 storedFadeTimer;
     /* 0x018 */ u8* seqData;
     /* 0x01C */ f32 fadeVolume;
     /* 0x020 */ f32 fadeVelocity;
@@ -943,7 +943,7 @@ typedef struct {
     /* 0x2960 */ f32 maxTempoTvTypeFactors;
     /* 0x2964 */ s32 refreshRate;
     /* 0x2968 */ s16* aiBuffers[3];
-    /* 0x2974 */ s16 aiNumSamplesPerFrame[3];
+    /* 0x2974 */ s16 numSamplesPerFrame[3];
     /* 0x297C */ u32 audioRandom;
     /* 0x2980 */ s32 audioErrorFlags;
     /* 0x2984 */ volatile u32 resetTimer;

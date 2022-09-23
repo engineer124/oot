@@ -1838,14 +1838,14 @@ void AudioScript_SequencePlayerProcessSequence(SequencePlayer* seqPlayer) {
                         temp = AudioScript_ScriptReadS16(seqScript);
                         switch (cmd) {
                             case SEQPLAYER_STATE_0:
-                            case SEQPLAYER_STATE_1:
-                                if (seqPlayer->state != SEQPLAYER_STATE_2) {
-                                    seqPlayer->fadeTimerUnkEu = temp;
+                            case SEQPLAYER_STATE_FADE_IN:
+                                if (seqPlayer->state != SEQPLAYER_STATE_FADE_OUT) {
+                                    seqPlayer->storedFadeTimer = temp;
                                     seqPlayer->state = cmd;
                                 }
                                 break;
 
-                            case SEQPLAYER_STATE_2:
+                            case SEQPLAYER_STATE_FADE_OUT:
                                 seqPlayer->fadeTimer = temp;
                                 seqPlayer->state = cmd;
                                 seqPlayer->fadeVelocity = (0.0f - seqPlayer->fadeVolume) / (s32)seqPlayer->fadeTimer;
@@ -1856,13 +1856,13 @@ void AudioScript_SequencePlayerProcessSequence(SequencePlayer* seqPlayer) {
                     case 0xDB: // `vol(u8)`, seqPlayer: set volume
                         value = AudioScript_ScriptReadU8(seqScript);
                         switch (seqPlayer->state) {
-                            case SEQPLAYER_STATE_1:
+                            case SEQPLAYER_STATE_FADE_IN:
                                 seqPlayer->state = SEQPLAYER_STATE_0;
                                 seqPlayer->fadeVolume = 0.0f;
                                 FALLTHROUGH;
                             case SEQPLAYER_STATE_0:
-                                seqPlayer->fadeTimer = seqPlayer->fadeTimerUnkEu;
-                                if (seqPlayer->fadeTimerUnkEu != 0) {
+                                seqPlayer->fadeTimer = seqPlayer->storedFadeTimer;
+                                if (seqPlayer->storedFadeTimer != 0) {
                                     seqPlayer->fadeVelocity =
                                         ((value / 127.0f) - seqPlayer->fadeVolume) / (s32)seqPlayer->fadeTimer;
                                 } else {
@@ -1870,7 +1870,7 @@ void AudioScript_SequencePlayerProcessSequence(SequencePlayer* seqPlayer) {
                                 }
                                 break;
 
-                            case SEQPLAYER_STATE_2:
+                            case SEQPLAYER_STATE_FADE_OUT:
                                 break;
                         }
                         break;
@@ -2074,9 +2074,9 @@ void AudioScript_ResetSequencePlayer(SequencePlayer* seqPlayer) {
     AudioScript_SequencePlayerDisable(seqPlayer);
     seqPlayer->stopScript = false;
     seqPlayer->delay = 0;
-    seqPlayer->state = SEQPLAYER_STATE_1;
+    seqPlayer->state = SEQPLAYER_STATE_FADE_IN;
     seqPlayer->fadeTimer = 0;
-    seqPlayer->fadeTimerUnkEu = 0;
+    seqPlayer->storedFadeTimer = 0;
     seqPlayer->tempoAcc = 0;
     seqPlayer->tempo = 120 * TATUMS_PER_BEAT; // 120 BPM
     seqPlayer->tempoChange = 0;
