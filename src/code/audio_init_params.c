@@ -5,9 +5,9 @@ AudioContext gAudioCtx;
 void (*gCustomAudioUpdateFunction)(void);
 s32 D_801755D8[3]; // unused
 
-const s16 D_8014A6C0[] = {
-    0x1C00, // unused
-    0x0030, // gTatumsPerBeat
+const s16 gAudioTatumInit[] = {
+    0x1C00,          // unused
+    TATUMS_PER_BEAT, // gTatumsPerBeat
 };
 
 // TODO: Extract from table?
@@ -27,59 +27,59 @@ const AudioHeapInitSizes gAudioHeapInitSizes = {
     ALIGN16(PERMANENT_POOL_SIZE),                                         // permanent pool size
 };
 
-#define DEFAULT_REVERB_SETTINGS \
+#define REVERB_INDEX_0_SETTINGS \
     { 1, 0x30, 0x3000, 0, 0, 0x7FFF, 0x0000, 0x0000, 0xFF, 0x3000, 0x0, 0x0 }
 
 ReverbSettings sReverbSettings[][3] = {
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
         { 1, 0x20, 0x0800, 0, 0, 0x7FFF, 0x0000, 0x0000, 0xFF, 0x0000, 0x0, 0x0 },
     },
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
         { 1, 0x30, 0x1800, 0, 0, 0x7FFF, 0x0000, 0x0000, 0xFF, 0x0000, 0xB, 0xB },
     },
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
         { 1, 0x38, 0x2800, 0, 0, 0x7FFF, 0x0000, 0x0000, 0xFF, 0x0000, 0x7, 0x7 },
     },
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
         { 1, 0x50, 0x5000, 0, 0, 0x7FFF, 0x1000, 0x1000, 0xFF, 0x3000, 0x7, 0x7 },
     },
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
         { 1, 0x40, 0x5000, 0, 0, 0x7FFF, 0x1800, 0x1800, 0xFF, 0x3000, 0x7, 0x7 },
     },
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
         { 1, 0x40, 0x5C00, 0, 0, 0x7FFF, 0x2000, 0x2000, 0xFF, 0x3000, 0x4, 0x4 },
     },
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
         { 1, 0x30, 0x6000, 0, 0, 0x7FFF, 0x1000, 0x1000, 0xFF, 0x3000, 0xA, 0xA },
     },
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
         { 1, 0x30, 0x6800, 0, 0, 0x7FFF, 0x1400, 0x1400, 0xFF, 0x3000, 0x6, 0x6 },
     },
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
         { 2, 0x50, 0x5000, 0, 0, 0x7FFF, 0xD000, 0x3000, 0xFF, 0x3000, 0x0, 0x0 },
     },
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
         { 1, 0x20, 0x0000, 0, 0, 0x7FFF, 0x0000, 0x0000, 0xFF, 0x0000, 0x0, 0x0 },
     },
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
         { 1, 0x30, 0x1800, 0, 0, 0x7FFF, 0x0000, 0x0000, 0xFF, 0x0000, 0xB, 0xB },
     },
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
     },
     {
-        DEFAULT_REVERB_SETTINGS,
+        REVERB_INDEX_0_SETTINGS,
         { 1, 0x40, 0x5000, 0, 0, 0x7FFF, 0x0000, 0x0000, 0xFF, 0x3000, 0x0, 0x0 },
     },
 };

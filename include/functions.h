@@ -1747,8 +1747,7 @@ void* AudioHeap_AllocSampleCache(size_t size, s32 fontId, void* sampleAddr, s8 m
 void AudioHeap_ApplySampleBankCache(s32 sampleBankId);
 
 void AudioLoad_DecreaseSampleChunkTtls(void);
-void* AudioLoad_AllocSampleChunkCache(uintptr_t devAddr, u32 size, s32 sampleFlags, u8* prevSampleChunkIndex,
-                                      s32 medium);
+void* AudioLoad_AllocSampleChunkCache(uintptr_t devAddr, size_t size, s32 sampleFlags, u8* prevSampleChunkIndex, s32 medium);
 void AudioLoad_InitSampleChunkCache(s32 numNotes);
 s32 AudioLoad_IsFontLoadComplete(s32 fontId);
 s32 AudioLoad_IsSeqLoadComplete(s32 seqId);
@@ -1765,7 +1764,7 @@ s32 AudioLoad_SyncInitSeqPlayer(s32 seqPlayerIndex, s32 seqId, s32 arg2);
 s32 AudioLoad_SyncInitSeqPlayerSkipTicks(s32 seqPlayerIndex, s32 seqId, s32 skipTicks);
 void AudioLoad_ProcessLoads(s32 resetStatus);
 void AudioLoad_SetDmaHandler(DmaHandler callback);
-void AudioLoad_Init(void* heap, u32 heapSize);
+void AudioLoad_Init(void* heap, size_t heapSize);
 void AudioLoad_InitSlowLoads(void);
 s32 AudioLoad_SlowLoadSample(s32 fontId, s32 instId, s8* status);
 s32 AudioLoad_SlowLoadSeq(s32 seqId, u8* ramAddr, s8* status);

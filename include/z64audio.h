@@ -943,7 +943,7 @@ typedef struct {
     /* 0x2960 */ f32 maxTempoTvTypeFactors;
     /* 0x2964 */ s32 refreshRate;
     /* 0x2968 */ s16* aiBuffers[3];
-    /* 0x2974 */ s16 aiBufLengths[3];
+    /* 0x2974 */ s16 aiNumSamplesPerFrame[3];
     /* 0x297C */ u32 audioRandom;
     /* 0x2980 */ s32 audioErrorFlags;
     /* 0x2984 */ volatile u32 resetTimer;
