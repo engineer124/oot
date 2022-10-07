@@ -58,9 +58,9 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ s8 damage;
-    /* 0x01 */ u8 unk_01;
-    /* 0x02 */ u8 unk_02;
-    /* 0x03 */ u8 unk_03;
+    /* 0x01 */ u8 rumbleStrength;
+    /* 0x02 */ u8 rumbleDuration;
+    /* 0x03 */ u8 rumbleDecreaseRate;
     /* 0x04 */ u16 sfxId;
 } FallImpactInfo; // size = 0x06
 
@@ -1467,9 +1467,9 @@ void func_80832630(PlayState* play) {
     }
 }
 
-void func_8083264C(Player* this, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+void Player_RequestRumble(Player* this, s32 sourceStrength, s32 duration, s32 decreaseRate, s32 distSq) {
     if (this->actor.category == ACTORCAT_PLAYER) {
-        func_800AA000(arg4, arg1, arg2, arg3);
+        Rumble_Request(distSq, sourceStrength, duration, decreaseRate);
     }
 }
 
@@ -2486,7 +2486,7 @@ s32 func_80834FBC(Player* this) {
     if (this->actor.child != NULL) {
         if (this->heldActor == NULL) {
             this->heldActor = this->actor.child;
-            func_8083264C(this, 255, 10, 250, 0);
+            Player_RequestRumble(this, 255, 10, 250, 0);
             Player_PlaySfx(&this->actor, SFX_ID_ITEM_HOOKSHOT_RECEIVE);
         }
 
@@ -2529,9 +2529,9 @@ s32 func_808350A4(PlayState* play, Player* this) {
                 play->shootingGalleryStatus = -10;
             }
 
-            func_8083264C(this, 150, 10, 150, 0);
+            Player_RequestRumble(this, 150, 10, 150, 0);
         } else {
-            func_8083264C(this, 255, 20, 150, 0);
+            Player_RequestRumble(this, 255, 20, 150, 0);
         }
 
         this->unk_A73 = 4;
@@ -2877,7 +2877,7 @@ void func_80835E44(PlayState* play, s16 camSetting) {
 
 void func_80835EA4(PlayState* play, s32 arg1) {
     func_80835E44(play, CAM_SET_TURN_AROUND);
-    Camera_SetCameraData(Play_GetCamera(play, CAM_ID_MAIN), 4, 0, 0, arg1, 0, 0);
+    Camera_SetCameraData(Play_GetCamera(play, CAM_ID_MAIN), 4, NULL, NULL, arg1, 0, 0);
 }
 
 void func_80835EFC(Player* this) {
@@ -2960,7 +2960,7 @@ void func_80835F44(PlayState* play, Player* this, s32 item) {
                     this->itemActionParam = actionParam;
                 }
             } else if ((actionParam != this->heldItemActionParam) ||
-                       ((this->heldActor == 0) && (Player_ActionToExplosive(this, actionParam) >= 0))) {
+                       ((this->heldActor == NULL) && (Player_ActionToExplosive(this, actionParam) >= 0))) {
                 this->nextModelGroup = Player_ActionToModelGroup(this, actionParam);
                 nextAnimType = gPlayerModelTypes[this->nextModelGroup][PLAYER_MODELGROUPENTRY_ANIM];
 
@@ -3641,14 +3641,14 @@ void func_80837C0C(PlayState* play, Player* this, s32 arg2, f32 arg3, f32 arg4, 
         sp2C = &gPlayerAnim_link_normal_ice_down;
 
         func_80832224(this);
-        func_8083264C(this, 255, 10, 40, 0);
+        Player_RequestRumble(this, 255, 10, 40, 0);
 
         Player_PlaySfx(&this->actor, SFX_ID_PLAYER_FREEZE_S);
         func_80832698(this, SFX_ID_VOICE_LI_FREEZE);
     } else if (arg2 == 4) {
         func_80835C58(play, this, func_8084FBF4, 0);
 
-        func_8083264C(this, 255, 80, 150, 0);
+        Player_RequestRumble(this, 255, 80, 150, 0);
 
         func_808322A4(play, this, &gPlayerAnim_link_normal_electric_shock);
         func_80832224(this);
@@ -3658,7 +3658,7 @@ void func_80837C0C(PlayState* play, Player* this, s32 arg2, f32 arg3, f32 arg4, 
         arg5 -= this->actor.shape.rot.y;
         if (this->stateFlags1 & PLAYER_STATE1_27) {
             func_80835C58(play, this, func_8084E30C, 0);
-            func_8083264C(this, 180, 20, 50, 0);
+            Player_RequestRumble(this, 180, 20, 50, 0);
 
             this->linearVelocity = 4.0f;
             this->actor.velocity.y = 0.0f;
@@ -3672,7 +3672,7 @@ void func_80837C0C(PlayState* play, Player* this, s32 arg2, f32 arg3, f32 arg4, 
 
             this->stateFlags3 |= PLAYER_STATE3_1;
 
-            func_8083264C(this, 255, 20, 150, 0);
+            Player_RequestRumble(this, 255, 20, 150, 0);
             func_80832224(this);
 
             if (arg2 == 2) {
@@ -3707,7 +3707,7 @@ void func_80837C0C(PlayState* play, Player* this, s32 arg2, f32 arg3, f32 arg4, 
         } else {
             if ((this->linearVelocity > 4.0f) && !func_8008E9C4(this)) {
                 this->unk_890 = 20;
-                func_8083264C(this, 120, 20, 10, 0);
+                Player_RequestRumble(this, 120, 20, 10, 0);
                 func_80832698(this, SFX_ID_VOICE_LI_DAMAGE_S);
                 return;
             }
@@ -3718,9 +3718,9 @@ void func_80837C0C(PlayState* play, Player* this, s32 arg2, f32 arg3, f32 arg4, 
             func_80833C3C(this);
 
             if (this->actor.colChkInfo.damage < 5) {
-                func_8083264C(this, 120, 20, 10, 0);
+                Player_RequestRumble(this, 120, 20, 10, 0);
             } else {
-                func_8083264C(this, 180, 20, 100, 0);
+                Player_RequestRumble(this, 180, 20, 100, 0);
                 this->linearVelocity = 23.0f;
                 sp28 += 4;
             }
@@ -3868,7 +3868,7 @@ s32 func_808382DC(Player* this, PlayState* play) {
             if (sp64 || ((this->invincibilityTimer < 0) && (this->cylinder.base.acFlags & AC_HIT) &&
                          (this->cylinder.info.atHit != NULL) && (this->cylinder.info.atHit->atFlags & 0x20000000))) {
 
-                func_8083264C(this, 180, 20, 100, 0);
+                Player_RequestRumble(this, 180, 20, 100, 0);
 
                 if (!Player_IsChildWithHylianShield(this)) {
                     if (this->invincibilityTimer >= 0) {
@@ -5765,7 +5765,7 @@ void func_8083D36C(PlayState* play, Player* this) {
 
         if ((this->currentBoots != PLAYER_BOOTS_IRON) && (this->stateFlags2 & PLAYER_STATE2_10)) {
             this->stateFlags2 &= ~PLAYER_STATE2_10;
-            func_8083D12C(play, this, 0);
+            func_8083D12C(play, this, NULL);
             this->unk_84F = 1;
         } else if (func_80844A44 == this->func_674) {
             func_80835C58(play, this, func_8084DC48, 0);
@@ -7705,7 +7705,7 @@ void func_808429B4(PlayState* play, s32 speed, s32 y, s32 countdown) {
 void func_80842A28(PlayState* play, Player* this) {
     func_808429B4(play, 27767, 7, 20);
     play->actorCtx.unk_02 = 4;
-    func_8083264C(this, 255, 20, 150, 0);
+    Player_RequestRumble(this, 255, 20, 150, 0);
     Player_PlaySfx(&this->actor, SFX_ID_ITEM_HAMMER_HIT);
 }
 
@@ -7775,7 +7775,7 @@ void func_80842D20(PlayState* play, Player* this) {
         func_808322D0(play, this, D_808545CC[Player_HoldsTwoHandedWeapon(this) + sp28]);
     }
 
-    func_8083264C(this, 180, 20, 100, 0);
+    Player_RequestRumble(this, 180, 20, 100, 0);
     this->linearVelocity = -18.0f;
     func_80842CF0(play, this);
 }
@@ -7835,7 +7835,7 @@ s32 func_80842DF4(PlayState* play, Player* this) {
 
                             func_80842CF0(play, this);
                             this->linearVelocity = -14.0f;
-                            func_8083264C(this, 180, 20, 100, 0);
+                            Player_RequestRumble(this, 180, 20, 100, 0);
                         }
                     }
                 }
@@ -8214,7 +8214,8 @@ s32 func_80843E64(PlayState* play, Player* this) {
 
         func_80837AE0(this, 40);
         func_808429B4(play, 32967, 2, 30);
-        func_8083264C(this, impactInfo->unk_01, impactInfo->unk_02, impactInfo->unk_03, 0);
+        Player_RequestRumble(this, impactInfo->rumbleStrength, impactInfo->rumbleDuration,
+                             impactInfo->rumbleDecreaseRate, 0);
         Player_PlaySfx(&this->actor, SFX_ID_PLAYER_BODY_HIT);
         func_80832698(this, impactInfo->sfxId);
 
@@ -8228,7 +8229,7 @@ s32 func_80843E64(PlayState* play, Player* this) {
             sp34 = 255;
         }
 
-        func_8083264C(this, (u8)sp34, (u8)(sp34 * 0.1f), (u8)sp34, 0);
+        Player_RequestRumble(this, (u8)sp34, (u8)(sp34 * 0.1f), (u8)sp34, 0);
 
         if (D_808535E4 == FLOOR_TYPE_6) {
             func_80832698(this, SFX_ID_VOICE_LI_CLIMB_END);
@@ -8419,7 +8420,7 @@ void func_80844708(Player* this, PlayState* play) {
                     func_80832264(play, this, GET_PLAYER_ANIM(PLAYER_ANIMGROUP_17, this->modelAnimType));
                     this->linearVelocity = -this->linearVelocity;
                     func_808429B4(play, 33267, 3, 12);
-                    func_8083264C(this, 255, 20, 150, 0);
+                    Player_RequestRumble(this, 255, 20, 150, 0);
                     Player_PlaySfx(&this->actor, SFX_ID_PLAYER_BODY_HIT);
                     func_80832698(this, SFX_ID_VOICE_LI_CLIMB_END);
                     this->unk_850 = 1;
@@ -10156,7 +10157,7 @@ void func_80848EF8(Player* this) {
         this->unk_6A0 += temp;
         if (this->unk_6A0 > 4000000.0f) {
             this->unk_6A0 = 0.0f;
-            func_8083264C(this, 120, 20, 10, 0);
+            Player_RequestRumble(this, 120, 20, 10, 0);
         }
     }
 }
@@ -13279,7 +13280,7 @@ void func_80850AEC(Player* this, PlayState* play) {
     if ((this->skelAnime.animation != &gPlayerAnim_link_hook_fly_start) || (4.0f <= this->skelAnime.curFrame)) {
         this->actor.gravity = 0.0f;
         Math_ScaledStepToS(&this->actor.shape.rot.x, this->actor.world.rot.x, 0x800);
-        func_8083264C(this, 100, 2, 100, 0);
+        Player_RequestRumble(this, 100, 2, 100, 0);
     }
 }
 
@@ -13710,7 +13711,7 @@ void func_808514C0(PlayState* play, Player* this, CsCmdActorAction* arg2) {
     func_80851314(this);
 
     if (func_808332B8(this)) {
-        func_808513BC(play, this, 0);
+        func_808513BC(play, this, NULL);
         return;
     }
 
@@ -13734,7 +13735,7 @@ void func_808515A4(PlayState* play, Player* this, CsCmdActorAction* arg2) {
     LinkAnimationHeader* anim;
 
     if (func_808332B8(this)) {
-        func_80851368(play, this, 0);
+        func_80851368(play, this, NULL);
         return;
     }
 
@@ -13759,7 +13760,7 @@ void func_80851688(PlayState* play, Player* this, CsCmdActorAction* arg2) {
         }
 
         if (func_808332B8(this) != 0) {
-            func_808513BC(play, this, 0);
+            func_808513BC(play, this, NULL);
             return;
         }
 

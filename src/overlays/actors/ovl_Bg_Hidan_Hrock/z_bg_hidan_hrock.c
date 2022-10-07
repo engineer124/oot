@@ -161,7 +161,7 @@ void func_808894B0(BgHidanHrock* this, PlayState* play) {
         (Math_CosS(this->dyna.actor.world.rot.y + (this->unk_168 << 0xE)) * 5.0f) + this->dyna.actor.home.pos.z;
 
     if (!(this->unk_168 % 4)) {
-        func_800AA000(this->dyna.actor.xyzDistToPlayerSq, 180, 10, 100);
+        Rumble_Request(this->dyna.actor.xyzDistToPlayerSq, 180, 10, 100);
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCK_SHAKE);
     }
 

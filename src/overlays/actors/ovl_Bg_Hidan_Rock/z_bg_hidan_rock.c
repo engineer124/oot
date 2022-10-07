@@ -233,7 +233,7 @@ void func_8088B69C(BgHidanRock* this, PlayState* play) {
     }
 
     if (!(this->timer % 4)) {
-        func_800AA000(this->dyna.actor.xyzDistToPlayerSq, 0xB4, 0x0A, 0x64);
+        Rumble_Request(this->dyna.actor.xyzDistToPlayerSq, 180, 10, 100);
         Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCK_SHAKE);
     }
 }

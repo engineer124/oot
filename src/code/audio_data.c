@@ -566,7 +566,7 @@ NoteSampleState gDefaultSampleState = {
     0,    // frequencyFixedPoint
     0,    // combFilterGain
     NULL, // tunedSample
-    0,    // filter
+    NULL, // filter
     0,    // pad_18
 };
 
