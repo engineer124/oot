@@ -3914,7 +3914,7 @@ s8 AudioSfx_ComputeReverb(u8 bankId, u8 entryIndex, u8 channelIndex) {
     }
 
     reverb = *entry->reverbAdd + distAdd + scriptAdd;
-    if ((bankId != BANK_OCARINA) || !((entry->sfxId & 0x1FF) < 2)) {
+    if ((bankId != BANK_OCARINA) || (SFX_INDEX(entry->sfxId) >= (SFX_ID_OCARINA_DOOR_OPEN - SFX_ID_OCARINA_OCARINA))) {
         reverb += sAudioEnvReverb + sAudioCodeReverb + sSpecReverb;
     }
 
@@ -3925,7 +3925,7 @@ s8 AudioSfx_ComputeReverb(u8 bankId, u8 entryIndex, u8 channelIndex) {
     return reverb;
 }
 
-s8 AudioSfx_ComputePanSigned(f32 x, f32 z, u8 token) {
+s8 AudioSfx_ComputePan(f32 x, f32 z, u8 token) {
     f32 absX = ABS_ALT(x);
     f32 absZ = ABS_ALT(z);
     f32 pan;
@@ -4095,7 +4095,7 @@ void AudioSfx_SetProperties(u8 bankId, u8 entryIndex, u8 channelIndex) {
             entry->dist = sqrtf(entry->dist);
             vol = AudioSfx_ComputeVolume(bankId, entryIndex) * *entry->vol;
             reverb = AudioSfx_ComputeReverb(bankId, entryIndex, channelIndex);
-            pan = AudioSfx_ComputePanSigned(*entry->posX, *entry->posZ, entry->token);
+            pan = AudioSfx_ComputePan(*entry->posX, *entry->posZ, entry->token);
             freqScale = AudioSfx_ComputeFreqScale(bankId, entryIndex) * *entry->freqScale;
 
             if (sSoundMode == SOUNDMODE_SURROUND) {
@@ -4234,7 +4234,7 @@ void Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(Vec3f* pos, u16 s
     AudioSfx_PlaySfx(sfxId, pos, 4, &sSfxSyncedFreq, &sSfxSyncedVolume, &gSfxDefaultReverb);
 
     if ((sfxId & 0xF0) == 0xB0) {
-        // Crawlspaces
+        // Crawlspaces (which range from sfxId 0x8B0 to 0x8BF)
         phi_f0 = 0.3f;
         phi_v0 = 1;
         sp24 = 1.0f;
@@ -4244,6 +4244,7 @@ void Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(Vec3f* pos, u16 s
     }
 
     if ((phi_f0 < freqVolParam) && (phi_v0 != 0)) {
+        // For the playerbank, (& 0x80) is a toggle for adult/child for certain groups of sfx
         if ((sfxId & 0x80) != 0) {
             metalSfxId = SFX_ID_PLAYER_METALEFFECT_ADULT;
         } else {
