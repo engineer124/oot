@@ -179,7 +179,7 @@ typedef struct {
     /* 0x14 */ f32 freqScaleTarget;
     /* 0x18 */ f32 freqScaleStep;
     /* 0x1C */ u16 freqScaleTimer;
-} ActiveSequenceChannelData; // size = 0x20
+} SequenceChannelController; // size = 0x20
 
 typedef struct {
     /* 0x000 */ f32 volCur;
@@ -199,7 +199,7 @@ typedef struct {
     /* 0x04C */ u8 setupCmdTimer; // only execute setup commands when the timer is at 0.
     /* 0x04D */ u8 setupCmdNum; // number of setup commands requested once the player is disabled
     /* 0x04E */ u8 setupFadeTimer;
-    /* 0x050 */ ActiveSequenceChannelData channelData[16];
+    /* 0x050 */ SequenceChannelController channelController[16];
     /* 0x250 */ u16 freqScaleChannelFlags;
     /* 0x252 */ u16 volChannelFlags;
     /* 0x254 */ u16 seqId; // active seqId currently playing. Resets when sequence stops
@@ -207,7 +207,7 @@ typedef struct {
     /* 0x258 */ u16 channelPortMask;
     /* 0x25C */ u32 startSeqCmd; // This name comes from MM
     /* 0x260 */ u8 isWaitingForFonts; // This name comes from MM
-} ActiveSequence; // size = 0x264
+} SequenceController; // size = 0x264
 
 typedef enum {
     /* 0x0 */ AMBIENCE_CHANNEL_STREAM_0,

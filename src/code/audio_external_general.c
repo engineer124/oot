@@ -4945,7 +4945,7 @@ void Audio_SetSequenceMode(u8 seqMode) {
             seqMode = SEQ_MODE_IGNORE;
         }
 
-        seqId = gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId;
+        seqId = gSeqController[SEQ_PLAYER_BGM_MAIN].seqId;
 
         if (seqId == SEQ_ID_FIELD_LOGIC && AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) == (SEQ_ID_ENEMY | 0x800)) {
             seqMode = SEQ_MODE_IGNORE;
@@ -4956,12 +4956,12 @@ void Audio_SetSequenceMode(u8 seqMode) {
             if (seqMode != (sPrevSeqMode & 0x7F)) {
                 if (seqMode == SEQ_MODE_ENEMY) {
                     // Start playing enemy bgm
-                    if (gActiveSeqs[SEQ_PLAYER_BGM_SUB].volScales[VOL_SCALE_INDEX_FANFARE] - sAudioEnemyVol < 0) {
+                    if (gSeqController[SEQ_PLAYER_BGM_SUB].volScales[VOL_SCALE_INDEX_FANFARE] - sAudioEnemyVol < 0) {
                         volumeFadeInTimer =
-                            -(gActiveSeqs[SEQ_PLAYER_BGM_SUB].volScales[VOL_SCALE_INDEX_FANFARE] - sAudioEnemyVol);
+                            -(gSeqController[SEQ_PLAYER_BGM_SUB].volScales[VOL_SCALE_INDEX_FANFARE] - sAudioEnemyVol);
                     } else {
                         volumeFadeInTimer =
-                            gActiveSeqs[SEQ_PLAYER_BGM_SUB].volScales[VOL_SCALE_INDEX_FANFARE] - sAudioEnemyVol;
+                            gSeqController[SEQ_PLAYER_BGM_SUB].volScales[VOL_SCALE_INDEX_FANFARE] - sAudioEnemyVol;
                     }
 
                     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_SUB, VOL_SCALE_INDEX_BGM_SUB, sAudioEnemyVol,
@@ -5026,11 +5026,11 @@ void Audio_UpdateEnemyBgmVolume(f32 dist) {
 
             sAudioEnemyVol = ((350.0f - adjDist) * 127.0f) / 350.0f;
             AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_SUB, VOL_SCALE_INDEX_BGM_SUB, sAudioEnemyVol, 10);
-            if (gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId != SEQ_ID_AMBIENCE) {
+            if (gSeqController[SEQ_PLAYER_BGM_MAIN].seqId != SEQ_ID_AMBIENCE) {
                 AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_BGM_SUB, (0x7F - sAudioEnemyVol), 10);
             }
         }
-        if (gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId != SEQ_ID_AMBIENCE) {
+        if (gSeqController[SEQ_PLAYER_BGM_MAIN].seqId != SEQ_ID_AMBIENCE) {
             Audio_SplitBgmChannels(sAudioEnemyVol);
         }
     }
@@ -5213,7 +5213,7 @@ void Audio_SetExtraFilter(u8 filter) {
 
     sAudioExtraFilter2 = filter;
     sAudioExtraFilter = filter;
-    if (gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId == SEQ_ID_AMBIENCE) {
+    if (gSeqController[SEQ_PLAYER_BGM_MAIN].seqId == SEQ_ID_AMBIENCE) {
         for (channelIndex = 0; channelIndex < SEQ_NUM_CHANNELS; channelIndex++) {
             AUDIOCMD_CHANNEL_SET_IO(SEQ_PLAYER_BGM_MAIN, (u32)channelIndex, 6, filter);
         }
@@ -5348,7 +5348,7 @@ void Audio_SetAmbienceChannelIO(u8 channelIndexRange, u8 ioPort, u8 ioData) {
     u8 lastChannelIndex;
     u8 channelIndex;
 
-    if ((gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId != SEQ_ID_AMBIENCE) &&
+    if ((gSeqController[SEQ_PLAYER_BGM_MAIN].seqId != SEQ_ID_AMBIENCE) &&
         AudioSeq_IsSeqCmdNotQueued(SEQCMD_OP_PLAY_SEQUENCE << 28 | SEQ_ID_AMBIENCE, SEQCMD_OP_MASK | 0xFF)) {
         sAudioNatureFailed = true;
         return;
@@ -5411,8 +5411,8 @@ void Audio_PlayAmbience(u8 ambienceId) {
     u8 ioPort;
     u8 ioData;
 
-    if ((gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId == SEQ_ID_DISABLED) ||
-        !(sSeqFlags[((u8)gActiveSeqs[SEQ_PLAYER_BGM_MAIN].seqId) & 0xFF] & SEQ_FLAG_NO_AMBIENCE)) {
+    if ((gSeqController[SEQ_PLAYER_BGM_MAIN].seqId == SEQ_ID_DISABLED) ||
+        !(sSeqFlags[((u8)gSeqController[SEQ_PLAYER_BGM_MAIN].seqId) & 0xFF] & SEQ_FLAG_NO_AMBIENCE)) {
 
         Audio_StartAmbience(sAmbienceData[ambienceId].initChannelMask, sAmbienceData[ambienceId].initMuteChannelMask);
 

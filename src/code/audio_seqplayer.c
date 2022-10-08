@@ -1833,7 +1833,7 @@ void AudioScript_SequencePlayerProcessSequence(SequencePlayer* seqPlayer) {
                         seqPlayer->tempoChange = (s8)AudioScript_ScriptReadU8(seqScript) * TATUMS_PER_BEAT;
                         break;
 
-                    case 0xDA: // `volmode(s8)`, seqPlayer: change volume
+                    case 0xDA: // `volmode(s8)`, seqPlayer: set volume mode (seqPlayer State)
                         cmd = AudioScript_ScriptReadU8(seqScript);
                         temp = AudioScript_ScriptReadS16(seqScript);
                         switch (cmd) {

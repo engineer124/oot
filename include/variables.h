@@ -216,7 +216,7 @@ extern u8 gSfxBankMuted[];
 extern u16 gAudioDebugSfxSwapSource[10];
 extern u16 gAudioDebugSfxSwapTarget[10];
 extern u8 gAudioDebugSfxSwapMode[10];
-extern ActiveSequence gActiveSeqs[4];
+extern SequenceController gSeqController[4];
 extern AudioContext gAudioCtx;
 extern void(*gCustomAudioUpdateFunction)(void);
 

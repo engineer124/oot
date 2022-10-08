@@ -28,8 +28,8 @@ typedef enum {
 
 typedef enum {
     /* 0 */ SEQPLAYER_STATE_0,
-    /* 1 */ SEQPLAYER_STATE_FADE_IN, // Fading in
-    /* 2 */ SEQPLAYER_STATE_FADE_OUT // Fading out
+    /* 1 */ SEQPLAYER_STATE_FADE_IN,
+    /* 2 */ SEQPLAYER_STATE_FADE_OUT
 } SeqPlayerState;
 
 #define MAX_CHANNELS_PER_BANK 3

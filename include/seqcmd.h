@@ -68,7 +68,7 @@ typedef enum {
  * @param seqArg no effect: < 0x7F, skip ticks: = 0x7F, will not play: >= 0x80 (see note)
  * @param seqId the id of the sequence to play, see `SeqId`
  *
- * @note seqArg will also be stored in gActiveSeqs.seqId, any check against that seqId must also include seqArg.
+ * @note seqArg will also be stored in gSeqController.seqId, any check against that seqId must also include seqArg.
  * seqArg = 0x7F  will interpret the duration as the number of ticks to skip.
  * seqArg >= 0x80 was intented to load a soundFont asynchronously but the code is unfinished (based on MM).
  */
@@ -313,9 +313,9 @@ typedef enum {
  *
  * @param setupSeqPlayerIndex the index of the seqPlayer to unqueue once the same seqPlayer is disabled
  *
- * @bug this command was misimplemented and fails to unqueue. The command relies on `gActiveSeqs.seqId` for
+ * @bug this command was misimplemented and fails to unqueue. The command relies on `gSeqController.seqId` for
  * unqueueing, but seqId is reset before being used to unqueue. A simple fix is to unqueue based on
- * `gActiveSeqs.prevSeqId` instead.
+ * `gSeqController.prevSeqId` instead.
  */
 #define SEQCMD_SETUP_UNQUEUE_SEQUENCE(setupSeqPlayerIndex)                                    \
     AudioSeq_QueueSeqCmd((SEQCMD_OP_SETUP_CMD << 28) | (SEQCMD_SUB_OP_SETUP_SEQ_UNQUEUE << 20) | \
