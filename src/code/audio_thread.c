@@ -666,80 +666,80 @@ void AudioThread_ProcessSeqPlayerCmd(SequencePlayer* seqPlayer, AudioCmd* cmd) {
 
 void AudioThread_ProcessChannelCmd(SequenceChannel* channel, AudioCmd* cmd) {
     switch (cmd->op) {
-        case AUDIOCMD_OP_CHANNEL_VOL_SCALE:
+        case AUDIOCMD_OP_CHANNEL_SET_VOL_SCALE:
             if (channel->volumeScale != cmd->asFloat) {
                 channel->volumeScale = cmd->asFloat;
                 channel->changes.s.volume = true;
             }
             break;
 
-        case AUDIOCMD_OP_CHANNEL_VOL:
+        case AUDIOCMD_OP_CHANNEL_SET_VOL:
             if (channel->volume != cmd->asFloat) {
                 channel->volume = cmd->asFloat;
                 channel->changes.s.volume = true;
             }
             break;
 
-        case AUDIOCMD_OP_CHANNEL_PAN_SIGNED:
+        case AUDIOCMD_OP_CHANNEL_SET_PAN:
             if (channel->newPan != cmd->asSbyte) {
                 channel->newPan = cmd->asSbyte;
                 channel->changes.s.pan = true;
             }
             break;
 
-        case AUDIOCMD_OP_CHANNEL_PAN_UNSIGNED:
+        case AUDIOCMD_OP_CHANNEL_SET_PAN_WEIGHT:
             if (channel->newPan != cmd->asSbyte) {
                 channel->panChannelWeight = cmd->asSbyte;
                 channel->changes.s.pan = true;
             }
             break;
 
-        case AUDIOCMD_OP_CHANNEL_FREQ_SCALE:
+        case AUDIOCMD_OP_CHANNEL_SET_FREQ_SCALE:
             if (channel->freqScale != cmd->asFloat) {
                 channel->freqScale = cmd->asFloat;
                 channel->changes.s.freqScale = true;
             }
             break;
 
-        case AUDIOCMD_OP_CHANNEL_REVERB_VOLUME:
+        case AUDIOCMD_OP_CHANNEL_SET_REVERB_VOLUME:
             if (channel->targetReverbVol != cmd->asSbyte) {
                 channel->targetReverbVol = cmd->asSbyte;
             }
             break;
 
-        case AUDIOCMD_OP_CHANNEL_IO:
+        case AUDIOCMD_OP_CHANNEL_SET_IO:
             if (cmd->arg2 < ARRAY_COUNT(channel->seqScriptIO)) {
                 channel->seqScriptIO[cmd->arg2] = cmd->asSbyte;
             }
             break;
 
-        case AUDIOCMD_OP_CHANNEL_MUTE:
+        case AUDIOCMD_OP_CHANNEL_SET_MUTE:
             channel->muted = cmd->asSbyte;
             break;
 
-        case AUDIOCMD_OP_CHANNEL_MUTE_FLAGS:
+        case AUDIOCMD_OP_CHANNEL_SET_MUTE_FLAGS:
             channel->muteFlags = cmd->asSbyte;
             break;
 
-        case AUDIOCMD_OP_CHANNEL_VIBRATO_SMALL:
+        case AUDIOCMD_OP_CHANNEL_SET_VIBRATO_SMALL:
             channel->vibratoExtentTarget = cmd->asUbyte * 8;
             channel->vibratoExtentChangeDelay = 1;
             break;
 
-        case AUDIOCMD_OP_CHANNEL_VIBRATO_LARGE:
+        case AUDIOCMD_OP_CHANNEL_SET_VIBRATO_LARGE:
             channel->vibratoRateTarget = cmd->asUbyte * 32;
             channel->vibratoRateChangeDelay = 1;
             break;
 
-        case AUDIOCMD_OP_CHANNEL_COMB_FILTER_SIZE:
+        case AUDIOCMD_OP_CHANNEL_SET_COMB_FILTER_SIZE:
             channel->combFilterSize = cmd->asUbyte;
             break;
 
-        case AUDIOCMD_OP_CHANNEL_COMB_FILTER_GAIN:
+        case AUDIOCMD_OP_CHANNEL_SET_COMB_FILTER_GAIN:
             channel->combFilterGain = cmd->asUShort;
             break;
 
-        case AUDIOCMD_OP_CHANNEL_STEREO:
+        case AUDIOCMD_OP_CHANNEL_SET_STEREO:
             channel->stereo.asByte = cmd->asUbyte;
             break;
 

@@ -390,6 +390,14 @@ typedef struct {
     /* 0x1C */ EnvelopePoint* envelope;
 } AdsrState; // size = 0x20
 
+#define STEREO_STRONG_REVERB_LEFT 0x1
+#define STEREO_STRONG_REVERB_RIGHT 0x2
+#define STEREO_STRONG_LEFT 0x4
+#define STEREO_STRONG_RIGHT 0x8
+#define STEREO_TYPE_1 0x10
+#define STEREO_TYPE_2 0x20
+#define STEREO_TYPE_3 0x30
+
 typedef struct {
     /* 0x00 */ u8 unused : 2;
     /* 0x00 */ u8 type : 2;

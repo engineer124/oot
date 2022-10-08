@@ -437,7 +437,7 @@ s32 AudioPlayback_SetFontInstrument(s32 instrumentType, s32 fontId, s32 index, v
 void AudioPlayback_SeqLayerDecayRelease(SequenceLayer* layer, s32 adsrState) {
     Note* note;
     NoteAttributes* attrs;
-    SequenceChannel* chan;
+    SequenceChannel* channel;
     s32 i;
 
     if (layer == NO_LAYER) {
@@ -472,10 +472,10 @@ void AudioPlayback_SeqLayerDecayRelease(SequenceLayer* layer, s32 adsrState) {
         attrs->pan = layer->notePan;
 
         if (layer->channel != NULL) {
-            chan = layer->channel;
-            attrs->targetReverbVol = chan->targetReverbVol;
-            attrs->gain = chan->gain;
-            attrs->filter = chan->filter;
+            channel = layer->channel;
+            attrs->targetReverbVol = channel->targetReverbVol;
+            attrs->gain = channel->gain;
+            attrs->filter = channel->filter;
 
             if (attrs->filter != NULL) {
                 for (i = 0; i < 8; i++) {
@@ -484,19 +484,19 @@ void AudioPlayback_SeqLayerDecayRelease(SequenceLayer* layer, s32 adsrState) {
                 attrs->filter = attrs->filterBuf;
             }
 
-            attrs->combFilterGain = chan->combFilterGain;
-            attrs->combFilterSize = chan->combFilterSize;
+            attrs->combFilterGain = channel->combFilterGain;
+            attrs->combFilterSize = channel->combFilterSize;
 
-            if (chan->seqPlayer->muted && (chan->muteFlags & MUTE_FLAGS_STOP_SAMPLES)) {
+            if (channel->seqPlayer->muted && (channel->muteFlags & MUTE_FLAGS_STOP_SAMPLES)) {
                 note->sampleState.bitField0.finished = true;
             }
 
             if (layer->stereo.asByte == 0) {
-                attrs->stereo = chan->stereo;
+                attrs->stereo = channel->stereo;
             } else {
                 attrs->stereo = layer->stereo;
             }
-            note->playbackState.priority = chan->someOtherPriority;
+            note->playbackState.priority = channel->someOtherPriority;
         } else {
             attrs->stereo = layer->stereo;
             note->playbackState.priority = 1;

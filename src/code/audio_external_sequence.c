@@ -298,7 +298,7 @@ void AudioSeq_ProcessSeqCmd(u32 cmd) {
             ioPort = (cmd & 0xFF0000) >> 16;
             val = cmd & 0xFF;
             if (!(gActiveSeqs[seqPlayerIndex].channelPortMask & (1 << channelIndex))) {
-                AUDIOCMD_CHANNEL_IO(seqPlayerIndex, (u32)channelIndex, ioPort, val);
+                AUDIOCMD_CHANNEL_SET_IO(seqPlayerIndex, (u32)channelIndex, ioPort, val);
             }
             break;
 
@@ -318,7 +318,7 @@ void AudioSeq_ProcessSeqCmd(u32 cmd) {
                 // Apply channel mask `channelMaskDisable`
                 AUDIOCMD_GLOBAL_SET_ACTIVE_CHANNEL_FLAGS(seqPlayerIndex, channelMaskDisable);
                 // Disable channels
-                AUDIOCMD_CHANNEL_MUTE(seqPlayerIndex, SEQ_ALL_CHANNELS, true);
+                AUDIOCMD_CHANNEL_SET_MUTE(seqPlayerIndex, SEQ_ALL_CHANNELS, true);
             }
 
             // Reenable channels
@@ -327,7 +327,7 @@ void AudioSeq_ProcessSeqCmd(u32 cmd) {
                 // Apply channel mask `channelMaskEnable`
                 AUDIOCMD_GLOBAL_SET_ACTIVE_CHANNEL_FLAGS(seqPlayerIndex, channelMaskEnable);
                 // Enable channels
-                AUDIOCMD_CHANNEL_MUTE(seqPlayerIndex, SEQ_ALL_CHANNELS, false);
+                AUDIOCMD_CHANNEL_SET_MUTE(seqPlayerIndex, SEQ_ALL_CHANNELS, false);
             }
             break;
 
@@ -615,8 +615,8 @@ void AudioSeq_UpdateActiveSequences(void) {
                         gActiveSeqs[seqPlayerIndex].volChannelFlags ^= (1 << channelIndex);
                     }
 
-                    AUDIOCMD_CHANNEL_VOL_SCALE(seqPlayerIndex, (u32)channelIndex,
-                                               gActiveSeqs[seqPlayerIndex].channelData[channelIndex].volCur);
+                    AUDIOCMD_CHANNEL_SET_VOL_SCALE(seqPlayerIndex, (u32)channelIndex,
+                                                   gActiveSeqs[seqPlayerIndex].channelData[channelIndex].volCur);
                 }
             }
         }
@@ -635,8 +635,8 @@ void AudioSeq_UpdateActiveSequences(void) {
                         gActiveSeqs[seqPlayerIndex].freqScaleChannelFlags ^= (1 << channelIndex);
                     }
 
-                    AUDIOCMD_CHANNEL_FREQ_SCALE(seqPlayerIndex, (u32)channelIndex,
-                                                gActiveSeqs[seqPlayerIndex].channelData[channelIndex].freqScaleCur);
+                    AUDIOCMD_CHANNEL_SET_FREQ_SCALE(seqPlayerIndex, (u32)channelIndex,
+                                                    gActiveSeqs[seqPlayerIndex].channelData[channelIndex].freqScaleCur);
                 }
             }
         }
