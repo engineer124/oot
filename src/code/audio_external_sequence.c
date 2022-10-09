@@ -49,7 +49,7 @@ void AudioSeq_StartSequence(u8 seqPlayerIndex, u8 seqId, u8 seqArgs, u16 fadeInD
             AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER_SKIP_TICKS((u32)seqPlayerIndex, (u32)seqId, skipTicks);
         } else {
             // `fadeInDuration` is interpreted as number of frames at 30 fps
-            AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER((u32)seqPlayerIndex, (u32)seqId, 0,
+            AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER((u32)seqPlayerIndex, (u32)seqId,
                                                 (fadeInDuration * (u16)gAudioCtx.audioBufParams.updatesPerFrame) / 4);
         }
 

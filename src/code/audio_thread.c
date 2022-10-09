@@ -339,14 +339,14 @@ void AudioThread_SetFadeOutTimer(s32 seqPlayerIndex, s32 fadeTimer) {
 /**
  * Seems to be designed to work in conjunction with the `vol(u8)` seq instruction
  */
-void AudioThread_SetFadeInTimer(s32 seqPlayerIndex, s32 fadeTimer) {
+void AudioThread_SetFadeInTimer(s32 seqPlayerIndex, s32 fadeInTimer) {
     SequencePlayer* seqPlayer;
 
-    if (fadeTimer != 0) {
+    if (fadeInTimer != 0) {
         seqPlayer = &gAudioCtx.seqPlayers[seqPlayerIndex];
         seqPlayer->state = SEQPLAYER_STATE_FADE_IN;
-        seqPlayer->storedFadeTimer = fadeTimer;
-        seqPlayer->fadeTimer = fadeTimer;
+        seqPlayer->storedFadeTimer = fadeInTimer;
+        seqPlayer->fadeTimer = fadeInTimer;
         seqPlayer->fadeVolume = 0.0f;
         seqPlayer->fadeVelocity = 0.0f;
     }
@@ -724,7 +724,7 @@ void AudioThread_ProcessChannelCmd(SequenceChannel* channel, AudioCmd* cmd) {
             channel->muteFlags = cmd->asSbyte;
             break;
 
-        case AUDIOCMD_OP_CHANNEL_SET_VIBRATO_AMPLITUTE:
+        case AUDIOCMD_OP_CHANNEL_SET_VIBRATO_AMPLITUDE:
             channel->vibratoExtentTarget = cmd->asUbyte * 8;
             channel->vibratoExtentChangeDelay = 1;
             break;

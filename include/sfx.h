@@ -76,11 +76,10 @@ typedef enum {
 #undef DEFINE_SFX
 
 #define SFX_BANK_SHIFT(sfxId)   (((sfxId) >> 12) & 0xFF)
-
 #define SFX_BANK_MASK(sfxId)    ((sfxId) & 0xF000)
-
-#define SFX_INDEX(sfxId)    ((sfxId) & 0x01FF)
 #define SFX_BANK(sfxId)     SFX_BANK_SHIFT(SFX_BANK_MASK(sfxId))
+
+#define SFX_INDEX(sfxId)    ((sfxId) & 0x1FF)
 
 /**
  * With `SFX_FLAG` on, play the entire sfx audio clip.

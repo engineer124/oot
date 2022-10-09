@@ -3841,7 +3841,7 @@ void Audio_Noop2(UNK_TYPE arg0, UNK_TYPE arg1) {
 }
 
 void Audio_PlayMainBgm(s8 seqId) {
-    AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER(SEQ_PLAYER_BGM_MAIN, (u8)seqId, 0, 1);
+    AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER(SEQ_PLAYER_BGM_MAIN, (u8)seqId, 1);
 }
 
 f32 AudioSfx_ComputeVolume(u8 bankId, u8 entryIndex) {

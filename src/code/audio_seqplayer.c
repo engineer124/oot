@@ -791,7 +791,7 @@ s32 AudioScript_SeqLayerProcessScriptStep4(SequenceLayer* layer, s32 cmd) {
     SequencePlayer* seqPlayer;
     u8 semitone = cmd;
     u16 sfxId;
-    s32 semitone2;
+    s32 semitoneIndex;
     s32 vel;
     f32 time;
     f32 tuning;
@@ -850,7 +850,7 @@ s32 AudioScript_SeqLayerProcessScriptStep4(SequenceLayer* layer, s32 cmd) {
 
         default:
             semitone += seqPlayer->transposition + channel->transposition + layer->transposition;
-            semitone2 = semitone;
+            semitoneIndex = semitone;
 
             layer->semitone = semitone;
             if (semitone >= 0x80) {
@@ -881,7 +881,7 @@ s32 AudioScript_SeqLayerProcessScriptStep4(SequenceLayer* layer, s32 cmd) {
                     }
                 }
 
-                temp_f2 = gPitchFrequencies[semitone2] * tuning;
+                temp_f2 = gPitchFrequencies[semitoneIndex] * tuning;
                 temp_f14 = gPitchFrequencies[layer->portamentoTargetNote] * tuning;
 
                 switch (PORTAMENTO_MODE(*portamento)) {
@@ -934,10 +934,10 @@ s32 AudioScript_SeqLayerProcessScriptStep4(SequenceLayer* layer, s32 cmd) {
                 tunedSample = AudioPlayback_GetInstrumentTunedSample(instrument, semitone);
                 sameTunedSample = (tunedSample == layer->tunedSample);
                 layer->tunedSample = tunedSample;
-                layer->freqScale = gPitchFrequencies[semitone2] * tunedSample->tuning;
+                layer->freqScale = gPitchFrequencies[semitoneIndex] * tunedSample->tuning;
             } else {
                 layer->tunedSample = NULL;
-                layer->freqScale = gPitchFrequencies[semitone2];
+                layer->freqScale = gPitchFrequencies[semitoneIndex];
                 if (instOrWave >= 0xC0) {
                     layer->tunedSample = &gAudioCtx.synthesisReverbs[instOrWave - 0xC0].tunedSample;
                 }
