@@ -159,7 +159,7 @@ typedef enum {
     AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_SET_MUTE_FLAGS, seqPlayerIndex, channelIndex, 0), muteFlags)
 
 /**
- * Set the vibrato dept (magnitude/amplitude/extent)
+ * Set the vibrato depth (magnitude/amplitude/extent)
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
  * @param channelIndex the index of the channel to modify
