@@ -2948,7 +2948,7 @@ void AudioDebug_Draw(GfxPrint* printer) {
                 GfxPrint_Printf(printer, "%d",
                                 (u8)(gAudioCtx.seqPlayers[sAudioSubTrackInfoPlayerSel]
                                          .channels[sAudioSubTrackInfoChannelSel]
-                                         ->vibratoExtentTarget /
+                                         ->vibratoDepthTarget /
                                      8));
 
                 GfxPrint_SetPos(printer, 15, 21);

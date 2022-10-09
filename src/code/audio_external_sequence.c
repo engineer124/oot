@@ -27,11 +27,11 @@
                            ((u8)(duration) << 16) | ((u8)((volume)*127.0f)));
 
 typedef struct {
-    u8 seqId;
-    u8 priority; // higher values have higher priority
-} SeqRequest;
+    /* 0x0 */ u8 seqId;
+    /* 0x1 */ u8 priority; // higher values have higher priority
+} SequenceRequest;         // size = 0x2
 
-SeqRequest sSeqRequests[4][5];
+SequenceRequest sSeqRequests[4][5];
 u8 sNumSeqRequests[4];
 u32 sAudioSeqCmds[0x100];
 SequenceController gSeqController[4];

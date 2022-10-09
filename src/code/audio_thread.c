@@ -724,12 +724,12 @@ void AudioThread_ProcessChannelCmd(SequenceChannel* channel, AudioCmd* cmd) {
             channel->muteFlags = cmd->asSbyte;
             break;
 
-        case AUDIOCMD_OP_CHANNEL_SET_VIBRATO_AMPLITUDE:
-            channel->vibratoExtentTarget = cmd->asUbyte * 8;
-            channel->vibratoExtentChangeDelay = 1;
+        case AUDIOCMD_OP_CHANNEL_SET_VIBRATO_DEPTH:
+            channel->vibratoDepthTarget = cmd->asUbyte * 8;
+            channel->vibratoDepthChangeDelay = 1;
             break;
 
-        case AUDIOCMD_OP_CHANNEL_SET_VIBRATO_FREQ:
+        case AUDIOCMD_OP_CHANNEL_SET_VIBRATO_RATE:
             channel->vibratoRateTarget = cmd->asUbyte * 32;
             channel->vibratoRateChangeDelay = 1;
             break;
@@ -754,21 +754,21 @@ void AudioThread_ProcessChannelCmd(SequenceChannel* channel, AudioCmd* cmd) {
 /**
  * Call an audio-thread command that has no code to process it. Unused.
  */
-void func_800E64B0(s32 arg0, s32 arg1, s32 arg2) {
+void AudioThread_Noop1Cmd(s32 arg0, s32 arg1, s32 arg2) {
     AUDIOCMD_GLOBAL_NOOP_1(arg0, arg1, arg2, 1);
 }
 
 /**
  * Call an audio-thread command that has no code to process it. Unused.
  */
-void func_800E64F8(void) {
+void AudioThread_Noop1CmdZeroed(void) {
     AUDIOCMD_GLOBAL_NOOP_1(0, 0, 0, 0);
 }
 
 /**
  * Call an audio-thread command that has no code to process it. Unused.
  */
-void func_800E651C(u32 arg0, s32 arg1) {
+void AudioThread_Noop2Cmd(u32 arg0, s32 arg1) {
     AUDIOCMD_GLOBAL_NOOP_2(0, 0, arg1, arg0);
 }
 

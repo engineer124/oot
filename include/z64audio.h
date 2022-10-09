@@ -470,11 +470,11 @@ typedef struct SequenceChannel {
     /* 0x0E */ u8 gateTimeRandomVariance;
     /* 0x0F */ u8 combFilterSize;
     /* 0x10 */ u16 vibratoRateStart;
-    /* 0x12 */ u16 vibratoExtentStart;
+    /* 0x12 */ u16 vibratoDepthStart;
     /* 0x14 */ u16 vibratoRateTarget;
-    /* 0x16 */ u16 vibratoExtentTarget;
+    /* 0x16 */ u16 vibratoDepthTarget;
     /* 0x18 */ u16 vibratoRateChangeDelay;
-    /* 0x1A */ u16 vibratoExtentChangeDelay;
+    /* 0x1A */ u16 vibratoDepthChangeDelay;
     /* 0x1C */ u16 vibratoDelay;
     /* 0x1E */ u16 delay;
     /* 0x20 */ u16 combFilterGain;

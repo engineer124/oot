@@ -286,10 +286,10 @@ void AudioScript_InitSequenceChannel(SequenceChannel* channel) {
     channel->adsr.sustain = 0;
     channel->vibratoRateTarget = 0x800;
     channel->vibratoRateStart = 0x800;
-    channel->vibratoExtentTarget = 0;
-    channel->vibratoExtentStart = 0;
+    channel->vibratoDepthTarget = 0;
+    channel->vibratoDepthStart = 0;
     channel->vibratoRateChangeDelay = 0;
-    channel->vibratoExtentChangeDelay = 0;
+    channel->vibratoDepthChangeDelay = 0;
     channel->vibratoDelay = 0;
     channel->filter = NULL;
     channel->combFilterGain = 0;
@@ -1333,9 +1333,9 @@ void AudioScript_SequenceChannelProcessScript(SequenceChannel* channel) {
 
                 case 0xD8: // `vibdepth(u8)`, channel: set vibrato extent
                     cmd = (u8)cmdArgs[0];
-                    channel->vibratoExtentTarget = cmd * 8;
-                    channel->vibratoExtentStart = 0;
-                    channel->vibratoExtentChangeDelay = 0;
+                    channel->vibratoDepthTarget = cmd * 8;
+                    channel->vibratoDepthStart = 0;
+                    channel->vibratoDepthChangeDelay = 0;
                     break;
 
                 case 0xD7: // `vibfreq(u8)`, channel: set vibrato rate
@@ -1347,11 +1347,11 @@ void AudioScript_SequenceChannelProcessScript(SequenceChannel* channel) {
 
                 case 0xE2: // `vibdepthgrad(u8, u8, u8)`, channel: set vibrato extent linear
                     cmd = (u8)cmdArgs[0];
-                    channel->vibratoExtentStart = cmd * 8;
+                    channel->vibratoDepthStart = cmd * 8;
                     cmd = (u8)cmdArgs[1];
-                    channel->vibratoExtentTarget = cmd * 8;
+                    channel->vibratoDepthTarget = cmd * 8;
                     cmd = (u8)cmdArgs[2];
-                    channel->vibratoExtentChangeDelay = cmd * 16;
+                    channel->vibratoDepthChangeDelay = cmd * 16;
                     break;
 
                 case 0xE1: // `vibfreqgrad(u8, u8, u8)`, channel: set vibratorate linear
@@ -1508,9 +1508,9 @@ void AudioScript_SequenceChannelProcessScript(SequenceChannel* channel) {
                     break;
 
                 case 0xEC: // ``, channel: reset vibrato
-                    channel->vibratoExtentTarget = 0;
-                    channel->vibratoExtentStart = 0;
-                    channel->vibratoExtentChangeDelay = 0;
+                    channel->vibratoDepthTarget = 0;
+                    channel->vibratoDepthStart = 0;
+                    channel->vibratoDepthChangeDelay = 0;
                     channel->vibratoRateTarget = 0;
                     channel->vibratoRateStart = 0;
                     channel->vibratoRateChangeDelay = 0;

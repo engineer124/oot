@@ -16,8 +16,8 @@ typedef enum {
     /* 0x07 */ AUDIOCMD_OP_CHANNEL_SET_PAN_WEIGHT,
     /* 0x08 */ AUDIOCMD_OP_CHANNEL_SET_MUTE,
     /* 0x09 */ AUDIOCMD_OP_CHANNEL_SET_MUTE_FLAGS,
-    /* 0x0A */ AUDIOCMD_OP_CHANNEL_SET_VIBRATO_AMPLITUDE,
-    /* 0x0B */ AUDIOCMD_OP_CHANNEL_SET_VIBRATO_FREQ,
+    /* 0x0A */ AUDIOCMD_OP_CHANNEL_SET_VIBRATO_DEPTH,
+    /* 0x0B */ AUDIOCMD_OP_CHANNEL_SET_VIBRATO_RATE,
     /* 0x0C */ AUDIOCMD_OP_CHANNEL_SET_COMB_FILTER_SIZE,
     /* 0x0D */ AUDIOCMD_OP_CHANNEL_SET_COMB_FILTER_GAIN,
     /* 0x0E */ AUDIOCMD_OP_CHANNEL_SET_STEREO,
@@ -98,7 +98,7 @@ typedef enum {
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
  * @param channelIndex the index of the channel to modify
- * @param freqScale (f32) 
+ * @param freqScale (f32)
  */
 #define AUDIOCMD_CHANNEL_SET_FREQ_SCALE(seqPlayerIndex, channelIndex, freqScale)                               \
     AudioThread_QueueCmdF32(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_SET_FREQ_SCALE, seqPlayerIndex, channelIndex, 0), \
@@ -159,25 +159,25 @@ typedef enum {
     AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_SET_MUTE_FLAGS, seqPlayerIndex, channelIndex, 0), muteFlags)
 
 /**
- * Set the Vibrato amplitude (magnitude/depth/extent)
+ * Set the vibrato dept (magnitude/amplitude/extent)
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
  * @param channelIndex the index of the channel to modify
- * @param vibratoExtentTarget
+ * @param vibratoDepthTarget
  */
-#define AUDIOCMD_CHANNEL_SET_VIBRATO_AMPLITUDE(seqPlayerIndex, channelIndex, vibratoExtentTarget)                    \
-    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_SET_VIBRATO_AMPLITUDE, seqPlayerIndex, channelIndex, 0), \
-                           vibratoExtentTarget)
+#define AUDIOCMD_CHANNEL_SET_VIBRATO_DEPTH(seqPlayerIndex, channelIndex, vibratoDepthTarget)                     \
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_SET_VIBRATO_DEPTH, seqPlayerIndex, channelIndex, 0), \
+                           vibratoDepthTarget)
 
 /**
- * Set the Vibrato freq (rate)
+ * Set the vibrato rate (freq/pitch)
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
  * @param channelIndex the index of the channel to modify
  * @param vibratoRateTarget
  */
-#define AUDIOCMD_CHANNEL_SET_VIBRATO_FREQ(seqPlayerIndex, channelIndex, vibratoRateTarget)                      \
-    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_SET_VIBRATO_FREQ, seqPlayerIndex, channelIndex, 0), \
+#define AUDIOCMD_CHANNEL_SET_VIBRATO_RATE(seqPlayerIndex, channelIndex, vibratoRateTarget)                      \
+    AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_CHANNEL_SET_VIBRATO_RATE, seqPlayerIndex, channelIndex, 0), \
                            vibratoRateTarget)
 
 /**
@@ -218,7 +218,7 @@ typedef enum {
  * Set the fade volume scale.
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
- * @param fadeVolumeScale (f32) 
+ * @param fadeVolumeScale (f32)
  */
 #define AUDIOCMD_SEQPLAYER_FADE_VOLUME_SCALE(seqPlayerIndex, fadeVolumeScale)                            \
     AudioThread_QueueCmdF32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_FADE_VOLUME_SCALE, seqPlayerIndex, 0, 0), \
@@ -238,7 +238,7 @@ typedef enum {
  * Set the tempo.
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
- * @param tempo
+ * @param tempo (s32)
  */
 #define AUDIOCMD_SEQPLAYER_SET_TEMPO(seqPlayerIndex, tempo) \
     AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_TEMPO, seqPlayerIndex, 0, 0), tempo)
@@ -247,7 +247,7 @@ typedef enum {
  * Set the transposition, i.e. the number of semitones to increase or decrease by for all notes on the seqPlayer
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
- * @param transposition
+ * @param transposition (s32)
  */
 #define AUDIOCMD_SEQPLAYER_SET_TRANSPOSITION(seqPlayerIndex, transposition) \
     AudioThread_QueueCmdS8(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_SET_TRANSPOSITION, seqPlayerIndex, 0, 0), transposition)
@@ -275,7 +275,7 @@ typedef enum {
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
  * @param fadeVolume
- * @param fadeTimer
+ * @param fadeTimer (s32)
  */
 #define AUDIOCMD_SEQPLAYER_FADE_TO_SET_VOLUME(seqPlayerIndex, fadeVolume, fadeTimer)                               \
     AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_FADE_TO_SET_VOLUME, seqPlayerIndex, fadeVolume, 0), \
@@ -286,7 +286,7 @@ typedef enum {
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
  * @param fadeVolume
- * @param fadeTimer
+ * @param fadeTimer (s32)
  */
 #define AUDIOCMD_SEQPLAYER_FADE_TO_SCALED_VOLUME(seqPlayerIndex, fadeVolume, fadeTimer)                               \
     AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_FADE_TO_SCALED_VOLUME, seqPlayerIndex, fadeVolume, 0), \
@@ -296,7 +296,7 @@ typedef enum {
  * Fade the volume to the volume of the seqPlayer
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
- * @param fadeTimer
+ * @param fadeTimer (s32)
  */
 #define AUDIOCMD_SEQPLAYER_FADE_TO_SEQ_VOLUME(seqPlayerIndex, fadeTimer) \
     AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_FADE_TO_SEQ_VOLUME, seqPlayerIndex, 0, 0), fadeTimer)
@@ -328,9 +328,8 @@ typedef enum {
  * @param seqId the id of the sequence to play, see `SeqId`
  * @param fadeInTimer
  */
-#define AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER(seqPlayerIndex, seqId, fadeInTimer)                            \
-    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER, seqPlayerIndex, seqId, 0), \
-                            fadeInTimer)
+#define AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER(seqPlayerIndex, seqId, fadeInTimer) \
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER, seqPlayerIndex, seqId, 0), fadeInTimer)
 
 /**
  * Disable a sequence player.
@@ -493,7 +492,7 @@ typedef enum {
 /**
  * Disable all sequence players.
  *
- * @param flags Set `& 1` to discard all sequences. 
+ * @param flags Set `& 1` to discard all sequences.
  *              Setting `& 3` will also only discard sampled notes, but the sequences are disabled anyway
  *              Not setting `& 1` should make this command useless TODO: Test
  */

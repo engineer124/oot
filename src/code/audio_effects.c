@@ -149,15 +149,15 @@ f32 AudioEffects_UpdateVibrato(VibratoState* vib) {
     if (channel != ((SequenceChannel*)(-1))) {
         if (vib->extentChangeTimer) {
             if (vib->extentChangeTimer == 1) {
-                vib->extent = (s32)channel->vibratoExtentTarget;
+                vib->extent = (s32)channel->vibratoDepthTarget;
             } else {
-                vib->extent += ((s32)channel->vibratoExtentTarget - vib->extent) / (s32)vib->extentChangeTimer;
+                vib->extent += ((s32)channel->vibratoDepthTarget - vib->extent) / (s32)vib->extentChangeTimer;
             }
 
             vib->extentChangeTimer--;
-        } else if (channel->vibratoExtentTarget != (s32)vib->extent) {
-            if ((vib->extentChangeTimer = channel->vibratoExtentChangeDelay) == 0) {
-                vib->extent = (s32)channel->vibratoExtentTarget;
+        } else if (channel->vibratoDepthTarget != (s32)vib->extent) {
+            if ((vib->extentChangeTimer = channel->vibratoDepthChangeDelay) == 0) {
+                vib->extent = (s32)channel->vibratoDepthTarget;
             }
         }
 
@@ -218,10 +218,10 @@ void AudioEffects_InitVibrato(Note* note) {
 
     channel = vib->channel;
 
-    if ((vib->extentChangeTimer = channel->vibratoExtentChangeDelay) == 0) {
-        vib->extent = (s32)channel->vibratoExtentTarget;
+    if ((vib->extentChangeTimer = channel->vibratoDepthChangeDelay) == 0) {
+        vib->extent = (s32)channel->vibratoDepthTarget;
     } else {
-        vib->extent = (s32)channel->vibratoExtentStart;
+        vib->extent = (s32)channel->vibratoDepthStart;
     }
 
     if ((vib->rateChangeTimer = channel->vibratoRateChangeDelay) == 0) {
