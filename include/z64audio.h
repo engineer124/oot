@@ -40,10 +40,10 @@ typedef enum {
 #define MUTE_FLAGS_STOP_NOTES (1 << 6)   // prevent further notes from playing
 #define MUTE_FLAGS_STOP_SCRIPT (1 << 7)  // stop processing sequence/channel scripts
 
-#define NOTE_ALLOC_POLICY_0 (1 << 0)
-#define NOTE_ALLOC_POLICY_1 (1 << 1)
-#define NOTE_ALLOC_POLICY_2 (1 << 2)
-#define NOTE_ALLOC_POLICY_3 (1 << 3)
+#define NOTE_ALLOC_POLICY_LAYER (1 << 0)
+#define NOTE_ALLOC_POLICY_CHANNEL (1 << 1)
+#define NOTE_ALLOC_POLICY_SEQPLAYER (1 << 2)
+#define NOTE_ALLOC_POLICY_FREE (1 << 3)
 
 #define AUDIO_LERPIMP(v0, v1, t) (v0 + ((v1 - v0) * t))
 
@@ -398,25 +398,24 @@ typedef struct {
 #define STEREO_TYPE_2 0x20
 #define STEREO_TYPE_3 0x30
 
-typedef struct {
-    /* 0x00 */ u8 unused : 2;
-    /* 0x00 */ u8 type : 2;
-    /* 0x00 */ u8 strongRight : 1;
-    /* 0x00 */ u8 strongLeft : 1;
-    /* 0x00 */ u8 strongReverbRight : 1;
-    /* 0x00 */ u8 strongReverbLeft : 1;
-} StereoData; // size = 0x1
 
 typedef union {
-    /* 0x00 */ StereoData s;
-    /* 0x00 */ u8 asByte;
-} Stereo; // size = 0x1
+    struct {
+        /* 0x0 */ u8 unused : 2;
+        /* 0x0 */ u8 type : 2;
+        /* 0x0 */ u8 strongRight : 1;
+        /* 0x0 */ u8 strongLeft : 1;
+        /* 0x0 */ u8 strongReverbRight : 1;
+        /* 0x0 */ u8 strongReverbLeft : 1;
+    };
+    /* 0x0 */ u8 asByte;
+} StereoData; // size = 0x1
 
 typedef struct {
     /* 0x00 */ u8 targetReverbVol;
     /* 0x01 */ u8 gain; // Increases volume by a multiplicative scaling factor. Represented as a UQ4.4 number
     /* 0x02 */ u8 pan;
-    /* 0x03 */ Stereo stereo;
+    /* 0x03 */ StereoData stereoData;
     /* 0x04 */ u8 combFilterSize;
     /* 0x06 */ u16 combFilterGain;
     /* 0x08 */ f32 freqScale;
@@ -424,6 +423,19 @@ typedef struct {
     /* 0x10 */ s16* filter;
     /* 0x14 */ s16 filterBuf[8];
 } NoteAttributes; // size = 0x24
+
+typedef struct {
+    /* 0x00 */ u8 targetReverbVol;
+    /* 0x01 */ u8 gain; // Increases volume by a multiplicative scaling factor. Represented as a UQ4.4 number
+    /* 0x02 */ u8 pan;
+    /* 0x03 */ StereoData stereoData;
+    /* 0x04 */ f32 frequency;
+    /* 0x08 */ f32 velocity;
+    /* 0x0C */ char unk_0C[0x4];
+    /* 0x10 */ s16* filter;
+    /* 0x14 */ u8 combFilterSize;
+    /* 0x16 */ u16 combFilterGain;
+} NoteSubAttributes; // size = 0x18
 
 // Also known as a SubTrack, according to sm64 debug strings.
 typedef struct SequenceChannel {
@@ -446,8 +458,8 @@ typedef struct SequenceChannel {
     /* 0x02 */ u8 noteAllocPolicy;
     /* 0x03 */ u8 muteFlags;
     /* 0x04 */ u8 targetReverbVol;
-    /* 0x05 */ u8 notePriority; // 0-3
-    /* 0x06 */ u8 someOtherPriority;
+    /* 0x05 */ u8 notePriority; // 0-0xF
+    /* 0x06 */ u8 releaseNotePriority;
     /* 0x07 */ u8 fontId;
     /* 0x08 */ u8 reverbIndex;
     /* 0x09 */ u8 bookOffset;
@@ -486,7 +498,7 @@ typedef struct SequenceChannel {
     /* 0x84 */ NotePool notePool;
     /* 0xC4 */ s8 seqScriptIO[8]; // bridge between sound script and audio lib, "io ports"
     /* 0xCC */ s16* filter;
-    /* 0xD0 */ Stereo stereo;
+    /* 0xD0 */ StereoData stereoData;
 } SequenceChannel; // size = 0xD4
 
 // Might also be known as a Track, according to sm64 debug strings (?).
@@ -499,7 +511,7 @@ typedef struct SequenceLayer {
     /* 0x00 */ u8 ignoreDrumPan : 1;
     /* 0x00 */ u8 bit1 : 1; // "has initialized continuous notes"?
     /* 0x00 */ u8 notePropertiesNeedInit : 1;
-    /* 0x01 */ Stereo stereo;
+    /* 0x01 */ StereoData stereoData;
     /* 0x02 */ u8 instOrWave;
     /* 0x03 */ u8 gateTime;
     /* 0x04 */ u8 semitone;
@@ -560,7 +572,7 @@ typedef struct {
 typedef struct {
     /* 0x00 */ struct SequenceChannel* channel;
     /* 0x04 */ u32 time;
-    /* 0x08 */ s16* curve;
+    /* 0x08 */ s16* sineWave;
     /* 0x0C */ f32 extent;
     /* 0x10 */ f32 rate;
     /* 0x14 */ u8 active;
@@ -569,14 +581,15 @@ typedef struct {
     /* 0x1A */ u16 delay;
 } VibratoState; // size = 0x1C
 
+// NoteEndStatus?
 typedef enum {
-    /* 0 */ PLAYBACK_STATUS_0,
-    /* 1 */ PLAYBACK_STATUS_1,
-    /* 2 */ PLAYBACK_STATUS_2
+    /* 0 */ PLAYBACK_STATUS_0, // Used for both init and reset?
+    /* 1 */ PLAYBACK_STATUS_DECAY_NOTE,
+    /* 2 */ PLAYBACK_STATUS_RELEASE_NOTE
 } NotePlaybackStatus;
 
 typedef struct {
-    /* 0x00 */ u8 priority;
+    /* 0x00 */ u8 notePriority; // TODO: Just priority is fine, just using a unique name for temp doc purposes
     /* 0x01 */ u8 waveId;
     /* 0x02 */ u8 harmonicIndex; // the harmonic index for the synthetic wave contained in gWaveSamples (also matches the base 2 logarithm of the harmonic order)
     /* 0x03 */ u8 fontId;
@@ -994,7 +1007,7 @@ typedef struct {
     /* 0x5BD8 */ u8 cmdWritePos;
     /* 0x5BD9 */ u8 cmdReadPos;
     /* 0x5BDA */ u8 cmdQueueFinished;
-    /* 0x5BDC */ u16 activeChannelsBits[4]; // bitfield for 16 channels. Only channels with bit turned on will be processed
+    /* 0x5BDC */ u16 threadCmdChannelMask[4]; // bitfield for 16 channels. When processing an audio thread channel command on all channels, only process channels with their bit set.
     /* 0x5BE4 */ OSMesgQueue* audioResetQueueP;
     /* 0x5BE8 */ OSMesgQueue* taskStartQueueP;
     /* 0x5BEC */ OSMesgQueue* cmdProcQueueP;
@@ -1006,19 +1019,6 @@ typedef struct {
     /* 0x5C40 */ OSMesg cmdProcMsgBuf[4];
     /* 0x5C50 */ AudioCmd cmdBuf[0x100]; // Audio commands used to transfer audio requests from the graph thread to the audio thread
 } AudioContext; // size = 0x6450
-
-typedef struct {
-    /* 0x00 */ u8 targetReverbVol;
-    /* 0x01 */ u8 gain; // Increases volume by a multiplicative scaling factor. Represented as a UQ4.4 number
-    /* 0x02 */ u8 pan;
-    /* 0x03 */ Stereo stereo;
-    /* 0x04 */ f32 frequency;
-    /* 0x08 */ f32 velocity;
-    /* 0x0C */ char unk_0C[0x4];
-    /* 0x10 */ s16* filter;
-    /* 0x14 */ u8 combFilterSize;
-    /* 0x16 */ u16 combFilterGain;
-} NoteSubAttributes; // size = 0x18
 
 typedef struct {
     /* 0x0 */ s16 unk_00; // set to 0x1C00, unused

@@ -129,6 +129,10 @@ typedef struct {
 // Use lowpass filter on surround sound
 #define SFX_FLAG_SURROUND_LOWPASS_FILTER (1 << 9)
 
+// If Surround Sound is set, then apply a strong-right or strong-left pan if the sfx
+// is played far enough behind screen. This indexes the z-distance threshold behind the
+// screen to apply those effects. A larger index leads to a farther distance needed behind screen.
+// (a 1-bit numeber ranging from 0-1). See `sBehindScreenZ`
 #define SFX_FLAG_BEHIND_SCREEN_Z_INDEX_SHIFT 10
 #define SFX_FLAG_BEHIND_SCREEN_Z_INDEX (1 << SFX_FLAG_BEHIND_SCREEN_Z_INDEX_SHIFT)
 

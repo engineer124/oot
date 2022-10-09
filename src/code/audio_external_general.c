@@ -8,7 +8,7 @@ typedef struct {
     /* 0x4 */ f32 freqScale;
     /* 0x8 */ s8 reverb;
     /* 0x9 */ s8 pan;
-    /* 0xA */ s8 stereoBits;
+    /* 0xA */ s8 stereoData;
     /* 0xB */ u8 filter;
     /* 0xC */ u8 combFilterGain;
 } SfxPlayerState; // size = 0x10
@@ -4068,13 +4068,15 @@ s8 AudioSfx_ComputeCombFilterGain(f32 posY, u16 sfxParams) {
     return combFilterGain | 1;
 }
 
+#define STEREO_FAR_BEHIND_SCREEN 0x10
+
 void AudioSfx_SetProperties(u8 bankId, u8 entryIndex, u8 channelIndex) {
     f32 vol = 1.0f;
     s8 volS8;
     s8 reverb = 0;
     f32 freqScale = 1.0f;
     s8 pan = 0x40;
-    u8 stereoBits = 0;
+    u8 stereoData = 0;
     u8 filter = 0;
     s8 combFilterGain = 0;
     f32 behindScreenZ;
@@ -4103,20 +4105,24 @@ void AudioSfx_SetProperties(u8 bankId, u8 entryIndex, u8 channelIndex) {
                                                SFX_FLAG_BEHIND_SCREEN_Z_INDEX_SHIFT];
                 if (!(entry->sfxParams & SFX_PARAM_RAND_FREQ_SCALE)) {
                     if (*entry->posZ < behindScreenZ) {
-                        stereoBits = 0x10;
+                        stereoData = STEREO_FAR_BEHIND_SCREEN;
                     }
 
-                    if ((sSfxChannelState[channelIndex].stereoBits ^ stereoBits) & 0x10) {
+                    if ((sSfxChannelState[channelIndex].stereoData ^ stereoData) & STEREO_FAR_BEHIND_SCREEN) {
+                        // Toggle on bit for a strong direction, while toggling off temporary bit for behind screen
                         if (pan < 0x40) {
-                            stereoBits = sSfxChannelState[channelIndex].stereoBits ^ (0x10 | STEREO_STRONG_LEFT);
+                            stereoData = sSfxChannelState[channelIndex].stereoData ^
+                                         (STEREO_STRONG_LEFT | STEREO_FAR_BEHIND_SCREEN);
                         } else {
-                            stereoBits = sSfxChannelState[channelIndex].stereoBits ^ (0x10 | STEREO_STRONG_RIGHT);
+                            stereoData = sSfxChannelState[channelIndex].stereoData ^
+                                         (STEREO_STRONG_RIGHT | STEREO_FAR_BEHIND_SCREEN);
                         }
                     } else {
-                        stereoBits = sSfxChannelState[channelIndex].stereoBits;
+                        stereoData = sSfxChannelState[channelIndex].stereoData;
                     }
                 }
             }
+
             if (sAudioBaseFilter != 0) {
                 if ((bankId == BANK_ITEM) || (bankId == BANK_PLAYER) || (bankId == BANK_VOICE)) {
                     baseFilter = sAudioBaseFilter;
@@ -4153,9 +4159,12 @@ void AudioSfx_SetProperties(u8 bankId, u8 entryIndex, u8 channelIndex) {
         sSfxChannelState[channelIndex].freqScale = freqScale;
     }
 
-    if (stereoBits != sSfxChannelState[channelIndex].stereoBits) {
-        AUDIOCMD_CHANNEL_SET_STEREO(SEQ_PLAYER_SFX, channelIndex, stereoBits | 0x10);
-        sSfxChannelState[channelIndex].stereoBits = stereoBits;
+    if (stereoData != sSfxChannelState[channelIndex].stereoData) {
+        // Note that how stereoData is applied depends on the type, which is masked by `& 0x30`.
+        // Therefore, if `STEREO_TYPE_2` is already set,
+        // then `STEREO_TYPE_3` will result from this bitwise-or.
+        AUDIOCMD_CHANNEL_SET_STEREO(SEQ_PLAYER_SFX, channelIndex, stereoData | STEREO_TYPE_1);
+        sSfxChannelState[channelIndex].stereoData = stereoData;
     }
 
     if (filter != sSfxChannelState[channelIndex].filter) {
@@ -4185,7 +4194,7 @@ void AudioSfx_ResetSfxChannelState(void) {
         state->freqScale = 1.0f;
         state->reverb = 0;
         state->pan = 0x40;
-        state->stereoBits = 0;
+        state->stereoData = 0;
         state->filter = 0xFF;
         state->combFilterGain = 0xFF;
     }
@@ -4610,7 +4619,7 @@ void Audio_ClearRiverSoundBgmPosAtPos(Vec3f* pos) {
  */
 void Audio_SplitBgmChannels(s8 volSplit) {
     u8 volume;
-    u8 notePriority;
+    u8 notePriorityThreshold;
     u16 channelBits;
     u8 sBgmPlayers[2] = { SEQ_PLAYER_BGM_MAIN, SEQ_PLAYER_BGM_SUB };
     u8 channelIndex;
@@ -4628,19 +4637,18 @@ void Audio_SplitBgmChannels(s8 volSplit) {
             }
 
             if (volume > 100) {
-                notePriority = 11;
+                notePriorityThreshold = 0xB;
             } else if (volume < 20) {
-                notePriority = 2;
+                notePriorityThreshold = 2;
             } else {
-                notePriority = ((volume - 20) / 10) + 2;
+                notePriorityThreshold = ((volume - 20) / 10) + 2;
             }
 
+            // If the notes currently playing in the channel are below the notePriorityThreshold,
+            // then disable the channel
             channelBits = 0;
             for (channelIndex = 0; channelIndex < SEQ_NUM_CHANNELS; channelIndex++) {
-                if (notePriority > gAudioCtx.seqPlayers[sBgmPlayers[i]].channels[channelIndex]->notePriority) {
-                    // If the note currently playing in the channel is a high enough priority,
-                    // then keep the channel on by setting a channelBit
-                    // If this condition fails, then the channel will be shut off
+                if (gAudioCtx.seqPlayers[sBgmPlayers[i]].channels[channelIndex]->notePriority < notePriorityThreshold) {
                     channelBits += (1 << channelIndex);
                 }
             }

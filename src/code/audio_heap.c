@@ -75,7 +75,7 @@ void AudioHeap_DiscardFont(s32 fontId) {
         Note* note = &gAudioCtx.notes[i];
 
         if (note->playbackState.fontId == fontId) {
-            if ((note->playbackState.status == PLAYBACK_STATUS_0) && (note->playbackState.priority != 0)) {
+            if ((note->playbackState.status == PLAYBACK_STATUS_0) && (note->playbackState.notePriority != 0)) {
                 note->playbackState.parentLayer->enabled = false;
                 note->playbackState.parentLayer->finished = true;
             }
@@ -95,8 +95,8 @@ void AudioHeap_ReleaseNotesForFont(s32 fontId) {
         NotePlaybackState* playbackState = &note->playbackState;
 
         if (playbackState->fontId == fontId) {
-            if ((playbackState->priority != 0) && (playbackState->adsr.action.s.state == ADSR_STATE_DECAY)) {
-                playbackState->priority = 1;
+            if ((playbackState->notePriority != 0) && (playbackState->adsr.action.s.state == ADSR_STATE_DECAY)) {
+                playbackState->notePriority = 1;
                 playbackState->adsr.fadeOutVel = gAudioCtx.audioBufParams.updatesPerFrameInv;
                 playbackState->adsr.action.s.release = true;
             }
@@ -914,7 +914,9 @@ void AudioHeap_Init(void) {
     }
     gAudioCtx.unk_2 = spec->unk_14;
 
-    // 60 (s / min)
+    // (tatums / min)
+    // 60 is a conversion from seconds to minutes
+    // 1000 is a factor cancelled out in `maxTempoTvTypeFactors`
     gAudioCtx.maxTempo = (u32)(gAudioCtx.audioBufParams.updatesPerFrame * (f32)(60 * 1000 * TATUMS_PER_BEAT) /
                                gTempoData.tatumsPerBeat / gAudioCtx.maxTempoTvTypeFactors);
 

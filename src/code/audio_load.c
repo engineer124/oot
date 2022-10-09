@@ -580,13 +580,13 @@ void AudioLoad_DiscardFont(s32 fontId) {
     AudioHeap_DiscardFont(fontId);
 }
 
-s32 AudioLoad_SyncInitSeqPlayer(s32 seqPlayerIndex, s32 seqId, s32 arg2) {
+s32 AudioLoad_SyncInitSeqPlayer(s32 seqPlayerIndex, s32 seqId, s32 unused) {
     if (gAudioCtx.resetTimer != 0) {
         return 0;
     }
 
     gAudioCtx.seqPlayers[seqPlayerIndex].skipTicks = 0;
-    AudioLoad_SyncInitSeqPlayerInternal(seqPlayerIndex, seqId, arg2);
+    AudioLoad_SyncInitSeqPlayerInternal(seqPlayerIndex, seqId, unused);
     // Intentionally missing return. Returning the result of the above function
     // call matches but is UB because it too is missing a return, and using the
     // result of a non-void function that has failed to return a value is UB.
@@ -603,7 +603,7 @@ s32 AudioLoad_SyncInitSeqPlayerSkipTicks(s32 seqPlayerIndex, s32 seqId, s32 skip
     // Missing return, see above.
 }
 
-s32 AudioLoad_SyncInitSeqPlayerInternal(s32 seqPlayerIndex, s32 seqId, s32 arg2) {
+s32 AudioLoad_SyncInitSeqPlayerInternal(s32 seqPlayerIndex, s32 seqId, s32 unused) {
     SequencePlayer* seqPlayer = &gAudioCtx.seqPlayers[seqPlayerIndex];
     u8* seqData;
     s32 index;

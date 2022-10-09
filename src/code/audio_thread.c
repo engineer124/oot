@@ -46,7 +46,7 @@ AudioTask* AudioThread_UpdateImpl(void) {
             gCustomAudioUpdateFunction();
         }
 
-        if ((gAudioCtx.totalTaskCount % gAudioCtx.audioBufParams.specUnk4) + 1 == gAudioCtx.audioBufParams.specUnk4) {
+        if (((gAudioCtx.totalTaskCount % gAudioCtx.audioBufParams.specUnk4) + 1) == gAudioCtx.audioBufParams.specUnk4) {
             return sWaitingAudioTask;
         } else {
             return NULL;
@@ -281,8 +281,8 @@ void AudioThread_ProcessGlobalCmd(AudioCmd* cmd) {
             AudioLoad_DiscardSeqFonts(cmd->arg1);
             break;
 
-        case AUDIOCMD_OP_GLOBAL_SET_ACTIVE_CHANNEL_FLAGS:
-            gAudioCtx.activeChannelsBits[cmd->arg0] = cmd->asUShort;
+        case AUDIOCMD_OP_GLOBAL_SET_CHANNEL_MASK:
+            gAudioCtx.threadCmdChannelMask[cmd->arg0] = cmd->asUShort;
             break;
 
         case AUDIOCMD_OP_GLOBAL_RESET_AUDIO_HEAP:
@@ -336,6 +336,9 @@ void AudioThread_SetFadeOutTimer(s32 seqPlayerIndex, s32 fadeTimer) {
     seqPlayer->fadeTimer = fadeTimer;
 }
 
+/**
+ * Seems to be designed to work in conjunction with the `vol(u8)` seq instruction
+ */
 void AudioThread_SetFadeInTimer(s32 seqPlayerIndex, s32 fadeTimer) {
     SequencePlayer* seqPlayer;
 
@@ -423,7 +426,7 @@ void AudioThread_ResetCmdQueue(void) {
 
 void AudioThread_ProcessCmd(AudioCmd* cmd) {
     SequencePlayer* seqPlayer;
-    u16 activeChannelsBits;
+    u16 threadCmdChannelMask;
     s32 channelIndex;
 
     if ((cmd->op & 0xF0) == 0xF0) {
@@ -449,12 +452,12 @@ void AudioThread_ProcessCmd(AudioCmd* cmd) {
         }
 
         if (cmd->arg1 == SEQ_ALL_CHANNELS) {
-            activeChannelsBits = gAudioCtx.activeChannelsBits[cmd->arg0];
+            threadCmdChannelMask = gAudioCtx.threadCmdChannelMask[cmd->arg0];
             for (channelIndex = 0; channelIndex < SEQ_NUM_CHANNELS; channelIndex++) {
-                if (activeChannelsBits & 1) {
+                if (threadCmdChannelMask & 1) {
                     AudioThread_ProcessChannelCmd(seqPlayer->channels[channelIndex], cmd);
                 }
-                activeChannelsBits = activeChannelsBits >> 1;
+                threadCmdChannelMask = threadCmdChannelMask >> 1;
             }
         }
     }
@@ -615,13 +618,13 @@ void AudioThread_ProcessSeqPlayerCmd(SequencePlayer* seqPlayer, AudioCmd* cmd) {
             seqPlayer->seqScriptIO[cmd->arg2] = cmd->asSbyte;
             break;
 
-        case AUDIOCMD_OP_SEQPLAYER_SET_FADE_VOLUME:
+        case AUDIOCMD_OP_SEQPLAYER_FADE_TO_SET_VOLUME:
             fadeVolume = (s32)cmd->arg1 / 127.0f;
-            goto fade_block;
+            goto apply_fade;
 
-        case AUDIOCMD_OP_SEQPLAYER_SCALE_FADE_VOLUME:
+        case AUDIOCMD_OP_SEQPLAYER_FADE_TO_SCALED_VOLUME:
             fadeVolume = ((s32)cmd->arg1 / 100.0f) * seqPlayer->fadeVolume;
-        fade_block:
+        apply_fade:
             if (seqPlayer->state != SEQPLAYER_STATE_FADE_OUT) {
                 seqPlayer->volume = seqPlayer->fadeVolume;
                 if (cmd->asInt == 0) {
@@ -636,7 +639,7 @@ void AudioThread_ProcessSeqPlayerCmd(SequencePlayer* seqPlayer, AudioCmd* cmd) {
             }
             break;
 
-        case AUDIOCMD_OP_SEQPLAYER_SET_FADE_TIMER:
+        case AUDIOCMD_OP_SEQPLAYER_FADE_TO_SEQ_VOLUME:
             if (seqPlayer->state != SEQPLAYER_STATE_FADE_OUT) {
                 if (cmd->asInt == 0) {
                     seqPlayer->fadeVolume = seqPlayer->volume;
@@ -721,12 +724,12 @@ void AudioThread_ProcessChannelCmd(SequenceChannel* channel, AudioCmd* cmd) {
             channel->muteFlags = cmd->asSbyte;
             break;
 
-        case AUDIOCMD_OP_CHANNEL_SET_VIBRATO_SMALL:
+        case AUDIOCMD_OP_CHANNEL_SET_VIBRATO_AMPLITUTE:
             channel->vibratoExtentTarget = cmd->asUbyte * 8;
             channel->vibratoExtentChangeDelay = 1;
             break;
 
-        case AUDIOCMD_OP_CHANNEL_SET_VIBRATO_LARGE:
+        case AUDIOCMD_OP_CHANNEL_SET_VIBRATO_FREQ:
             channel->vibratoRateTarget = cmd->asUbyte * 32;
             channel->vibratoRateChangeDelay = 1;
             break;
@@ -740,7 +743,7 @@ void AudioThread_ProcessChannelCmd(SequenceChannel* channel, AudioCmd* cmd) {
             break;
 
         case AUDIOCMD_OP_CHANNEL_SET_STEREO:
-            channel->stereo.asByte = cmd->asUbyte;
+            channel->stereoData.asByte = cmd->asUbyte;
             break;
 
         default:

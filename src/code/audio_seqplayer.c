@@ -267,7 +267,7 @@ void AudioScript_InitSequenceChannel(SequenceChannel* channel) {
     channel->transposition = 0;
     channel->largeNotes = false;
     channel->bookOffset = 0;
-    channel->stereo.asByte = 0;
+    channel->stereoData.asByte = 0;
     channel->changes.asByte = 0xFF;
     channel->scriptState.depth = 0;
     channel->newPan = 0x40;
@@ -279,7 +279,7 @@ void AudioScript_InitSequenceChannel(SequenceChannel* channel) {
     channel->targetReverbVol = 0;
     channel->gain = 0;
     channel->notePriority = 3;
-    channel->someOtherPriority = 1;
+    channel->releaseNotePriority = 1;
     channel->delay = 0;
     channel->adsr.envelope = gDefaultEnvelope;
     channel->adsr.decayIndex = 0xF0;
@@ -334,7 +334,7 @@ s32 AudioScript_SeqChannelSetLayer(SequenceChannel* channel, s32 layerIndex) {
     layer->ignoreDrumPan = false;
     layer->bit1 = false;
     layer->notePropertiesNeedInit = false;
-    layer->stereo.asByte = 0;
+    layer->stereoData.asByte = 0;
     layer->portamento.mode = PORTAMENTO_MODE_OFF;
     layer->scriptState.depth = 0;
     layer->gateTime = 0x80;
@@ -578,6 +578,8 @@ void AudioScript_SeqLayerProcessScriptStep1(SequenceLayer* layer) {
     layer->notePropertiesNeedInit = true;
 }
 
+// AudioScript_InitNote?
+// AudioScript_SetupNote?
 s32 AudioScript_SeqLayerProcessScriptStep5(SequenceLayer* layer, s32 sameTunedSample) {
     Note* note;
 
@@ -587,7 +589,7 @@ s32 AudioScript_SeqLayerProcessScriptStep5(SequenceLayer* layer, s32 sameTunedSa
         return PROCESS_SCRIPT_END;
     }
 
-    if ((layer->continuousNotes == true) && (layer->bit1 == 1)) {
+    if ((layer->continuousNotes == true) && (layer->bit1 == true)) {
         return 0;
     }
 
@@ -603,13 +605,13 @@ s32 AudioScript_SeqLayerProcessScriptStep5(SequenceLayer* layer, s32 sameTunedSa
 
         layer->note = AudioNote_Alloc(layer);
         if ((layer->note != NULL) && (layer->note->playbackState.parentLayer == layer)) {
-            AudioEffects_InitVibrato(layer->note);
+            note = layer->note;
+            AudioEffects_InitVibrato(note);
         }
     }
 
     if ((layer->note != NULL) && (layer->note->playbackState.parentLayer == layer)) {
         note = layer->note;
-
         AudioEffects_InitPortamento(note);
     }
 
@@ -749,7 +751,7 @@ s32 AudioScript_SeqLayerProcessScriptStep2(SequenceLayer* layer) {
                 break;
 
             case 0xCD: // `stereo(u8)`, layer: stereo effects
-                layer->stereo.asByte = AudioScript_ScriptReadU8(state);
+                layer->stereoData.asByte = AudioScript_ScriptReadU8(state);
                 break;
 
             case 0xCE: // `bendfine(s8)`, layer: bend pitch
@@ -1100,7 +1102,7 @@ void AudioScript_SetChannelPriorities(SequenceChannel* channel, u8 priority) {
 
     priority = priority >> 4;
     if (priority != 0) {
-        channel->someOtherPriority = priority;
+        channel->releaseNotePriority = priority;
     }
 }
 
@@ -1441,7 +1443,7 @@ void AudioScript_SequenceChannelProcessScript(SequenceChannel* channel) {
                     } else {
                         channel->stereoHeadsetEffects = false;
                     }
-                    channel->stereo.asByte = cmd & 0x7F;
+                    channel->stereoData.asByte = cmd & 0x7F;
                     break;
 
                 case 0xD1: // `notealloc(u8)`, channel: set note allocation policy
@@ -2053,7 +2055,7 @@ void AudioScript_ProcessSequences(s32 arg0) {
         seqPlayer = &gAudioCtx.seqPlayers[i];
         if (seqPlayer->enabled == true) {
             AudioScript_SequencePlayerProcessSequence(seqPlayer);
-            AudioEffects_SequencePlayerProcessSound(seqPlayer);
+            AudioScript_SequencePlayerProcessSound(seqPlayer);
         }
     }
 
@@ -2063,7 +2065,7 @@ void AudioScript_ProcessSequences(s32 arg0) {
 void AudioScript_SkipForwardSequence(SequencePlayer* seqPlayer) {
     while (seqPlayer->skipTicks > 0) {
         AudioScript_SequencePlayerProcessSequence(seqPlayer);
-        AudioEffects_SequencePlayerProcessSound(seqPlayer);
+        AudioScript_SequencePlayerProcessSound(seqPlayer);
         seqPlayer->skipTicks--;
     }
 }

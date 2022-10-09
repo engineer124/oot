@@ -1,7 +1,18 @@
+/**
+ * @file audio_effects.c
+ *
+ * The first half of this file processes sound on the seqPlayer, channel, and layer level
+ * once the .seq file is finished for this update.
+ *
+ * The second half of this file implements three types of audio effects over long periods of times:
+ * - Vibrato: regular, pulsating change of pitch
+ * - Portamento: pitch sliding from one note to another
+ * - Multi-Point ADSR Envelope: volume changing over time
+ */
 #include "ultra64.h"
 #include "global.h"
 
-void AudioEffects_SequenceChannelProcessSound(SequenceChannel* channel, s32 recalculateVolume, s32 applyBend) {
+void AudioScript_SequenceChannelProcessSound(SequenceChannel* channel, s32 recalculateVolume, s32 applyBend) {
     f32 channelVolume;
     f32 chanFreqScale;
     s32 i;
@@ -49,7 +60,7 @@ void AudioEffects_SequenceChannelProcessSound(SequenceChannel* channel, s32 reca
     channel->changes.asByte = 0;
 }
 
-void AudioEffects_SequencePlayerProcessSound(SequencePlayer* seqPlayer) {
+void AudioScript_SequencePlayerProcessSound(SequencePlayer* seqPlayer) {
     s32 i;
 
     if (seqPlayer->fadeTimer != 0) {
@@ -76,40 +87,49 @@ void AudioEffects_SequencePlayerProcessSound(SequencePlayer* seqPlayer) {
 
     for (i = 0; i < SEQ_NUM_CHANNELS; i++) {
         if (seqPlayer->channels[i]->enabled == true) {
-            AudioEffects_SequenceChannelProcessSound(seqPlayer->channels[i], seqPlayer->recalculateVolume,
-                                                     seqPlayer->applyBend);
+            AudioScript_SequenceChannelProcessSound(seqPlayer->channels[i], seqPlayer->recalculateVolume,
+                                                    seqPlayer->applyBend);
         }
     }
 
     seqPlayer->recalculateVolume = false;
 }
 
-f32 AudioEffects_GetPortamentoFreqScale(Portamento* portamento) {
-    u32 loResCur;
+/**
+ * @return freqScale
+ */
+f32 AudioEffects_UpdatePortamento(Portamento* portamento) {
+    u32 bendIndex;
     f32 portamentoFreq;
 
     portamento->cur += portamento->speed;
-    loResCur = (portamento->cur >> 8) & 0xFF;
+    bendIndex = (portamento->cur >> 8) & 0xFF;
 
-    if (loResCur >= 127) {
-        loResCur = 127;
+    if (bendIndex >= 127) {
+        bendIndex = 127;
         portamento->mode = 0;
     }
 
-    portamentoFreq = 1.0f + portamento->extent * (gBendPitchOneOctaveFrequencies[loResCur + 128] - 1.0f);
+    portamentoFreq = 1.0f + portamento->extent * (gBendPitchOneOctaveFrequencies[bendIndex + 128] - 1.0f);
 
     return portamentoFreq;
 }
 
+/**
+ * time: 0x400 is 1 unit of time, 0x10000 is 1 period
+ */
 s16 AudioEffects_GetVibratoPitchChange(VibratoState* vib) {
     s32 index;
 
     vib->time += (s32)vib->rate;
-    index = (vib->time >> 10) & 0x3F;
-    return vib->curve[index];
+    index = (vib->time >> 10) % WAVE_SAMPLE_COUNT;
+    return vib->sineWave[index];
 }
 
-f32 AudioEffects_GetVibratoFreqScale(VibratoState* vib) {
+/**
+ * @return freqScale
+ */
+f32 AudioEffects_UpdateVibrato(VibratoState* vib) {
     static f32 sActiveVibratoFreqScaleSum = 0.0f;
     static s32 sActiveVibratoCount = 0;
     f32 pitchChange;
@@ -174,12 +194,14 @@ f32 AudioEffects_GetVibratoFreqScale(VibratoState* vib) {
     return result;
 }
 
-void AudioEffects_UpdateVibrato(Note* note) {
+void AudioEffects_UpdatePortamentoAndVibrato(Note* note) {
+    // Update Portamento
     if (note->playbackState.portamento.mode != 0) {
-        note->playbackState.portamentoFreqScale = AudioEffects_GetPortamentoFreqScale(&note->playbackState.portamento);
+        note->playbackState.portamentoFreqScale = AudioEffects_UpdatePortamento(&note->playbackState.portamento);
     }
+    // Update Vibrato
     if (note->playbackState.vibratoState.active) {
-        note->playbackState.vibratoFreqScale = AudioEffects_GetVibratoFreqScale(&note->playbackState.vibratoState);
+        note->playbackState.vibratoFreqScale = AudioEffects_UpdateVibrato(&note->playbackState.vibratoState);
     }
 }
 
@@ -191,7 +213,7 @@ void AudioEffects_InitVibrato(Note* note) {
 
     vib->active = true;
     vib->time = 0;
-    vib->curve = gWaveSamples[2]; // gSineWaveSample
+    vib->sineWave = gWaveSamples[2]; // gSineWaveSample
     vib->channel = note->playbackState.parentLayer->channel;
 
     channel = vib->channel;
@@ -226,6 +248,9 @@ void AudioEffects_InitAdsr(AdsrState* adsr, EnvelopePoint* envelope, s16* volOut
     // removed, but the function parameter was forgotten and remains.)
 }
 
+/**
+ * @return volumeScale
+ */
 f32 AudioEffects_UpdateAdsr(AdsrState* adsr) {
     u8 state = adsr->action.s.state;
 
