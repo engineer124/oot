@@ -7,7 +7,8 @@
  */
 
 typedef enum {
-    /* 0x01 */ AUDIOCMD_OP_CHANNEL_SET_VOL_SCALE = 0x1,
+    /* 0x00 */ AUDIOCMD_OP_NOOP,
+    /* 0x01 */ AUDIOCMD_OP_CHANNEL_SET_VOL_SCALE,
     /* 0x02 */ AUDIOCMD_OP_CHANNEL_SET_VOL,
     /* 0x03 */ AUDIOCMD_OP_CHANNEL_SET_PAN,
     /* 0x04 */ AUDIOCMD_OP_CHANNEL_SET_FREQ_SCALE,
@@ -28,7 +29,7 @@ typedef enum {
     /* 0x49 */ AUDIOCMD_OP_SEQPLAYER_CHANGE_TEMPO,
     /* 0x4A */ AUDIOCMD_OP_SEQPLAYER_FADE_TO_SET_VOLUME,
     /* 0x4B */ AUDIOCMD_OP_SEQPLAYER_FADE_TO_SCALED_VOLUME,
-    /* 0x4C */ AUDIOCMD_OP_SEQPLAYER_FADE_TO_SEQ_VOLUME,
+    /* 0x4C */ AUDIOCMD_OP_SEQPLAYER_RESET_VOLUME,
     /* 0x4D */ AUDIOCMD_OP_SEQPLAYER_SET_BEND,
     /* 0x4E */ AUDIOCMD_OP_SEQPLAYER_CHANGE_TEMPO_TICKS,
     /* 0x81 */ AUDIOCMD_OP_GLOBAL_SYNC_LOAD_SEQ_PARTS = 0x81,
@@ -293,13 +294,13 @@ typedef enum {
                             fadeTimer)
 
 /**
- * Fade the volume to the volume of the seqPlayer
+ * Reset to the default volume of the seqPlayer
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
- * @param fadeTimer (s32)
+ * @param fadeTimer (s32) number of ticks to fade the sequence back to its default volume
  */
-#define AUDIOCMD_SEQPLAYER_FADE_TO_SEQ_VOLUME(seqPlayerIndex, fadeTimer) \
-    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_FADE_TO_SEQ_VOLUME, seqPlayerIndex, 0, 0), fadeTimer)
+#define AUDIOCMD_SEQPLAYER_RESET_VOLUME(seqPlayerIndex, fadeTimer) \
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_RESET_VOLUME, seqPlayerIndex, 0, 0), fadeTimer)
 
 /**
  * Set the bend.
@@ -326,7 +327,7 @@ typedef enum {
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
  * @param seqId the id of the sequence to play, see `SeqId`
- * @param fadeInTimer
+ * @param fadeInTimer number of ticks to fade in the sequence to the requested volume
  */
 #define AUDIOCMD_GLOBAL_INIT_SEQPLAYER(seqPlayerIndex, seqId, fadeInTimer) \
     AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_INIT_SEQPLAYER, seqPlayerIndex, seqId, 0), fadeInTimer)
@@ -335,7 +336,7 @@ typedef enum {
  * Disable a sequence player.
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
- * @param fadeOutTimer
+ * @param fadeOutTimer number of ticks to fade out the sequence
  */
 #define AUDIOCMD_GLOBAL_DISABLE_SEQPLAYER(seqPlayerIndex, fadeOutTimer) \
     AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_DISABLE_SEQPLAYER, seqPlayerIndex, 0, 0), fadeOutTimer)
@@ -493,8 +494,9 @@ typedef enum {
  * Disable all sequence players.
  *
  * @param flags Set `& 1` to discard all sequences.
- *              Setting `& 3` will also only discard sampled notes, but the sequences are disabled anyway
- *              Not setting `& 1` should make this command useless TODO: Test
+ *              
+ * @note Setting `& 3` will also only discard sampled notes, but the sequences are disabled anyway.
+ *       Not setting `& 1` should make this command useless TODO: Test
  */
 #define AUDIOCMD_GLOBAL_DISABLE_ALL_SEQPLAYERS(flags) \
     AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_DISABLE_ALL_SEQPLAYERS, 0, 0, 0), flags)

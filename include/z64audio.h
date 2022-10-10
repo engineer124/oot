@@ -1005,20 +1005,20 @@ typedef struct {
     /* 0x5B84 */ s32 sampleStateBaseIndex; // Start of the list of sample states for this update. Resets after each audio frame.
     /* 0x5B88 */ AudioListItem layerFreeList;
     /* 0x5B98 */ NotePool noteFreeLists;
-    /* 0x5BD8 */ u8 cmdWritePos;
-    /* 0x5BD9 */ u8 cmdReadPos;
-    /* 0x5BDA */ u8 cmdQueueFinished;
+    /* 0x5BD8 */ u8 threadCmdWritePos;
+    /* 0x5BD9 */ u8 threadCmdReadPos;
+    /* 0x5BDA */ u8 threadCmdQueueFinished;
     /* 0x5BDC */ u16 threadCmdChannelMask[4]; // bitfield for 16 channels. When processing an audio thread channel command on all channels, only process channels with their bit set.
     /* 0x5BE4 */ OSMesgQueue* audioResetQueueP;
     /* 0x5BE8 */ OSMesgQueue* taskStartQueueP;
-    /* 0x5BEC */ OSMesgQueue* cmdProcQueueP;
+    /* 0x5BEC */ OSMesgQueue* threadCmdProcQueueP;
     /* 0x5BF0 */ OSMesgQueue taskStartQueue;
-    /* 0x5C08 */ OSMesgQueue cmdProcQueue;
+    /* 0x5C08 */ OSMesgQueue threadCmdProcQueue;
     /* 0x5C20 */ OSMesgQueue audioResetQueue;
     /* 0x5C38 */ OSMesg taskStartMsgBuf[1];
     /* 0x5C3C */ OSMesg audioResetMsgBuf[1];
     /* 0x5C40 */ OSMesg cmdProcMsgBuf[4];
-    /* 0x5C50 */ AudioCmd cmdBuf[0x100]; // Audio commands used to transfer audio requests from the graph thread to the audio thread
+    /* 0x5C50 */ AudioCmd threadCmdBuf[0x100]; // Audio thread commands used to transfer audio requests from the graph thread to the audio thread
 } AudioContext; // size = 0x6450
 
 typedef struct {

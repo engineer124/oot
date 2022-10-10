@@ -141,12 +141,12 @@ AudioTask* AudioThread_UpdateImpl(void) {
     j = 0;
     if (gAudioCtx.resetStatus == 0) {
         // msg = 0000RREE R = read pos, E = End Pos
-        while (osRecvMesg(gAudioCtx.cmdProcQueueP, (OSMesg*)&sp4C, OS_MESG_NOBLOCK) != -1) {
+        while (osRecvMesg(gAudioCtx.threadCmdProcQueueP, (OSMesg*)&sp4C, OS_MESG_NOBLOCK) != -1) {
             if (1) {}
             AudioThread_ProcessCmds(sp4C);
             j++;
         }
-        if ((j == 0) && gAudioCtx.cmdQueueFinished) {
+        if ((j == 0) && gAudioCtx.threadCmdQueueFinished) {
             AudioThread_ScheduleProcessCmds();
         }
     }
@@ -353,29 +353,29 @@ void AudioThread_SetFadeInTimer(s32 seqPlayerIndex, s32 fadeInTimer) {
 }
 
 void AudioThread_InitMesgQueuesInternal(void) {
-    gAudioCtx.cmdWritePos = 0;
-    gAudioCtx.cmdReadPos = 0;
-    gAudioCtx.cmdQueueFinished = false;
+    gAudioCtx.threadCmdWritePos = 0;
+    gAudioCtx.threadCmdReadPos = 0;
+    gAudioCtx.threadCmdQueueFinished = false;
 
     gAudioCtx.taskStartQueueP = &gAudioCtx.taskStartQueue;
-    gAudioCtx.cmdProcQueueP = &gAudioCtx.cmdProcQueue;
+    gAudioCtx.threadCmdProcQueueP = &gAudioCtx.threadCmdProcQueue;
     gAudioCtx.audioResetQueueP = &gAudioCtx.audioResetQueue;
 
     osCreateMesgQueue(gAudioCtx.taskStartQueueP, gAudioCtx.taskStartMsgBuf, ARRAY_COUNT(gAudioCtx.taskStartMsgBuf));
-    osCreateMesgQueue(gAudioCtx.cmdProcQueueP, gAudioCtx.cmdProcMsgBuf, ARRAY_COUNT(gAudioCtx.cmdProcMsgBuf));
+    osCreateMesgQueue(gAudioCtx.threadCmdProcQueueP, gAudioCtx.cmdProcMsgBuf, ARRAY_COUNT(gAudioCtx.cmdProcMsgBuf));
     osCreateMesgQueue(gAudioCtx.audioResetQueueP, gAudioCtx.audioResetMsgBuf, ARRAY_COUNT(gAudioCtx.audioResetMsgBuf));
 }
 
 void AudioThread_QueueCmd(u32 opArgs, void** data) {
-    AudioCmd* cmd = &gAudioCtx.cmdBuf[gAudioCtx.cmdWritePos & 0xFF];
+    AudioCmd* cmd = &gAudioCtx.threadCmdBuf[gAudioCtx.threadCmdWritePos & 0xFF];
 
     cmd->opArgs = opArgs;
     cmd->data = *data;
 
-    gAudioCtx.cmdWritePos++;
+    gAudioCtx.threadCmdWritePos++;
 
-    if (gAudioCtx.cmdWritePos == gAudioCtx.cmdReadPos) {
-        gAudioCtx.cmdWritePos--;
+    if (gAudioCtx.threadCmdWritePos == gAudioCtx.threadCmdReadPos) {
+        gAudioCtx.threadCmdWritePos--;
     }
 }
 
@@ -403,14 +403,14 @@ s32 AudioThread_ScheduleProcessCmds(void) {
     static s32 D_801304E8 = 0;
     s32 ret;
 
-    if (D_801304E8 < (u8)((gAudioCtx.cmdWritePos - gAudioCtx.cmdReadPos) + 0x100)) {
-        D_801304E8 = (u8)((gAudioCtx.cmdWritePos - gAudioCtx.cmdReadPos) + 0x100);
+    if (D_801304E8 < (u8)((gAudioCtx.threadCmdWritePos - gAudioCtx.threadCmdReadPos) + 0x100)) {
+        D_801304E8 = (u8)((gAudioCtx.threadCmdWritePos - gAudioCtx.threadCmdReadPos) + 0x100);
     }
 
-    ret = osSendMesg(gAudioCtx.cmdProcQueueP,
-                     (OSMesg)(((gAudioCtx.cmdReadPos & 0xFF) << 8) | (gAudioCtx.cmdWritePos & 0xFF)), OS_MESG_NOBLOCK);
+    ret = osSendMesg(gAudioCtx.threadCmdProcQueueP,
+                     (OSMesg)(((gAudioCtx.threadCmdReadPos & 0xFF) << 8) | (gAudioCtx.threadCmdWritePos & 0xFF)), OS_MESG_NOBLOCK);
     if (ret != -1) {
-        gAudioCtx.cmdReadPos = gAudioCtx.cmdWritePos;
+        gAudioCtx.threadCmdReadPos = gAudioCtx.threadCmdWritePos;
         ret = 0;
     } else {
         return -1;
@@ -420,8 +420,8 @@ s32 AudioThread_ScheduleProcessCmds(void) {
 }
 
 void AudioThread_ResetCmdQueue(void) {
-    gAudioCtx.cmdQueueFinished = false;
-    gAudioCtx.cmdReadPos = gAudioCtx.cmdWritePos;
+    gAudioCtx.threadCmdQueueFinished = false;
+    gAudioCtx.threadCmdReadPos = gAudioCtx.threadCmdWritePos;
 }
 
 void AudioThread_ProcessCmd(AudioCmd* cmd) {
@@ -468,25 +468,25 @@ void AudioThread_ProcessCmds(u32 msg) {
     AudioCmd* cmd;
     u8 endPos;
 
-    if (!gAudioCtx.cmdQueueFinished) {
+    if (!gAudioCtx.threadCmdQueueFinished) {
         sCurCmdRdPos = msg >> 8;
     }
 
     while (true) {
         endPos = msg & 0xFF;
         if (sCurCmdRdPos == endPos) {
-            gAudioCtx.cmdQueueFinished = false;
+            gAudioCtx.threadCmdQueueFinished = false;
             return;
         }
 
-        cmd = &gAudioCtx.cmdBuf[sCurCmdRdPos++ & 0xFF];
+        cmd = &gAudioCtx.threadCmdBuf[sCurCmdRdPos++ & 0xFF];
         if (cmd->op == AUDIOCMD_OP_GLOBAL_STOP_AUDIOCMDS) {
-            gAudioCtx.cmdQueueFinished = true;
+            gAudioCtx.threadCmdQueueFinished = true;
             return;
         }
 
         AudioThread_ProcessCmd(cmd);
-        cmd->op = 0;
+        cmd->op = AUDIOCMD_OP_NOOP;
     }
 }
 
@@ -639,7 +639,7 @@ void AudioThread_ProcessSeqPlayerCmd(SequencePlayer* seqPlayer, AudioCmd* cmd) {
             }
             break;
 
-        case AUDIOCMD_OP_SEQPLAYER_FADE_TO_SEQ_VOLUME:
+        case AUDIOCMD_OP_SEQPLAYER_RESET_VOLUME:
             if (seqPlayer->state != SEQPLAYER_STATE_FADE_OUT) {
                 if (cmd->asInt == 0) {
                     seqPlayer->fadeVolume = seqPlayer->volume;
