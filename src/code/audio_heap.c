@@ -914,11 +914,11 @@ void AudioHeap_Init(void) {
     }
     gAudioCtx.unk_2 = spec->unk_14;
 
-    // (tatums / min)
+    // (ticks / min)
     // 60 is a conversion from seconds to minutes
     // 1000 is a factor cancelled out in `maxTempoTvTypeFactors`
-    gAudioCtx.maxTempo = (u32)(gAudioCtx.audioBufParams.updatesPerFrame * (f32)(60 * 1000 * TATUMS_PER_BEAT) /
-                               gTempoData.tatumsPerBeat / gAudioCtx.maxTempoTvTypeFactors);
+    gAudioCtx.maxTempo = (u32)(gAudioCtx.audioBufParams.updatesPerFrame * (f32)(60 * 1000 * TICKS_PER_BEAT) /
+                               gTempoData.ticksPerBeat / gAudioCtx.maxTempoTvTypeFactors);
 
     gAudioCtx.scaledRefreshRate = gAudioCtx.refreshRate;
     gAudioCtx.scaledRefreshRate *= gAudioCtx.audioBufParams.updatesPerFrame;

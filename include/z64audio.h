@@ -1,9 +1,9 @@
 #ifndef Z64_AUDIO_H
 #define Z64_AUDIO_H
 
-#define TATUMS_PER_UPDATE_PAL 1.001521f
-#define TATUMS_PER_UPDATE_MPAL 0.99276f
-#define TATUMS_PER_UPDATE_NTSC 1.00278f
+#define TICKS_PER_UPDATE_PAL 1.001521f
+#define TICKS_PER_UPDATE_MPAL 0.99276f
+#define TICKS_PER_UPDATE_NTSC 1.00278f
 
 #define REFRESH_RATE_PAL 50
 #define REFRESH_RATE_MPAL 60
@@ -13,7 +13,8 @@
 
 #define NO_LAYER ((SequenceLayer*)(-1))
 
-#define TATUMS_PER_BEAT 48
+// Also known as "Pulses Per Quarter Note" or "Tatums Per Beat"
+#define TICKS_PER_BEAT 48
 
 #define IS_SEQUENCE_CHANNEL_VALID(ptr) ((uintptr_t)(ptr) != (uintptr_t)&gAudioCtx.sequenceChannelNone)
 #define SEQ_NUM_CHANNELS 16
@@ -336,7 +337,7 @@ typedef struct {
     /* 0x005 */ u8 defaultFont;
     /* 0x006 */ u8 unk_06[1];
     /* 0x007 */ s8 seqPlayerIndex;
-    /* 0x008 */ u16 tempo; // tatums per minute
+    /* 0x008 */ u16 tempo; // ticks per minute
     /* 0x00A */ u16 tempoAcc; // tempo accumulation, used in a discretized algorithm to apply tempo.
     /* 0x00C */ u16 tempoChange; // Used to adjust the tempo without altering the base tempo.
     /* 0x00E */ s16 transposition;
@@ -1022,7 +1023,7 @@ typedef struct {
 
 typedef struct {
     /* 0x0 */ s16 unk_00; // set to 0x1C00, unused
-    /* 0x2 */ s16 tatumsPerBeat;
+    /* 0x2 */ s16 ticksPerBeat;
 } TempoData; // size = 0x4
 
 typedef struct {

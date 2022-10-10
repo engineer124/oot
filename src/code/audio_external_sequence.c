@@ -44,13 +44,13 @@ void AudioSeq_StartSequence(u8 seqPlayerIndex, u8 seqId, u8 seqArgs, u16 fadeInD
     if (!gStartSeqDisabled || (seqPlayerIndex == SEQ_PLAYER_SFX)) {
         seqArgs &= 0x7F;
         if (seqArgs == 0x7F) {
-            // `fadeInDuration` is interpreted as skip ticks
+            // `fadeInDuration` is interpreted as seconds
             skipTicks = (fadeInDuration >> 3) * 60 * gAudioCtx.audioBufParams.updatesPerFrame;
-            AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER_SKIP_TICKS((u32)seqPlayerIndex, (u32)seqId, skipTicks);
+            AUDIOCMD_GLOBAL_INIT_SEQPLAYER_SKIP_TICKS((u32)seqPlayerIndex, (u32)seqId, skipTicks);
         } else {
-            // `fadeInDuration` is interpreted as number of frames at 30 fps
-            AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER((u32)seqPlayerIndex, (u32)seqId,
-                                                (fadeInDuration * (u16)gAudioCtx.audioBufParams.updatesPerFrame) / 4);
+            // `fadeInDuration` is interpreted as (1/30th) of a second
+            AUDIOCMD_GLOBAL_INIT_SEQPLAYER((u32)seqPlayerIndex, (u32)seqId,
+                                           (fadeInDuration * (u16)gAudioCtx.audioBufParams.updatesPerFrame) / 4);
         }
 
         gSeqController[seqPlayerIndex].seqId = seqId | (seqArgs << 8);
@@ -544,7 +544,7 @@ void AudioSeq_UpdateActiveSequences(void) {
 
             // Process tempo commands
             if (gAudioCtx.seqPlayers[seqPlayerIndex].enabled) {
-                tempoPrev = gAudioCtx.seqPlayers[seqPlayerIndex].tempo / TATUMS_PER_BEAT;
+                tempoPrev = gAudioCtx.seqPlayers[seqPlayerIndex].tempo / TICKS_PER_BEAT;
                 tempoOp = (tempoCmd & 0xF000) >> 12;
                 switch (tempoOp) {
                     case SEQCMD_SUB_OP_TEMPO_SPEED_UP:
@@ -585,7 +585,7 @@ void AudioSeq_UpdateActiveSequences(void) {
                 }
 
                 gSeqController[seqPlayerIndex].tempoTarget = tempoTarget;
-                gSeqController[seqPlayerIndex].tempoCur = gAudioCtx.seqPlayers[seqPlayerIndex].tempo / TATUMS_PER_BEAT;
+                gSeqController[seqPlayerIndex].tempoCur = gAudioCtx.seqPlayers[seqPlayerIndex].tempo / TICKS_PER_BEAT;
                 gSeqController[seqPlayerIndex].tempoStep =
                     (gSeqController[seqPlayerIndex].tempoCur - gSeqController[seqPlayerIndex].tempoTarget) / tempoTimer;
                 gSeqController[seqPlayerIndex].tempoTimer = tempoTimer;

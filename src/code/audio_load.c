@@ -1217,18 +1217,18 @@ void AudioLoad_Init(void* heap, size_t heapSize) {
 
     switch (osTvType) {
         case OS_TV_PAL:
-            gAudioCtx.maxTempoTvTypeFactors = 1000 * TATUMS_PER_UPDATE_PAL / REFRESH_RATE_PAL;
+            gAudioCtx.maxTempoTvTypeFactors = 1000 * TICKS_PER_UPDATE_PAL / REFRESH_RATE_PAL;
             gAudioCtx.refreshRate = REFRESH_RATE_PAL;
             break;
 
         case OS_TV_MPAL:
-            gAudioCtx.maxTempoTvTypeFactors = 1000 * TATUMS_PER_UPDATE_MPAL / REFRESH_RATE_MPAL;
+            gAudioCtx.maxTempoTvTypeFactors = 1000 * TICKS_PER_UPDATE_MPAL / REFRESH_RATE_MPAL;
             gAudioCtx.refreshRate = REFRESH_RATE_MPAL;
             break;
 
         case OS_TV_NTSC:
         default:
-            gAudioCtx.maxTempoTvTypeFactors = 1000 * TATUMS_PER_UPDATE_NTSC / REFRESH_RATE_NTSC;
+            gAudioCtx.maxTempoTvTypeFactors = 1000 * TICKS_PER_UPDATE_NTSC / REFRESH_RATE_NTSC;
             gAudioCtx.refreshRate = REFRESH_RATE_NTSC;
             break;
     }

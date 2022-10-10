@@ -30,11 +30,11 @@ typedef enum {
     /* 0x4B */ AUDIOCMD_OP_SEQPLAYER_FADE_TO_SCALED_VOLUME,
     /* 0x4C */ AUDIOCMD_OP_SEQPLAYER_FADE_TO_SEQ_VOLUME,
     /* 0x4D */ AUDIOCMD_OP_SEQPLAYER_SET_BEND,
-    /* 0x4E */ AUDIOCMD_OP_SEQPLAYER_CHANGE_TATUM_TEMPO,
+    /* 0x4E */ AUDIOCMD_OP_SEQPLAYER_CHANGE_TEMPO_TICKS,
     /* 0x81 */ AUDIOCMD_OP_GLOBAL_SYNC_LOAD_SEQ_PARTS = 0x81,
-    /* 0x82 */ AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER,
+    /* 0x82 */ AUDIOCMD_OP_GLOBAL_INIT_SEQPLAYER,
     /* 0x83 */ AUDIOCMD_OP_GLOBAL_DISABLE_SEQPLAYER,
-    /* 0x85 */ AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER_SKIP_TICKS = 0x85,
+    /* 0x85 */ AUDIOCMD_OP_GLOBAL_INIT_SEQPLAYER_SKIP_TICKS = 0x85,
     /* 0x90 */ AUDIOCMD_OP_GLOBAL_SET_CHANNEL_MASK = 0x90,
     /* 0xE0 */ AUDIOCMD_OP_GLOBAL_SET_DRUM_FONT = 0xE0,
     /* 0xE1 */ AUDIOCMD_OP_GLOBAL_SET_SFX_FONT,
@@ -262,13 +262,13 @@ typedef enum {
     AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_CHANGE_TEMPO, seqPlayerIndex, 0, 0), tempoChange)
 
 /**
- * Set tempoChange in tatums per minute.
+ * Set tempoChange in ticks per minute.
  *
  * @param seqPlayerIndex the index of the seqPlayer to modify
- * @param tempoChange difference in tempo to change, in tatums per minute
+ * @param tempoChange difference in tempo to change, in ticks per minute
  */
-#define AUDIOCMD_SEQPLAYER_CHANGE_TATUM_TEMPO(seqPlayerIndex, tempoChange) \
-    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_CHANGE_TATUM_TEMPO, seqPlayerIndex, 0, 0), tempoChange)
+#define AUDIOCMD_SEQPLAYER_CHANGE_TEMPO_TICKS(seqPlayerIndex, tempoChange) \
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_SEQPLAYER_CHANGE_TEMPO_TICKS, seqPlayerIndex, 0, 0), tempoChange)
 
 /**
  * Fade the volume to the requested volume set directly
@@ -328,8 +328,8 @@ typedef enum {
  * @param seqId the id of the sequence to play, see `SeqId`
  * @param fadeInTimer
  */
-#define AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER(seqPlayerIndex, seqId, fadeInTimer) \
-    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER, seqPlayerIndex, seqId, 0), fadeInTimer)
+#define AUDIOCMD_GLOBAL_INIT_SEQPLAYER(seqPlayerIndex, seqId, fadeInTimer) \
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_INIT_SEQPLAYER, seqPlayerIndex, seqId, 0), fadeInTimer)
 
 /**
  * Disable a sequence player.
@@ -349,8 +349,8 @@ typedef enum {
  * @param seqId the id of the sequence to play, see `SeqId`
  * @param skipTicks
  */
-#define AUDIOCMD_GLOBAL_SYNC_INIT_SEQPLAYER_SKIP_TICKS(seqPlayerIndex, seqId, skipTicks)                               \
-    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER_SKIP_TICKS, seqPlayerIndex, seqId, 0), \
+#define AUDIOCMD_GLOBAL_INIT_SEQPLAYER_SKIP_TICKS(seqPlayerIndex, seqId, skipTicks)                               \
+    AudioThread_QueueCmdS32(AUDIO_MK_CMD(AUDIOCMD_OP_GLOBAL_INIT_SEQPLAYER_SKIP_TICKS, seqPlayerIndex, seqId, 0), \
                             skipTicks)
 
 /**

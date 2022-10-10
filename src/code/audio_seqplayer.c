@@ -1821,7 +1821,7 @@ void AudioScript_SequencePlayerProcessSequence(SequencePlayer* seqPlayer) {
                         break;
 
                     case 0xDD: // `tempo(u8)`, seqPlayer: set tempo
-                        seqPlayer->tempo = AudioScript_ScriptReadU8(seqScript) * TATUMS_PER_BEAT;
+                        seqPlayer->tempo = AudioScript_ScriptReadU8(seqScript) * TICKS_PER_BEAT;
                         if (seqPlayer->tempo > gAudioCtx.maxTempo) {
                             seqPlayer->tempo = (u16)gAudioCtx.maxTempo;
                         }
@@ -1832,7 +1832,7 @@ void AudioScript_SequencePlayerProcessSequence(SequencePlayer* seqPlayer) {
                         break;
 
                     case 0xDC: // `tempochg(s8)`, seqPlayer: add tempo
-                        seqPlayer->tempoChange = (s8)AudioScript_ScriptReadU8(seqScript) * TATUMS_PER_BEAT;
+                        seqPlayer->tempoChange = (s8)AudioScript_ScriptReadU8(seqScript) * TICKS_PER_BEAT;
                         break;
 
                     case 0xDA: // `volmode(s8)`, seqPlayer: set volume mode (seqPlayer State)
@@ -2080,7 +2080,7 @@ void AudioScript_ResetSequencePlayer(SequencePlayer* seqPlayer) {
     seqPlayer->fadeTimer = 0;
     seqPlayer->storedFadeTimer = 0;
     seqPlayer->tempoAcc = 0;
-    seqPlayer->tempo = 120 * TATUMS_PER_BEAT; // 120 BPM
+    seqPlayer->tempo = 120 * TICKS_PER_BEAT; // 120 BPM
     seqPlayer->tempoChange = 0;
     seqPlayer->transposition = 0;
     seqPlayer->noteAllocPolicy = 0;

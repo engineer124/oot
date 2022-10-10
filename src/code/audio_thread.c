@@ -208,12 +208,12 @@ void AudioThread_ProcessGlobalCmd(AudioCmd* cmd) {
             AudioLoad_SyncLoadSeqParts(cmd->arg1, cmd->arg2);
             break;
 
-        case AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER:
+        case AUDIOCMD_OP_GLOBAL_INIT_SEQPLAYER:
             AudioLoad_SyncInitSeqPlayer(cmd->arg0, cmd->arg1, cmd->arg2);
             AudioThread_SetFadeInTimer(cmd->arg0, cmd->asInt);
             break;
 
-        case AUDIOCMD_OP_GLOBAL_SYNC_INIT_SEQPLAYER_SKIP_TICKS:
+        case AUDIOCMD_OP_GLOBAL_INIT_SEQPLAYER_SKIP_TICKS:
             AudioLoad_SyncInitSeqPlayerSkipTicks(cmd->arg0, cmd->arg1, cmd->asInt);
             break;
 
@@ -599,14 +599,14 @@ void AudioThread_ProcessSeqPlayerCmd(SequencePlayer* seqPlayer, AudioCmd* cmd) {
             break;
 
         case AUDIOCMD_OP_SEQPLAYER_SET_TEMPO:
-            seqPlayer->tempo = cmd->asInt * TATUMS_PER_BEAT;
+            seqPlayer->tempo = cmd->asInt * TICKS_PER_BEAT;
             break;
 
         case AUDIOCMD_OP_SEQPLAYER_CHANGE_TEMPO:
-            seqPlayer->tempoChange = cmd->asInt * TATUMS_PER_BEAT;
+            seqPlayer->tempoChange = cmd->asInt * TICKS_PER_BEAT;
             break;
 
-        case AUDIOCMD_OP_SEQPLAYER_CHANGE_TATUM_TEMPO:
+        case AUDIOCMD_OP_SEQPLAYER_CHANGE_TEMPO_TICKS:
             seqPlayer->tempoChange = cmd->asInt;
             break;
 
