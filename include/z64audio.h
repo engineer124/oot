@@ -28,7 +28,7 @@ typedef enum {
 } AudioHeapResetState;
 
 typedef enum {
-    /* 0 */ SEQPLAYER_STATE_0,
+    /* 0 */ SEQPLAYER_STATE_0, // on and off?
     /* 1 */ SEQPLAYER_STATE_FADE_IN,
     /* 2 */ SEQPLAYER_STATE_FADE_OUT
 } SeqPlayerState;

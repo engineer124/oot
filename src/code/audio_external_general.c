@@ -136,8 +136,8 @@ u8 sSeqModeInput = 0;
 #define SEQ_FLAG_ENEMY (1 << 0) // Allows enemy bgm
 #define SEQ_FLAG_FANFARE (1 << 1)
 #define SEQ_FLAG_FANFARE_GANON (1 << 2)
-#define SEQ_FLAG_RESTORE \
-    (1 << 3) // required for Audio_RestorePrevBgm to restore a sequence after Audio_PlayBgm_StorePrevBgm
+// required for Audio_RestorePrevBgm to restore a sequence after Audio_PlayBgm_StorePrevBgm
+#define SEQ_FLAG_RESTORE (1 << 3)
 
 /**
  * These two sequence flags work together to implement a “resume playing from where you left off” system for scene
@@ -4736,7 +4736,7 @@ void Audio_PlaySceneSequence(u16 seqId) {
             // Start the sequence from the beginning
 
             // Writes to ioPort 7. See `SEQ_FLAG_SKIP_HARP_INTRO` for writing a value of 1 to ioPort 7.
-            skipHarpIntro = (sSeqFlags[(seqId & 0xFF) & 0xFF] & SEQ_FLAG_SKIP_HARP_INTRO) ? 1 : 0xFF;
+            skipHarpIntro = (sSeqFlags[(seqId & 0xFF) & 0xFF] & SEQ_FLAG_SKIP_HARP_INTRO) ? 1 : (u8)SEQ_IO_VAL_NONE;
             Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_MAIN, seqId, 0, 7, skipHarpIntro);
 
             if (!(sSeqFlags[seqId] & SEQ_FLAG_RESUME_PREV)) {
@@ -4937,9 +4937,9 @@ void Audio_UpdateFanfare(void) {
     }
 }
 
-void Audio_PlaySequenceWithSeqPlayerIO(u8 seqPlayerIndex, u16 seqId, u8 fadeTimer, s8 ioPort, s8 ioData) {
+void Audio_PlaySequenceWithSeqPlayerIO(u8 seqPlayerIndex, u16 seqId, u8 fadeInDuration, s8 ioPort, s8 ioData) {
     SEQCMD_SET_PLAYER_IO(seqPlayerIndex, ioPort, ioData);
-    SEQCMD_PLAY_SEQUENCE(seqPlayerIndex, fadeTimer, 0, seqId);
+    SEQCMD_PLAY_SEQUENCE(seqPlayerIndex, fadeInDuration, 0, seqId);
 }
 
 void Audio_SetSequenceMode(u8 seqMode) {

@@ -408,7 +408,8 @@ s32 AudioThread_ScheduleProcessCmds(void) {
     }
 
     ret = osSendMesg(gAudioCtx.threadCmdProcQueueP,
-                     (OSMesg)(((gAudioCtx.threadCmdReadPos & 0xFF) << 8) | (gAudioCtx.threadCmdWritePos & 0xFF)), OS_MESG_NOBLOCK);
+                     (OSMesg)(((gAudioCtx.threadCmdReadPos & 0xFF) << 8) | (gAudioCtx.threadCmdWritePos & 0xFF)),
+                     OS_MESG_NOBLOCK);
     if (ret != -1) {
         gAudioCtx.threadCmdReadPos = gAudioCtx.threadCmdWritePos;
         ret = 0;
