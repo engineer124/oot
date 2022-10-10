@@ -1879,7 +1879,7 @@ void Audio_PlaySfx_Window(u8 windowToggleDirection);
 void Audio_PlaySfx_IfNotInCutscene(u16 sfxId);
 
 void Audio_PlayCutsceneEffectsSequence(u8 csEffectType);
-void Audio_PlaySariaBgm(Vec3f* pos, u16 seqId, u16 distMax);
+void Audio_PlayRiverSoundBgm(Vec3f* pos, u16 seqId, u16 distMax);
 void Audio_PlayMorningSceneSequence(u16 seqId);
 void Audio_PlaySceneSequence(u16 seqId);
 void Audio_PlayBgmForSongOfStorms(void);
@@ -1911,7 +1911,7 @@ void Audio_SetAmbienceChannelIO(u8 channelIndexRange, u8 ioPort, u8 ioData);
 void Audio_MuteAllSeqExceptSysAndOca(u16);
 void Audio_LowerMainBgmVolume(u8 volume);
 void Audio_ResetIncreasingTranspose(void);
-void Audio_UpdateRiverSoundParameters(Vec3f* pos, f32 xzDistToPlayer);
+void Audio_UpdateRiverSoundBgm(Vec3f* pos, f32 xzDistToPlayer);
 void Audio_ClearRiverSoundBgmPos(void);
 void Audio_ClearRiverSoundBgmPosAtPos(Vec3f* pos);
 void Audio_ClearRiverSoundBgmPos2(void);

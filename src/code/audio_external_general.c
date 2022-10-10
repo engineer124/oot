@@ -4557,7 +4557,7 @@ void AudioSfx_SetChannelIO(Vec3f* pos, u16 sfxId, u8 ioData) {
 /**
  * Used to update position, pan, and volume of Saria's Sequence in Lost Woods
  */
-void Audio_UpdateRiverSoundParameters(Vec3f* pos, f32 xzDistToPlayer) {
+void Audio_UpdateRiverSoundBgm(Vec3f* pos, f32 xzDistToPlayer) {
     f32 volumeRel;
     s8 pan;
     u8 channelIndex;
@@ -4658,7 +4658,7 @@ void Audio_SplitBgmChannels(s8 volSplit) {
     }
 }
 
-void Audio_PlaySariaBgm(Vec3f* pos, u16 seqId, u16 distMax) {
+void Audio_PlayRiverSoundBgm(Vec3f* pos, u16 seqId, u16 distMax) {
     f32 absY;
     f32 dist;
     u8 targetVolume;
