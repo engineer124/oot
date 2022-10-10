@@ -1324,7 +1324,7 @@ SfxPlayerState sSfxChannelState[SEQ_NUM_CHANNELS];
 char sBinToStrBuf[0x20];
 u8 sMalonsSingingTimer;
 u8 sAudioSpecPeakNumNotes[0x12];
-u8 sMalonsSingingDisabled;
+u8 sMalonSingingDisabled;
 u8 sRiverSoundBgmTimer;
 u8 sFanfareStartTimer;
 u16 sFanfareSeqId;
@@ -1351,8 +1351,8 @@ u16 sMusicStaffCurHeldLength[OCARINA_SONG_MAX];
 u16 sMusicStaffExpectedLength[OCARINA_SONG_MAX];
 u8 sMusicStaffExpectedPitch[OCARINA_SONG_MAX];
 OcarinaNote sScarecrowsLongSongSecondNote;
-u8 sAudioDebugIsMalonSingingUpdating;
-f32 sAudioDebugMalonSingingDist;
+u8 sIsMalonSinging;
+f32 sMalonSingingDist;
 
 void PadMgr_RequestPadData(PadMgr* padMgr, Input* inputs, s32 gameRequest);
 
@@ -3146,9 +3146,9 @@ void AudioDebug_Draw(GfxPrint* printer) {
             GfxPrint_Printf(printer, "DEMO FLAG %d", sAudioCutsceneFlag);
 
             GfxPrint_SetPos(printer, 3, 12);
-            if (sAudioDebugIsMalonSingingUpdating == true) {
-                GfxPrint_Printf(printer, "MARON BGM DIST %f", sAudioDebugMalonSingingDist);
-                sAudioDebugIsMalonSingingUpdating = false;
+            if (sIsMalonSinging == true) {
+                GfxPrint_Printf(printer, "MARON BGM DIST %f", sMalonSingingDist);
+                sIsMalonSinging = false;
             }
 
             GfxPrint_SetPos(printer, 3, 23);
@@ -5050,10 +5050,10 @@ void Audio_UpdateMalonSinging(f32 dist, u16 seqId) {
     s8 melodyVolume;
     s16 curSeqId;
 
-    sAudioDebugIsMalonSingingUpdating = true;
-    sAudioDebugMalonSingingDist = dist;
+    sIsMalonSinging = true;
+    sMalonSingingDist = dist;
 
-    if (sMalonsSingingDisabled) {
+    if (sMalonSingingDisabled) {
         return;
     }
 
@@ -5061,7 +5061,7 @@ void Audio_UpdateMalonSinging(f32 dist, u16 seqId) {
 
     if (curSeqId == (seqId & 0xFF)) {
         if ((seqId & 0xFF) == SEQ_ID_LONLON) {
-            // Malon singing in Lon Lon Ranch
+            // Malon is singing along with the Lon Lon Sequence
 
             if (dist > 2000.0f) {
                 melodyVolume = 127;
@@ -5070,7 +5070,8 @@ void Audio_UpdateMalonSinging(f32 dist, u16 seqId) {
             } else {
                 melodyVolume = (s8)(((dist - 200.0f) * 127.0f) / 1800.0f);
             }
-            // Update volume for channels 0 & 1, which contains Malon's singing
+
+            // Update volume for channels 0 & 1, which contain Malon's singing
             SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_MAIN, 0, 3, 127 - melodyVolume);
             SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_MAIN, 1, 3, 127 - melodyVolume);
 
@@ -5082,10 +5083,13 @@ void Audio_UpdateMalonSinging(f32 dist, u16 seqId) {
             }
         }
     } else if ((curSeqId == SEQ_ID_AMBIENCE) && ((seqId & 0xFF) == SEQ_ID_LONLON)) {
-        // Malon singing at night market
+        // Malon is singing along with ambience
         curSeqId = (s8)(AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) & 0xFF);
+
         if ((curSeqId != (seqId & 0xFF)) && (sMalonsSingingTimer < 10)) {
             Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_SUB, SEQ_ID_LONLON, 0, 0, 0);
+            // Disable all channels between 2-15.
+            // Only allow the two channels with Malon's singing to play, and suppress the full lon lon sequence.
             SEQCMD_SET_CHANNEL_DISABLE_MASK(SEQ_PLAYER_BGM_SUB, 0xFFFC);
             sMalonsSingingTimer = 10;
         }
@@ -5097,7 +5101,8 @@ void Audio_UpdateMalonSinging(f32 dist, u16 seqId) {
         } else {
             melodyVolume = (s8)(((dist - 200.0f) * 127.0f) / 1800.0f);
         }
-        // Update volume for channels 0 & 1, which contains Malon's singing
+
+        // Update volume for channels 0 & 1, which contain Malon's singing
         SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_SUB, 0, 3, 127 - melodyVolume);
         SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_SUB, 1, 3, 127 - melodyVolume);
     }
@@ -5120,46 +5125,54 @@ void Audio_PlaySfx_Window(u8 windowToggleDirection) {
     }
 }
 
-void Audio_SetMalonsSigning(u8 malonsSingingDisabled) {
+/**
+ * Enable or disable Malon's singing
+ *
+ * @param malonSingingDisabled true to disable, false to enable
+ */
+void Audio_ToggleMalonSinging(u8 malonsSingingDisabled) {
     u8 seqPlayerIndex;
     u16 channelMaskDisable;
 
-    sMalonsSingingDisabled = malonsSingingDisabled;
+    sMalonSingingDisabled = malonsSingingDisabled;
 
     if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) & 0xFF) == SEQ_ID_LONLON) {
-        // Malon singing in Lon Lon Ranch
+        // Malon is singing along with the Lon Lon Sequence
         seqPlayerIndex = SEQ_PLAYER_BGM_MAIN;
         // Do not disable any channel.
         // Allow the full lon lon sequence to play in addition to Malon's singing.
         channelMaskDisable = 0;
     } else if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) & 0xFF) == SEQ_ID_LONLON) {
-        // Malon singing at night market
+        // Malon is singing along with ambience
         seqPlayerIndex = SEQ_PLAYER_BGM_SUB;
         // Disable all channels between 2-15.
-        // Only allow the two channels with Malon's singing to play, and surpress the full lon lon sequence.
+        // Only allow the two channels with Malon's singing to play, and suppress the full lon lon sequence.
         channelMaskDisable = 0xFFFC;
     } else {
         return;
     }
 
     if (malonsSingingDisabled) {
-        // Turn volume off for channels 0 & 1, which contains Malon's singing,
+        // Turn volume off for channels 0 & 1, which contain Malon's singing,
         SEQCMD_SET_CHANNEL_VOLUME(seqPlayerIndex, 0, 1, 0);
         SEQCMD_SET_CHANNEL_VOLUME(seqPlayerIndex, 1, 1, 0);
+
         if (seqPlayerIndex == SEQ_PLAYER_BGM_SUB) {
-            // In night market, disable all 16 channels
+            // When singing along with ambience, disable all 16 channels
             SEQCMD_SET_CHANNEL_DISABLE_MASK(seqPlayerIndex, channelMaskDisable | 3);
         }
     } else {
         if (seqPlayerIndex == SEQ_PLAYER_BGM_SUB) {
-            // In night market, start the sequence.
+            // When singing along with ambience, start the sequence
             Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_SUB, SEQ_ID_LONLON, 0, 0, 0);
         }
-        // Turn volume on for channels 0 & 1, which contains Malon's singing,
+
+        // Turn volume on for only channels 0 & 1, which contain Malon's singing
         SEQCMD_SET_CHANNEL_VOLUME(seqPlayerIndex, 0, 1, 0x7F);
         SEQCMD_SET_CHANNEL_VOLUME(seqPlayerIndex, 1, 1, 0x7F);
+
         if (seqPlayerIndex == SEQ_PLAYER_BGM_SUB) {
-            // In night market, disable channels 2-15
+            // When singing along with ambience, disable channels 2-15
             SEQCMD_SET_CHANNEL_DISABLE_MASK(seqPlayerIndex, channelMaskDisable);
         }
     }
@@ -5348,7 +5361,7 @@ void Audio_ResetData(void) {
     sRiverSoundBgmPos = NULL;
     sFanfareStartTimer = 0;
     sRiverSoundBgmTimer = 1;
-    sMalonsSingingDisabled = false;
+    sMalonSingingDisabled = false;
 }
 
 void Audio_SetAmbienceChannelIO(u8 channelIndexRange, u8 ioPort, u8 ioData) {
