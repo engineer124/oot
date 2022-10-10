@@ -1322,7 +1322,7 @@ u8 sRiverSoundMainBgmRestore;
 u8 sGanonsTowerVol;
 SfxPlayerState sSfxChannelState[SEQ_NUM_CHANNELS];
 char sBinToStrBuf[0x20];
-u8 sMalonsSingingTimer;
+u8 sMalonSingingTimer;
 u8 sAudioSpecPeakNumNotes[0x12];
 u8 sMalonSingingDisabled;
 u8 sRiverSoundBgmTimer;
@@ -5078,20 +5078,20 @@ void Audio_UpdateMalonSinging(f32 dist, u16 seqId) {
             // Update volume for channel 13, which contains the melody line for Lon Lon's Sequence
             SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_MAIN, 13, 3, melodyVolume);
 
-            if (sMalonsSingingTimer == 0) {
-                sMalonsSingingTimer++;
+            if (sMalonSingingTimer == 0) {
+                sMalonSingingTimer++;
             }
         }
     } else if ((curSeqId == SEQ_ID_AMBIENCE) && ((seqId & 0xFF) == SEQ_ID_LONLON)) {
         // Malon is singing along with ambience
         curSeqId = (s8)(AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) & 0xFF);
 
-        if ((curSeqId != (seqId & 0xFF)) && (sMalonsSingingTimer < 10)) {
+        if ((curSeqId != (seqId & 0xFF)) && (sMalonSingingTimer < 10)) {
             Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_SUB, SEQ_ID_LONLON, 0, 0, 0);
             // Disable all channels between 2-15.
             // Only allow the two channels with Malon's singing to play, and suppress the full lon lon sequence.
             SEQCMD_SET_CHANNEL_DISABLE_MASK(SEQ_PLAYER_BGM_SUB, 0xFFFC);
-            sMalonsSingingTimer = 10;
+            sMalonSingingTimer = 10;
         }
 
         if (dist > 2000.0f) {
@@ -5107,8 +5107,8 @@ void Audio_UpdateMalonSinging(f32 dist, u16 seqId) {
         SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_SUB, 1, 3, 127 - melodyVolume);
     }
 
-    if (sMalonsSingingTimer < 10) {
-        sMalonsSingingTimer++;
+    if (sMalonSingingTimer < 10) {
+        sMalonSingingTimer++;
     }
 }
 
@@ -5130,11 +5130,11 @@ void Audio_PlaySfx_Window(u8 windowToggleDirection) {
  *
  * @param malonSingingDisabled true to disable, false to enable
  */
-void Audio_ToggleMalonSinging(u8 malonsSingingDisabled) {
+void Audio_ToggleMalonSinging(u8 malonSingingDisabled) {
     u8 seqPlayerIndex;
     u16 channelMaskDisable;
 
-    sMalonSingingDisabled = malonsSingingDisabled;
+    sMalonSingingDisabled = malonSingingDisabled;
 
     if ((AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) & 0xFF) == SEQ_ID_LONLON) {
         // Malon is singing along with the Lon Lon Sequence
@@ -5152,7 +5152,7 @@ void Audio_ToggleMalonSinging(u8 malonsSingingDisabled) {
         return;
     }
 
-    if (malonsSingingDisabled) {
+    if (malonSingingDisabled) {
         // Turn volume off for channels 0 & 1, which contain Malon's singing,
         SEQCMD_SET_CHANNEL_VOLUME(seqPlayerIndex, 0, 1, 0);
         SEQCMD_SET_CHANNEL_VOLUME(seqPlayerIndex, 1, 1, 0);
@@ -5353,7 +5353,7 @@ void Audio_ResetData(void) {
     sRiverSoundMainBgmLower = false;
     sRiverSoundMainBgmRestore = false;
     sGanonsTowerVol = 0xFF;
-    sMalonsSingingTimer = 0;
+    sMalonSingingTimer = 0;
     sSpecReverb = sSpecReverbs[gAudioSpecId];
     sAudioIsWindowOpen = false;
     sPrevMainBgmSeqId = SEQ_ID_DISABLED;
@@ -5378,7 +5378,7 @@ void Audio_SetAmbienceChannelIO(u8 channelIndexRange, u8 ioPort, u8 ioData) {
     // channelIndexRange = 01 on ioPort 1
     if (((channelIndexRange << 8) + ioPort) == ((AMBIENCE_CHANNEL_CRITTER_0 << 8) + CHANNEL_IO_PORT_1)) {
         if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) != SEQ_ID_LONLON) {
-            sMalonsSingingTimer = 0;
+            sMalonSingingTimer = 0;
         }
     }
 

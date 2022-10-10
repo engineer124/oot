@@ -1896,7 +1896,7 @@ void Audio_SetSfxTimerLerpInterval(s8 timerLerpRange1, s8 timerLerpRange2);
 void Audio_SetBgmVolumeOff(void);
 void Audio_SetBgmVolumeOn(void);
 void Audio_SetMainBgmVolume(u8 targetVol, u8 volumeFadeTimer);
-void Audio_ToggleMalonSinging(u8 malonsSingingDisabled);
+void Audio_ToggleMalonSinging(u8 malonSingingDisabled);
 void Audio_SetGanonsTowerBgmVolumeLevel(u8 ganonsTowerLevel);
 void Audio_SetSeqTempoAndFreq(f32 scaleTempoAndFreq, u8 duration);
 void Audio_SetSequenceMode(u8 seqMode);

@@ -298,13 +298,15 @@ void EnMa3_Update(Actor* thisx, PlayState* play) {
     func_800343CC(play, &this->actor, &this->unk_1E0.unk_00, (f32)this->collider.dim.radius + 150.0f, func_80AA2AA0,
                   func_80AA2BD4);
     if (this->unk_1E0.unk_00 == 0) {
-        if (this->unk_20A != 0) {
+        if (this->isNotSinging) {
+            // Turn on singing
             Audio_ToggleMalonSinging(false);
-            this->unk_20A = 0;
+            this->isNotSinging = false;
         }
-    } else if (this->unk_20A == 0) {
+    } else if (!this->isNotSinging) {
+        // Turn off singing
         Audio_ToggleMalonSinging(true);
-        this->unk_20A = 1;
+        this->isNotSinging = true;
     }
 }
 
@@ -357,14 +359,14 @@ void EnMa3_Draw(Actor* thisx, PlayState* play) {
     static void* sEyeTextures[] = { gMalonAdultEyeOpenTex, gMalonAdultEyeHalfTex, gMalonAdultEyeClosedTex };
     EnMa3* this = (EnMa3*)thisx;
     Camera* activeCam;
-    f32 someFloat;
+    f32 distFromCamEye;
     s32 pad;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_ma3.c", 978);
 
     activeCam = GET_ACTIVE_CAM(play);
-    someFloat = Math_Vec3f_DistXZ(&this->actor.world.pos, &activeCam->eye);
-    Audio_UpdateMalonSinging(someFloat, SEQ_ID_LONLON);
+    distFromCamEye = Math_Vec3f_DistXZ(&this->actor.world.pos, &activeCam->eye);
+    Audio_UpdateMalonSinging(distFromCamEye, SEQ_ID_LONLON);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(sMouthTextures[this->mouthIndex]));
