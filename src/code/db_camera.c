@@ -85,7 +85,7 @@ char D_8012D0F8[] = GFXP_HIRAGANA "Yｶｲﾃﾝ       \0\0";
 #define MENU_SUCCESS 2
 #define MENU_ERROR 9
 
-#define DEMO_CTRL_MENU(actionIdx, menuIdx) (actionIdx * 100 + menuIdx)
+#define DEMO_CTRL_MENU(actionIndex, menuIndex) (actionIndex * 100 + menuIndex)
 
 s32 DbCamera_SaveCallback(char* c);
 s32 DbCamera_LoadCallback(char* c);
@@ -166,12 +166,12 @@ Vec3f* DbCamera_CalcUpFromPitchYawRoll(Vec3f* dest, s16 pitch, s16 yaw, s16 roll
     return dest;
 }
 
-char* DbCamera_SetTextValue(s16 value, char* str, u8 endIdx) {
+char* DbCamera_SetTextValue(s16 value, char* str, u8 endIndex) {
     char* strIter;
     char sign;
 
-    strIter = str + (s32)endIdx - 1;
-    str[endIdx] = '\0';
+    strIter = str + (s32)endIndex - 1;
+    str[endIndex] = '\0';
 
     if (value >= 0) {
         sign = ' ';
@@ -199,13 +199,13 @@ char* DbCamera_SetTextValue(s16 value, char* str, u8 endIdx) {
     return strIter;
 }
 
-void DbCamera_Vec3SToF(Vec3s* in, Vec3f* out) {
+void DbCamera_Vec3sToVec3f(Vec3s* in, Vec3f* out) {
     out->x = in->x;
     out->y = in->y;
     out->z = in->z;
 }
 
-void DbCamera_Vec3FToS(Vec3f* in, Vec3s* out) {
+void DbCamera_Vec3fToVec3s(Vec3f* in, Vec3s* out) {
     out->x = in->x;
     out->y = in->y;
     out->z = in->z;
@@ -217,7 +217,8 @@ void DbCamera_CopyVec3f(Vec3f* in, Vec3f* out) {
     out->z = in->z;
 }
 
-void DbCamera_Vec3SToF2(Vec3s* in, Vec3f* out) {
+// Identical to DbCamera_Vec3sToVec3f
+void DbCamera_Vec3sToVec3fAlt(Vec3s* in, Vec3f* out) {
     out->x = in->x;
     out->y = in->y;
     out->z = in->z;
@@ -226,15 +227,17 @@ void DbCamera_Vec3SToF2(Vec3s* in, Vec3f* out) {
 void func_800B3F94(PosRot* posRot, Vec3f* vec, Vec3s* out) {
     VecSph sph;
     Vec3f tempVec;
+
     OLib_Vec3fDiffToVecSphGeo(&sph, &posRot->pos, vec);
     sph.yaw -= posRot->rot.y;
     OLib_VecSphGeoToVec3f(&tempVec, &sph);
-    DbCamera_Vec3FToS(&tempVec, out);
+    DbCamera_Vec3fToVec3s(&tempVec, out);
 }
 
 void func_800B3FF4(PosRot* posRot, Vec3f* vec, Vec3f* out) {
     VecSph sph;
     Vec3f tempVec;
+
     DbCamera_CopyVec3f(vec, &tempVec);
     OLib_Vec3fToVecSphGeo(&sph, &tempVec);
     sph.yaw += posRot->rot.y;
@@ -243,7 +246,8 @@ void func_800B3FF4(PosRot* posRot, Vec3f* vec, Vec3f* out) {
 
 void func_800B404C(PosRot* posRot, Vec3s* vec, Vec3f* out) {
     Vec3f tempVec;
-    DbCamera_Vec3SToF(vec, &tempVec);
+
+    DbCamera_Vec3sToVec3f(vec, &tempVec);
     func_800B3FF4(posRot, &tempVec, out);
 }
 
@@ -252,8 +256,8 @@ s32 func_800B4088(DbCamera* dbCamera, Camera* cam) {
     CutsceneCameraPoint* lookAt;
     s32 i;
 
-    position = &dbCamera->sub.position[dbCamera->sub.unkIdx];
-    lookAt = &dbCamera->sub.lookAt[dbCamera->sub.unkIdx];
+    position = &dbCamera->sub.position[dbCamera->sub.unkIndex];
+    lookAt = &dbCamera->sub.lookAt[dbCamera->sub.unkIndex];
 
     position->continueFlag = -1;
     lookAt->continueFlag = position->continueFlag;
@@ -263,8 +267,8 @@ s32 func_800B4088(DbCamera* dbCamera, Camera* cam) {
     lookAt->viewAngle = position->viewAngle = dbCamera->fov;
 
     if (dbCamera->sub.mode != 1) {
-        DbCamera_Vec3FToS(&dbCamera->eye, &position->pos);
-        DbCamera_Vec3FToS(&dbCamera->at, &lookAt->pos);
+        DbCamera_Vec3fToVec3s(&dbCamera->eye, &position->pos);
+        DbCamera_Vec3fToVec3s(&dbCamera->at, &lookAt->pos);
     } else {
         func_800B3F94(&cam->playerPosRot, &dbCamera->at, &lookAt->pos);
         func_800B3F94(&cam->playerPosRot, &dbCamera->eye, &position->pos);
@@ -276,16 +280,16 @@ s32 func_800B4088(DbCamera* dbCamera, Camera* cam) {
 
     dbCamera->sub.position[i].continueFlag = dbCamera->sub.lookAt[i].continueFlag = -1;
 
-    return dbCamera->sub.unkIdx;
+    return dbCamera->sub.unkIndex;
 }
 
-s16 func_800B41DC(DbCamera* dbCamera, s16 idx, Camera* cameraPtr) {
-    CutsceneCameraPoint* position = &dbCamera->sub.position[idx];
-    CutsceneCameraPoint* lookAt = &dbCamera->sub.lookAt[idx];
+s16 func_800B41DC(DbCamera* dbCamera, s16 index, Camera* cameraPtr) {
+    CutsceneCameraPoint* position = &dbCamera->sub.position[index];
+    CutsceneCameraPoint* lookAt = &dbCamera->sub.lookAt[index];
 
     if (dbCamera->sub.mode != 1) {
-        DbCamera_Vec3SToF2(&position->pos, &dbCamera->eye);
-        DbCamera_Vec3SToF2(&lookAt->pos, &dbCamera->at);
+        DbCamera_Vec3sToVec3fAlt(&position->pos, &dbCamera->eye);
+        DbCamera_Vec3sToVec3fAlt(&lookAt->pos, &dbCamera->at);
     } else {
         func_800B404C(&cameraPtr->playerPosRot, &lookAt->pos, &dbCamera->at);
         func_800B404C(&cameraPtr->playerPosRot, &position->pos, &dbCamera->eye);
@@ -294,38 +298,38 @@ s16 func_800B41DC(DbCamera* dbCamera, s16 idx, Camera* cameraPtr) {
     dbCamera->roll = lookAt->cameraRoll;
     dbCamera->rollDegrees = dbCamera->roll * (360.0f / 256.0f);
     dbCamera->fov = lookAt->viewAngle;
-    return idx;
+    return index;
 }
 
 s32 func_800B42C0(DbCamera* dbCamera, Camera* cameraPtr) {
 
-    CutsceneCameraPoint* position = &dbCamera->sub.position[dbCamera->sub.unkIdx];
-    CutsceneCameraPoint* lookAt = &dbCamera->sub.lookAt[dbCamera->sub.unkIdx];
+    CutsceneCameraPoint* position = &dbCamera->sub.position[dbCamera->sub.unkIndex];
+    CutsceneCameraPoint* lookAt = &dbCamera->sub.lookAt[dbCamera->sub.unkIndex];
 
     position->continueFlag = lookAt->continueFlag = 0;
 
     if (dbCamera->sub.mode != 1) {
-        DbCamera_Vec3FToS(&dbCamera->eye, &position->pos);
-        DbCamera_Vec3FToS(&dbCamera->at, &lookAt->pos);
+        DbCamera_Vec3fToVec3s(&dbCamera->eye, &position->pos);
+        DbCamera_Vec3fToVec3s(&dbCamera->at, &lookAt->pos);
     } else {
         func_800B3F94(&cameraPtr->playerPosRot, &dbCamera->at, &lookAt->pos);
         func_800B3F94(&cameraPtr->playerPosRot, &dbCamera->eye, &position->pos);
     }
 
-    return dbCamera->sub.unkIdx;
+    return dbCamera->sub.unkIndex;
 }
 
-s32 func_800B4370(DbCamera* dbCamera, s16 idx, Camera* cam) {
-    CutsceneCameraPoint* lookAt = &dbCamera->sub.lookAt[idx];
-    CutsceneCameraPoint* position = &dbCamera->sub.position[idx];
+s32 func_800B4370(DbCamera* dbCamera, s16 index, Camera* cam) {
+    CutsceneCameraPoint* lookAt = &dbCamera->sub.lookAt[index];
+    CutsceneCameraPoint* position = &dbCamera->sub.position[index];
     VecSph sph;
     Vec3f at;
 
     if (dbCamera->sub.mode != 1) {
         if (dbCamera->sub.unk_0C) {
-            DbCamera_Vec3SToF2(&position->pos, &dbCamera->at);
+            DbCamera_Vec3sToVec3fAlt(&position->pos, &dbCamera->at);
         } else {
-            DbCamera_Vec3SToF2(&lookAt->pos, &dbCamera->at);
+            DbCamera_Vec3sToVec3fAlt(&lookAt->pos, &dbCamera->at);
         }
     } else {
         if (dbCamera->sub.unk_0C) {
@@ -342,7 +346,7 @@ s32 func_800B4370(DbCamera* dbCamera, s16 idx, Camera* cam) {
     dbCamera->roll = lookAt->cameraRoll;
     dbCamera->rollDegrees = dbCamera->roll * (360.0f / 256.0f);
     dbCamera->fov = lookAt->viewAngle;
-    return idx;
+    return index;
 }
 
 void func_800B44E0(DbCamera* dbCamera, Camera* cam) {
@@ -528,13 +532,13 @@ void DbCamera_Init(DbCamera* dbCamera, Camera* cameraPtr) {
     dbCamera->sub.mode = 0;
     dbCamera->sub.nFrames = -1;
     dbCamera->sub.nPoints = 1;
-    dbCamera->sub.unkIdx = 0;
+    dbCamera->sub.unkIndex = 0;
     dbCamera->sub.unk_08 = 0;
     dbCamera->sub.unk_0A = 0;
     dbCamera->unk_78 = 0;
     dbCamera->unk_7A = 0;
     dbCamera->sub.demoCtrlMenu = DEMO_CTRL_MENU(ACTION_E, MENU_INFO);
-    dbCamera->sub.demoCtrlActionIdx = ACTION_E;
+    dbCamera->sub.demoCtrlActionIndex = ACTION_E;
     dbCamera->sub.demoCtrlToggleSwitch = 0;
     dbCamera->unk_6C.x = 0;
     dbCamera->unk_6C.y = 0;
@@ -548,7 +552,7 @@ void DbgCamera_Enable(DbCamera* dbCamera, Camera* cam) {
     dbCamera->fov = cam->fov;
     dbCamera->roll = 0;
     dbCamera->sub.nPoints = 1;
-    dbCamera->sub.unkIdx = 0;
+    dbCamera->sub.unkIndex = 0;
     dbCamera->sub.unk_08 = 0;
     dbCamera->sub.unk_0A = 1;
     dbCamera->sub.unk_0C = true;
@@ -564,14 +568,14 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
     static s32 D_80161140; // bool
     static s32 D_80161144; // bool
     Vec3f* sp124;
-    f32 temp_f0_5;
+    f32 stickAdjY;
     s16 yaw;
     f32 new_var2;
     f32 temp_f2;
     s16 pitch;
     char sp111;
     char sp110;
-    f32 temp_f2_2;
+    f32 stickAdjX;
     VecSph sp104;
     VecSph spFC;
     VecSph spF4;
@@ -605,7 +609,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
         dbCamera->unk_38 = 1;
         dbCamera->unk_44 = 0;
         dbCamera->unk_40 = -1;
-        dbCamera->sub.demoCtrlActionIdx = 0;
+        dbCamera->sub.demoCtrlActionIndex = 0;
         sDbCamAnim.unk_0A = 0;
         Audio_PlaySfxGeneral(NA_SE_SY_LOCK_ON, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -623,18 +627,24 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                     D_80161144 = false;
                     D_80161140 = false;
                     break;
+
                 case 1:
                     sp124 = &dbCamera->unk_6C;
                     D_80161144 = false;
                     D_80161140 = false;
                     break;
+
                 case 2:
                     sp124 = &dbCamera->unk_54;
                     D_80161144 = false;
                     D_80161140 = true;
                     break;
+
+                default:
+                    break;
             }
             break;
+
         case 1:
             switch (dbCamera->sub.unk_08) {
                 case 0:
@@ -646,6 +656,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                     }
                     D_80161140 = false;
                     break;
+
                 case 1:
                     D_80161144 = dbCamera->sub.unk_0C;
                     if (D_80161144) {
@@ -655,19 +666,26 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                     }
                     D_80161140 = false;
                     break;
+
                 case 2:
                     D_80161144 = false;
                     D_80161140 = true;
                     sp124 = sp7C;
                     break;
+
+                default:
+                    break;
             }
             break;
+
         case 2:
             DbCamera_UpdateDemoControl(dbCamera, cam);
             return;
+
         default:
             break;
     }
+
     phi_s0 = sp124;
 
     if (!D_80161144) {
@@ -931,25 +949,25 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
             Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             dbCamera->sub.unk_08 = 0;
-            func_800B41DC(dbCamera, dbCamera->sub.unkIdx, cam);
+            func_800B41DC(dbCamera, dbCamera->sub.unkIndex, cam);
         } else {
 
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_R) &&
                 CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
                 Audio_PlaySfxGeneral(NA_SE_SY_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                dbCamera->sub.nPoints = dbCamera->sub.unkIdx + 1;
+                dbCamera->sub.nPoints = dbCamera->sub.unkIndex + 1;
                 func_800B4088(dbCamera, cam);
             } else if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_R)) {
-                if (dbCamera->sub.unkIdx == 0x80) {
+                if (dbCamera->sub.unkIndex == 0x80) {
                     Audio_PlaySfxGeneral(NA_SE_SY_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 } else {
                     Audio_PlaySfxGeneral(NA_SE_IT_SWORD_PUTAWAY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     func_800B42C0(dbCamera, cam);
-                    if (dbCamera->sub.unkIdx == (dbCamera->sub.nPoints - 1)) {
-                        dbCamera->sub.unkIdx++;
+                    if (dbCamera->sub.unkIndex == (dbCamera->sub.nPoints - 1)) {
+                        dbCamera->sub.unkIndex++;
                         dbCamera->sub.nPoints++;
                         func_800B4088(dbCamera, cam);
                     }
@@ -957,19 +975,21 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
             }
         }
     } else {
-        temp_f0_5 = sPlay->state.input[DBCAM_CONTROLLER_PORT].rel.stick_y;
-        temp_f2_2 = sPlay->state.input[DBCAM_CONTROLLER_PORT].rel.stick_x;
-        pitch = CAM_DEG_TO_BINANG((SQ(temp_f0_5) / 600.0f) * 0.8f);
-        yaw = CAM_DEG_TO_BINANG((SQ(temp_f2_2) / 600.0f) * 0.8f);
+        stickAdjY = sPlay->state.input[DBCAM_CONTROLLER_PORT].rel.stick_y;
+        stickAdjX = sPlay->state.input[DBCAM_CONTROLLER_PORT].rel.stick_x;
+
+        pitch = CAM_DEG_TO_BINANG((SQ(stickAdjY) / 600.0f) * 0.8f);
+        yaw = CAM_DEG_TO_BINANG((SQ(stickAdjX) / 600.0f) * 0.8f);
+
         if (!D_80161144) {
-            sp104.pitch += (s16)((temp_f0_5 >= 0.0f) ? pitch : -pitch);
-            sp104.yaw += (s16)((temp_f2_2 >= 0.0f) ? yaw : -yaw);
+            sp104.pitch += (s16)((stickAdjY >= 0.0f) ? pitch : -pitch);
+            sp104.yaw += (s16)((stickAdjX >= 0.0f) ? yaw : -yaw);
             DbCamera_AddVecSph(sp80, sp7C, &sp104);
             dbCamera->sub.unk_104A.x = -sp104.pitch;
             dbCamera->sub.unk_104A.y = sp104.yaw - 0x7FFF;
         } else {
-            sp104.pitch += (s16)((temp_f0_5 >= 0.0f) ? -pitch : pitch);
-            sp104.yaw += (s16)((temp_f2_2 >= 0.0f) ? -yaw : yaw);
+            sp104.pitch += (s16)((stickAdjY >= 0.0f) ? -pitch : pitch);
+            sp104.yaw += (s16)((stickAdjX >= 0.0f) ? -yaw : yaw);
             DbCamera_AddVecSph(sp7C, sp80, &sp104);
             dbCamera->sub.unk_104A.x = sp104.pitch;
             dbCamera->sub.unk_104A.y = sp104.yaw;
@@ -1018,78 +1038,76 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                 CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
                 Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                if (dbCamera->sub.unkIdx > 0) {
-                    dbCamera->sub.unkIdx--;
+                if (dbCamera->sub.unkIndex > 0) {
+                    dbCamera->sub.unkIndex--;
                 } else {
-                    dbCamera->sub.unkIdx = dbCamera->sub.nPoints - 1;
+                    dbCamera->sub.unkIndex = dbCamera->sub.nPoints - 1;
                 }
-            } else {
-                if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CUP)) {
-                    Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                    if (dbCamera->sub.unkIdx > 0) {
-                        dbCamera->sub.unkIdx--;
-                    } else {
-                        dbCamera->sub.unkIdx = dbCamera->sub.nPoints - 1;
-                    }
-                    if ((dbCamera->sub.unk_08 == 2) && (dbCamera->sub.unkIdx != (dbCamera->sub.nPoints - 1))) {
-                        func_800B4370(dbCamera, dbCamera->sub.unkIdx, cam);
-                        dbCamera->roll = 0;
-                        dbCamera->fov = 60.0f;
-                        dbCamera->rollDegrees = 0;
-                    } else {
-                        func_800B41DC(dbCamera, dbCamera->sub.unkIdx, cam);
-                        dbCamera->fov = dbCamera->sub.lookAt[dbCamera->sub.unkIdx].viewAngle;
-                        dbCamera->roll = dbCamera->sub.lookAt[dbCamera->sub.unkIdx].cameraRoll;
-                        dbCamera->rollDegrees = dbCamera->roll * 1.40625f;
-                    }
+            } else if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CUP)) {
+                Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                if (dbCamera->sub.unkIndex > 0) {
+                    dbCamera->sub.unkIndex--;
+                } else {
+                    dbCamera->sub.unkIndex = dbCamera->sub.nPoints - 1;
+                }
+                if ((dbCamera->sub.unk_08 == 2) && (dbCamera->sub.unkIndex != (dbCamera->sub.nPoints - 1))) {
+                    func_800B4370(dbCamera, dbCamera->sub.unkIndex, cam);
+                    dbCamera->roll = 0;
+                    dbCamera->fov = 60.0f;
+                    dbCamera->rollDegrees = 0;
+                } else {
+                    func_800B41DC(dbCamera, dbCamera->sub.unkIndex, cam);
+                    dbCamera->fov = dbCamera->sub.lookAt[dbCamera->sub.unkIndex].viewAngle;
+                    dbCamera->roll = dbCamera->sub.lookAt[dbCamera->sub.unkIndex].cameraRoll;
+                    dbCamera->rollDegrees = dbCamera->roll * 1.40625f;
                 }
             }
+
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L) &&
                 CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CDOWN)) {
                 Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                if (dbCamera->sub.unkIdx < (dbCamera->sub.nPoints - 1)) {
-                    dbCamera->sub.unkIdx++;
+                if (dbCamera->sub.unkIndex < (dbCamera->sub.nPoints - 1)) {
+                    dbCamera->sub.unkIndex++;
                 } else {
-                    dbCamera->sub.unkIdx = 0;
+                    dbCamera->sub.unkIndex = 0;
                 }
-            } else {
-                if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CDOWN)) {
-                    Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                    if (dbCamera->sub.unkIdx < (dbCamera->sub.nPoints - 1)) {
-                        dbCamera->sub.unkIdx++;
-                    } else {
-                        dbCamera->sub.unkIdx = 0;
-                    }
+            } else if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_CDOWN)) {
+                Audio_PlaySfxGeneral(NA_SE_IT_SWORD_IMPACT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                if (dbCamera->sub.unkIndex < (dbCamera->sub.nPoints - 1)) {
+                    dbCamera->sub.unkIndex++;
+                } else {
+                    dbCamera->sub.unkIndex = 0;
+                }
 
-                    if ((dbCamera->sub.unk_08 == 2) && (dbCamera->sub.unkIdx != (dbCamera->sub.nPoints - 1))) {
-                        func_800B4370(dbCamera, dbCamera->sub.unkIdx, cam);
-                        dbCamera->roll = 0;
-                        dbCamera->fov = 60.0f;
-                        dbCamera->rollDegrees = 0;
-                    } else {
-                        func_800B41DC(dbCamera, dbCamera->sub.unkIdx, cam);
-                        dbCamera->fov = dbCamera->sub.lookAt[dbCamera->sub.unkIdx].viewAngle;
-                        dbCamera->roll = dbCamera->sub.lookAt[dbCamera->sub.unkIdx].cameraRoll;
-                        dbCamera->rollDegrees = dbCamera->roll * 1.40625f;
-                    }
+                if ((dbCamera->sub.unk_08 == 2) && (dbCamera->sub.unkIndex != (dbCamera->sub.nPoints - 1))) {
+                    func_800B4370(dbCamera, dbCamera->sub.unkIndex, cam);
+                    dbCamera->roll = 0;
+                    dbCamera->fov = 60.0f;
+                    dbCamera->rollDegrees = 0;
+                } else {
+                    func_800B41DC(dbCamera, dbCamera->sub.unkIndex, cam);
+                    dbCamera->fov = dbCamera->sub.lookAt[dbCamera->sub.unkIndex].viewAngle;
+                    dbCamera->roll = dbCamera->sub.lookAt[dbCamera->sub.unkIndex].cameraRoll;
+                    dbCamera->rollDegrees = dbCamera->roll * 1.40625f;
                 }
             }
 
             func_8006376C(0xA, 6, (dbCamera->sub.unk_08 == 0) ? 7 : 4, D_8012D00C);
             func_8006376C(0x11, 6, (dbCamera->sub.unk_08 == 1) ? 7 : 4, D_8012D020);
             func_8006376C(0x17, 6, (dbCamera->sub.unk_08 == 2) ? 7 : 4, D_8012D034);
-            if (dbCamera->sub.unkIdx == 0x80) {
+
+            if (dbCamera->sub.unkIndex == 0x80) {
                 func_8006376C(0x10, 0x1A, 1, D_8012CEF8[0]);
-            } else if (dbCamera->sub.unkIdx == (dbCamera->sub.nPoints - 1)) {
+            } else if (dbCamera->sub.unkIndex == (dbCamera->sub.nPoints - 1)) {
                 D_8012CEE0[7][10] = (dbCamera->sub.nPoints / 10) + '0';
                 D_8012CEE0[7][11] = (dbCamera->sub.nPoints % 10) + '0';
                 func_8006376C(0xF, 0x1A, 1, D_8012CEE0[7]);
             } else {
-                D_8012CEE0[8][10] = ((dbCamera->sub.unkIdx + 1) / 10) + '0';
-                D_8012CEE0[8][11] = ((dbCamera->sub.unkIdx + 1) % 10) + '0';
+                D_8012CEE0[8][10] = ((dbCamera->sub.unkIndex + 1) / 10) + '0';
+                D_8012CEE0[8][11] = ((dbCamera->sub.unkIndex + 1) % 10) + '0';
                 D_8012CEE0[8][13] = ((dbCamera->sub.nPoints - 1) / 10) + '0';
                 D_8012CEE0[8][14] = ((dbCamera->sub.nPoints - 1) % 10) + '0';
                 func_8006376C(0xF, 0x1A, 1, D_8012CEE0[8]);
@@ -1099,6 +1117,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                 case 2:
                     dbCamera->unk_3C = false;
                     break;
+
                 case 0:
                     dbCamera->unk_3C = false;
                     if (dbCamera->sub.mode != 1) {
@@ -1123,6 +1142,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                         func_8006376C(0x10, 0x19, 3, &sp110);
                     }
                     break;
+
                 case 1:
                     dbCamera->unk_3C = true;
                     if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DUP)) {
@@ -1149,11 +1169,12 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                         switch (dbCamera->sub.unk_0A) {
                             case 1:
                                 if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
-                                    dbCamera->sub.lookAt[dbCamera->sub.unkIdx].nextPointFrame -= 5;
+                                    dbCamera->sub.lookAt[dbCamera->sub.unkIndex].nextPointFrame -= 5;
                                 } else {
-                                    dbCamera->sub.lookAt[dbCamera->sub.unkIdx].nextPointFrame--;
+                                    dbCamera->sub.lookAt[dbCamera->sub.unkIndex].nextPointFrame--;
                                 }
                                 break;
+
                             case 3:
                                 dbCamera->sub.mode--;
                                 if (dbCamera->sub.mode == -1) {
@@ -1162,32 +1183,37 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                                 if (dbCamera->sub.mode == 1) {
                                     dbCamera->unk_78 = 2;
                                     for (i = 0; i < dbCamera->sub.nPoints; i++) {
-                                        DbCamera_Vec3SToF2(&dbCamera->sub.lookAt[i].pos, &spD8);
+                                        DbCamera_Vec3sToVec3fAlt(&dbCamera->sub.lookAt[i].pos, &spD8);
                                         func_800B3F94(temp_s6, &spD8, &dbCamera->sub.lookAt[i].pos);
-                                        DbCamera_Vec3SToF2(&dbCamera->sub.position[i].pos, &spD8);
+                                        DbCamera_Vec3sToVec3fAlt(&dbCamera->sub.position[i].pos, &spD8);
                                         func_800B3F94(temp_s6, &spD8, &dbCamera->sub.position[i].pos);
                                     }
                                 } else {
                                     for (i = 0; i < dbCamera->sub.nPoints; i++) {
                                         func_800B404C(temp_s6, &dbCamera->sub.lookAt[i].pos, &spD8);
-                                        DbCamera_Vec3FToS(&spD8, &dbCamera->sub.lookAt[i].pos);
+                                        DbCamera_Vec3fToVec3s(&spD8, &dbCamera->sub.lookAt[i].pos);
                                         func_800B404C(temp_s6, &dbCamera->sub.position[i].pos, &spD8);
-                                        DbCamera_Vec3FToS(&spD8, &dbCamera->sub.position[i].pos);
+                                        DbCamera_Vec3fToVec3s(&spD8, &dbCamera->sub.position[i].pos);
                                     }
                                 }
                                 break;
+
                             case 4:
                                 dbCamera->sub.unk_0C = false;
                                 break;
+
                             case 2:
                                 if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
-                                    dbCamera->sub.lookAt[dbCamera->sub.unkIdx].cameraRoll -= 5;
-                                    dbCamera->roll = dbCamera->sub.lookAt[dbCamera->sub.unkIdx].cameraRoll;
+                                    dbCamera->sub.lookAt[dbCamera->sub.unkIndex].cameraRoll -= 5;
+                                    dbCamera->roll = dbCamera->sub.lookAt[dbCamera->sub.unkIndex].cameraRoll;
                                 } else {
-                                    dbCamera->sub.lookAt[dbCamera->sub.unkIdx].cameraRoll--;
-                                    dbCamera->roll = dbCamera->sub.lookAt[dbCamera->sub.unkIdx].cameraRoll;
+                                    dbCamera->sub.lookAt[dbCamera->sub.unkIndex].cameraRoll--;
+                                    dbCamera->roll = dbCamera->sub.lookAt[dbCamera->sub.unkIndex].cameraRoll;
                                 }
                                 dbCamera->rollDegrees = dbCamera->roll * 1.40625f;
+                                break;
+
+                            default:
                                 break;
                         }
                     }
@@ -1201,13 +1227,14 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                         switch (dbCamera->sub.unk_0A) {
                             case 0:
                                 if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
-                                    dbCamera->sub.lookAt[dbCamera->sub.unkIdx].viewAngle -= 1.0f;
-                                    dbCamera->fov = dbCamera->sub.lookAt[dbCamera->sub.unkIdx].viewAngle;
+                                    dbCamera->sub.lookAt[dbCamera->sub.unkIndex].viewAngle -= 1.0f;
+                                    dbCamera->fov = dbCamera->sub.lookAt[dbCamera->sub.unkIndex].viewAngle;
                                 } else {
-                                    dbCamera->sub.lookAt[dbCamera->sub.unkIdx].viewAngle -= 0.2f;
-                                    dbCamera->fov = dbCamera->sub.lookAt[dbCamera->sub.unkIdx].viewAngle;
+                                    dbCamera->sub.lookAt[dbCamera->sub.unkIndex].viewAngle -= 0.2f;
+                                    dbCamera->fov = dbCamera->sub.lookAt[dbCamera->sub.unkIndex].viewAngle;
                                 }
                                 break;
+
                             case 5:
                                 if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
                                     dbCamera->sub.nFrames -= 10;
@@ -1228,6 +1255,9 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                                     }
                                 }
                                 break;
+
+                            default:
+                                break;
                         }
                     }
 
@@ -1238,11 +1268,12 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                         switch (dbCamera->sub.unk_0A) {
                             case 1:
                                 if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
-                                    dbCamera->sub.lookAt[dbCamera->sub.unkIdx].nextPointFrame += 5;
+                                    dbCamera->sub.lookAt[dbCamera->sub.unkIndex].nextPointFrame += 5;
                                 } else {
-                                    dbCamera->sub.lookAt[dbCamera->sub.unkIdx].nextPointFrame++;
+                                    dbCamera->sub.lookAt[dbCamera->sub.unkIndex].nextPointFrame++;
                                 }
                                 break;
+
                             case 3:
                                 dbCamera->sub.mode++;
                                 if (dbCamera->sub.mode == 3) {
@@ -1251,32 +1282,36 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                                 if (dbCamera->sub.mode == 1) {
                                     dbCamera->unk_78 = 2;
                                     for (i = 0; i < dbCamera->sub.nPoints; i++) {
-                                        DbCamera_Vec3SToF2(&dbCamera->sub.lookAt[i].pos, &spD8);
+                                        DbCamera_Vec3sToVec3fAlt(&dbCamera->sub.lookAt[i].pos, &spD8);
                                         func_800B3F94(temp_s6, &spD8, &dbCamera->sub.lookAt[i].pos);
-                                        DbCamera_Vec3SToF2(&dbCamera->sub.position[i].pos, &spD8);
+                                        DbCamera_Vec3sToVec3fAlt(&dbCamera->sub.position[i].pos, &spD8);
                                         func_800B3F94(temp_s6, &spD8, &dbCamera->sub.position[i].pos);
                                     }
                                 } else {
                                     for (i = 0; i < dbCamera->sub.nPoints; i++) {
                                         func_800B404C(temp_s6, &dbCamera->sub.lookAt[i].pos, &spD8);
-                                        DbCamera_Vec3FToS(&spD8, &dbCamera->sub.lookAt[i].pos);
+                                        DbCamera_Vec3fToVec3s(&spD8, &dbCamera->sub.lookAt[i].pos);
                                         func_800B404C(temp_s6, &dbCamera->sub.position[i].pos, &spD8);
-                                        DbCamera_Vec3FToS(&spD8, &dbCamera->sub.position[i].pos);
+                                        DbCamera_Vec3fToVec3s(&spD8, &dbCamera->sub.position[i].pos);
                                     }
                                 }
                                 FALLTHROUGH;
                             case 4:
                                 dbCamera->sub.unk_0C = true;
                                 break;
+
                             case 2:
                                 if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
-                                    dbCamera->sub.lookAt[dbCamera->sub.unkIdx].cameraRoll += 5;
-                                    dbCamera->roll = dbCamera->sub.lookAt[dbCamera->sub.unkIdx].cameraRoll;
+                                    dbCamera->sub.lookAt[dbCamera->sub.unkIndex].cameraRoll += 5;
+                                    dbCamera->roll = dbCamera->sub.lookAt[dbCamera->sub.unkIndex].cameraRoll;
                                 } else {
-                                    dbCamera->sub.lookAt[dbCamera->sub.unkIdx].cameraRoll++;
-                                    dbCamera->roll = dbCamera->sub.lookAt[dbCamera->sub.unkIdx].cameraRoll;
+                                    dbCamera->sub.lookAt[dbCamera->sub.unkIndex].cameraRoll++;
+                                    dbCamera->roll = dbCamera->sub.lookAt[dbCamera->sub.unkIndex].cameraRoll;
                                 }
                                 dbCamera->rollDegrees = dbCamera->roll * 1.40625f;
+                                break;
+
+                            default:
                                 break;
                         }
                     }
@@ -1289,13 +1324,14 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                         switch (dbCamera->sub.unk_0A) {
                             case 0:
                                 if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
-                                    dbCamera->sub.lookAt[dbCamera->sub.unkIdx].viewAngle += 1.0f;
-                                    dbCamera->fov = dbCamera->sub.lookAt[dbCamera->sub.unkIdx].viewAngle;
+                                    dbCamera->sub.lookAt[dbCamera->sub.unkIndex].viewAngle += 1.0f;
+                                    dbCamera->fov = dbCamera->sub.lookAt[dbCamera->sub.unkIndex].viewAngle;
                                 } else {
-                                    dbCamera->sub.lookAt[dbCamera->sub.unkIdx].viewAngle += 0.2f;
-                                    dbCamera->fov = dbCamera->sub.lookAt[dbCamera->sub.unkIdx].viewAngle;
+                                    dbCamera->sub.lookAt[dbCamera->sub.unkIndex].viewAngle += 0.2f;
+                                    dbCamera->fov = dbCamera->sub.lookAt[dbCamera->sub.unkIndex].viewAngle;
                                 }
                                 break;
+
                             case 5:
                                 if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
                                     dbCamera->sub.nFrames += 10;
@@ -1304,14 +1340,18 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                                 }
                                 if (&dbCamera->at) {}
                                 break;
+
+                            default:
+                                break;
                         }
                     }
 
-                    DbCamera_SetTextValue(dbCamera->sub.lookAt[dbCamera->sub.unkIdx].viewAngle, &D_8012D05C[10], 3);
+                    DbCamera_SetTextValue(dbCamera->sub.lookAt[dbCamera->sub.unkIndex].viewAngle, &D_8012D05C[10], 3);
                     func_8006376C(0x10, 0x14, (dbCamera->sub.unk_0A == 0) ? 7 : 4, D_8012D05C);
-                    DbCamera_SetTextValue(dbCamera->sub.lookAt[dbCamera->sub.unkIdx].nextPointFrame, &D_8012D070[9], 3);
+                    DbCamera_SetTextValue(dbCamera->sub.lookAt[dbCamera->sub.unkIndex].nextPointFrame, &D_8012D070[9],
+                                          3);
                     func_8006376C(0x10, 0x15, (dbCamera->sub.unk_0A == 1) ? 7 : 4, D_8012D070);
-                    DbCamera_SetTextValue(dbCamera->sub.lookAt[dbCamera->sub.unkIdx].cameraRoll, &D_8012D084[10], 3);
+                    DbCamera_SetTextValue(dbCamera->sub.lookAt[dbCamera->sub.unkIndex].cameraRoll, &D_8012D084[10], 3);
                     func_8006376C(0x10, 0x16, (dbCamera->sub.unk_0A == 2) ? 7 : 4, D_8012D084);
                     func_8006376C(0xF, 0x17, (dbCamera->sub.unk_0A == 3) ? 7 : 4,
                                   (dbCamera->sub.mode == 1)   ? D_8012CF14
@@ -1336,6 +1376,9 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                     DbCamera_SetTextValue(dbCamera->sub.nFrames, &D_8012D0C0[10], 5);
                     func_8006376C(0xF, 0x19, (dbCamera->sub.unk_0A == 5) ? 7 : 4,
                                   (dbCamera->sub.nFrames == -1) ? *D_8012CF24 : D_8012D0C0);
+                    break;
+
+                default:
                     break;
             }
 
@@ -1407,15 +1450,15 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
             if (dbCamera->sub.unk_08 == 2) {
                 for (i = 0; i < (dbCamera->sub.nPoints - 1); i++) {
                     if (dbCamera->sub.mode != 1) {
-                        DbCamera_Vec3SToF2(&(dbCamera->sub.position + i)->pos, &spAC);
-                        DbCamera_Vec3SToF2(&(dbCamera->sub.lookAt + i)->pos, &spB8);
+                        DbCamera_Vec3sToVec3fAlt(&(dbCamera->sub.position + i)->pos, &spAC);
+                        DbCamera_Vec3sToVec3fAlt(&(dbCamera->sub.lookAt + i)->pos, &spB8);
                     } else {
                         func_800B404C(temp_s6, &(dbCamera->sub.lookAt + i)->pos, &spB8);
                         func_800B404C(temp_s6, &(dbCamera->sub.position + i)->pos, &spAC);
                     }
                     OLib_Vec3fDiffToVecSphGeo(&spFC, &spAC, &spB8);
                     spAA = dbCamera->sub.lookAt[i].cameraRoll * 0xB6;
-                    if (i == dbCamera->sub.unkIdx) {
+                    if (i == dbCamera->sub.unkIndex) {
                         DebugDisplay_AddObject(spAC.x, spAC.y, spAC.z, spFC.pitch * -1, spFC.yaw, spAA, .5f, .5f, .5f,
                                                0x7F, 0xFF, 0x7F, 0x80, 5, cam->play->view.gfxCtx);
                         DebugDisplay_AddObject(spB8.x, spB8.y, spB8.z, spFC.pitch * -1, spFC.yaw, spAA, 1.5f, 2.0f,
@@ -1498,8 +1541,8 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
     }
 }
 
-static s16 sCurFileIdx;
-static s16 sLastFileIdx; // holds the file index of the slot to move
+static s16 sCurFileIndex;
+static s16 sLastFileIndex; // holds the file index of the slot to move
 // is the size correct? todo: add ALIGN32 for sizeof in Mempak functions, replace 0xF with sizeof()
 static DbCameraCut sDbCameraCuts[16];
 static char D_80161250[0x80];
@@ -1509,10 +1552,12 @@ static s32 sAllocSize;
 
 s32 DbCamera_GetFirstAvailableLetter(void) {
     s32 i;
+
     for (i = 0; i < ARRAY_COUNT(sLetters); i++) {
         switch (sLetters[i]) {
             case 'O':
                 break;
+
             default:
                 return 'A' + i;
         }
@@ -1521,58 +1566,58 @@ s32 DbCamera_GetFirstAvailableLetter(void) {
     return '?';
 }
 
-char DbCamera_InitCut(s32 idx, DbCameraSub* sub) {
+char DbCamera_InitCut(s32 index, DbCameraSub* sub) {
     s32 i;
 
-    sDbCameraCuts[idx].unk_01 = 0x61;
-    sDbCameraCuts[idx].letter = DbCamera_GetFirstAvailableLetter();
-    D_80161250[0x3F + sDbCameraCuts[idx].letter] = 'O';
+    sDbCameraCuts[index].unk_01 = 0x61;
+    sDbCameraCuts[index].letter = DbCamera_GetFirstAvailableLetter();
+    D_80161250[0x3F + sDbCameraCuts[index].letter] = 'O';
 
     i = sub->nPoints * sizeof(CutsceneCameraPoint);
-    sDbCameraCuts[idx].lookAt = DebugArena_MallocDebug(i, "../db_camera.c", 2748);
-    if (sDbCameraCuts[idx].lookAt == NULL) {
+    sDbCameraCuts[index].lookAt = DebugArena_MallocDebug(i, "../db_camera.c", 2748);
+    if (sDbCameraCuts[index].lookAt == NULL) {
         // "Debug camera memory allocation failure"
         osSyncPrintf("%s: %d: デバッグカメラ メモリ確保失敗！！\n", "../db_camera.c", 2751);
         return '?';
     }
 
-    sDbCameraCuts[idx].position = DebugArena_MallocDebug(i, "../db_camera.c", 2754);
-    if (sDbCameraCuts[idx].position == NULL) {
+    sDbCameraCuts[index].position = DebugArena_MallocDebug(i, "../db_camera.c", 2754);
+    if (sDbCameraCuts[index].position == NULL) {
         // "Debug camera memory allocation failure"
         osSyncPrintf("%s: %d: デバッグカメラ メモリ確保失敗！！\n", "../db_camera.c", 2757);
-        DebugArena_FreeDebug(sDbCameraCuts[idx].lookAt, "../db_camera.c", 2758);
-        sDbCameraCuts[idx].lookAt = NULL;
+        DebugArena_FreeDebug(sDbCameraCuts[index].lookAt, "../db_camera.c", 2758);
+        sDbCameraCuts[index].lookAt = NULL;
         return '?';
     }
 
-    sDbCameraCuts[idx].mode = sub->mode;
-    sDbCameraCuts[idx].nFrames = sub->nFrames;
-    sDbCameraCuts[idx].nPoints = sub->nPoints;
+    sDbCameraCuts[index].mode = sub->mode;
+    sDbCameraCuts[index].nFrames = sub->nFrames;
+    sDbCameraCuts[index].nPoints = sub->nPoints;
 
     for (i = 0; i < sub->nPoints; i++) {
-        sDbCameraCuts[idx].lookAt[i] = sub->lookAt[i];
-        sDbCameraCuts[idx].position[i] = sub->position[i];
+        sDbCameraCuts[index].lookAt[i] = sub->lookAt[i];
+        sDbCameraCuts[index].position[i] = sub->position[i];
     }
 
-    return sDbCameraCuts[idx].letter;
+    return sDbCameraCuts[index].letter;
 }
 
-void DbCamera_ResetCut(s32 idx, s32 shouldFree) {
-    if (sDbCameraCuts[idx].letter != '?') {
-        D_80161250[0x3F + sDbCameraCuts[idx].letter] = 'X';
+void DbCamera_ResetCut(s32 index, s32 shouldFree) {
+    if (sDbCameraCuts[index].letter != '?') {
+        D_80161250[0x3F + sDbCameraCuts[index].letter] = 'X';
     }
 
     if (shouldFree) {
-        DebugArena_FreeDebug(sDbCameraCuts[idx].lookAt, "../db_camera.c", 2784);
-        DebugArena_FreeDebug(sDbCameraCuts[idx].position, "../db_camera.c", 2785);
+        DebugArena_FreeDebug(sDbCameraCuts[index].lookAt, "../db_camera.c", 2784);
+        DebugArena_FreeDebug(sDbCameraCuts[index].position, "../db_camera.c", 2785);
     }
 
-    sDbCameraCuts[idx].letter = '?';
-    sDbCameraCuts[idx].lookAt = NULL;
-    sDbCameraCuts[idx].position = NULL;
-    sDbCameraCuts[idx].mode = 0;
-    sDbCameraCuts[idx].nFrames = 0;
-    sDbCameraCuts[idx].nPoints = 0;
+    sDbCameraCuts[index].letter = '?';
+    sDbCameraCuts[index].lookAt = NULL;
+    sDbCameraCuts[index].position = NULL;
+    sDbCameraCuts[index].mode = 0;
+    sDbCameraCuts[index].nFrames = 0;
+    sDbCameraCuts[index].nPoints = 0;
 }
 
 s32 DbCamera_CalcMempakAllocSize(void) {
@@ -1687,10 +1732,10 @@ s32 DbCamera_SaveCallback(char* c) {
 
         if (ret) {
             return *c;
-        } else {
-            Mempak_DeleteFile(DBCAM_CONTROLLER_PORT, *c);
-            return false;
         }
+
+        Mempak_DeleteFile(DBCAM_CONTROLLER_PORT, *c);
+        return false;
     }
 
     return false;
@@ -1723,6 +1768,7 @@ void DbCamera_PrintAllCuts(Camera* cam) {
 
     for (i = 0; i < ARRAY_COUNT(sDbCameraCuts) - 1; i++) {
         DbCameraCut* cut = &sDbCameraCuts[i];
+
         if (cut->nPoints != 0) {
             if (i != 0) {
                 osSyncPrintf("@@@\n@@@/* ** %d ** */\n@@@\n", i);
@@ -1828,8 +1874,8 @@ void DbCamera_Reset(Camera* cam, DbCamera* dbCam) {
     }
     sDbCamPtr = dbCam;
     D_8016110C = 0;
-    sCurFileIdx = 0;
-    sLastFileIdx = -1;
+    sCurFileIndex = 0;
+    sLastFileIndex = -1;
     sDbCamAnim.unk_0A = 0;
 }
 
@@ -1840,9 +1886,9 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
     };
     static s32 sMempakFilesize = 0;
     s32 i;
-    s32 idx1;
-    s32 idx2;
-    s16 idx3;
+    s32 index1;
+    s32 index2;
+    s16 index3;
     char sp74[(ARRAY_COUNT(sDbCameraCuts) - 1 + 4) * 2];
     DbCameraCut sp64;
     VecSph sp5C;
@@ -1850,10 +1896,10 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
 
     func_8006376C(0xE, 5, 0, D_8012CF44); // DEMO CONTROL
 
-    idx1 = sCurFileIdx >> 1;
-    idx2 = sLastFileIdx >> 1;
+    index1 = sCurFileIndex >> 1;
+    index2 = sLastFileIndex >> 1;
 
-    switch (dbCamera->sub.demoCtrlActionIdx) {
+    switch (dbCamera->sub.demoCtrlActionIndex) {
         case ACTION_SAVE:
         case ACTION_LOAD:
         case ACTION_CLEAR:
@@ -1861,17 +1907,17 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
 
                 case DEMO_CTRL_MENU(ACTION_SAVE, MENU_INFO):
                 case DEMO_CTRL_MENU(ACTION_LOAD, MENU_INFO):
-                case DEMO_CTRL_MENU(ACTION_CLEAR, MENU_INFO): {
-                    if ((1 << sCurFileIdx) & sMempakFiles) {
+                case DEMO_CTRL_MENU(ACTION_CLEAR, MENU_INFO):
+                    if ((1 << sCurFileIndex) & sMempakFiles) {
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DLEFT) ||
                             CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DRIGHT)) {
                             Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             dbCamera->sub.demoCtrlToggleSwitch ^= 1;
                         }
-                        D_8012CEE0[41][9] = sCurFileIdx + 'A';
+                        D_8012CEE0[41][9] = sCurFileIndex + 'A';
                         func_8006376C(0xA, 7, 5, D_8012CEE0[41]);
-                        func_8006376C(0x10, 7, 5, D_8012CF60[dbCamera->sub.demoCtrlActionIdx]);
+                        func_8006376C(0x10, 7, 5, D_8012CF60[dbCamera->sub.demoCtrlActionIndex]);
                         func_8006376C(0x14, 7, 5, D_8012CF88[0]);
 
                         func_8006376C(0x11, 8, dbCamera->sub.demoCtrlToggleSwitch ? 4 : 7, D_8012CF94);
@@ -1888,17 +1934,16 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                                 dbCamera->sub.demoCtrlMenu = 0;
                             }
                         }
+                    } else if (dbCamera->sub.demoCtrlMenu == 100) {
+                        dbCamera->sub.demoCtrlMenu++;
                     } else {
-                        if (dbCamera->sub.demoCtrlMenu == 100) {
-                            dbCamera->sub.demoCtrlMenu++;
-                        } else {
-                            dbCamera->sub.demoCtrlToggleSwitch ^= 1;
-                            D_8012CF84[9] = sCurFileIdx + 'A';
-                            func_8006376C(0xD, 7, 5, D_8012CF88[-1]); // todo: find something better
-                            func_8006376C(0x12, 7, 5, D_8012CF80);
-                            func_8006376C(0xD, 9, dbCamera->sub.demoCtrlToggleSwitch ? 1 : 6, "PRESS B BUTTON");
-                        }
+                        dbCamera->sub.demoCtrlToggleSwitch ^= 1;
+                        D_8012CF84[9] = sCurFileIndex + 'A';
+                        func_8006376C(0xD, 7, 5, D_8012CF88[-1]); // todo: find something better
+                        func_8006376C(0x12, 7, 5, D_8012CF80);
+                        func_8006376C(0xD, 9, dbCamera->sub.demoCtrlToggleSwitch ? 1 : 6, "PRESS B BUTTON");
                     }
+
                     if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_B)) {
                         Audio_PlaySfxGeneral(NA_SE_SY_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -1906,30 +1951,28 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                         return 1;
                     }
                     goto block_2;
-                }
 
                 case DEMO_CTRL_MENU(ACTION_SAVE, MENU_CALLBACK):
                 case DEMO_CTRL_MENU(ACTION_LOAD, MENU_CALLBACK):
-                case DEMO_CTRL_MENU(ACTION_CLEAR, MENU_CALLBACK): {
-                    D_8012CEE0[41][9] = sCurFileIdx + 'A';
+                case DEMO_CTRL_MENU(ACTION_CLEAR, MENU_CALLBACK):
+                    D_8012CEE0[41][9] = sCurFileIndex + 'A';
                     func_8006376C(0xC, 7, 5, D_8012CEE0[41]);
-                    func_8006376C(0x12, 7, 5, D_8012CF60[dbCamera->sub.demoCtrlActionIdx]);
+                    func_8006376C(0x12, 7, 5, D_8012CF60[dbCamera->sub.demoCtrlActionIndex]);
                     func_8006376C(0x16, 7, 5, D_8012CF9C[0]);
 
-                    if (callbacks[dbCamera->sub.demoCtrlActionIdx - 1](&D_8012CF84[9])) {
+                    if (callbacks[dbCamera->sub.demoCtrlActionIndex - 1](&D_8012CF84[9])) {
                         dbCamera->sub.demoCtrlMenu++;
                         return 1;
-                    } else {
-                        dbCamera->sub.demoCtrlMenu += 8;
-                        return 1;
                     }
-                }
+
+                    dbCamera->sub.demoCtrlMenu += 8;
+                    return 1;
 
                 case DEMO_CTRL_MENU(ACTION_SAVE, MENU_SUCCESS):
                 case DEMO_CTRL_MENU(ACTION_LOAD, MENU_SUCCESS):
-                case DEMO_CTRL_MENU(ACTION_CLEAR, MENU_SUCCESS): {
+                case DEMO_CTRL_MENU(ACTION_CLEAR, MENU_SUCCESS):
                     dbCamera->sub.demoCtrlToggleSwitch ^= 1;
-                    D_8012CEE0[41][9] = sCurFileIdx + 'A';
+                    D_8012CEE0[41][9] = sCurFileIndex + 'A';
                     func_8006376C(0xD, 7, 5, D_8012CEE0[41]);
                     func_8006376C(0x13, 7, 5, D_8012CF60[dbCamera->sub.demoCtrlMenu / 100]);
                     func_8006376C(0x17, 7, 5, D_8012CFA4);
@@ -1940,19 +1983,18 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                         Audio_PlaySfxGeneral(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                         if (dbCamera->sub.demoCtrlMenu == DEMO_CTRL_MENU(ACTION_LOAD, MENU_SUCCESS)) {
-                            dbCamera->sub.demoCtrlActionIdx = ACTION_E;
+                            dbCamera->sub.demoCtrlActionIndex = ACTION_E;
                         }
                         dbCamera->sub.demoCtrlMenu = DEMO_CTRL_MENU(ACTION_E, MENU_INFO);
                         return 1;
                     }
                     goto block_2;
-                }
 
                 case DEMO_CTRL_MENU(ACTION_SAVE, MENU_ERROR):
                 case DEMO_CTRL_MENU(ACTION_LOAD, MENU_ERROR):
-                case DEMO_CTRL_MENU(ACTION_CLEAR, MENU_ERROR): {
+                case DEMO_CTRL_MENU(ACTION_CLEAR, MENU_ERROR):
                     dbCamera->sub.demoCtrlToggleSwitch ^= 1;
-                    D_8012CEE0[41][9] = sCurFileIdx + 'A';
+                    D_8012CEE0[41][9] = sCurFileIndex + 'A';
                     func_8006376C(0xD, 7, 5, D_8012CEE0[(dbCamera->sub.demoCtrlMenu / 100) + 32]);
                     func_8006376C(0x11, 7, 5, D_8012CFAC);
                     func_8006376C(0x17, 7, 5, D_8012CFA4);
@@ -1966,30 +2008,29 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                     }
                 block_2:
                     return 1;
-                }
 
                 case 1:
                     goto block_1;
 
-                default: {
+                default:
                     if (Mempak_Init(DBCAM_CONTROLLER_PORT)) {
                         sMempakFiles = Mempak_FindFile(DBCAM_CONTROLLER_PORT, 'A', 'E');
                         dbCamera->sub.demoCtrlMenu = DEMO_CTRL_MENU(ACTION_E, MENU_CALLBACK);
                         DbCamera_CalcMempakAllocSize();
-                        if ((1 << sCurFileIdx) & sMempakFiles) {
-                            sMempakFilesize = Mempak_GetFileSize(DBCAM_CONTROLLER_PORT, sCurFileIdx + 'A');
-                            dbCamera->sub.demoCtrlActionIdx = ACTION_LOAD;
+                        if ((1 << sCurFileIndex) & sMempakFiles) {
+                            sMempakFilesize = Mempak_GetFileSize(DBCAM_CONTROLLER_PORT, sCurFileIndex + 'A');
+                            dbCamera->sub.demoCtrlActionIndex = ACTION_LOAD;
                         } else {
                             sMempakFilesize = 0;
-                            dbCamera->sub.demoCtrlActionIdx = ACTION_SAVE;
+                            dbCamera->sub.demoCtrlActionIndex = ACTION_SAVE;
                         }
                     block_1:
-                        idx2 = 1;
+                        index2 = 1;
                         for (i = 0; i < 5; i++) {
-                            sp74[i * 2 + 1] = (sMempakFiles & idx2) ? i + 'A' : '?';
+                            sp74[i * 2 + 1] = (sMempakFiles & index2) ? i + 'A' : '?';
                             sp74[i * 2 + 0] = '-';
 
-                            idx2 <<= 1;
+                            index2 <<= 1;
                         }
                         sp74[i * 2 + 0] = '-';
                         sp74[i * 2 + 1] = '\0';
@@ -1997,42 +2038,42 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DRIGHT)) {
                             Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                            if (sCurFileIdx >= 4) {
-                                sCurFileIdx = 0;
+                            if (sCurFileIndex >= 4) {
+                                sCurFileIndex = 0;
                             } else {
-                                sCurFileIdx++;
+                                sCurFileIndex++;
                             }
 
-                            if ((1 << sCurFileIdx) & sMempakFiles) {
-                                sMempakFilesize = Mempak_GetFileSize(DBCAM_CONTROLLER_PORT, sCurFileIdx + 'A');
-                                dbCamera->sub.demoCtrlActionIdx = ACTION_LOAD;
+                            if ((1 << sCurFileIndex) & sMempakFiles) {
+                                sMempakFilesize = Mempak_GetFileSize(DBCAM_CONTROLLER_PORT, sCurFileIndex + 'A');
+                                dbCamera->sub.demoCtrlActionIndex = ACTION_LOAD;
                             } else {
                                 sMempakFilesize = 0;
-                                dbCamera->sub.demoCtrlActionIdx = ACTION_SAVE;
+                                dbCamera->sub.demoCtrlActionIndex = ACTION_SAVE;
                             }
                         }
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DLEFT)) {
                             Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                            if (sCurFileIdx <= 0) {
-                                sCurFileIdx = 4;
+                            if (sCurFileIndex <= 0) {
+                                sCurFileIndex = 4;
                             } else {
-                                sCurFileIdx--;
+                                sCurFileIndex--;
                             }
 
-                            if ((1 << sCurFileIdx) & sMempakFiles) {
-                                sMempakFilesize = Mempak_GetFileSize(DBCAM_CONTROLLER_PORT, sCurFileIdx + 'A');
-                                dbCamera->sub.demoCtrlActionIdx = ACTION_LOAD;
+                            if ((1 << sCurFileIndex) & sMempakFiles) {
+                                sMempakFilesize = Mempak_GetFileSize(DBCAM_CONTROLLER_PORT, sCurFileIndex + 'A');
+                                dbCamera->sub.demoCtrlActionIndex = ACTION_LOAD;
                             } else {
                                 sMempakFilesize = 0;
-                                dbCamera->sub.demoCtrlActionIdx = ACTION_SAVE;
+                                dbCamera->sub.demoCtrlActionIndex = ACTION_SAVE;
                             }
                         }
-                        idx3 = dbCamera->sub.demoCtrlActionIdx;
-                        func_8006376C(0xE, 7, 5, D_8012CF50[idx3]);
+                        index3 = dbCamera->sub.demoCtrlActionIndex;
+                        func_8006376C(0xE, 7, 5, D_8012CF50[index3]);
                         func_8006376C(0xF, 7, 4, sp74);
 
-                        func_8006376C((sCurFileIdx * 2) + 0x10, 7, 7, "_"); // cursor
+                        func_8006376C((sCurFileIndex * 2) + 0x10, 7, 7, "_"); // cursor
                         DbCamera_SetTextValue(DbCamera_GetMempakAllocSize(), sp74, 6);
                         func_8006376C(0xD, 9, 6, D_8012CF78); // NEED      BYTE
                         func_8006376C(0x11, 9, 4, sp74);
@@ -2045,36 +2086,37 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
                             func_8006376C(0x11, 0xB, 4, sp74);
                         }
 
-                        idx1 = (dbCamera->sub.demoCtrlActionIdx + 2);
+                        index1 = (dbCamera->sub.demoCtrlActionIndex + 2);
                         func_8006376C(0xF, 0x16, 1, D_8012CF7C);
-                        func_8006376C(0x12, 0x17, sDbCameraColors[idx1], D_8012CF64);
-                        func_8006376C(0x12, 0x18, sDbCameraColors[idx1 - 1], D_8012CF68);
-                        func_8006376C(0x12, 0x19, sDbCameraColors[idx1 - 2], D_8012CF6C);
-                        func_8006376C(0xE, dbCamera->sub.demoCtrlActionIdx + 0x16, 7, D_8012CF0C); // current selection
+                        func_8006376C(0x12, 0x17, sDbCameraColors[index1], D_8012CF64);
+                        func_8006376C(0x12, 0x18, sDbCameraColors[index1 - 1], D_8012CF68);
+                        func_8006376C(0x12, 0x19, sDbCameraColors[index1 - 2], D_8012CF6C);
+                        func_8006376C(0xE, dbCamera->sub.demoCtrlActionIndex + 0x16, 7,
+                                      D_8012CF0C); // current selection
                         func_8006376C(0xD, 0x1A, 5, D_8012CF60[0]);
                         func_8006376C(0x14, 0x1A, 5, D_8012CF70);
 
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DUP)) {
                             Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                            dbCamera->sub.demoCtrlActionIdx = (dbCamera->sub.demoCtrlActionIdx - 1) % 4u;
+                            dbCamera->sub.demoCtrlActionIndex = (dbCamera->sub.demoCtrlActionIndex - 1) % 4u;
                         }
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DDOWN)) {
                             Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                            dbCamera->sub.demoCtrlActionIdx = (dbCamera->sub.demoCtrlActionIdx + 1) % 4u;
+                            dbCamera->sub.demoCtrlActionIndex = (dbCamera->sub.demoCtrlActionIndex + 1) % 4u;
                         }
 
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_A)) {
                             Audio_PlaySfxGeneral(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             dbCamera->sub.demoCtrlToggleSwitch = 0;
-                            dbCamera->sub.demoCtrlMenu = DEMO_CTRL_MENU(dbCamera->sub.demoCtrlActionIdx, MENU_INFO);
+                            dbCamera->sub.demoCtrlMenu = DEMO_CTRL_MENU(dbCamera->sub.demoCtrlActionIndex, MENU_INFO);
                         }
                         if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_B)) {
                             Audio_PlaySfxGeneral(NA_SE_SY_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                            dbCamera->sub.demoCtrlActionIdx = ACTION_E;
+                            dbCamera->sub.demoCtrlActionIndex = ACTION_E;
                             return 1;
                         }
                         goto block_2;
@@ -2087,29 +2129,28 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
 
                             Audio_PlaySfxGeneral(NA_SE_SY_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                            dbCamera->sub.demoCtrlActionIdx = ACTION_E;
+                            dbCamera->sub.demoCtrlActionIndex = ACTION_E;
                         }
                         return 2;
                     }
                     break;
-                }
             }
             break;
 
-        default: {
+        default:
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DUP)) {
                 Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 dbCamera->sub.demoCtrlMenu = DEMO_CTRL_MENU(ACTION_E, MENU_INFO);
-                dbCamera->sub.demoCtrlActionIdx = (dbCamera->sub.demoCtrlActionIdx - 1) % 4u;
-                sCurFileIdx = 0;
+                dbCamera->sub.demoCtrlActionIndex = (dbCamera->sub.demoCtrlActionIndex - 1) % 4u;
+                sCurFileIndex = 0;
             }
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DDOWN)) {
                 Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 dbCamera->sub.demoCtrlMenu = DEMO_CTRL_MENU(ACTION_E, MENU_INFO);
-                dbCamera->sub.demoCtrlActionIdx = (dbCamera->sub.demoCtrlActionIdx + 1) % 4u;
-                sCurFileIdx = 0;
+                dbCamera->sub.demoCtrlActionIndex = (dbCamera->sub.demoCtrlActionIndex + 1) % 4u;
+                sCurFileIndex = 0;
             }
 
             DbCamera_DrawSlotLetters(sp74, 7, 5, 4);
@@ -2169,96 +2210,98 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
             }
 
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_L)) {
-                if (sp74[sCurFileIdx] == '?') {
-                    sLastFileIdx = -1;
+                if (sp74[sCurFileIndex] == '?') {
+                    sLastFileIndex = -1;
                     D_801612EA = '*';
                 } else {
-                    sLastFileIdx = sCurFileIdx;
-                    D_801612EA = sDbCameraCuts[idx1].letter;
+                    sLastFileIndex = sCurFileIndex;
+                    D_801612EA = sDbCameraCuts[index1].letter;
                 }
                 if (1) {}
             } else if (!CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L)) {
-                if (sLastFileIdx != -1) {
-                    switch (sp74[sCurFileIdx]) {
+                if (sLastFileIndex != -1) {
+                    switch (sp74[sCurFileIndex]) {
                         case '?':
                             Audio_PlaySfxGeneral(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                            sDbCameraCuts[idx1] = sDbCameraCuts[idx2];
-                            sp74[sCurFileIdx] = '?'; // useless
-                            DbCamera_ResetCut(idx2, false);
+                            sDbCameraCuts[index1] = sDbCameraCuts[index2];
+                            sp74[sCurFileIndex] = '?'; // useless
+                            DbCamera_ResetCut(index2, false);
                             break;
+
                         case '-':
                             Audio_PlaySfxGeneral(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
-                            sp64 = sDbCameraCuts[idx2];
-                            if (sLastFileIdx < sCurFileIdx) {
+                            sp64 = sDbCameraCuts[index2];
+                            if (sLastFileIndex < sCurFileIndex) {
                                 // rotate right
-                                for (i = idx2; i < idx1 - 1 && i < ARRAY_COUNT(sDbCameraCuts) - 1; i++) {
+                                for (i = index2; i < index1 - 1 && i < ARRAY_COUNT(sDbCameraCuts) - 1; i++) {
                                     sDbCameraCuts[i] = sDbCameraCuts[i + 1];
                                 }
-                                sDbCameraCuts[idx1 - 1] = sp64;
-                            } else if (sCurFileIdx < sLastFileIdx) {
+                                sDbCameraCuts[index1 - 1] = sp64;
+                            } else if (sCurFileIndex < sLastFileIndex) {
                                 // rotate left
-                                for (i = idx2; idx1 < i && i > 0; i--) {
+                                for (i = index2; index1 < i && i > 0; i--) {
                                     sDbCameraCuts[i] = sDbCameraCuts[i - 1];
                                 }
-                                sDbCameraCuts[idx1] = sp64;
+                                sDbCameraCuts[index1] = sp64;
                             }
 
                             for (i = 0; i < ARRAY_COUNT(sDbCameraCuts) - 1; i++) {
                                 sp74[i * 2 + 1] = sDbCameraCuts[i].letter;
                             }
                             break;
+
                         default:
                             Audio_PlaySfxGeneral(NA_SE_SY_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                             break;
                     }
                 }
-                sLastFileIdx = -1;
+                sLastFileIndex = -1;
             }
 
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_A)) {
-                if (sp74[sCurFileIdx] == '?') {
+                if (sp74[sCurFileIndex] == '?') {
                     Audio_PlaySfxGeneral(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                    sp74[sCurFileIdx] = DbCamera_InitCut(idx1, &dbCamera->sub);
-                    if (sp74[sCurFileIdx] == '?') {
+                    sp74[sCurFileIndex] = DbCamera_InitCut(index1, &dbCamera->sub);
+                    if (sp74[sCurFileIndex] == '?') {
                         func_8006376C(0xF, 0x18, 7, D_8012CF48);
                     }
                 }
             }
 
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_B)) {
-                if (sp74[sCurFileIdx] != '?' && sp74[sCurFileIdx] != '-') {
+                if (sp74[sCurFileIndex] != '?' && sp74[sCurFileIndex] != '-') {
                     Audio_PlaySfxGeneral(NA_SE_SY_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                    sp74[sCurFileIdx] = '?';
-                    DbCamera_ResetCut(idx1, true);
+                    sp74[sCurFileIndex] = '?';
+                    DbCamera_ResetCut(index1, true);
                 }
             }
 
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_R)) {
-                if (sp74[sCurFileIdx] != '?' && sp74[sCurFileIdx] != '-') {
+                if (sp74[sCurFileIndex] != '?' && sp74[sCurFileIndex] != '-') {
                     Audio_PlaySfxGeneral(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
-                    for (i = 0; i < sDbCameraCuts[idx1].nPoints; i++) {
-                        dbCamera->sub.lookAt[i] = sDbCameraCuts[idx1].lookAt[i];
+                    for (i = 0; i < sDbCameraCuts[index1].nPoints; i++) {
+                        dbCamera->sub.lookAt[i] = sDbCameraCuts[index1].lookAt[i];
                     }
                     // why use another loop for that...
-                    for (i = 0; i < sDbCameraCuts[idx1].nPoints; i++) {
-                        dbCamera->sub.position[i] = sDbCameraCuts[idx1].position[i];
+                    for (i = 0; i < sDbCameraCuts[index1].nPoints; i++) {
+                        dbCamera->sub.position[i] = sDbCameraCuts[index1].position[i];
                     }
 
-                    dbCamera->sub.mode = sDbCameraCuts[idx1].mode;
-                    dbCamera->sub.nFrames = sDbCameraCuts[idx1].nFrames;
-                    dbCamera->sub.nPoints = sDbCameraCuts[idx1].nPoints;
-                    dbCamera->sub.unkIdx = 0;
-                    func_800B41DC(dbCamera, dbCamera->sub.unkIdx, cam);
-                    sp74[sCurFileIdx] = '?';
-                    DbCamera_ResetCut(idx1, true);
+                    dbCamera->sub.mode = sDbCameraCuts[index1].mode;
+                    dbCamera->sub.nFrames = sDbCameraCuts[index1].nFrames;
+                    dbCamera->sub.nPoints = sDbCameraCuts[index1].nPoints;
+                    dbCamera->sub.unkIndex = 0;
+                    func_800B41DC(dbCamera, dbCamera->sub.unkIndex, cam);
+                    sp74[sCurFileIndex] = '?';
+                    DbCamera_ResetCut(index1, true);
                     dbCamera->unk_00 = 1;
                 }
             }
@@ -2266,16 +2309,16 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DRIGHT)) {
                 Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                if (sCurFileIdx == 0x1E) {
-                    sCurFileIdx = 0;
+                if (sCurFileIndex == 0x1E) {
+                    sCurFileIndex = 0;
                 } else {
-                    sCurFileIdx++;
+                    sCurFileIndex++;
                 }
             }
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].press.button, BTN_DLEFT)) {
                 Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                sCurFileIdx = (sCurFileIdx == 0) ? 0x1E : sCurFileIdx - 1;
+                sCurFileIndex = (sCurFileIndex == 0) ? 0x1E : sCurFileIndex - 1;
             }
 
             if (CHECK_BTN_ALL(sPlay->state.input[DBCAM_CONTROLLER_PORT].cur.button, BTN_L) &&
@@ -2311,16 +2354,15 @@ s32 DbCamera_UpdateDemoControl(DbCamera* dbCamera, Camera* cam) {
 
             func_8006376C(4, 7, 5, D_8012CF50[0]);
             sp74[1] = 0;
-            if (sLastFileIdx != -1) {
+            if (sLastFileIndex != -1) {
                 sp74[0] = D_801612EA;
-                func_8006376C(sLastFileIdx + 5, 7, 2, sp74);
+                func_8006376C(sLastFileIndex + 5, 7, 2, sp74);
             } else {
                 sp74[0] = '_';
             }
-            func_8006376C(sCurFileIdx + 5, 7, 7, sp74);
+            func_8006376C(sCurFileIndex + 5, 7, 7, sp74);
 
             break;
-        }
     }
 
     return 1;

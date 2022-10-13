@@ -1419,7 +1419,7 @@ typedef struct {
     /* 0x0000 */ s16 mode;
     /* 0x0002 */ s16 nFrames;
     /* 0x0004 */ s16 nPoints;
-    /* 0x0006 */ s16 unkIdx;
+    /* 0x0006 */ s16 unkIndex;
     /* 0x0008 */ s16 unk_08;
     /* 0x000A */ s16 unk_0A;
     /* 0x000C */ s32 unk_0C; // bool: indicates position vs lookAt?
@@ -1427,7 +1427,7 @@ typedef struct {
     /* 0x0024 */ CutsceneCameraPoint position[129];
     /* 0x0834 */ CutsceneCameraPoint lookAt[129];
     /* 0x1044 */ s16 demoCtrlMenu;
-    /* 0x1046 */ s16 demoCtrlActionIdx; // e (?), s (save), l (load), c (clear)
+    /* 0x1046 */ s16 demoCtrlActionIndex; // e (?), s (save), l (load), c (clear)
     /* 0x1048 */ s16 demoCtrlToggleSwitch;
     /* 0x104A */ Vec3s unk_104A;
 } DbCameraSub; // size = 0x1050
