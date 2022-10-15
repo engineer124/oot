@@ -43,7 +43,7 @@ void EnJsjutan_Init(Actor* thisx, PlayState* play) {
     this->dyna.actor.flags &= ~ACTOR_FLAG_0;
     DynaPolyActor_Init(&this->dyna, 0);
     CollisionHeader_GetVirtual(&sCol, &header);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, header);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, header);
     Actor_SetScale(thisx, 0.02f);
     this->unk_164 = true;
     this->shadowAlpha = 100.0f;

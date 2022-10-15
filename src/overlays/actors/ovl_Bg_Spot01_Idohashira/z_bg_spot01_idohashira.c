@@ -298,7 +298,7 @@ void BgSpot01Idohashira_Init(Actor* thisx, PlayState* play) {
     DynaPolyActor_Init(&this->dyna, 0);
     colHeader = NULL;
     CollisionHeader_GetVirtual(&gKakarikoWellArchCol, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 
     if (!IS_CUTSCENE_LAYER) {
         if (GET_EVENTCHKINF(EVENTCHKINF_54) && LINK_IS_ADULT) {

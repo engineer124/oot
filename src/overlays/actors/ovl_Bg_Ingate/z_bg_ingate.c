@@ -42,7 +42,7 @@ void BgInGate_Init(Actor* thisx, PlayState* play) {
     DynaPolyActor_Init(&this->dyna, 0);
     CollisionHeader_GetVirtual(&gIngoGateCol, &colHeader);
 
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 
     if ((play->sceneId != SCENE_SPOT20 || !LINK_IS_ADULT) ||
         (GET_EVENTCHKINF(EVENTCHKINF_18) && (gSaveContext.cutsceneIndex != 0xFFF0))) {

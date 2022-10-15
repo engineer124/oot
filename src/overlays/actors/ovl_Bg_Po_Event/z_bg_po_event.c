@@ -157,7 +157,7 @@ void BgPoEvent_InitBlocks(BgPoEvent* this, PlayState* play) {
 
     this->dyna.actor.flags |= ACTOR_FLAG_4 | ACTOR_FLAG_5;
     CollisionHeader_GetVirtual(&gPoSistersAmyBlockCol, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     if ((this->type == 0) && (this->index != 3)) {
         newBlock = Actor_SpawnAsChild(&play->actorCtx, &this->dyna.actor, play, ACTOR_BG_PO_EVENT,
                                       blockPosX[this->index], this->dyna.actor.world.pos.y, blockPosZ[this->index], 0,

@@ -55,7 +55,7 @@ void BgMizuShutter_Init(Actor* thisx, PlayState* play) {
     this->displayList = sDisplayLists[BGMIZUSHUTTER_SIZE_PARAM(&this->dyna.actor)];
     DynaPolyActor_Init(&this->dyna, DYNA_TRANSFORM_POS);
     CollisionHeader_GetVirtual(sCollisionHeaders[BGMIZUSHUTTER_SIZE_PARAM(&this->dyna.actor)], &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 
     if ((BGMIZUSHUTTER_SIZE_PARAM(&this->dyna.actor) == BGMIZUSHUTTER_SMALL) ||
         (BGMIZUSHUTTER_SIZE_PARAM(&this->dyna.actor) == BGMIZUSHUTTER_LARGE)) {

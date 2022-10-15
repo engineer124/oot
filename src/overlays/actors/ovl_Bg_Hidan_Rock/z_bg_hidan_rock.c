@@ -101,7 +101,7 @@ void BgHidanRock_Init(Actor* thisx, PlayState* play) {
         this->actionFunc = func_8088B634;
     }
 
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     this->timer = 0;
 }
 

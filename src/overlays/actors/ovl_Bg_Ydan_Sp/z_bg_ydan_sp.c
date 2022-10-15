@@ -136,7 +136,7 @@ void BgYdanSp_Init(Actor* thisx, PlayState* play) {
         tri[1].z = this->dyna.actor.world.pos.z - (sinsY * ti1->dim.vtx[0].x) + (ti1->dim.vtx[2].y * cossY * nSinsX);
         Collider_SetTrisVertices(&this->trisCollider, 1, &tri[0], &tri[2], &tri[1]);
     }
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     this->timer = 0;
     if (Flags_GetSwitch(play, this->isDestroyedSwitchFlag)) {
         Actor_Kill(&this->dyna.actor);

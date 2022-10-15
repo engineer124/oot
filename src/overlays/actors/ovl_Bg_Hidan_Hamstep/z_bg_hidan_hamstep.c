@@ -157,7 +157,7 @@ void BgHidanHamstep_Init(Actor* thisx, PlayState* play) {
         CollisionHeader_GetVirtual(&gFireTempleStoneStep2Col, &colHeader);
     }
 
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 
     if (Flags_GetSwitch(play, (this->dyna.actor.params >> 8) & 0xFF)) {
         if ((this->dyna.actor.params & 0xFF) == 0) {

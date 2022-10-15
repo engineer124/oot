@@ -102,7 +102,7 @@ void BgSpot17Bakudankabe_Init(Actor* thisx, PlayState* play) {
     }
 
     CollisionHeader_GetVirtual(&gCraterBombableWallCol, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
 }
 

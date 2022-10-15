@@ -54,7 +54,7 @@ void BgGndIceblock_Init(Actor* thisx, PlayState* play) {
     CollisionHeader_GetVirtual(&gWaterTrialIceBlockCol, &colHeader);
     this->targetPos = this->dyna.actor.home.pos;
     this->actionFunc = BgGndIceblock_Idle;
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     if (this->dyna.actor.world.pos.x == 2792.0f) {
         this->dyna.actor.params = 0;
         sBlockPositions[0] = 7;

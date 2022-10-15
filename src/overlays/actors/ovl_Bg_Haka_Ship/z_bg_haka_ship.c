@@ -55,7 +55,7 @@ void BgHakaShip_Init(Actor* thisx, PlayState* play) {
         CollisionHeader_GetVirtual(&object_haka_objects_Col_00ED7C, &colHeader);
         this->actionFunc = BgHakaShip_ChildUpdatePosition;
     }
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     this->dyna.actor.world.rot.y = this->dyna.actor.shape.rot.y - 0x4000;
     this->yOffset = 0;
     if (this->dyna.actor.params == 0 &&

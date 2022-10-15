@@ -170,7 +170,7 @@ void BgHidanSekizou_Init(Actor* thisx, PlayState* play) {
         this->updateFunc = func_8088D434;
     }
     this->unk_170 = 0;
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     CollisionCheck_SetInfo(&this->dyna.actor.colChkInfo, NULL, &sColChkInfoInit);
 }
 

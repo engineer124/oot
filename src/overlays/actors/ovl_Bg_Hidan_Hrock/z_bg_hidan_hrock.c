@@ -137,7 +137,7 @@ void BgHidanHrock_Init(Actor* thisx, PlayState* play) {
         CollisionHeader_GetVirtual(&gFireTemplePillarInsertedInGroundCol, &collisionHeader);
     }
 
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, collisionHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, collisionHeader);
 }
 
 void BgHidanHrock_Destroy(Actor* thisx, PlayState* play) {

@@ -40,7 +40,7 @@ void BgJyaBlock_Init(Actor* thisx, PlayState* play) {
 
     DynaPolyActor_Init(&this->dyna, 0);
     CollisionHeader_GetVirtual(&gPushBlockCol, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
 
     if ((LINK_AGE_IN_YEARS != YEARS_CHILD) || !Flags_GetSwitch(play, thisx->params & 0x3F)) {

@@ -56,7 +56,7 @@ void EnLightbox_Init(Actor* thisx, PlayState* play) {
     thisx->targetMode = 0;
     thisx->gravity = -2.0f;
     CollisionHeader_GetVirtual(&object_lightbox_Col_001F10, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 }
 
 void EnLightbox_Destroy(Actor* thisx, PlayState* play) {

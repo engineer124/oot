@@ -222,7 +222,7 @@ void BgJyaIronobj_Init(Actor* thisx, PlayState* play) {
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
     BgJyaIronobj_InitCylinder(this, play);
     CollisionHeader_GetVirtual(sCollisionHeaders[thisx->params & 1], &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     func_808992D8(this);
 }
 

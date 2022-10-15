@@ -45,7 +45,7 @@ void BgSpot07Taki_Init(Actor* thisx, PlayState* play) {
         } else {
             CollisionHeader_GetVirtual(&object_spot07_object_Col_0038FC, &colHeader);
         }
-        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     }
     this->actionFunc = BgSpot07Taki_DoNothing;
 }

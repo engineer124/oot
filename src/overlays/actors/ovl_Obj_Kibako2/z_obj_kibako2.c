@@ -124,7 +124,7 @@ void ObjKibako2_Init(Actor* thisx, PlayState* play) {
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
     ObjKibako2_InitCollider(thisx, play);
     CollisionHeader_GetVirtual(&gLargeCrateCol, &colHeader);
-    bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     this->collectibleFlag = this->dyna.actor.home.rot.z & 0x3F;
     this->dyna.bgId = bgId;
     this->actionFunc = ObjKibako2_Idle;

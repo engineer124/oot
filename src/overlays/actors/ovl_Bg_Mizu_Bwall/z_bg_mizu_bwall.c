@@ -179,7 +179,7 @@ void BgMizuBwall_Init(Actor* thisx, PlayState* play) {
     this->dList = sDLists[(u16)this->dyna.actor.params & 0xF];
     DynaPolyActor_Init(&this->dyna, DYNA_TRANSFORM_POS);
     CollisionHeader_GetVirtual(sColHeaders[(u16)this->dyna.actor.params & 0xF], &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 
     switch ((u16)this->dyna.actor.params & 0xF) {
         case MIZUBWALL_FLOOR:

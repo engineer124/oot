@@ -72,7 +72,7 @@ void BgSpot18Shutter_Init(Actor* thisx, PlayState* play) {
     }
 
     CollisionHeader_GetVirtual(&gGoronCityDoorCol, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 }
 
 void BgSpot18Shutter_Destroy(Actor* thisx, PlayState* play) {

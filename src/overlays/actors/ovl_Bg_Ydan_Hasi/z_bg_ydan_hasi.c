@@ -67,7 +67,7 @@ void BgYdanHasi_Init(Actor* thisx, PlayState* play) {
             this->actionFunc = BgYdanHasi_SetupThreeBlocks;
             Actor_SetFocus(&this->dyna.actor, 40.0f);
         }
-        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     }
     this->timer = 0;
 }

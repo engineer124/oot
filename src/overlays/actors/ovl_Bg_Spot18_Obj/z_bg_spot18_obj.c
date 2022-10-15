@@ -130,7 +130,7 @@ s32 func_808B8A98(BgSpot18Obj* this, PlayState* play) {
 
     DynaPolyActor_Init(&this->dyna, 0);
     CollisionHeader_GetVirtual(D_808B90FC[this->dyna.actor.params & 0xF], &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     return 1;
 }
 

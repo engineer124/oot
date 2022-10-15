@@ -119,7 +119,7 @@ void BgSpot11Bakudankabe_Init(Actor* thisx, PlayState* play) {
     }
     func_808B2180(this, play);
     CollisionHeader_GetVirtual(&gDesertColossusBombableWallCol, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     Actor_SetScale(&this->dyna.actor, 1.0f);
     osSyncPrintf("(spot11 爆弾壁)(arg_data 0x%04x)\n", this->dyna.actor.params);
 }

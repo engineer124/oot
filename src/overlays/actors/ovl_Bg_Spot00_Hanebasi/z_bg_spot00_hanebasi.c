@@ -61,7 +61,7 @@ void BgSpot00Hanebasi_Init(Actor* thisx, PlayState* play) {
         CollisionHeader_GetVirtual(&gHyruleFieldCastleDrawbridgeChainsCol, &colHeader);
     }
 
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 
     if (this->dyna.actor.params == DT_DRAWBRIDGE) {
         if (LINK_IS_ADULT && !IS_CUTSCENE_LAYER) {

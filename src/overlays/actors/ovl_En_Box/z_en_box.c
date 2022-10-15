@@ -105,7 +105,7 @@ void EnBox_Init(Actor* thisx, PlayState* play2) {
 
     DynaPolyActor_Init(&this->dyna, 0);
     CollisionHeader_GetVirtual(&gTreasureChestCol, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     DynaPoly_DisableCeilingCollision(play, &play->colCtx.dyna, this->dyna.bgId);
 
     this->movementFlags = 0;

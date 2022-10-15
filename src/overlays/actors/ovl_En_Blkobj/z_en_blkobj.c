@@ -65,7 +65,7 @@ void EnBlkobj_Init(Actor* thisx, PlayState* play) {
         EnBlkobj_SetupAction(this, EnBlkobj_DoNothing);
     } else {
         CollisionHeader_GetVirtual(&gIllusionRoomCol, &colHeader);
-        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
         EnBlkobj_SetupAction(this, EnBlkobj_Wait);
     }
 }

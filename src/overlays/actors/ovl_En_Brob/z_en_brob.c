@@ -65,7 +65,7 @@ void EnBrob_Init(Actor* thisx, PlayState* play) {
                        this->morphTable, 10);
     DynaPolyActor_Init(&this->dyna, 0);
     CollisionHeader_GetVirtual(&object_brob_Col_001A70, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     Collider_InitCylinder(play, &this->colliders[0]);
     Collider_SetCylinder(play, &this->colliders[0], &this->dyna.actor, &sCylinderInit);
     Collider_InitCylinder(play, &this->colliders[1]);

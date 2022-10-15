@@ -49,7 +49,7 @@ void BgIceObjects_Init(Actor* thisx, PlayState* play) {
     CollisionHeader_GetVirtual(&object_ice_objects_Col_0003F0, &colHeader);
     Math_Vec3f_Copy(&this->targetPos, &this->dyna.actor.home.pos);
     this->actionFunc = BgIceObjects_Idle;
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     this->dyna.actor.params = 0;
 }
 

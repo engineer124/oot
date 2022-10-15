@@ -171,7 +171,7 @@ void EnAObj_Init(Actor* thisx, PlayState* play) {
 
     if (this->dyna.bgId != BGACTOR_NEG_ONE) {
         CollisionHeader_GetVirtual(sColHeaders[this->dyna.bgId], &colHeader);
-        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     }
 }
 

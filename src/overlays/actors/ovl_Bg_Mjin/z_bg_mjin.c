@@ -84,7 +84,7 @@ void func_808A0850(BgMjin* this, PlayState* play) {
         DynaPolyActor_Init(&this->dyna, 0);
         collision = this->dyna.actor.params != 0 ? &gWarpPadCol : &gOcarinaWarpPadCol;
         CollisionHeader_GetVirtual(collision, &colHeader);
-        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
         BgMjin_SetupAction(this, BgMjin_DoNothing);
         this->dyna.actor.draw = BgMjin_Draw;
     }

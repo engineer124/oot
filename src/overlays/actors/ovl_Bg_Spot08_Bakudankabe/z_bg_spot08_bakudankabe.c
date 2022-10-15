@@ -168,7 +168,7 @@ void BgSpot08Bakudankabe_Init(Actor* thisx, PlayState* play) {
     }
     func_808B02D0(this, play);
     CollisionHeader_GetVirtual(&gZorasFountainBombableWallCol, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
 }
 

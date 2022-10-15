@@ -85,7 +85,7 @@ void BgSpot02Objects_Init(Actor* thisx, PlayState* play) {
                 CollisionHeader_GetVirtual(&object_spot02_objects_Col_0133EC, &colHeader);
             }
 
-            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 
             if ((GET_EVENTCHKINF(EVENTCHKINF_1D) && (play->sceneId == SCENE_SPOT02) && (thisx->params == 2)) ||
                 (LINK_IS_ADULT && (thisx->params == 1))) {

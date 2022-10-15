@@ -74,7 +74,7 @@ void BgDdanKd_Init(Actor* thisx, PlayState* play) {
     Collider_SetCylinder(play, &this->collider, &this->dyna.actor, &sCylinderInit);
     CollisionHeader_GetVirtual(&gDodongoFallingStairsCol, &colHeader);
 
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 
     if (!Flags_GetSwitch(play, this->dyna.actor.params)) {
         BgDdanKd_SetupAction(this, BgDdanKd_CheckForExplosions);

@@ -60,7 +60,7 @@ void EnHata_Init(Actor* thisx, PlayState* play) {
     Animation_Change(&this->skelAnime, &gFlagpoleFlapAnim, 1.0f, 0.0f, frameCount, ANIMMODE_LOOP, 0.0f);
     DynaPolyActor_Init(&this->dyna, 0);
     CollisionHeader_GetVirtual(&gFlagpoleCol, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     this->dyna.actor.uncullZoneScale = 500.0f;
     this->dyna.actor.uncullZoneDownward = 550.0f;
     this->dyna.actor.uncullZoneForward = 2200.0f;

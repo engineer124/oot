@@ -47,7 +47,7 @@ void BgGjyoBridge_Init(Actor* thisx, PlayState* play) {
     DynaPolyActor_Init(&this->dyna, 0);
     CollisionHeader_GetVirtual(&gRainbowBridgeCol, &colHeader);
 
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 
     if (GET_EVENTCHKINF(EVENTCHKINF_4D)) {
         this->actionFunc = func_808787A4;

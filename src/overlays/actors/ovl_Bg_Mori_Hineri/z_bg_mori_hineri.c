@@ -149,7 +149,7 @@ void func_808A39FC(BgMoriHineri* this, PlayState* play) {
                 this->actionFunc = func_808A3C8C;
                 CollisionHeader_GetVirtual(&object_mori_hineri2a_Col_006078, &colHeader);
             }
-            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
         }
     }
 }

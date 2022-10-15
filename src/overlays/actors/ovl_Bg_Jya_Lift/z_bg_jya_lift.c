@@ -47,7 +47,7 @@ void BgJyaLift_InitDynapoly(BgJyaLift* this, PlayState* play, CollisionHeader* c
 
     DynaPolyActor_Init(&this->dyna, moveFlag);
     CollisionHeader_GetVirtual(collisionHeader, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 }
 
 void BgJyaLift_Init(Actor* thisx, PlayState* play) {

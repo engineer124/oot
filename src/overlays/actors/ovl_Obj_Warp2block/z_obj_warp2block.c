@@ -214,7 +214,7 @@ void ObjWarp2block_Init(Actor* thisx, PlayState* play2) {
         }
         DynaPolyActor_Init(&this->dyna, 0);
         CollisionHeader_GetVirtual(&gSongOfTimeBlockCol, &collisionHeader);
-        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, collisionHeader);
+        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, collisionHeader);
     } else {
         ObjWarp2block_SetInactive(this);
     }

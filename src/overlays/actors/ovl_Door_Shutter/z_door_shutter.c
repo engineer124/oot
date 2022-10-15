@@ -295,7 +295,7 @@ void DoorShutter_SetupType(DoorShutter* this, PlayState* play) {
             this->unk_16C = sObjectInfo[this->unk_16B].index1;
             CollisionHeader_GetVirtual((this->doorType == SHUTTER_GOHMA_BLOCK) ? &gGohmaDoorCol : &gPhantomGanonBarsCol,
                                        &colHeader);
-            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
             if (this->doorType == SHUTTER_GOHMA_BLOCK) {
                 this->dyna.actor.velocity.y = 0.0f;
                 this->dyna.actor.gravity = -2.0f;

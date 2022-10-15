@@ -109,7 +109,7 @@ void EnJj_Init(Actor* thisx, PlayState* play2) {
                 JABUJABU_COLLISION);
             DynaPolyActor_Init(&this->dyna, 0);
             CollisionHeader_GetVirtual(&gJabuJabuHeadCol, &colHeader);
-            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
             Collider_InitCylinder(play, &this->collider);
             Collider_SetCylinder(play, &this->collider, &this->dyna.actor, &sCylinderInit);
             this->dyna.actor.colChkInfo.mass = MASS_IMMOVABLE;
@@ -118,7 +118,7 @@ void EnJj_Init(Actor* thisx, PlayState* play2) {
         case JABUJABU_COLLISION:
             DynaPolyActor_Init(&this->dyna, 0);
             CollisionHeader_GetVirtual(&gJabuJabuBodyCol, &colHeader);
-            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
             DynaPoly_DisableCeilingCollision(play, &play->colCtx.dyna, this->dyna.bgId);
             this->dyna.actor.update = EnJj_UpdateStaticCollision;
             this->dyna.actor.draw = NULL;
@@ -128,7 +128,7 @@ void EnJj_Init(Actor* thisx, PlayState* play2) {
         case JABUJABU_UNUSED_COLLISION:
             DynaPolyActor_Init(&this->dyna, 0);
             CollisionHeader_GetVirtual(&gJabuJabuUnusedCol, &colHeader);
-            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
             this->dyna.actor.update = EnJj_UpdateStaticCollision;
             this->dyna.actor.draw = NULL;
             Actor_SetScale(&this->dyna.actor, 0.087f);

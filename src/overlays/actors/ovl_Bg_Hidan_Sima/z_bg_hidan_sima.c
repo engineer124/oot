@@ -93,7 +93,7 @@ void BgHidanSima_Init(Actor* thisx, PlayState* play) {
     } else {
         CollisionHeader_GetVirtual(&gFireTempleStonePlatform2Col, &colHeader);
     }
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
     Collider_InitJntSph(play, &this->collider);
     Collider_SetJntSph(play, &this->collider, &this->dyna.actor, &sJntSphInit, this->elements);
     for (i = 0; i < ARRAY_COUNT(sJntSphElementsInit); i++) {

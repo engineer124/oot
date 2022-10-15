@@ -97,7 +97,7 @@ void func_8087DB24(BgHakaMegane* this, PlayState* play) {
             collision = sCollisionHeaders[this->dyna.actor.params];
             if (collision != NULL) {
                 CollisionHeader_GetVirtual(collision, &colHeader);
-                this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+                this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
             }
         } else {
             this->actionFunc = BgHakaMegane_DoNothing;

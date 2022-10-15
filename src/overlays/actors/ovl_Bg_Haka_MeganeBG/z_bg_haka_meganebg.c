@@ -95,7 +95,7 @@ void BgHakaMeganeBG_Init(Actor* thisx, PlayState* play) {
         }
     }
 
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 }
 
 void BgHakaMeganeBG_Destroy(Actor* thisx, PlayState* play) {

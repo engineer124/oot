@@ -2593,7 +2593,7 @@ void DynaLookup_ResetVtxStartIndex(u16* vtxStartIndex) {
  * Initialize BgActor
  */
 void BgActor_Initialize(PlayState* play, BgActor* bgActor) {
-    bgActor->actor = NULL;
+    bgActor->dyna = NULL;
     bgActor->colHeader = NULL;
     ScaleRotPos_Initialize(&bgActor->prevTransform);
     ScaleRotPos_Initialize(&bgActor->curTransform);
@@ -2606,16 +2606,16 @@ void BgActor_Initialize(PlayState* play, BgActor* bgActor) {
 /**
  * setActor internal
  */
-void BgActor_SetActor(BgActor* bgActor, Actor* actor, CollisionHeader* colHeader) {
-    bgActor->actor = actor;
+void BgActor_SetActor(BgActor* bgActor, DynaPolyActor* dyna, CollisionHeader* colHeader) {
+    bgActor->dyna = dyna;
     bgActor->colHeader = colHeader;
-    bgActor->prevTransform.scale = actor->scale;
-    bgActor->prevTransform.rot = actor->shape.rot;
+    bgActor->prevTransform.scale = dyna->actor.scale;
+    bgActor->prevTransform.rot = dyna->actor.shape.rot;
     bgActor->prevTransform.rot.x--;
-    bgActor->prevTransform.pos = actor->world.pos;
-    bgActor->curTransform.scale = actor->scale;
-    bgActor->curTransform.rot = actor->shape.rot;
-    bgActor->curTransform.pos = actor->world.pos;
+    bgActor->prevTransform.pos = dyna->actor.world.pos;
+    bgActor->curTransform.scale = dyna->actor.scale;
+    bgActor->curTransform.rot = dyna->actor.shape.rot;
+    bgActor->curTransform.pos = dyna->actor.world.pos;
 }
 
 /**
@@ -2706,7 +2706,7 @@ void DynaPoly_Alloc(PlayState* play, DynaCollisionContext* dyna) {
  * Set BgActor
  * original name: DynaPolyInfo_setActor
  */
-s32 DynaPoly_SetBgActor(PlayState* play, DynaCollisionContext* dyna, Actor* actor, CollisionHeader* colHeader) {
+s32 DynaPoly_SetBgActor(PlayState* play, DynaCollisionContext* dyna, DynaPolyActor* actor, CollisionHeader* colHeader) {
     s32 bgId;
     s32 foundSlot = false;
 
@@ -2744,7 +2744,7 @@ DynaPolyActor* DynaPoly_GetActor(CollisionContext* colCtx, s32 bgId) {
         colCtx->dyna.bgActorFlags[bgId] & BGACTOR_1) {
         return NULL;
     }
-    return (DynaPolyActor*)colCtx->dyna.bgActors[bgId].actor;
+    return colCtx->dyna.bgActors[bgId].dyna;
 }
 
 void DynaPoly_DisableCollision(PlayState* play, DynaCollisionContext* dyna, s32 bgId) {
@@ -2807,7 +2807,7 @@ void DynaPoly_DeleteBgActor(PlayState* play, DynaCollisionContext* dyna, s32 bgI
     if (actor != NULL) {
 
         actor->bgId = BGACTOR_NEG_ONE;
-        dyna->bgActors[bgId].actor = NULL;
+        dyna->bgActors[bgId].dyna = NULL;
         dyna->bgActorFlags[bgId] |= BGACTOR_1;
     }
 }
@@ -2822,7 +2822,7 @@ void DynaPoly_InvalidateLookup(PlayState* play, DynaCollisionContext* dyna) {
 void DynaPoly_AddBgActorToLookup(PlayState* play, DynaCollisionContext* dyna, s32 bgId, s32* vtxStartIndex,
                                  s32* polyStartIndex) {
     MtxF mtx;
-    Actor* actor;
+    DynaPolyActor* dynaActor;
     s32 pad;
     s32 pad2;
     f32 numVtxInverse;
@@ -2842,13 +2842,14 @@ void DynaPoly_AddBgActorToLookup(PlayState* play, DynaCollisionContext* dyna, s3
 
     pbgdata = dyna->bgActors[bgId].colHeader;
     sphere = &dyna->bgActors[bgId].boundingSphere;
-    actor = dyna->bgActors[bgId].actor;
+    dynaActor = dyna->bgActors[bgId].dyna;
     dyna->bgActors[bgId].dynaLookup.polyStartIndex = *polyStartIndex;
     dyna->bgActors[bgId].vtxStartIndex = *vtxStartIndex;
-    pos = actor->world.pos;
-    pos.y += actor->shape.yOffset * actor->scale.y;
+    pos = dynaActor->actor.world.pos;
+    pos.y += dynaActor->actor.shape.yOffset * dynaActor->actor.scale.y;
 
-    ScaleRotPos_SetValue(&dyna->bgActors[bgId].curTransform, &actor->scale, &actor->shape.rot, &pos);
+    ScaleRotPos_SetValue(&dyna->bgActors[bgId].curTransform, &dynaActor->actor.scale, &dynaActor->actor.shape.rot,
+                         &pos);
 
     if (dyna->bgActorFlags[bgId] & BGACTOR_COLLISION_DISABLED) {
         return;
@@ -3041,7 +3042,7 @@ void DynaPoly_UpdateContext(PlayState* play, DynaCollisionContext* dyna) {
             BgActor_Initialize(play, &dyna->bgActors[i]);
             dyna->bitFlag |= DYNAPOLY_INVALIDATE_LOOKUP;
         }
-        if (dyna->bgActors[i].actor != NULL && dyna->bgActors[i].actor->update == NULL) {
+        if (dyna->bgActors[i].dyna != NULL && dyna->bgActors[i].dyna->actor.update == NULL) {
             // Delete BgActor
             osSyncPrintf(VT_FGCOL(GREEN));
             osSyncPrintf("DynaPolyInfo_setup():削除 index=%d\n", i);
@@ -3172,7 +3173,7 @@ f32 BgCheck_RaycastDownDyna(DynaRaycastDown* dynaRaycastDown) {
             continue;
         }
 
-        if (dynaRaycastDown->actor == dynaRaycastDown->colCtx->dyna.bgActors[i].actor ||
+        if (dynaRaycastDown->actor == &dynaRaycastDown->colCtx->dyna.bgActors[i].dyna->actor ||
             dynaRaycastDown->pos->y < dynaRaycastDown->colCtx->dyna.bgActors[i].minY ||
             Math3D_XZInSphere(&dynaRaycastDown->colCtx->dyna.bgActors[i].boundingSphere, dynaRaycastDown->pos->x,
                               dynaRaycastDown->pos->z) == false) {
@@ -3478,7 +3479,7 @@ s32 BgCheck_SphVsDynaWall(CollisionContext* colCtx, u16 xpFlags, f32* outX, f32*
         if (!(colCtx->dyna.bgActorFlags[i] & BGACTOR_IN_USE)) {
             continue;
         }
-        if ((colCtx->dyna.bgActors + i)->actor == actor) {
+        if (&(colCtx->dyna.bgActors + i)->dyna->actor == actor) {
             continue;
         }
         bgActor = &colCtx->dyna.bgActors[i];
@@ -3597,7 +3598,7 @@ s32 BgCheck_CheckDynaCeiling(CollisionContext* colCtx, u16 xpFlags, f32* outY, V
         if (!(colCtx->dyna.bgActorFlags[i] & BGACTOR_IN_USE)) {
             continue;
         }
-        if (actor == colCtx->dyna.bgActors[i].actor) {
+        if (actor == &colCtx->dyna.bgActors[i].dyna->actor) {
             continue;
         }
         if (!Math3D_XZInSphere(&colCtx->dyna.bgActors[i].boundingSphere, pos->x, pos->z)) {
@@ -3730,7 +3731,7 @@ s32 BgCheck_CheckLineAgainstDyna(CollisionContext* colCtx, u16 xpFlags, Vec3f* p
 
     for (i = 0; i < BG_ACTOR_MAX; i++) {
         if (colCtx->dyna.bgActorFlags[i] & BGACTOR_IN_USE) {
-            if (actor != colCtx->dyna.bgActors[i].actor) {
+            if (actor != &colCtx->dyna.bgActors[i].dyna->actor) {
                 ay = posA->y;
                 by = posB->y;
                 if (!(ay < colCtx->dyna.bgActors[i].minY) || !(by < colCtx->dyna.bgActors[i].minY)) {
@@ -3836,7 +3837,7 @@ s32 BgCheck_SphVsFirstDynaPoly(CollisionContext* colCtx, u16 xpFlags, CollisionP
         if (!(colCtx->dyna.bgActorFlags[i] & BGACTOR_IN_USE)) {
             continue;
         }
-        if (colCtx->dyna.bgActors[i].actor == actor) {
+        if (&colCtx->dyna.bgActors[i].dyna->actor == actor) {
             continue;
         }
         testSphere.center.x = center->x;
@@ -3883,7 +3884,7 @@ void func_800418D0(CollisionContext* colCtx, PlayState* play) {
     for (i = 0; i < BG_ACTOR_MAX; i++) {
         flag = dyna->bgActorFlags[i];
         if ((flag & BGACTOR_IN_USE) && !(flag & BGACTOR_1)) {
-            Actor_SetObjectDependency(play, dyna->bgActors[i].actor);
+            Actor_SetObjectDependency(play, &dyna->bgActors[i].dyna->actor);
             CollisionHeader_SegmentedToVirtual(dyna->bgActors[i].colHeader);
         }
     }

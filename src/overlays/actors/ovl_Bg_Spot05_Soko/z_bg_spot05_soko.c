@@ -64,7 +64,7 @@ void BgSpot05Soko_Init(Actor* thisx, PlayState* play) {
             thisx->flags |= ACTOR_FLAG_4;
         }
     }
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 }
 
 void BgSpot05Soko_Destroy(Actor* thisx, PlayState* play) {

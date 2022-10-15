@@ -102,7 +102,7 @@ void BgMoriElevator_Init(Actor* thisx, PlayState* play) {
                 Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
                 DynaPolyActor_Init(&this->dyna, DYNA_TRANSFORM_POS);
                 CollisionHeader_GetVirtual(&gMoriElevatorCol, &colHeader);
-                this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+                this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
                 BgMoriElevator_SetupWaitAfterInit(this);
                 break;
             case true:

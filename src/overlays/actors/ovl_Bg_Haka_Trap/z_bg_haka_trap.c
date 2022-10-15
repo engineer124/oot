@@ -172,7 +172,7 @@ void BgHakaTrap_Init(Actor* thisx, PlayState* play) {
                 this->actionFunc = func_808801B8;
             }
 
-            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
         }
     } else {
         this->timer = 40;

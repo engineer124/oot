@@ -98,7 +98,7 @@ void BgYdanMaruta_Init(Actor* thisx, PlayState* play) {
         triInit = &sTrisElementsInit[1];
         DynaPolyActor_Init(&this->dyna, 0);
         CollisionHeader_GetVirtual(&gDTFallingLadderCol, &colHeader);
-        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
         thisx->home.pos.y += -280.0f;
         if (Flags_GetSwitch(play, this->switchFlag)) {
             thisx->world.pos.y = thisx->home.pos.y;

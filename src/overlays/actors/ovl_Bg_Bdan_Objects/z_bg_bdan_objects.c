@@ -159,7 +159,7 @@ void BgBdanObjects_Init(Actor* thisx, PlayState* play) {
             }
         }
     }
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 }
 
 void BgBdanObjects_Destroy(Actor* thisx, PlayState* play) {

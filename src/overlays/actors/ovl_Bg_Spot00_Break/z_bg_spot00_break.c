@@ -47,7 +47,7 @@ void BgSpot00Break_Init(Actor* thisx, PlayState* play) {
         CollisionHeader_GetVirtual(&gBrokenDrawbridgeCol, &colHeader);
     }
 
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 
     if (!LINK_IS_ADULT) {
         Actor_Kill(&this->dyna.actor);

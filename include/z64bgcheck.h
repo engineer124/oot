@@ -246,7 +246,7 @@ typedef struct {
 } DynaLookup;
 
 typedef struct {
-    /* 0x00 */ struct Actor* actor;
+    /* 0x00 */ struct DynaPolyActor* dyna;
     /* 0x04 */ CollisionHeader* colHeader;
     /* 0x08 */ DynaLookup dynaLookup;
     /* 0x10 */ u16 vtxStartIndex;

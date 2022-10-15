@@ -186,7 +186,7 @@ void BgHakaZou_Wait(BgHakaZou* this, PlayState* play) {
                 this->collider.dim.height = 20;
             }
 
-            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 
             if ((this->dyna.actor.params == STA_GIANT_BIRD_STATUE) && Flags_GetSwitch(play, this->switchFlag)) {
                 this->actionFunc = BgHakaZou_DoNothing;

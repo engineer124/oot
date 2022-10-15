@@ -106,7 +106,7 @@ void BgSpot06Objects_Init(Actor* thisx, PlayState* play) {
             Actor_ProcessInitChain(thisx, sInitChain);
             DynaPolyActor_Init(&this->dyna, 0);
             CollisionHeader_GetVirtual(&gLakeHyliaWaterTempleGateCol, &colHeader);
-            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 
             if (LINK_IS_ADULT && Flags_GetSwitch(play, this->switchFlag)) {
                 thisx->world.pos.y = thisx->home.pos.y + 120.0f;
@@ -172,7 +172,7 @@ void BgSpot06Objects_Init(Actor* thisx, PlayState* play) {
             Actor_ProcessInitChain(thisx, sInitChain);
             DynaPolyActor_Init(&this->dyna, 0);
             CollisionHeader_GetVirtual(&gLakeHyliaZoraShortcutIceblockCol, &colHeader);
-            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+            this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
             this->actionFunc = BgSpot06Objects_DoNothing;
 
             if (!LINK_IS_ADULT) {

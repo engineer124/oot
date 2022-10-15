@@ -116,7 +116,7 @@ void BgJyaMegami_InitDynaPoly(BgJyaMegami* this, PlayState* play, CollisionHeade
 
     DynaPolyActor_Init(&this->dyna, flag);
     CollisionHeader_GetVirtual(collision, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 }
 
 void BgJyaMegami_InitCollider(BgJyaMegami* this, PlayState* play) {

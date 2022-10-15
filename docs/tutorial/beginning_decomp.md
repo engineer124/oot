@@ -318,7 +318,7 @@ Now that we know this, it is worth remaking the context file and running mips2c 
 ```C
 DynaPolyActor_Init((DynaPolyActor *) this, 0);
 CollisionHeader_GetVirtual((void *) &D_06000A1C, &sp4C);
-this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, sp4C);
+this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, sp4C);
 ```
 
 Next, replace `(DynaPolyActor *) this` by `&this->dyna`. There's not a lot more we can do to the DynaPoly stuff right now, so just remove the casts to void and move on.
@@ -524,7 +524,7 @@ void EnJj_Init(Actor *thisx, PlayState *play) {
         this->childActor = Actor_SpawnAsChild(&play->actorCtx, &this->dyna.actor, play, ACTOR_EN_JJ, this->dyna.actor.world.pos.x - 10.0f, this->dyna.actor.world.pos.y, this->dyna.actor.world.pos.z, 0, this->dyna.actor.world.rot.y, 0, 0);
         DynaPolyActor_Init(&this->dyna, 0);
         CollisionHeader_GetVirtual(&D_06000A1C, &sp4C);
-        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, sp4C);
+        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, sp4C);
         // temp_a1_3 = this + 0x2B0;
         // sp44 = temp_a1_3;
         Collider_InitCylinder(play, &this->collider);
@@ -537,7 +537,7 @@ void EnJj_Init(Actor *thisx, PlayState *play) {
         CollisionHeader_GetVirtual(&D_06001830, &sp4C);
         // temp_a1_2 = &play->colCtx.dyna;
         // sp44 = temp_a1_2;
-        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, sp4C);
+        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, sp4C);
         func_8003ECA8(play, &play->colCtx.dyna, this->dyna.bgId);
         this->dyna.actor.update = &func_80A87F44;
         this->dyna.actor.draw = NULL;
@@ -549,7 +549,7 @@ void EnJj_Init(Actor *thisx, PlayState *play) {
     }
     DynaPolyActor_Init(&this->dyna, 0);
     CollisionHeader_GetVirtual(&D_0600BA8C, &sp4C);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, sp4C);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, sp4C);
     this->dyna.actor.update = &func_80A87F44;
     this->dyna.actor.draw = NULL;
     Actor_SetScale(&this->dyna.actor, 0.087f);
@@ -732,7 +732,7 @@ void EnJj_Init(Actor *thisx, PlayState *play) {
         this->childActor = Actor_SpawnAsChild(&play->actorCtx, &this->dyna.actor, play, ACTOR_EN_JJ, this->dyna.actor.world.pos.x - 10.0f, this->dyna.actor.world.pos.y, this->dyna.actor.world.pos.z, 0, this->dyna.actor.world.rot.y, 0, 0);
         DynaPolyActor_Init(&this->dyna, 0);
         CollisionHeader_GetVirtual(&D_06000A1C, &sp4C);
-        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, sp4C);
+        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, sp4C);
         // temp_a1_3 = this + 0x2B0;
         // sp44 = temp_a1_3;
         Collider_InitCylinder(play, &this->collider);
@@ -745,7 +745,7 @@ void EnJj_Init(Actor *thisx, PlayState *play) {
         CollisionHeader_GetVirtual(&D_06001830, &sp4C);
         // temp_a1_2 = &play->colCtx.dyna;
         // sp44 = temp_a1_2;
-        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, sp4C);
+        this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, sp4C);
         func_8003ECA8(play, &play->colCtx.dyna, this->dyna.bgId);
         this->dyna.actor.update = func_80A87F44;
         this->dyna.actor.draw = NULL;
@@ -757,7 +757,7 @@ void EnJj_Init(Actor *thisx, PlayState *play) {
     }
     DynaPolyActor_Init(&this->dyna, 0);
     CollisionHeader_GetVirtual(&D_0600BA8C, &sp4C);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, sp4C);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, sp4C);
     this->dyna.actor.update = func_80A87F44;
     this->dyna.actor.draw = NULL;
     Actor_SetScale(&this->dyna.actor, 0.087f);
@@ -859,7 +859,7 @@ void EnJj_Init(Actor* thisx, PlayState* play) {
             DynaPolyActor_Init(&this->dyna, 0);
             CollisionHeader_GetVirtual(&D_06000A1C, &sp4C);
             this->dyna.bgId =
-                DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, sp4C);
+                DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, sp4C);
             Collider_InitCylinder(play, &this->collider);
             Collider_SetCylinder(play, &this->collider, &this->dyna.actor, &D_80A88CB4);
             this->dyna.actor.colChkInfo.mass = 0xFF;
@@ -870,7 +870,7 @@ void EnJj_Init(Actor* thisx, PlayState* play) {
             // temp_a1_2 = &play->colCtx.dyna;
             // sp44 = temp_a1_2;
             this->dyna.bgId =
-                DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, sp4C);
+                DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, sp4C);
             func_8003ECA8(play, &play->colCtx.dyna, this->dyna.bgId);
             this->dyna.actor.update = func_80A87F44;
             this->dyna.actor.draw = NULL;
@@ -880,7 +880,7 @@ void EnJj_Init(Actor* thisx, PlayState* play) {
             DynaPolyActor_Init(&this->dyna, 0);
             CollisionHeader_GetVirtual(&D_0600BA8C, &sp4C);
             this->dyna.bgId =
-                DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, sp4C);
+                DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, sp4C);
             this->dyna.actor.update = func_80A87F44;
             this->dyna.actor.draw = NULL;
             Actor_SetScale(&this->dyna.actor, 0.087f);

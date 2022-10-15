@@ -101,7 +101,7 @@ void BgRelayObjects_Init(Actor* thisx, PlayState* play) {
             D_808A9508 |= 1;
         }
     }
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
+    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna, colHeader);
 }
 
 void BgRelayObjects_Destroy(Actor* thisx, PlayState* play) {
