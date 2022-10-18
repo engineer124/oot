@@ -3819,9 +3819,14 @@ void Audio_Update(void) {
         Audio_UpdateRiverSoundVolumes();
         Audio_UpdateSceneSequenceResumePoint();
         Audio_UpdateFanfare();
+
         if (gAudioSpecId == 7) {
-            Audio_ClearRiverSoundBgmPos();
+            // Intended to clear `sRiverSoundBgmPos` in Lost Woods Ocarina Cutscene.
+            // The default lost woods specId is 9, but the lost woods ocarina cutscene
+            // sceneLayer uses specId of 7
+            Audio_ClearRiverSoundMainBgmPos();
         }
+
         AudioSfx_ProcessRequests();
         AudioSeq_ProcessSeqCmds();
         AudioSfx_ProcessActiveSfx();
@@ -4559,7 +4564,8 @@ void AudioSfx_SetChannelIO(Vec3f* projectedPos, u16 sfxId, u8 ioData) {
 }
 
 /**
- * Used to update position, pan, and volume of Saria's Sequence in Lost Woods
+ * Used to update position, pan, and volume of the main bgm
+ * Designed specifically to navigate the maze in Lost Woods using volume and pan
  */
 void Audio_UpdateRiverSoundMainBgm(Vec3f* projectedPos, f32 xzDistToPlayer) {
     f32 volumeRel;
@@ -4598,6 +4604,8 @@ void Audio_UpdateRiverSoundMainBgm(Vec3f* projectedPos, f32 xzDistToPlayer) {
     }
 
     for (channelIndex = 0; channelIndex < SEQ_NUM_CHANNELS; channelIndex++) {
+        // For Lost Woods Sequence, channelIndex 9 contains drums.
+        // Keep the drums always at default volume, adjust volume of every other channel.
         if (channelIndex != 9) {
             SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_MAIN, channelIndex, 2, (127.0f * volumeRel));
             AUDIOCMD_CHANNEL_SET_PAN(SEQ_PLAYER_BGM_MAIN, (u32)channelIndex, pan);
@@ -4605,13 +4613,18 @@ void Audio_UpdateRiverSoundMainBgm(Vec3f* projectedPos, f32 xzDistToPlayer) {
     }
 }
 
-void Audio_ClearRiverSoundBgmPos(void) {
+void Audio_ClearRiverSoundMainBgmPos(void) {
     if (sRiverSoundBgmPos != NULL) {
         sRiverSoundBgmPos = NULL;
     }
 }
 
-void Audio_ClearRiverSoundBgmPosAtPos(Vec3f* projectedPos) {
+/**
+ * Clear the main bgm riversound pos.
+ * This is designed for the lost woods maze as there are multiple riversound entries
+ * used to navigate the lost woods maze.
+ */
+void Audio_ClearRiverSoundMainBgmPosAtPos(Vec3f* projectedPos) {
     if (sRiverSoundBgmPos == projectedPos) {
         sRiverSoundBgmPos = NULL;
     }
@@ -4637,7 +4650,7 @@ void Audio_SplitBgmChannels(s8 volSplit) {
                 volume = volSplit;
             } else {
                 // Sub Bgm SeqPlayer
-                volume = 0x7F - volSplit;
+                volume = 127 - volSplit;
             }
 
             if (volume > 100) {
@@ -4662,37 +4675,37 @@ void Audio_SplitBgmChannels(s8 volSplit) {
     }
 }
 
-void Audio_UpdateRiverSoundSubBgm(Vec3f* projectedPos, u16 seqId, u16 distMax) {
+void Audio_UpdateRiverSoundSubBgm(Vec3f* projectedPos, u16 seqId, u16 projectedDistMax) {
     f32 absY;
-    f32 dist;
+    f32 xzProjectedDist;
     u8 targetVolume;
-    f32 prevDist;
+    f32 xzProjectedDistPrev;
 
     if (sRiverSoundBgmTimer != 0) {
         sRiverSoundBgmTimer--;
         return;
     }
 
-    dist = sqrtf(SQ(projectedPos->z) + SQ(projectedPos->x));
+    xzProjectedDist = sqrtf(SQ(projectedPos->z) + SQ(projectedPos->x));
 
     if (sRiverSoundBgmPos == NULL) {
         sRiverSoundBgmPos = projectedPos;
         Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_SUB, seqId, 0, 7, 2);
     } else {
-        prevDist = sqrtf(SQ(sRiverSoundBgmPos->z) + SQ(sRiverSoundBgmPos->x));
-        if (dist < prevDist) {
+        xzProjectedDistPrev = sqrtf(SQ(sRiverSoundBgmPos->z) + SQ(sRiverSoundBgmPos->x));
+        if (xzProjectedDist < xzProjectedDistPrev) {
             sRiverSoundBgmPos = projectedPos;
         } else {
-            dist = prevDist;
+            xzProjectedDist = xzProjectedDistPrev;
         }
     }
 
     absY = ABS_ALT(projectedPos->y);
 
-    if ((distMax / 15.0f) < absY) {
+    if (absY > (projectedDistMax / 15.0f)) {
         targetVolume = 0;
-    } else if (dist < distMax) {
-        targetVolume = (1.0f - (dist / distMax)) * 127.0f;
+    } else if (xzProjectedDist < projectedDistMax) {
+        targetVolume = (1.0f - (xzProjectedDist / projectedDistMax)) * 127.0f;
     } else {
         targetVolume = 0;
     }
@@ -4705,7 +4718,7 @@ void Audio_UpdateRiverSoundSubBgm(Vec3f* projectedPos, u16 seqId, u16 distMax) {
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_BGM_SUB, 0x7F - targetVolume, 0);
 }
 
-void Audio_ClearRiverSoundBgmPos2(void) {
+void Audio_ClearRiverSoundSubBgmPos(void) {
     sRiverSoundBgmPos = NULL;
 }
 

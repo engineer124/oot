@@ -50,9 +50,9 @@ void EnRiverSound_Destroy(Actor* thisx, PlayState* play) {
     EnRiverSound* this = (EnRiverSound*)thisx;
 
     if (this->actor.params == RS_LOST_WOODS_SARIAS_SONG) {
-        Audio_ClearRiverSoundBgmPosAtPos(&this->actor.projectedPos);
+        Audio_ClearRiverSoundMainBgmPosAtPos(&this->actor.projectedPos);
     } else if (this->actor.params == RS_GORON_CITY_SARIAS_SONG) {
-        Audio_ClearRiverSoundBgmPos2();
+        Audio_ClearRiverSoundSubBgmPos();
     }
 }
 
