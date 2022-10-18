@@ -123,8 +123,8 @@ u8 sAudioBaseFilter = 0;
 u8 sAudioExtraFilter = 0;
 u8 sAudioBaseFilter2 = 0;
 u8 sAudioExtraFilter2 = 0;
-Vec3f* sSariaBgmPtr = NULL;
-f32 D_80130650 = 2000.0f;
+Vec3f* sRiverSoundBgmPos = NULL;
+f32 sRiverSoundXZDistToPlayer = 2000.0f;
 u8 sSeqModeInput = 0;
 
 #define SEQ_FLAG_ENEMY (1 << 0) // Allows enemy bgm
@@ -1240,7 +1240,7 @@ char sBinToStrBuf[0x20];
 u8 sMalonSingingTimer;
 u8 sAudioSpecPeakNumNotes[0x12];
 u8 sMalonSingingDisabled;
-u8 D_8016B9F3;
+u8 sRiverSoundSubBgmStartTimer;
 u8 sFanfareStartTimer;
 u16 sFanfareSeqId;
 
@@ -3069,8 +3069,8 @@ void AudioDebug_Draw(GfxPrint* printer) {
             }
 
             GfxPrint_SetPos(printer, 3, 24);
-            if (sSariaBgmPtr != NULL) {
-                GfxPrint_Printf(printer, "SARIA BGM PTR %08x", sSariaBgmPtr);
+            if (sRiverSoundBgmPos != NULL) {
+                GfxPrint_Printf(printer, "SARIA BGM PTR %08x", sRiverSoundBgmPos);
             }
 
             GfxPrint_SetPos(printer, 3, 25);
@@ -3708,9 +3708,14 @@ void func_800F3054(void) {
         Audio_UpdateRiverSoundVolumes();
         Audio_UpdateSceneSequenceResumePoint();
         Audio_UpdateFanfare();
+
         if (gAudioSpecId == 7) {
-            Audio_ClearSariaBgm();
+            // Intended to clear `sRiverSoundBgmPos` in Lost Woods Ocarina Cutscene.
+            // The default lost woods specId is 9, but the lost woods ocarina cutscene
+            // sceneLayer uses specId of 7
+            Audio_ClearRiverSoundMainBgmPos();
         }
+
         Audio_ProcessSfxRequests();
         Audio_ProcessSeqCmds();
         func_800F8F88();
@@ -4426,56 +4431,70 @@ void func_800F4C58(Vec3f* pos, u16 sfxId, u8 arg2) {
     Audio_PlaySfxGeneral(sfxId, pos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 }
 
-void func_800F4E30(Vec3f* pos, f32 arg1) {
-    f32 phi_f22;
-    s8 phi_s4;
-    u8 i;
+/**
+ * Used to update position, pan, and volume of the main bgm
+ * Designed specifically to navigate the maze in Lost Woods using volume and pan
+ */
+void Audio_UpdateRiverSoundMainBgm(Vec3f* projectedPos, f32 xzDistToPlayer) {
+    f32 volumeRel;
+    s8 pan;
+    u8 channelIndex;
 
-    if (sSariaBgmPtr == NULL) {
-        sSariaBgmPtr = pos;
-        D_80130650 = arg1;
-    } else if (pos != sSariaBgmPtr) {
-        if (arg1 < D_80130650) {
-            sSariaBgmPtr = pos;
-            D_80130650 = arg1;
+    // Set RiverSound Position
+    if (sRiverSoundBgmPos == NULL) {
+        sRiverSoundBgmPos = projectedPos;
+        sRiverSoundXZDistToPlayer = xzDistToPlayer;
+    } else if (sRiverSoundBgmPos != projectedPos) {
+        if (xzDistToPlayer < sRiverSoundXZDistToPlayer) {
+            sRiverSoundBgmPos = projectedPos;
+            sRiverSoundXZDistToPlayer = xzDistToPlayer;
         }
     } else {
-        D_80130650 = arg1;
+        sRiverSoundXZDistToPlayer = xzDistToPlayer;
     }
 
-    if (sSariaBgmPtr->x > 100.0f) {
-        phi_s4 = 0x7F;
-    } else if (sSariaBgmPtr->x < -100.0f) {
-        phi_s4 = 0;
+    // Set RiverSound Pan
+    if (sRiverSoundBgmPos->x > 100.0f) {
+        pan = 0x7F;
+    } else if (sRiverSoundBgmPos->x < -100.0f) {
+        pan = 0;
     } else {
-        phi_s4 = ((sSariaBgmPtr->x / 100.0f) * 64.0f) + 64.0f;
+        pan = ((sRiverSoundBgmPos->x / 100.0f) * 64.0f) + 64.0f;
     }
 
-    if (D_80130650 > 400.0f) {
-        phi_f22 = 0.1f;
-    } else if (D_80130650 < 120.0f) {
-        phi_f22 = 1.0f;
+    // Set RiverSound Volume
+    if (sRiverSoundXZDistToPlayer > 400.0f) {
+        volumeRel = 0.1f;
+    } else if (sRiverSoundXZDistToPlayer < 120.0f) {
+        volumeRel = 1.0f;
     } else {
-        phi_f22 = ((1.0f - ((D_80130650 - 120.0f) / 280.0f)) * 0.9f) + 0.1f;
+        volumeRel = ((1.0f - ((sRiverSoundXZDistToPlayer - 120.0f) / 280.0f)) * 0.9f) + 0.1f;
     }
 
-    for (i = 0; i < 0x10; i++) {
-        if (i != 9) {
-            SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_MAIN, i, 2, (127.0f * phi_f22));
-            Audio_QueueCmdS8(0x3 << 24 | SEQ_PLAYER_BGM_MAIN << 16 | ((u8)((u32)i) << 8), phi_s4);
+    for (channelIndex = 0; channelIndex < SEQ_NUM_CHANNELS; channelIndex++) {
+        // For Lost Woods Sequence, channelIndex 9 contains drums.
+        // Keep the drums always at default volume, adjust volume of every other channel.
+        if (channelIndex != 9) {
+            SEQCMD_SET_CHANNEL_VOLUME(SEQ_PLAYER_BGM_MAIN, channelIndex, 2, (127.0f * volumeRel));
+            Audio_QueueCmdS8(0x3 << 24 | SEQ_PLAYER_BGM_MAIN << 16 | ((u8)((u32)channelIndex) << 8), pan);
         }
     }
 }
 
-void Audio_ClearSariaBgm(void) {
-    if (sSariaBgmPtr != NULL) {
-        sSariaBgmPtr = NULL;
+void Audio_ClearRiverSoundMainBgmPos(void) {
+    if (sRiverSoundBgmPos != NULL) {
+        sRiverSoundBgmPos = NULL;
     }
 }
 
-void Audio_ClearSariaBgmAtPos(Vec3f* pos) {
-    if (sSariaBgmPtr == pos) {
-        sSariaBgmPtr = NULL;
+/**
+ * Clear the main bgm riversound pos.
+ * This is designed for the lost woods maze as there are multiple riversound entries
+ * used to navigate the lost woods maze.
+ */
+void Audio_ClearRiverSoundMainBgmPosAtPos(Vec3f* projectedPos) {
+    if (sRiverSoundBgmPos == projectedPos) {
+        sRiverSoundBgmPos = NULL;
     }
 }
 
@@ -4485,94 +4504,90 @@ void Audio_ClearSariaBgmAtPos(Vec3f* pos) {
  */
 void Audio_SplitBgmChannels(s8 volSplit) {
     u8 volume;
-    u8 notePriority;
+    u8 notePriorityThreshold;
     u16 channelBits;
-    u8 bgmPlayers[2] = { SEQ_PLAYER_BGM_MAIN, SEQ_PLAYER_BGM_SUB };
-    u8 channelIdx;
+    u8 sBgmPlayers[2] = { SEQ_PLAYER_BGM_MAIN, SEQ_PLAYER_BGM_SUB };
+    u8 channelIndex;
     u8 i;
 
     if ((Audio_GetActiveSeqId(SEQ_PLAYER_FANFARE) == NA_BGM_DISABLED) &&
         (Audio_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) != NA_BGM_LONLON)) {
-        for (i = 0; i < ARRAY_COUNT(bgmPlayers); i++) {
+        for (i = 0; i < ARRAY_COUNT(sBgmPlayers); i++) {
             if (i == 0) {
                 // Main Bgm SeqPlayer
                 volume = volSplit;
             } else {
                 // Sub Bgm SeqPlayer
-                volume = 0x7F - volSplit;
+                volume = 127 - volSplit;
             }
 
             if (volume > 100) {
-                notePriority = 11;
+                notePriorityThreshold = 0xB;
             } else if (volume < 20) {
-                notePriority = 2;
+                notePriorityThreshold = 2;
             } else {
-                notePriority = ((volume - 20) / 10) + 2;
+                notePriorityThreshold = ((volume - 20) / 10) + 2;
             }
 
+            // If the notes currently playing in the channel are below the notePriorityThreshold,
+            // then disable the channel
             channelBits = 0;
-            for (channelIdx = 0; channelIdx < 16; channelIdx++) {
-                if (notePriority > gAudioCtx.seqPlayers[bgmPlayers[i]].channels[channelIdx]->notePriority) {
-                    // If the note currently playing in the channel is a high enough priority,
-                    // then keep the channel on by setting a channelBit
-                    // If this condition fails, then the channel will be shut off
-                    channelBits += (1 << channelIdx);
+            for (channelIndex = 0; channelIndex < SEQ_NUM_CHANNELS; channelIndex++) {
+                if (gAudioCtx.seqPlayers[sBgmPlayers[i]].channels[channelIndex]->notePriority < notePriorityThreshold) {
+                    channelBits += (1 << channelIndex);
                 }
             }
 
-            SEQCMD_SET_CHANNEL_DISABLE_MASK(bgmPlayers[i], channelBits);
+            SEQCMD_SET_CHANNEL_DISABLE_MASK(sBgmPlayers[i], channelBits);
         }
     }
 }
 
-void Audio_PlaySariaBgm(Vec3f* pos, u16 seqId, u16 distMax) {
+void Audio_UpdateRiverSoundSubBgm(Vec3f* projectedPos, u16 seqId, u16 projectedDistMax) {
     f32 absY;
-    f32 dist;
-    u8 vol;
-    f32 prevDist;
+    f32 xzProjectedDist;
+    u8 targetVolume;
+    f32 xzPrevProjectedDist;
 
-    if (D_8016B9F3 != 0) {
-        D_8016B9F3--;
+    if (sRiverSoundSubBgmStartTimer != 0) {
+        sRiverSoundSubBgmStartTimer--;
         return;
     }
 
-    dist = sqrtf(SQ(pos->z) + SQ(pos->x));
-    if (sSariaBgmPtr == NULL) {
-        sSariaBgmPtr = pos;
+    xzProjectedDist = sqrtf(SQ(projectedPos->z) + SQ(projectedPos->x));
+
+    if (sRiverSoundBgmPos == NULL) {
+        sRiverSoundBgmPos = projectedPos;
         Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_SUB, seqId, 0, 7, 2);
     } else {
-        prevDist = sqrtf(SQ(sSariaBgmPtr->z) + SQ(sSariaBgmPtr->x));
-        if (dist < prevDist) {
-            sSariaBgmPtr = pos;
+        xzPrevProjectedDist = sqrtf(SQ(sRiverSoundBgmPos->z) + SQ(sRiverSoundBgmPos->x));
+        if (xzProjectedDist < xzPrevProjectedDist) {
+            sRiverSoundBgmPos = projectedPos;
         } else {
-            dist = prevDist;
+            xzProjectedDist = xzPrevProjectedDist;
         }
     }
 
-    if (pos->y < 0.0f) {
-        absY = -pos->y;
-    } else {
-        absY = pos->y;
-    }
+    absY = ABS_ALT(projectedPos->y);
 
-    if ((distMax / 15.0f) < absY) {
-        vol = 0;
-    } else if (dist < distMax) {
-        vol = (1.0f - (dist / distMax)) * 127.0f;
+    if (absY > (projectedDistMax / 15.0f)) {
+        targetVolume = 0;
+    } else if (xzProjectedDist < projectedDistMax) {
+        targetVolume = (1.0f - (xzProjectedDist / projectedDistMax)) * 127.0f;
     } else {
-        vol = 0;
+        targetVolume = 0;
     }
 
     if (seqId != NA_BGM_GREAT_FAIRY) {
-        Audio_SplitBgmChannels(vol);
+        Audio_SplitBgmChannels(targetVolume);
     }
 
-    Audio_SetVolumeScale(SEQ_PLAYER_BGM_SUB, VOL_SCALE_INDEX_BGM_SUB, vol, 0);
-    Audio_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_BGM_SUB, 0x7F - vol, 0);
+    Audio_SetVolumeScale(SEQ_PLAYER_BGM_SUB, VOL_SCALE_INDEX_BGM_SUB, targetVolume, 0);
+    Audio_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_BGM_SUB, 127 - targetVolume, 0);
 }
 
-void Audio_ClearSariaBgm2(void) {
-    sSariaBgmPtr = NULL;
+void Audio_ClearRiverSoundSubBgmPos(void) {
+    sRiverSoundBgmPos = NULL;
 }
 
 void Audio_PlayMorningSceneSequence(u16 seqId) {
@@ -5226,9 +5241,9 @@ void func_800F6C34(void) {
     D_80130608 = 0;
     sPrevMainBgmSeqId = NA_BGM_DISABLED;
     Audio_QueueCmdS8(0x46 << 24 | SEQ_PLAYER_BGM_MAIN << 16, -1);
-    sSariaBgmPtr = NULL;
+    sRiverSoundBgmPos = NULL;
     sFanfareStartTimer = 0;
-    D_8016B9F3 = 1;
+    sRiverSoundSubBgmStartTimer = 1;
     sMalonSingingDisabled = false;
 }
 

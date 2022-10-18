@@ -50,9 +50,9 @@ void EnRiverSound_Destroy(Actor* thisx, PlayState* play) {
     EnRiverSound* this = (EnRiverSound*)thisx;
 
     if (this->actor.params == RS_LOST_WOODS_SARIAS_SONG) {
-        Audio_ClearSariaBgmAtPos(&this->actor.projectedPos);
+        Audio_ClearRiverSoundMainBgmPosAtPos(&this->actor.projectedPos);
     } else if (this->actor.params == RS_GORON_CITY_SARIAS_SONG) {
-        Audio_ClearSariaBgm2();
+        Audio_ClearRiverSoundSubBgmPos();
     }
 }
 
@@ -277,15 +277,15 @@ void EnRiverSound_Draw(Actor* thisx, PlayState* play) {
     } else if (this->actor.params == RS_LOST_WOODS_SARIAS_SONG) {
         // Play Sarias Song at the next correct Lost Woods path to Sacred Forest Meadow
         // Volume depends on distance to source
-        func_800F4E30(&this->actor.projectedPos, this->actor.xzDistToPlayer);
+        Audio_UpdateRiverSoundMainBgm(&this->actor.projectedPos, this->actor.xzDistToPlayer);
     } else if (this->actor.params == RS_GORON_CITY_SARIAS_SONG) {
         // Play Sarias Song in Goron City at the entrance to lost woods
         // Volume depends on distance to source
-        Audio_PlaySariaBgm(&this->actor.home.pos, NA_BGM_SARIA_THEME, 1000);
+        Audio_UpdateRiverSoundSubBgm(&this->actor.home.pos, NA_BGM_SARIA_THEME, 1000);
     } else if (this->actor.params == RS_GREAT_FAIRY) {
         // Play the Great Fairy Song inside the fairy fountain
         // Volume depends on distance to source
-        Audio_PlaySariaBgm(&this->actor.home.pos, NA_BGM_GREAT_FAIRY, 800);
+        Audio_UpdateRiverSoundSubBgm(&this->actor.home.pos, NA_BGM_GREAT_FAIRY, 800);
     } else if ((this->actor.params == RS_SANDSTORM) || (this->actor.params == RS_CHAMBER_OF_SAGES_1) ||
                (this->actor.params == RS_CHAMBER_OF_SAGES_2) || (this->actor.params == RS_RUMBLING)) {
         // Play sfx in the fixed center of the screen
