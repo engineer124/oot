@@ -797,7 +797,7 @@ void EnTa_RunCuccoGame(EnTa* this, PlayState* play) {
     }
 
     if (gSaveContext.timer1Value == 10) {
-        Audio_IncreaseTempoForTimedMinigame();
+        Audio_SetFastTempoForTimedMinigame();
     }
 
     if (gSaveContext.timer1Value == 0 && !Play_InCsMode(play)) {

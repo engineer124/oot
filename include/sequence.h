@@ -78,7 +78,7 @@ typedef enum {
     /* 0x49 */ SEQ_ID_OCA_STORM,        // Ocarina Song of Storms
     /* 0x4A */ SEQ_ID_NAVI_OPENING,     // Fairy Flying "SEQ_ID_NAVI"
     /* 0x4B */ SEQ_ID_DEKU_TREE_CS,     // Deku Tree "SEQ_ID_DEKUNOKI"
-    /* 0x4C */ SEQ_ID_SONG_OF_STORMS,         // Windmill Hut "SEQ_ID_FUSHA"
+    /* 0x4C */ SEQ_ID_WINDMILL,         // Windmill Hut "SEQ_ID_FUSHA"
     /* 0x4D */ SEQ_ID_HYRULE_CS,        // Legend of Hyrule "SEQ_ID_HIRAL_DEMO"
     /* 0x4E */ SEQ_ID_MINI_GAME,        // Shooting Gallery
     /* 0x4F */ SEQ_ID_SHEIK,            // Sheik's Theme "SEQ_ID_SEAK"

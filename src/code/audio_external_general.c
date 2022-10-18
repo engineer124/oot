@@ -239,7 +239,7 @@ u8 sSeqFlags[] = {
     SEQ_FLAG_FANFARE,                        // SEQ_ID_OCA_STORM
     0,                                       // SEQ_ID_NAVI_OPENING
     0,                                       // SEQ_ID_DEKU_TREE_CS
-    0,                                       // SEQ_ID_SONG_OF_STORMS
+    0,                                       // SEQ_ID_WINDMILL
     0,                                       // SEQ_ID_HYRULE_CS
     SEQ_FLAG_RESUME_PREV,                    // SEQ_ID_MINI_GAME
     0,                                       // SEQ_ID_SHEIK
@@ -4395,12 +4395,12 @@ void Audio_StepFreqLerp(FreqLerp* lerp) {
     }
 }
 
-void Audio_SetBgmVolumeOff(void) {
+void Audio_SetBgmVolumeOffDuringFanfare(void) {
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_FANFARE, 0, 10);
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_SUB, VOL_SCALE_INDEX_FANFARE, 0, 10);
 }
 
-void Audio_SetBgmVolumeOn(void) {
+void Audio_SetBgmVolumeOnDuringFanfare(void) {
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_MAIN, VOL_SCALE_INDEX_FANFARE, 0x7F, 3);
     AudioSeq_SetVolumeScale(SEQ_PLAYER_BGM_SUB, VOL_SCALE_INDEX_FANFARE, 0x7F, 3);
 }
@@ -4716,13 +4716,13 @@ void Audio_PlaySceneSequence(u16 seqId) {
     u8 fadeInDuration = 0;
     u16 skipHarpIntro;
 
-    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != SEQ_ID_SONG_OF_STORMS) {
+    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != SEQ_ID_WINDMILL) {
         if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_SUB) == SEQ_ID_LONLON) {
             AudioSeq_StopSequence(SEQ_PLAYER_BGM_SUB, 0);
             AUDIOCMD_GLOBAL_STOP_AUDIOCMDS();
         }
 
-        if ((sSeqFlags[sPrevSceneSeqId] & SEQ_FLAG_RESUME_PREV) && sSeqFlags[(seqId & 0xFF) & 0xFF] & SEQ_FLAG_RESUME) {
+        if ((sSeqFlags[sPrevSceneSeqId] & SEQ_FLAG_RESUME_PREV) && (sSeqFlags[seqId & 0xFF & 0xFF] & SEQ_FLAG_RESUME)) {
             // Resume the sequence from the point where it left off last time it was played in the scene
             if ((sSeqResumePoint & 0x3F) != 0) {
                 fadeInDuration = 30;
@@ -4751,7 +4751,7 @@ void Audio_PlaySceneSequence(u16 seqId) {
 void Audio_UpdateSceneSequenceResumePoint(void) {
     u16 seqId = AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN);
 
-    if ((seqId != SEQ_ID_DISABLED) && (sSeqFlags[(u8)seqId & 0xFF] & SEQ_FLAG_RESUME)) {
+    if ((seqId != SEQ_ID_DISABLED) && (sSeqFlags[seqId & 0xFF & 0xFF] & SEQ_FLAG_RESUME)) {
         if (sSeqResumePoint != SEQ_RESUME_POINT_NONE) {
             // Get the current point to resume from the .seq script
             sSeqResumePoint = gAudioCtx.seqPlayers[SEQ_PLAYER_BGM_MAIN].seqScriptIO[3];
@@ -4762,14 +4762,15 @@ void Audio_UpdateSceneSequenceResumePoint(void) {
     }
 }
 
-void Audio_PlayBgmForSongOfStorms(void) {
-    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != SEQ_ID_SONG_OF_STORMS) {
-        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_SONG_OF_STORMS);
+void Audio_PlayWindmillBgm(void) {
+    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) != SEQ_ID_WINDMILL) {
+        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_WINDMILL);
     }
 }
 
-void Audio_SetSeqTempoAndFreq(f32 scaleTempoAndFreq, u8 duration) {
+void Audio_SetMainBgmTempoFreqAfterFanfare(f32 scaleTempoAndFreq, u8 duration) {
     if (scaleTempoAndFreq == 1.0f) {
+        // Should instead use `SEQCMD_SETUP_RESET_TEMPO` to wait until the fanfare is finished
         SEQCMD_RESET_TEMPO(SEQ_PLAYER_BGM_MAIN, duration);
     } else {
         SEQCMD_SETUP_SCALE_TEMPO(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, duration, scaleTempoAndFreq * 100.0f);
@@ -4778,7 +4779,11 @@ void Audio_SetSeqTempoAndFreq(f32 scaleTempoAndFreq, u8 duration) {
     SEQCMD_SETUP_SET_PLAYER_FREQ(SEQ_PLAYER_FANFARE, SEQ_PLAYER_BGM_MAIN, duration, scaleTempoAndFreq * 100.0f);
 }
 
-void Audio_IncreaseTempoForTimedMinigame(void) {
+/**
+ * Set the tempo for the timed minigame sequence to 210 bpm,
+ * which is faster than the default tempo
+ */
+void Audio_SetFastTempoForTimedMinigame(void) {
     if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == SEQ_ID_TIMED_MINI_GAME &&
         AudioSeq_IsSeqCmdNotQueued(SEQCMD_OP_PLAY_SEQUENCE << 28, SEQCMD_OP_MASK)) {
         SEQCMD_SET_TEMPO(SEQ_PLAYER_BGM_MAIN, 5, 210);
@@ -4806,16 +4811,16 @@ void Audio_StopSequenceInCutscene(u16 seqId) {
     }
 }
 
-s32 Audio_IsSequencePlaying(u8 seqId) {
-    u8 seqPlayerIndex = 0;
+s32 Audio_IsSequencePlaying(u16 seqId) {
+    u8 seqPlayerIndex = SEQ_PLAYER_BGM_MAIN;
 
-    if (sSeqFlags[seqId & 0xFF] & SEQ_FLAG_FANFARE) {
-        seqPlayerIndex = 1;
-    } else if (sSeqFlags[seqId & 0xFF] & SEQ_FLAG_FANFARE_GANON) {
-        seqPlayerIndex = 1;
+    if (sSeqFlags[seqId & 0xFF & 0xFF] & SEQ_FLAG_FANFARE) {
+        seqPlayerIndex = SEQ_PLAYER_FANFARE;
+    } else if (sSeqFlags[seqId & 0xFF & 0xFF] & SEQ_FLAG_FANFARE_GANON) {
+        seqPlayerIndex = SEQ_PLAYER_FANFARE;
     }
 
-    if (seqId == (u8)AudioSeq_GetActiveSeqId(seqPlayerIndex)) {
+    if ((seqId & 0xFF) == (AudioSeq_GetActiveSeqId(seqPlayerIndex) & 0xFF)) {
         return true;
     } else {
         return false;
@@ -4890,11 +4895,12 @@ void Audio_PlayFanfare(u16 seqId) {
 
     curFontId = AudioThread_GetFontsForSequence(curSeqId & 0xFF, &outNumFonts);
     requestedFontId = AudioThread_GetFontsForSequence(seqId & 0xFF, &outNumFonts);
+
     if ((curSeqId == SEQ_ID_DISABLED) || (*curFontId == *requestedFontId)) {
         sFanfareStartTimer = 1;
     } else {
         // Give extra time to start the fanfare if both another fanfare needs to be stopped
-        // and a new fontId needs to tbe loaded in
+        // and a new fontId needs to be loaded in
         sFanfareStartTimer = 5;
         SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_FANFARE, 0);
     }
@@ -4959,7 +4965,7 @@ void Audio_SetSequenceMode(u8 seqMode) {
             seqMode = SEQ_MODE_IGNORE;
         }
 
-        if ((seqId == SEQ_ID_DISABLED) || (sSeqFlags[(u8)(seqId & 0xFF)] & SEQ_FLAG_ENEMY) ||
+        if ((seqId == SEQ_ID_DISABLED) || (sSeqFlags[seqId & 0xFF & 0xFF] & SEQ_FLAG_ENEMY) ||
             ((sPrevSeqMode & 0x7F) == SEQ_MODE_ENEMY)) {
             if (seqMode != (sPrevSeqMode & 0x7F)) {
                 if (seqMode == SEQ_MODE_ENEMY) {
@@ -5397,7 +5403,7 @@ void Audio_SetAmbienceChannelIO(u8 channelIndexRange, u8 ioPort, u8 ioData) {
 void Audio_StartAmbience(u16 initChannelMask, u16 initMuteChannelMask) {
     u8 channelIndex;
 
-    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == SEQ_ID_SONG_OF_STORMS) {
+    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == SEQ_ID_WINDMILL) {
         Audio_PlayCutsceneEffectsSequence(SEQ_CS_EFFECTS_RAINFALL);
         return;
     }
@@ -5433,7 +5439,7 @@ void Audio_PlayAmbience(u8 ambienceId) {
     u8 ioData;
 
     if ((gSeqController[SEQ_PLAYER_BGM_MAIN].seqId == SEQ_ID_DISABLED) ||
-        !(sSeqFlags[((u8)gSeqController[SEQ_PLAYER_BGM_MAIN].seqId) & 0xFF] & SEQ_FLAG_NO_AMBIENCE)) {
+        !(sSeqFlags[gSeqController[SEQ_PLAYER_BGM_MAIN].seqId & 0xFF & 0xFF] & SEQ_FLAG_NO_AMBIENCE)) {
 
         Audio_StartAmbience(sAmbienceData[ambienceId].initChannelMask, sAmbienceData[ambienceId].initMuteChannelMask);
 
