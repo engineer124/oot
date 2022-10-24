@@ -1259,7 +1259,7 @@ u8 sOcarinaWithoutMusicStaffPos;
 u8 sOcarinaHasStartedSong;
 u8 sFirstOcarinaSongIndex;
 u8 sLastOcarinaSongIndex;
-u16 sAvailOcarinaSongFlags;
+static u16 sOcarinaAvailableSongs;
 u8 sStaffOcarinaPlayingPos;
 u16 sMusicStaffPos[OCARINA_SONG_MAX];
 u16 sMusicStaffCurHeldLength[OCARINA_SONG_MAX];
@@ -1391,14 +1391,24 @@ void AudioOcarina_MapPitchToScarecrowButtons(u8 noteSongIndex) {
     }
 }
 
+#define OCARINA_SONGS_PLAYABLE_SONGS_BASE                                                       \
+    ((1 << OCARINA_SONG_MINUET) | (1 << OCARINA_SONG_BOLERO) | (1 << OCARINA_SONG_SERENADE) |   \
+     (1 << OCARINA_SONG_REQUIEM) | (1 << OCARINA_SONG_NOCTURNE) | (1 << OCARINA_SONG_PRELUDE) | \
+     (1 << OCARINA_SONG_SARIAS) | (1 << OCARINA_SONG_EPONAS) | (1 << OCARINA_SONG_LULLABY) |    \
+     (1 << OCARINA_SONG_SUNS) | (1 << OCARINA_SONG_TIME) | (1 << OCARINA_SONG_STORMS))
+
+#define OCARINA_SONGS_PLAYABLE_SONGS \
+    (OCARINA_SONGS_PLAYABLE_SONGS_BASE | (1 << OCARINA_SONG_SCARECROW_SPAWN) | (1 << OCARINA_SONG_MEMORY_GAME))
+
+#define OCARINA_FLAG_ON 0x80000000
+
 /**
  * Ocarina flags:
  * bitmask 0x3FFF:
- *      - Ocarina song id
+ *      - Bitpacked ocarina songs that are allowable
  * bitmask 0xC000:
- *      - 0x0000: Limits the notes to 8 notes at a time. Not playing a correct song after 8 notes will cause an ocarina
- * error
- *      - 0x4000: (Identical to 0xC000)
+ *      - 0x0000: Limits the notes to 8 notes at a time. Not playing a correct song after 8 notes will error
+ *      - 0x4000: (NOT identical to 0xC000)
  *      - 0x8000: Limits the notes to 1 note at a time. A single incorrect note will cause an ocarina error
  *      - 0xC000: Free-play, no limitations to the number of notes to play
  * bitmask 0x7FFF0000:
@@ -1409,26 +1419,30 @@ void AudioOcarina_MapPitchToScarecrowButtons(u8 noteSongIndex) {
 void AudioOcarina_Start(u16 ocarinaFlags) {
     u8 i;
 
-    if ((sOcarinaSongNotes[OCARINA_SONG_SCARECROW_SPAWN][1].volume != 0xFF) && ((ocarinaFlags & 0xFFF) == 0xFFF)) {
-        ocarinaFlags |= 0x1000;
+    if ((sOcarinaSongNotes[OCARINA_SONG_SCARECROW_SPAWN][1].volume != 0xFF) &&
+        ((ocarinaFlags & OCARINA_SONGS_PLAYABLE_SONGS_BASE) == OCARINA_SONGS_PLAYABLE_SONGS_BASE)) {
+        ocarinaFlags |= (1 << OCARINA_SONG_SCARECROW_SPAWN);
     }
 
-    if ((ocarinaFlags == 0xCFFF) && (sOcarinaSongNotes[OCARINA_SONG_SCARECROW_SPAWN][1].volume != 0xFF)) {
-        ocarinaFlags = 0xDFFF;
+    if ((ocarinaFlags == (OCARINA_SONGS_PLAYABLE_SONGS_BASE | OCARINA_START_NO_NOTE_LIMIT)) &&
+        (sOcarinaSongNotes[OCARINA_SONG_SCARECROW_SPAWN][1].volume != 0xFF)) {
+        ocarinaFlags =
+            OCARINA_SONGS_PLAYABLE_SONGS_BASE | (1 << OCARINA_SONG_SCARECROW_SPAWN) | OCARINA_START_NO_NOTE_LIMIT;
     }
 
-    if ((ocarinaFlags == 0xFFF) && (sOcarinaSongNotes[OCARINA_SONG_SCARECROW_SPAWN][1].volume != 0xFF)) {
-        ocarinaFlags = 0x1FFF;
+    if ((ocarinaFlags == OCARINA_SONGS_PLAYABLE_SONGS_BASE) &&
+        (sOcarinaSongNotes[OCARINA_SONG_SCARECROW_SPAWN][1].volume != 0xFF)) {
+        ocarinaFlags = OCARINA_SONGS_PLAYABLE_SONGS_BASE | (1 << OCARINA_SONG_SCARECROW_SPAWN);
     }
 
-    if (ocarinaFlags != 0xFFFF) {
-        sOcarinaFlags = 0x80000000 + (u32)ocarinaFlags;
+    if (ocarinaFlags != (OCARINA_SONGS_PLAYABLE_SONGS | OCARINA_START_NO_NOTE_LIMIT)) {
+        sOcarinaFlags = (u32)ocarinaFlags + OCARINA_FLAG_ON;
         sFirstOcarinaSongIndex = 0;
         sLastOcarinaSongIndex = OCARINA_SONG_MAX;
-        if (ocarinaFlags != 0xA000) {
+        if (ocarinaFlags != ((1 << OCARINA_SONG_MEMORY_GAME) | OCARINA_START_ONE_NOTE_LIMIT)) {
             sLastOcarinaSongIndex--;
         }
-        sAvailOcarinaSongFlags = ocarinaFlags & 0x3FFF;
+        sOcarinaAvailableSongs = ocarinaFlags & OCARINA_SONGS_PLAYABLE_SONGS;
         sMusicStaffNumNotesPerTest = 8; // Ocarina Check
         sOcarinaHasStartedSong = false;
         sPlayedOcarinaSongIndexPlusOne = 0;
@@ -1445,15 +1459,15 @@ void AudioOcarina_Start(u16 ocarinaFlags) {
             sMusicStaffExpectedPitch[i] = 0;
         }
 
-        if (ocarinaFlags & 0x8000) {
+        if (ocarinaFlags & OCARINA_START_ONE_NOTE_LIMIT) {
             sMusicStaffNumNotesPerTest = 0; // Ocarina Playback
         }
 
-        if (ocarinaFlags & 0x4000) {
+        if (ocarinaFlags & OCARINA_START_WITHOUT_MUSIC_STAFF) {
             sOcarinaWithoutMusicStaffPos = 0;
         }
 
-        if (ocarinaFlags & 0xD000) {
+        if (ocarinaFlags & ((1 << OCARINA_SONG_SCARECROW_SPAWN) | OCARINA_START_NO_NOTE_LIMIT)) {
             AudioOcarina_MapPitchToScarecrowButtons(OCARINA_SONG_SCARECROW_SPAWN);
         }
     } else {
@@ -1506,7 +1520,7 @@ void AudioOcarina_CheckSongsWithMusicStaff(void) {
     for (songIndex = sFirstOcarinaSongIndex; songIndex < sLastOcarinaSongIndex; songIndex++) {
         curOcarinaSongFlag = 1 << songIndex;
 
-        if (sAvailOcarinaSongFlags & curOcarinaSongFlag) {
+        if (sOcarinaAvailableSongs & curOcarinaSongFlag) {
             sMusicStaffCurHeldLength[songIndex] = sMusicStaffExpectedLength[songIndex] + 18;
 
             if (noNewValidInput) {
@@ -1532,7 +1546,7 @@ void AudioOcarina_CheckSongsWithMusicStaff(void) {
                     } else {
                         // Note is not part of expected song, so this song is no longer available as an option in this
                         // playback
-                        sAvailOcarinaSongFlags ^= curOcarinaSongFlag;
+                        sOcarinaAvailableSongs ^= curOcarinaSongFlag;
                     }
                 }
 
@@ -1543,7 +1557,7 @@ void AudioOcarina_CheckSongsWithMusicStaff(void) {
 
                 // The current note is not the expected note.
                 if (sCurOcarinaPitch != sMusicStaffExpectedPitch[songIndex]) {
-                    sAvailOcarinaSongFlags ^= curOcarinaSongFlag;
+                    sOcarinaAvailableSongs ^= curOcarinaSongFlag;
                 }
 
                 while (curNote->pitch == nextNote->pitch ||
@@ -1560,15 +1574,15 @@ void AudioOcarina_CheckSongsWithMusicStaff(void) {
                 sMusicStaffPrevPitch = sCurOcarinaPitch;
             } else {
                 // case never taken
-                sAvailOcarinaSongFlags ^= curOcarinaSongFlag;
+                sOcarinaAvailableSongs ^= curOcarinaSongFlag;
             }
         }
 
-        // if a note is played that doesn't match a song, the song bit in sAvailOcarinaSongFlags is turned off
+        // if a note is played that doesn't match a song, the song bit in sOcarinaAvailableSongs is turned off
         // if there are no more songs remaining that it could be and the maximum position has been exceeded, then
-        if (sAvailOcarinaSongFlags == 0 && sStaffOcarinaPlayingPos >= sMusicStaffNumNotesPerTest) {
+        if ((sOcarinaAvailableSongs == 0) && (sStaffOcarinaPlayingPos >= sMusicStaffNumNotesPerTest)) {
             sIsOcarinaInputEnabled = false;
-            if ((sOcarinaFlags & 0x4000) && sCurOcarinaPitch == sOcarinaSongNotes[songIndex][0].pitch) {
+            if ((sOcarinaFlags & 0x4000) && (sCurOcarinaPitch == sOcarinaSongNotes[songIndex][0].pitch)) {
                 // case never taken, this function is not called if (sOcarinaFlags & 0x4000) is set
                 sPrevOcarinaWithMusicStaffFlags = sOcarinaFlags;
             }
@@ -1631,7 +1645,7 @@ void AudioOcarina_CheckSongsWithoutMusicStaff(void) {
         // Loop through each of the songs
         for (i = sFirstOcarinaSongIndex; i < sLastOcarinaSongIndex; i++) {
             // Checks to see if the song is available to be played
-            if (sAvailOcarinaSongFlags & (u16)(1 << i)) {
+            if (sOcarinaAvailableSongs & (u16)(1 << i)) {
                 for (j = 0, k = 0; j < gOcarinaSongButtons[i].numButtons && k == 0 &&
                                    sOcarinaWithoutMusicStaffPos >= gOcarinaSongButtons[i].numButtons;) {
                     pitch = sCurOcarinaSongWithoutMusicStaff[sOcarinaWithoutMusicStaffPos -
@@ -2233,7 +2247,7 @@ void AudioOcarina_Update(void) {
         }
 
         if (sOcarinaFlags != 0) {
-            if (sOcarinaFlags & 0x4000) {
+            if (sOcarinaFlags & OCARINA_START_WITHOUT_MUSIC_STAFF) {
                 AudioOcarina_CheckSongsWithoutMusicStaff();
             } else {
                 AudioOcarina_CheckSongsWithMusicStaff();

@@ -990,21 +990,19 @@ void EnSkj_WaitForSong(EnSkj* this, PlayState* play) {
             Actor_Kill(&this->actor);
         } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE) {
             player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
-        } else {
-            if (play->msgCtx.ocarinaMode >= OCARINA_MODE_PLAYED_SARIA) {
-                gSaveContext.sunsSongState = 0;
-                if (GET_ITEMGETINF(ITEMGETINF_16)) {
-                    play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
-                    player->ocarinaActor = &this->actor;
-                    func_8002F2CC(&this->actor, play, EnSkj_GetItemXzRange(this));
-                    this->textId = 0x10BD;
-                    EnSkj_SetupAfterSong(this);
-                } else {
-                    play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
-                    player->ocarinaActor = &this->actor;
-                    func_8002F2CC(&this->actor, play, EnSkj_GetItemXzRange(this));
-                    EnSkj_SetupWrongSong(this);
-                }
+        } else if (play->msgCtx.ocarinaMode >= OCARINA_MODE_PLAYED_SARIA) {
+            gSaveContext.sunsSongState = SUNSSONG_INACTIVE;
+            if (GET_ITEMGETINF(ITEMGETINF_16)) {
+                play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                player->ocarinaActor = &this->actor;
+                func_8002F2CC(&this->actor, play, EnSkj_GetItemXzRange(this));
+                this->textId = 0x10BD;
+                EnSkj_SetupAfterSong(this);
+            } else {
+                play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                player->ocarinaActor = &this->actor;
+                func_8002F2CC(&this->actor, play, EnSkj_GetItemXzRange(this));
+                EnSkj_SetupWrongSong(this);
             }
         }
     }
@@ -1508,8 +1506,7 @@ void EnSkj_WaitForOfferResponse(EnSkj* this, PlayState* play) {
         switch (play->msgCtx.choiceIndex) {
             case 0: // yes
                 player = GET_PLAYER(play);
-                player->stateFlags3 |=
-                    PLAYER_STATE3_OCARINA_FORCED; // makes player take ocarina out right away after closing box
+                player->stateFlags3 |= PLAYER_STATE3_OCARINA_FORCED;
                 this->actionFunc = EnSkj_SetupWaitForOcarina;
                 break;
             case 1: // no

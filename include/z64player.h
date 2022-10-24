@@ -454,7 +454,7 @@ typedef struct {
 #define PLAYER_STATE3_2 (1 << 2)
 #define PLAYER_STATE3_3 (1 << 3)
 #define PLAYER_STATE3_4 (1 << 4)
-#define PLAYER_STATE3_OCARINA_FORCED (1 << 5)
+#define PLAYER_STATE3_OCARINA_FORCED (1 << 5)  // Makes player take ocarina out right away
 #define PLAYER_STATE3_RESTORE_NAYRUS_LOVE (1 << 6) // Set by ocarina effects actors when destroyed to signal Nayru's Love may be restored (see `ACTOROVL_ALLOC_ABSOLUTE`)
 #define PLAYER_STATE3_7 (1 << 7)
 
