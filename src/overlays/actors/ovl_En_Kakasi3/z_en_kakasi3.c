@@ -313,7 +313,7 @@ void func_80A91760(EnKakasi3* this, PlayState* play) {
     SkelAnime_Update(&this->skelAnime);
     if (this->dialogState == Message_GetState(&play->msgCtx) && Message_ShouldAdvance(play)) {
         play->msgCtx.msgMode = MSGMODE_PAUSED;
-        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_SCARECROW_SPAWN_PLAYBACK);
+        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_SCARECROW_SPAWN_DEMONSTRATION);
         this->actionFunc = func_80A917FC;
         this->subCamId = OnePointCutscene_Init(play, 2280, -99, &this->actor, CAM_ID_MAIN);
     }

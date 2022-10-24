@@ -21,7 +21,7 @@ void func_80AA0D88(EnMa1* this, PlayState* play);
 void func_80AA0EA0(EnMa1* this, PlayState* play);
 void func_80AA0EFC(EnMa1* this, PlayState* play);
 void func_80AA0F44(EnMa1* this, PlayState* play);
-void func_80AA106C(EnMa1* this, PlayState* play);
+void EnMa1_TeachSong(EnMa1* this, PlayState* play);
 void func_80AA10EC(EnMa1* this, PlayState* play);
 void func_80AA1150(EnMa1* this, PlayState* play);
 void EnMa1_DoNothing(EnMa1* this, PlayState* play);
@@ -359,16 +359,18 @@ void func_80AA0F44(EnMa1* this, PlayState* play) {
             Message_StartTextbox(play, this->actor.textId, NULL);
             this->unk_1E8.unk_00 = 1;
             this->actor.flags |= ACTOR_FLAG_16;
-            this->actionFunc = func_80AA106C;
+            this->actionFunc = EnMa1_TeachSong;
         } else if (this->actor.xzDistToPlayer < 30.0f + (f32)this->collider.dim.radius) {
             player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
         }
     }
 }
 
-void func_80AA106C(EnMa1* this, PlayState* play) {
+void EnMa1_TeachSong(EnMa1* this, PlayState* play) {
     GET_PLAYER(play)->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     if (this->unk_1E8.unk_00 == 2) {
+        // Ocarina instrument is set to malon here but is immediately
+        // overwritten to malon in the message system, so changing this does nothing
         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_MALON);
         Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_TEACH_EPONA);
         this->actor.flags &= ~ACTOR_FLAG_16;

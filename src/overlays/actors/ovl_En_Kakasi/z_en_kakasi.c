@@ -269,7 +269,7 @@ void func_80A8F9C8(EnKakasi* this, PlayState* play) {
         this->subCamId = OnePointCutscene_Init(play, 2270, -99, &this->actor, CAM_ID_MAIN);
         play->msgCtx.msgMode = MSGMODE_PAUSED;
         func_8002DF54(play, NULL, 8);
-        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_SCARECROW_LONG_PLAYBACK);
+        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_SCARECROW_LONG_DEMONSTRATION);
         this->actionFunc = func_80A8FAA4;
     }
 }

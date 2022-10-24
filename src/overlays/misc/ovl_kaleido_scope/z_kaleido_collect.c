@@ -189,7 +189,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                         D_8082A11C = 0;
                         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_DEFAULT);
                         AudioOcarina_Start((1 << pauseCtx->ocarinaSongIndex) + OCARINA_START_ONE_NOTE_LIMIT);
-                        pauseCtx->ocarinaStaff = AudioOcarina_GetPlaybackStaff();
+                        pauseCtx->ocarinaStaff = AudioOcarina_GetDemonstrationStaff();
                         pauseCtx->ocarinaStaff->pos = 0;
                         pauseCtx->ocarinaStaff->state = 0xFF;
                         VREG(21) = -62;
@@ -277,9 +277,9 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                 AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_DEFAULT);
                 AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_DEFAULT);
                 pauseCtx->ocarinaSongIndex = gOcarinaSongItemMap[sp216 - QUEST_SONG_MINUET];
-                AudioOcarina_SetPlaybackSong(pauseCtx->ocarinaSongIndex + 1, 1);
+                AudioOcarina_SetDemonstrationSong(pauseCtx->ocarinaSongIndex + 1, 1);
                 pauseCtx->unk_1E4 = 2;
-                pauseCtx->ocarinaStaff = AudioOcarina_GetPlaybackStaff();
+                pauseCtx->ocarinaStaff = AudioOcarina_GetDemonstrationStaff();
                 pauseCtx->ocarinaStaff->pos = 0;
                 sp216 = pauseCtx->cursorSlot[PAUSE_QUEST];
                 KaleidoScope_SetCursorVtx(pauseCtx, sp216 * 4, pauseCtx->questVtx);
@@ -471,7 +471,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
         }
 
         if (pauseCtx->unk_1E4 == 2) {
-            pauseCtx->ocarinaStaff = AudioOcarina_GetPlaybackStaff();
+            pauseCtx->ocarinaStaff = AudioOcarina_GetDemonstrationStaff();
 
             if (pauseCtx->ocarinaStaff->pos != 0) {
                 if (D_8082A11C + 1 == pauseCtx->ocarinaStaff->pos) {
@@ -610,7 +610,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                     D_8082A11C = 0;
                     AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_DEFAULT);
                     AudioOcarina_Start((1 << pauseCtx->ocarinaSongIndex) + OCARINA_START_ONE_NOTE_LIMIT);
-                    pauseCtx->ocarinaStaff = AudioOcarina_GetPlaybackStaff();
+                    pauseCtx->ocarinaStaff = AudioOcarina_GetDemonstrationStaff();
                     pauseCtx->ocarinaStaff->pos = 0;
                     pauseCtx->ocarinaStaff->state = 0xFE;
                     pauseCtx->unk_1E4 = 5;

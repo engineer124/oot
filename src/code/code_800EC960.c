@@ -860,13 +860,13 @@ f32 sRelativeOcarinaVolume = 87.0f / 127.0f;
 s8 sCurOcarinaBendIndex = 0;
 s8 sCurOcarinaVolume = 87;
 s8 sCurOcarinaVibrato = 0;
-u8 sPlaybackState = 0;
+u8 sDemonstrationState = 0;
 u32 sOcarinaFlags = 0;
-u32 sPlaybackNoteTimer = 0;
-u16 sPlaybackNotePos = 0;
-u16 sPlaybackStaffPos = 0;
+u32 sDemonstrationNoteTimer = 0;
+u16 sDemonstrationNotePos = 0;
+u16 sDemonstrationStaffPos = 0;
 u16 sPrevOcarinaWithMusicStaffFlags = 0;
-u8 sPlaybackPitch = OCARINA_PITCH_NONE; // Pitch + PitchFlags
+u8 sDemonstrationPitch = OCARINA_PITCH_NONE; // Pitch + PitchFlags
 u8 sNotePlaybackVolume = 0;
 u8 sNotePlaybackVibrato = 0;
 s8 sNotePlaybackBend = 0;
@@ -1038,7 +1038,7 @@ OcarinaNote sOcarinaSongNotes[OCARINA_SONG_MAX][20] = {
     },
 };
 
-OcarinaNote* sPlaybackSong = sOcarinaSongNotes[0];
+OcarinaNote* sDemonstrationSong = sOcarinaSongNotes[0];
 u8 sFrogsSongNotes[14] = {
     OCARINA_BTN_A,       OCARINA_BTN_C_LEFT,  OCARINA_BTN_C_RIGHT, OCARINA_BTN_C_DOWN, OCARINA_BTN_C_LEFT,
     OCARINA_BTN_C_RIGHT, OCARINA_BTN_C_DOWN,  OCARINA_BTN_A,       OCARINA_BTN_C_DOWN, OCARINA_BTN_A,
@@ -1245,7 +1245,7 @@ u8 sFanfareStartTimer;
 u16 sFanfareSeqId;
 
 OcarinaStaff sPromptStaff;
-OcarinaStaff sPlaybackStaff;
+OcarinaStaff sDemonstrationStaff;
 OcarinaStaff sRecordingStaff;
 u32 sOcarinaUpdateTaskStart;
 OcarinaStick sOcarinaInputStickAdj;
@@ -1544,8 +1544,7 @@ void AudioOcarina_CheckSongsWithMusicStaff(void) {
                             sMusicStaffCurHeldLength[songIndex] = 0;
                         }
                     } else {
-                        // Note is not part of expected song, so this song is no longer available as an option in this
-                        // playback
+                        // Note is not part of expected song, so this song is no longer available as an option
                         sOcarinaAvailableSongs ^= curOcarinaSongFlag;
                     }
                 }
@@ -1796,8 +1795,8 @@ void AudioOcarina_SetInstrument(u8 ocarinaInstrumentId) {
         AudioOcarina_PlayControllerInput(false);
         Audio_StopSfxById(NA_SE_OC_OCARINA);
         Audio_SetSfxBanksMute(0);
-        sPlaybackState = 0;
-        sPlaybackStaffPos = 0;
+        sDemonstrationState = 0;
+        sDemonstrationStaffPos = 0;
         sIsOcarinaInputEnabled = false;
         sOcarinaFlags = 0;
         // return to full volume for players 0 and 3 (background bgm) after ocarina is finished
@@ -1812,27 +1811,27 @@ void AudioOcarina_SetInstrument(u8 ocarinaInstrumentId) {
     }
 }
 
-void AudioOcarina_SetPlaybackSong(s8 songIndexPlusOne, s8 playbackState) {
+void AudioOcarina_SetDemonstrationSong(s8 songIndexPlusOne, s8 demonstrationState) {
     if (songIndexPlusOne == 0) {
-        sPlaybackState = 0;
+        sDemonstrationState = 0;
         Audio_StopSfxById(NA_SE_OC_OCARINA);
         return;
     }
 
     if (songIndexPlusOne < (OCARINA_SONG_SCARECROW_LONG + 1)) {
-        sPlaybackSong = sOcarinaSongNotes[songIndexPlusOne - 1];
+        sDemonstrationSong = sOcarinaSongNotes[songIndexPlusOne - 1];
     } else {
-        sPlaybackSong = sScarecrowsLongSongNotes;
+        sDemonstrationSong = sScarecrowsLongSongNotes;
     }
 
-    sPlaybackState = playbackState;
-    sPlaybackNoteTimer = 0;
-    sPlaybackPitch = OCARINA_PITCH_NONE;
-    sPlaybackNotePos = 0;
-    sPlaybackStaffPos = 0;
+    sDemonstrationState = demonstrationState;
+    sDemonstrationNoteTimer = 0;
+    sDemonstrationPitch = OCARINA_PITCH_NONE;
+    sDemonstrationNotePos = 0;
+    sDemonstrationStaffPos = 0;
 
-    while (sPlaybackSong[sPlaybackNotePos].pitch == OCARINA_PITCH_NONE) {
-        sPlaybackNotePos++;
+    while (sDemonstrationSong[sDemonstrationNotePos].pitch == OCARINA_PITCH_NONE) {
+        sDemonstrationNotePos++;
     }
 }
 
@@ -1840,102 +1839,103 @@ void AudioOcarina_SetPlaybackSong(s8 songIndexPlusOne, s8 playbackState) {
  * Play a song with the ocarina to the user that is
  * based on OcarinaNote data and not user input
  */
-void AudioOcarina_PlaybackSong(void) {
+void AudioOcarina_DemonstrateSong(void) {
     u32 noteTimerStep;
     u32 nextNoteTimerStep;
 
-    if (sPlaybackState == 0) {
+    if (sDemonstrationState == 0) {
         return;
     }
 
-    if (sPlaybackStaffPos == 0) {
+    if (sDemonstrationStaffPos == 0) {
         noteTimerStep = 3;
     } else {
         noteTimerStep = sOcarinaUpdateTaskStart - sOcarinaPlaybackTaskStart;
     }
 
-    if (noteTimerStep < sPlaybackNoteTimer) {
-        sPlaybackNoteTimer -= noteTimerStep;
+    if (noteTimerStep < sDemonstrationNoteTimer) {
+        sDemonstrationNoteTimer -= noteTimerStep;
     } else {
-        nextNoteTimerStep = noteTimerStep - sPlaybackNoteTimer;
-        sPlaybackNoteTimer = 0;
+        nextNoteTimerStep = noteTimerStep - sDemonstrationNoteTimer;
+        sDemonstrationNoteTimer = 0;
     }
 
-    if (sPlaybackNoteTimer == 0) {
+    if (sDemonstrationNoteTimer == 0) {
 
-        sPlaybackNoteTimer = sPlaybackSong[sPlaybackNotePos].length;
+        sDemonstrationNoteTimer = sDemonstrationSong[sDemonstrationNotePos].length;
 
-        if (sPlaybackNotePos == 1) {
-            sPlaybackNoteTimer++;
+        if (sDemonstrationNotePos == 1) {
+            sDemonstrationNoteTimer++;
         }
 
-        if (sPlaybackNoteTimer == 0) {
-            sPlaybackState--;
-            if (sPlaybackState != 0) {
-                sPlaybackNotePos = 0;
-                sPlaybackStaffPos = 0;
-                sPlaybackPitch = OCARINA_PITCH_NONE;
+        if (sDemonstrationNoteTimer == 0) {
+            sDemonstrationState--;
+            if (sDemonstrationState != 0) {
+                sDemonstrationNotePos = 0;
+                sDemonstrationStaffPos = 0;
+                sDemonstrationPitch = OCARINA_PITCH_NONE;
             } else {
                 Audio_StopSfxById(NA_SE_OC_OCARINA);
             }
             return;
         } else {
-            sPlaybackNoteTimer -= nextNoteTimerStep;
+            sDemonstrationNoteTimer -= nextNoteTimerStep;
         }
 
         // Update volume
-        if (sNotePlaybackVolume != sPlaybackSong[sPlaybackNotePos].volume) {
-            sNotePlaybackVolume = sPlaybackSong[sPlaybackNotePos].volume;
+        if (sNotePlaybackVolume != sDemonstrationSong[sDemonstrationNotePos].volume) {
+            sNotePlaybackVolume = sDemonstrationSong[sDemonstrationNotePos].volume;
             sRelativeNotePlaybackVolume = sNotePlaybackVolume / 127.0f;
         }
 
         // Update vibrato
-        if (sNotePlaybackVibrato != sPlaybackSong[sPlaybackNotePos].vibrato) {
-            sNotePlaybackVibrato = sPlaybackSong[sPlaybackNotePos].vibrato;
+        if (sNotePlaybackVibrato != sDemonstrationSong[sDemonstrationNotePos].vibrato) {
+            sNotePlaybackVibrato = sDemonstrationSong[sDemonstrationNotePos].vibrato;
             // Sets vibrato to io port 6
             Audio_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | SFX_CHANNEL_OCARINA << 8 | 6, sNotePlaybackVibrato);
         }
 
         // Update bend
-        if (sNotePlaybackBend != sPlaybackSong[sPlaybackNotePos].bend) {
-            sNotePlaybackBend = sPlaybackSong[sPlaybackNotePos].bend;
+        if (sNotePlaybackBend != sDemonstrationSong[sDemonstrationNotePos].bend) {
+            sNotePlaybackBend = sDemonstrationSong[sDemonstrationNotePos].bend;
             sRelativeNotePlaybackBend = AudioOcarina_BendPitchTwoSemitones(sNotePlaybackBend);
         }
 
         // No changes in volume, vibrato, or bend between notes
-        if ((sPlaybackSong[sPlaybackNotePos].volume == sPlaybackSong[sPlaybackNotePos - 1].volume &&
-             (sPlaybackSong[sPlaybackNotePos].vibrato == sPlaybackSong[sPlaybackNotePos - 1].vibrato) &&
-             (sPlaybackSong[sPlaybackNotePos].bend == sPlaybackSong[sPlaybackNotePos - 1].bend))) {
-            sPlaybackPitch = 0xFE;
+        if ((sDemonstrationSong[sDemonstrationNotePos].volume == sDemonstrationSong[sDemonstrationNotePos - 1].volume &&
+             (sDemonstrationSong[sDemonstrationNotePos].vibrato ==
+              sDemonstrationSong[sDemonstrationNotePos - 1].vibrato) &&
+             (sDemonstrationSong[sDemonstrationNotePos].bend == sDemonstrationSong[sDemonstrationNotePos - 1].bend))) {
+            sDemonstrationPitch = 0xFE;
         }
 
-        if (sPlaybackPitch != sPlaybackSong[sPlaybackNotePos].pitch) {
-            u8 pitch = sPlaybackSong[sPlaybackNotePos].pitch;
+        if (sDemonstrationPitch != sDemonstrationSong[sDemonstrationNotePos].pitch) {
+            u8 pitch = sDemonstrationSong[sDemonstrationNotePos].pitch;
 
             // As bFlat4 is exactly in the middle of notes B & A, a flag is
             // added to the pitch to resolve which button to map Bflat4 to
             if (pitch == OCARINA_PITCH_BFLAT4) {
-                sPlaybackPitch = pitch + sPlaybackSong[sPlaybackNotePos].bFlat4Flag;
+                sDemonstrationPitch = pitch + sDemonstrationSong[sDemonstrationNotePos].bFlat4Flag;
             } else {
-                sPlaybackPitch = pitch;
+                sDemonstrationPitch = pitch;
             }
 
-            if (sPlaybackPitch != OCARINA_PITCH_NONE) {
-                sPlaybackStaffPos++;
+            if (sDemonstrationPitch != OCARINA_PITCH_NONE) {
+                sDemonstrationStaffPos++;
                 // Sets ocarina instrument Id to channelIdx io port 7, which is used
                 // as an index in seq 0 to get the true instrument Id
                 Audio_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | SFX_CHANNEL_OCARINA << 8 | 7,
                                  sOcarinaInstrumentId - 1);
-                // Sets sPlaybackPitch to channelIdx io port 5
+                // Sets sDemonstrationPitch to channelIdx io port 5
                 Audio_QueueCmdS8(0x6 << 24 | SEQ_PLAYER_SFX << 16 | SFX_CHANNEL_OCARINA << 8 | 5,
-                                 sPlaybackPitch & 0x3F);
+                                 sDemonstrationPitch & 0x3F);
                 Audio_PlaySfxGeneral(NA_SE_OC_OCARINA, &gSfxDefaultPos, 4, &sRelativeNotePlaybackBend,
                                      &sRelativeNotePlaybackVolume, &gSfxDefaultReverb);
             } else {
                 Audio_StopSfxById(NA_SE_OC_OCARINA);
             }
         }
-        sPlaybackNotePos++;
+        sDemonstrationNotePos++;
     }
 }
 
@@ -2118,19 +2118,19 @@ void AudioOcarina_UpdatePromptStaff(void) {
     sPromptStaff.pos = sStaffOcarinaPlayingPos;
 }
 
-void AudioOcarina_UpdatePlaybackStaff(void) {
-    if ((sPlaybackPitch & 0x3F) <= OCARINA_PITCH_EFLAT5) {
-        sPlaybackStaff.buttonIndex = AudioOcarina_MapPitchToButton(sPlaybackPitch);
+void AudioOcarina_UpdateDemonstrationStaff(void) {
+    if ((sDemonstrationPitch & 0x3F) <= OCARINA_PITCH_EFLAT5) {
+        sDemonstrationStaff.buttonIndex = AudioOcarina_MapPitchToButton(sDemonstrationPitch);
     }
 
-    sPlaybackStaff.state = sPlaybackState;
+    sDemonstrationStaff.state = sDemonstrationState;
 
-    if (sPlaybackSong != sScarecrowsLongSongNotes) {
-        sPlaybackStaff.pos = sPlaybackStaffPos;
-    } else if (sPlaybackStaffPos == 0) {
-        sPlaybackStaff.pos = 0;
+    if (sDemonstrationSong != sScarecrowsLongSongNotes) {
+        sDemonstrationStaff.pos = sDemonstrationStaffPos;
+    } else if (sDemonstrationStaffPos == 0) {
+        sDemonstrationStaff.pos = 0;
     } else {
-        sPlaybackStaff.pos = ((sPlaybackStaffPos - 1) % 8) + 1;
+        sDemonstrationStaff.pos = ((sDemonstrationStaffPos - 1) % 8) + 1;
     }
 }
 
@@ -2146,8 +2146,8 @@ OcarinaStaff* AudioOcarina_GetPromptStaff(void) {
     return &sPromptStaff;
 }
 
-OcarinaStaff* AudioOcarina_GetPlaybackStaff(void) {
-    return &sPlaybackStaff;
+OcarinaStaff* AudioOcarina_GetDemonstrationStaff(void) {
+    return &sDemonstrationStaff;
 }
 
 void AudioOcarina_RecordSong(void) {
@@ -2242,7 +2242,7 @@ void AudioOcarina_Update(void) {
             AudioOcarina_ReadControllerInput();
         }
 
-        if ((sPlaybackState == 0) && (sIsOcarinaInputEnabled == true)) {
+        if ((sDemonstrationState == 0) && (sIsOcarinaInputEnabled == true)) {
             AudioOcarina_PlayControllerInput(false);
         }
 
@@ -2254,10 +2254,10 @@ void AudioOcarina_Update(void) {
             }
         }
 
-        AudioOcarina_PlaybackSong();
+        AudioOcarina_DemonstrateSong();
         sOcarinaPlaybackTaskStart = sOcarinaUpdateTaskStart;
 
-        if (sPlaybackState == 0) {
+        if (sDemonstrationState == 0) {
             AudioOcarina_RecordSong();
         }
 
@@ -2269,7 +2269,7 @@ void AudioOcarina_Update(void) {
     }
 
     AudioOcarina_UpdatePromptStaff();
-    AudioOcarina_UpdatePlaybackStaff();
+    AudioOcarina_UpdateDemonstrationStaff();
     AudioOcarina_UpdateRecordingStaff();
 }
 
@@ -2295,12 +2295,12 @@ void AudioOcarina_PlayLongScarecrowAfterCredits(void) {
         case 1:
             Audio_SetSfxBanksMute(0);
             AudioOcarina_SetInstrument(sScarecrowAfterCreditsIntrumentId);
-            AudioOcarina_SetPlaybackSong(OCARINA_SONG_SCARECROW_LONG + 1, 1);
+            AudioOcarina_SetDemonstrationSong(OCARINA_SONG_SCARECROW_LONG + 1, 1);
             sScarecrowAfterCreditsIntrumentId++;
             sScarecrowAfterCreditsState++;
             break;
         case 2:
-            if (AudioOcarina_GetPlaybackStaff()->state == 0) {
+            if (AudioOcarina_GetDemonstrationStaff()->state == 0) {
                 sScarecrowAfterCreditsState = 0;
             }
             break;
@@ -2311,9 +2311,9 @@ void AudioOcarina_ResetStaffs(void) {
     sPromptStaff.buttonIndex = OCARINA_BTN_INVALID;
     sPromptStaff.state = 0xFF;
     sPromptStaff.pos = 0;
-    sPlaybackStaff.buttonIndex = OCARINA_BTN_INVALID;
-    sPlaybackStaff.state = 0;
-    sPlaybackStaff.pos = 0;
+    sDemonstrationStaff.buttonIndex = OCARINA_BTN_INVALID;
+    sDemonstrationStaff.state = 0;
+    sDemonstrationStaff.pos = 0;
     sRecordingStaff.buttonIndex = OCARINA_BTN_INVALID;
     sRecordingStaff.state = OCARINA_RECORD_REJECTED;
     sRecordingStaff.pos = 0;
@@ -2982,8 +2982,8 @@ void AudioDebug_Draw(GfxPrint* printer) {
         case PAGE_OCARINA_TEST:
             SETCOL(255, 255, 255);
             GfxPrint_SetPos(printer, 3, 4);
-            GfxPrint_Printf(printer, "SEQ INFO  : %2d %02x %d", sPlaybackStaff.buttonIndex, sPlaybackStaff.state,
-                            sPlaybackStaff.pos);
+            GfxPrint_Printf(printer, "SEQ INFO  : %2d %02x %d", sDemonstrationStaff.buttonIndex,
+                            sDemonstrationStaff.state, sDemonstrationStaff.pos);
 
             GfxPrint_SetPos(printer, 3, 5);
             GfxPrint_Printf(printer, "PLAY INFO : %2d %02x %d", sPromptStaff.buttonIndex, sPromptStaff.state,
@@ -3002,7 +3002,7 @@ void AudioDebug_Draw(GfxPrint* printer) {
 
             GfxPrint_SetPos(printer, 3, 24);
             GfxPrint_Printf(printer, "OCA:%02x SEQ:%04x PLAY:%02x REC:%02x", sOcarinaInstrumentId, sOcarinaFlags,
-                            sPlaybackState, sRecordingState);
+                            sDemonstrationState, sRecordingState);
             break;
 
         case PAGE_SFX_PARAMETER_CHANGE:

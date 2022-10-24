@@ -62,7 +62,9 @@ static AnimationHeader* sHniAnimHeaders[] = {
 
 static AnimationHeader** sAnimationHeaders[] = { sEponaAnimHeaders, sHniAnimHeaders };
 
-static f32 sPlaybackSpeeds[] = { 2.0f / 3.0f, 2.0f / 3.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 2.0f / 3.0f, 2.0f / 3.0f };
+static f32 sDemonstrationSpeeds[] = {
+    2.0f / 3.0f, 2.0f / 3.0f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f, 2.0f / 3.0f, 2.0f / 3.0f
+};
 
 static SkeletonHeader* sSkeletonHeaders[] = { &gEponaSkel, &gHorseIngoSkel };
 
@@ -2064,11 +2066,11 @@ void EnHorse_UpdateIngoHorseAnim(EnHorse* this) {
 
     if (animChanged == true) {
         Animation_Change(&this->skin.skelAnime, sAnimationHeaders[this->type][this->animationIdx],
-                         sPlaybackSpeeds[this->animationIdx] * animSpeed * 1.5f, 0,
+                         sDemonstrationSpeeds[this->animationIdx] * animSpeed * 1.5f, 0,
                          Animation_GetLastFrame(sAnimationHeaders[this->type][this->animationIdx]), ANIMMODE_ONCE, -3);
     } else {
         Animation_Change(&this->skin.skelAnime, sAnimationHeaders[this->type][this->animationIdx],
-                         sPlaybackSpeeds[this->animationIdx] * animSpeed * 1.5f, 0,
+                         sDemonstrationSpeeds[this->animationIdx] * animSpeed * 1.5f, 0,
                          Animation_GetLastFrame(sAnimationHeaders[this->type][this->animationIdx]), ANIMMODE_ONCE, 0);
     }
 }
@@ -2228,7 +2230,7 @@ void EnHorse_CsJump(EnHorse* this, PlayState* play, CsCmdActorAction* action) {
         func_80028A54(play, 25.0f, &this->actor.world.pos);
         this->animationIdx = ENHORSE_ANIM_GALLOP;
         Animation_PlayOnceSetSpeed(&this->skin.skelAnime, sAnimationHeaders[this->type][this->animationIdx],
-                                   sPlaybackSpeeds[6]);
+                                   sDemonstrationSpeeds[6]);
         jointTable = this->skin.skelAnime.jointTable;
         y = jointTable->y;
         this->riderPos.y += y * 0.01f;
@@ -2500,12 +2502,12 @@ void EnHorse_UpdateHbaAnim(EnHorse* this) {
 
     if (animChanged == true) {
         Animation_Change(&this->skin.skelAnime, sAnimationHeaders[this->type][this->animationIdx],
-                         sPlaybackSpeeds[this->animationIdx] * animSpeed * 1.5f, 0,
+                         sDemonstrationSpeeds[this->animationIdx] * animSpeed * 1.5f, 0,
                          Animation_GetLastFrame(sAnimationHeaders[this->type][this->animationIdx]), ANIMMODE_ONCE,
                          -3.0f);
     } else {
         Animation_Change(&this->skin.skelAnime, sAnimationHeaders[this->type][this->animationIdx],
-                         sPlaybackSpeeds[this->animationIdx] * animSpeed * 1.5f, 0,
+                         sDemonstrationSpeeds[this->animationIdx] * animSpeed * 1.5f, 0,
                          Animation_GetLastFrame(sAnimationHeaders[this->type][this->animationIdx]), ANIMMODE_ONCE, 0);
     }
 }

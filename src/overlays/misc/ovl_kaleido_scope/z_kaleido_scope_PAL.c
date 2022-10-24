@@ -2935,7 +2935,7 @@ void KaleidoScope_Update(PlayState* play) {
                     break;
 
                 case 2:
-                    pauseCtx->ocarinaStaff = AudioOcarina_GetPlaybackStaff();
+                    pauseCtx->ocarinaStaff = AudioOcarina_GetDemonstrationStaff();
                     if (pauseCtx->ocarinaStaff->state == 0) {
                         pauseCtx->unk_1E4 = 4;
                         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);

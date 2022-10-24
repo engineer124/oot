@@ -885,7 +885,7 @@ void EnFr_ContinueFrogSong(EnFr* this, PlayState* play) {
         EnFr_OcarinaMistake(this, play);
     } else {
         this->frogSongTimer--;
-        if (play->msgCtx.msgMode == MSGMODE_FROGS_PLAYING) {
+        if (play->msgCtx.msgMode == MSGMODE_FROGS_PROMPT) {
             counter = 0;
             for (i = 0; i < ARRAY_COUNT(sEnFrPointers.frogs); i++) {
                 frog = sEnFrPointers.frogs[i];

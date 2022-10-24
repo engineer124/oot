@@ -1450,7 +1450,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
                     this->songFailTimer = 160;
                 }
                 break;
-            case MSGMODE_MEMORY_GAME_PLAYER_PLAYING:
+            case MSGMODE_MEMORY_GAME_PROMPT:
                 if (this->songFailTimer != 0) {
                     this->songFailTimer--;
                 } else { // took too long, game failed
@@ -1471,8 +1471,8 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
                     }
                     this->songFailTimer = 160;
                     AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_FLUTE);
-                    AudioOcarina_SetPlaybackSong(OCARINA_SONG_MEMORY_GAME + 1, 1);
-                    play->msgCtx.msgMode = MSGMODE_MEMORY_GAME_LEFT_SKULLKID_PLAYING;
+                    AudioOcarina_SetDemonstrationSong(OCARINA_SONG_MEMORY_GAME + 1, 1);
+                    play->msgCtx.msgMode = MSGMODE_MEMORY_GAME_LEFT_SKULLKID_DEMONSTRATION;
                     play->msgCtx.stateTimer = 2;
                 }
                 break;
