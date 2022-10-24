@@ -320,9 +320,9 @@ void func_809FE3B4(EnDu* this, PlayState* play) {
 void func_809FE3C0(EnDu* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
+    if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
         Message_StartOcarinaBlockSunSong(play, OCARINA_ACTION_CHECK_SARIA);
-        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_PLAY;
+        player->stateFlags2 |= PLAYER_STATE2_OCARINA_ON_WITH_ACTOR;
         player->ocarinaActor = &this->actor;
         EnDu_SetupAction(this, func_809FE4A4);
         return;
@@ -331,8 +331,8 @@ void func_809FE3C0(EnDu* this, PlayState* play) {
         func_8002DF54(play, &this->actor, 7);
         this->unk_1F4.unk_00 = 0;
     }
-    if (this->actor.xzDistToPlayer < 116.0f + this->collider.dim.radius) {
-        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+    if (this->actor.xzDistToPlayer < (116.0f + this->collider.dim.radius)) {
+        player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     }
 }
 
@@ -357,7 +357,7 @@ void func_809FE4A4(EnDu* this, PlayState* play) {
         EnDu_SetupAction(this, func_809FE890);
         play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
     } else {
-        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+        player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     }
 }
 

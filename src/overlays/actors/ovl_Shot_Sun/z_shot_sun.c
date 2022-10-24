@@ -128,8 +128,8 @@ void func_80BADF0C(ShotSun* this, PlayState* play) {
         this->unk_1A4 = 0;
     } else {
         if (this->unk_1A4 == 0) {
-            if (!(player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY)) {
-                player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+            if (!(player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY)) {
+                player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
                 return;
             } else {
                 this->unk_1A4 = 1;

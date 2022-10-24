@@ -212,18 +212,18 @@ void func_80A8F75C(EnKakasi* this, PlayState* play) {
 
             if (absyawTowardsPlayer < 0x4300) {
                 if (!this->unk_194) {
-                    if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
+                    if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
                         this->subCamId = OnePointCutscene_Init(play, 2260, -99, &this->actor, CAM_ID_MAIN);
 
                         Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_SCARECROW_LONG_RECORDING);
                         this->unk_19A = 0;
                         this->unk_1B8 = 0.0;
-                        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+                        player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
                         this->actionFunc = func_80A8F8D0;
                         return;
                     }
                     if (this->actor.xzDistToPlayer < 80.0f) {
-                        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+                        player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
                     }
                 }
                 func_8002F2CC(&this->actor, play, 100.0f);
@@ -252,7 +252,7 @@ void func_80A8F8D0(EnKakasi* this, PlayState* play) {
         }
     } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE) {
         func_80A8F320(this, play, 0);
-        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+        player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     }
 }
 

@@ -143,8 +143,8 @@ void func_80A4E470(EnGs* this, PlayState* play) {
     if (this->actor.xzDistToPlayer <= 100.0f) {
         bREG(15) = 1;
         if (this->unk_19D == 0) {
-            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
-            if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
+            player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
+            if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
                 Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_FREE_PLAY);
                 this->unk_19D |= 1;
             }
@@ -167,7 +167,7 @@ void func_80A4E470(EnGs* this, PlayState* play) {
                 this->unk_19D = 0;
                 Flags_SetSwitch(play, (this->actor.params >> 8) & 0x3F);
             } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE) {
-                player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+                player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
             }
         }
     }

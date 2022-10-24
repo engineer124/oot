@@ -439,9 +439,9 @@ typedef struct {
 #define PLAYER_STATE2_20 (1 << 20)
 #define PLAYER_STATE2_21 (1 << 21)
 #define PLAYER_STATE2_22 (1 << 22)
-#define ACTOR_FLAG_OCARINA_ACTOR_NEAR (1 << 23)
-#define ACTOR_FLAG_OCARINA_ACTOR_TRY (1 << 24)
-#define ACTOR_FLAG_OCARINA_ACTOR_PLAY (1 << 25)
+#define PLAYER_STATE2_OCARINA_START_OVERRIDE (1 << 23) // Indicate that ocarina will be started externally to player instead of the default free start
+#define PLAYER_STATE2_OCARINA_START_READY (1 << 24) // Indicate that Player is ready to start playing ocarina
+#define PLAYER_STATE2_OCARINA_ON_WITH_ACTOR (1 << 25)
 #define PLAYER_STATE2_26 (1 << 26)
 #define PLAYER_STATE2_OCARINA_ON (1 << 27)
 #define PLAYER_STATE2_28 (1 << 28)

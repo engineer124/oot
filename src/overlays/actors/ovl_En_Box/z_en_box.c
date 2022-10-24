@@ -294,8 +294,8 @@ void func_809C9700(EnBox* this, PlayState* play) {
         this->unk_1FB = ENBOX_STATE_0;
     } else {
         if (this->unk_1FB == ENBOX_STATE_0) {
-            if (!(player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY)) {
-                player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+            if (!(player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY)) {
+                player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
                 return;
             }
             this->unk_1FB = ENBOX_STATE_1;

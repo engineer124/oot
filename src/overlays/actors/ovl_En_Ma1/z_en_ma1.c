@@ -352,8 +352,8 @@ void func_80AA0F44(EnMa1* this, PlayState* play) {
     }
 
     if (GET_EVENTCHKINF(EVENTCHKINF_16)) {
-        if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
-            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_PLAY;
+        if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
+            player->stateFlags2 |= PLAYER_STATE2_OCARINA_ON_WITH_ACTOR;
             player->ocarinaActor = &this->actor;
             this->actor.textId = 0x2061;
             Message_StartTextbox(play, this->actor.textId, NULL);
@@ -361,13 +361,13 @@ void func_80AA0F44(EnMa1* this, PlayState* play) {
             this->actor.flags |= ACTOR_FLAG_16;
             this->actionFunc = func_80AA106C;
         } else if (this->actor.xzDistToPlayer < 30.0f + (f32)this->collider.dim.radius) {
-            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+            player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
         }
     }
 }
 
 void func_80AA106C(EnMa1* this, PlayState* play) {
-    GET_PLAYER(play)->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+    GET_PLAYER(play)->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     if (this->unk_1E8.unk_00 == 2) {
         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_MALON);
         Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_TEACH_EPONA);
@@ -377,7 +377,7 @@ void func_80AA106C(EnMa1* this, PlayState* play) {
 }
 
 void func_80AA10EC(EnMa1* this, PlayState* play) {
-    GET_PLAYER(play)->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+    GET_PLAYER(play)->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_SONG_DEMO_DONE) {
         Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_PLAYBACK_EPONA);
         this->actionFunc = func_80AA1150;
@@ -385,7 +385,7 @@ void func_80AA10EC(EnMa1* this, PlayState* play) {
 }
 
 void func_80AA1150(EnMa1* this, PlayState* play) {
-    GET_PLAYER(play)->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+    GET_PLAYER(play)->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) {
         play->nextEntranceIndex = ENTR_SPOT20_0;
         gSaveContext.nextCutsceneIndex = 0xFFF1;

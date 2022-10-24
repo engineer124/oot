@@ -157,11 +157,11 @@ s32 func_80BA2218(ObjWarp2block* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (func_80BA1ECC(this, play)) {
-        if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
+        if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
             Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_FREE_PLAY);
             this->func_168 = func_80BA228C;
         } else {
-            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+            player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
         }
     }
 

@@ -266,13 +266,13 @@ void func_80AA2018(EnMa2* this, PlayState* play) {
 void func_80AA204C(EnMa2* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
+    if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
         player->ocarinaActor = &this->actor;
-        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_PLAY;
+        player->stateFlags2 |= PLAYER_STATE2_OCARINA_ON_WITH_ACTOR;
         Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_EPONA);
         this->actionFunc = func_80AA20E4;
     } else if (this->actor.xzDistToPlayer < 30.0f + (f32)this->collider.dim.radius) {
-        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+        player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     }
 }
 
@@ -290,7 +290,7 @@ void func_80AA20E4(EnMa2* this, PlayState* play) {
         this->actionFunc = func_80AA21C8;
         play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
     } else {
-        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+        player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     }
 }
 
@@ -298,7 +298,7 @@ void func_80AA21C8(EnMa2* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (DECR(this->unk_208)) {
-        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+        player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     } else {
         if (this->unk_1E0.unk_00 == 0) {
             this->actor.flags |= ACTOR_FLAG_16;

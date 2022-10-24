@@ -3053,7 +3053,7 @@ s32 func_80835C58(PlayState* play, Player* this, PlayerFunc674 func, s32 flags) 
 
     if (Player_PlayOcarina == this->func_674) {
         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
-        this->stateFlags2 &= ~(ACTOR_FLAG_OCARINA_ACTOR_TRY | ACTOR_FLAG_OCARINA_ACTOR_PLAY);
+        this->stateFlags2 &= ~(PLAYER_STATE2_OCARINA_START_READY | PLAYER_STATE2_OCARINA_ON_WITH_ACTOR);
     } else if (func_808507F4 == this->func_674) {
         func_80832340(play, this);
     }
@@ -5215,6 +5215,7 @@ s32 func_8083B040(Player* this, PlayState* play) {
 
         if (!func_8083ADD4(play, this)) {
             if (this->unk_6AD == 4) {
+                // Cutscene Items: Magic Spells
                 sp2C = Player_ActionToMagicSpell(this, this->itemAction);
                 if (sp2C >= 0) {
                     if ((sp2C != 3) || (gSaveContext.respawn[RESPAWN_MODE_TOP].data <= 0)) {
@@ -5230,6 +5231,7 @@ s32 func_8083B040(Player* this, PlayState* play) {
                     return 1;
                 }
 
+                // Cutscene Items: Exchange (Trade Quest or Bottled Item)
                 sp2C = this->itemAction - PLAYER_IA_LETTER_ZELDA;
                 if ((sp2C >= 0) ||
                     (sp28 = Player_ActionToBottle(this, this->itemAction) - 1,
@@ -5299,6 +5301,7 @@ s32 func_8083B040(Player* this, PlayState* play) {
 
                 sp2C = Player_ActionToBottle(this, this->itemAction);
                 if (sp2C >= 0) {
+                    // Item Cutscenes: Remaining Bottled Items
                     if (sp2C == 0xC) {
                         func_80835DE4(play, this, func_8084EED8, 0);
                         func_808322D0(play, this, &gPlayerAnim_link_bottle_bug_out);
@@ -5313,12 +5316,13 @@ s32 func_8083B040(Player* this, PlayState* play) {
                         func_80835EA4(play, 2);
                     }
                 } else {
+                    // Item Cutscenes: Ocarina
                     func_80835DE4(play, this, Player_PlayOcarina, 0);
                     func_808322D0(play, this, &gPlayerAnim_link_normal_okarina_start);
                     this->stateFlags2 |= PLAYER_STATE2_OCARINA_ON;
                     func_80835EA4(play, (this->ocarinaActor != NULL) ? 0x5B : 0x5A);
                     if (this->ocarinaActor != NULL) {
-                        this->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_PLAY;
+                        this->stateFlags2 |= PLAYER_STATE2_OCARINA_ON_WITH_ACTOR;
                         Camera_SetParam(Play_GetCamera(play, CAM_ID_MAIN), 8, this->ocarinaActor);
                     }
                 }
@@ -10794,11 +10798,11 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
 
         this->naviTextId = 0;
 
-        if (!(this->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_PLAY)) {
+        if (!(this->stateFlags2 & PLAYER_STATE2_OCARINA_ON_WITH_ACTOR)) {
             this->ocarinaActor = NULL;
         }
 
-        this->stateFlags2 &= ~ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+        this->stateFlags2 &= ~PLAYER_STATE2_OCARINA_START_OVERRIDE;
         this->unk_6A4 = FLT_MAX;
 
         temp_f0 = this->actor.world.pos.y - this->actor.prevPos.y;
@@ -12507,15 +12511,19 @@ static s16 sWarpSongEntrances[] = {
  */
 void Player_PlayOcarina(Player* this, PlayState* play) {
     if (LinkAnimation_Update(play, &this->skelAnime)) {
+        // Finish pulling out the ocarina
         func_808322A4(play, this, &gPlayerAnim_link_normal_okarina_swing);
         this->unk_850 = 1;
-        if (this->stateFlags2 & (ACTOR_FLAG_OCARINA_ACTOR_NEAR | ACTOR_FLAG_OCARINA_ACTOR_PLAY)) {
-            this->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_TRY;
+        if (this->stateFlags2 & (PLAYER_STATE2_OCARINA_START_OVERRIDE | PLAYER_STATE2_OCARINA_ON_WITH_ACTOR)) {
+            // Leave it to the actor to start the ocarina with the specified flags
+            this->stateFlags2 |= PLAYER_STATE2_OCARINA_START_READY;
         } else {
+            // Default start
             Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_FREE_PLAY);
         }
         return;
     }
+    // Continue pulling out the ocarina
 
     if (this->unk_850 == 0) {
         return;
@@ -12534,8 +12542,8 @@ void Player_PlayOcarina(Player* this, PlayState* play) {
             func_8083A098(this, &gPlayerAnim_link_normal_okarina_end, play);
         }
 
-        this->stateFlags2 &=
-            ~(ACTOR_FLAG_OCARINA_ACTOR_NEAR | ACTOR_FLAG_OCARINA_ACTOR_TRY | ACTOR_FLAG_OCARINA_ACTOR_PLAY);
+        this->stateFlags2 &= ~(PLAYER_STATE2_OCARINA_START_OVERRIDE | PLAYER_STATE2_OCARINA_START_READY |
+                               PLAYER_STATE2_OCARINA_ON_WITH_ACTOR);
         this->ocarinaActor = NULL;
     } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_WARP) {
         gSaveContext.respawn[RESPAWN_MODE_RETURN].entranceIndex = sWarpSongEntrances[play->msgCtx.lastPlayedSong];
