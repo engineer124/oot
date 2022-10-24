@@ -1559,8 +1559,8 @@ void DemoEffect_UpdateJewelChild(DemoEffect* this, PlayState* play) {
     if (play->csCtx.state && play->csCtx.npcActions[this->csActionId]) {
         switch (play->csCtx.npcActions[this->csActionId]->action) {
             case 3:
-                if (GET_EVENTCHKINF(EVENTCHKINF_4B)) {
-                    SET_EVENTCHKINF(EVENTCHKINF_4B);
+                if (GET_EVENTCHKINF(EVENTCHKINF_DOOR_OF_TIME_OPENED)) {
+                    SET_EVENTCHKINF(EVENTCHKINF_DOOR_OF_TIME_OPENED);
                 }
                 DemoEffect_MoveJewelActivateDoorOfTime(this, play);
                 if ((play->gameplayFrames & 1) == 0) {
@@ -1593,7 +1593,7 @@ void DemoEffect_UpdateJewelChild(DemoEffect* this, PlayState* play) {
     }
 
     if (gSaveContext.entranceIndex == ENTR_TOKINOMA_0) {
-        if (!GET_EVENTCHKINF(EVENTCHKINF_4B)) {
+        if (!GET_EVENTCHKINF(EVENTCHKINF_DOOR_OF_TIME_OPENED)) {
             hasCmdAction = play->csCtx.state && play->csCtx.npcActions[this->csActionId];
             if (!hasCmdAction) {
                 this->effectFlags |= 0x1;

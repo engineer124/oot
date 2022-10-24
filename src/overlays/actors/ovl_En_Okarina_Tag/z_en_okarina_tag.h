@@ -9,12 +9,12 @@ struct EnOkarinaTag;
 typedef void (*EnOkarinaTagActionFunc)(struct EnOkarinaTag*, PlayState*);
 
 typedef enum {
-    /* 0 */ OCARINASPOT_TYPE_CHECK_LULLABY = 1,
-    /* 2 */ OCARINASPOT_TYPE_CHECK_STORMS, // Child Only
-    /* 4 */ OCARINASPOT_TYPE_CHECK_SOT = 4,
-    /* 5 */ OCARINASPOT_TYPE_5,
-    /* 6 */ OCARINASPOT_TYPE_CHECK_LULLABY_ROYAL_TOMB,
-    /* 7 */ OCARINASPOT_TYPE_7
+    /* 0 */ OCARINASPOT_TYPE_CHECK_ZORA_WATERFALL = 1,
+    /* 2 */ OCARINASPOT_TYPE_CHECK_WINDMILL, // Child Only
+    /* 4 */ OCARINASPOT_TYPE_CHECK_DOOR_OF_TIME = 4,
+    /* 5 */ OCARINASPOT_TYPE_LEARN_SUNS,
+    /* 6 */ OCARINASPOT_TYPE_CHECK_ROYAL_TOMB,
+    /* 7 */ OCARINASPOT_TYPE_GENERIC
 } OcarinaSpotType;
 
 typedef struct EnOkarinaTag {
@@ -26,7 +26,7 @@ typedef struct EnOkarinaTag {
     /* 0x0156 */ char unk_156[0x2];
     /* 0x0158 */ s16 anySongAllowed;
     /* 0x015A */ s16 timer;
-    /* 0x015C */ f32 interactRange;
+    /* 0x015C */ f32 interactRange; // xzDistance added onto 90.0f
 } EnOkarinaTag; // size = 0x0160
 
 #endif

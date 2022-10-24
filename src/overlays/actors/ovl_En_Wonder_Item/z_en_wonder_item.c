@@ -293,8 +293,8 @@ void EnWonderItem_MultitagOrdered(EnWonderItem* this, PlayState* play) {
                     Actor_Kill(&this->actor);
                     return;
                 }
-            } 
-            
+            }
+
             if (R_DBG_DRAW_ON) {
                 DebugDisplay_AddObject(sTagPointsOrdered[i].x, sTagPointsOrdered[i].y, sTagPointsOrdered[i].z,
                                        this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f,

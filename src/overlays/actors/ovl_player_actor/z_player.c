@@ -333,7 +333,7 @@ void func_80852564(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_808525C0(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80852608(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80852648(PlayState* play, Player* this, CsCmdActorAction* arg2);
-void Player_LearnOcarinaSongEffects(PlayState* play, Player* this, CsCmdActorAction* arg2);
+void Player_LearnSongOcarinaEffects(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_8085283C(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_808528C8(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80852944(PlayState* play, Player* this, CsCmdActorAction* arg2);
@@ -13829,9 +13829,9 @@ static struct_80854B18 D_80854E50[] = {
     { 12, &gPlayerAnim_d_link_orowait },
     { 12, &gPlayerAnim_demo_link_nwait },
     { 11, NULL },
-    { -1, Player_LearnOcarinaSongEffects },
+    { -1, Player_LearnSongOcarinaEffects },
     { 17, &gPlayerAnim_sude_nwait },
-    { -1, Player_LearnOcarinaSongEffects },
+    { -1, Player_LearnSongOcarinaEffects },
     { 17, &gPlayerAnim_sude_nwait },
     { 12, &gPlayerAnim_link_demo_gurad_wait },
     { 12, &gPlayerAnim_link_demo_look_hand_wait },
@@ -14509,39 +14509,50 @@ void func_80852648(PlayState* play, Player* this, CsCmdActorAction* arg2) {
     }
 }
 
-static LinkAnimationHeader* D_80855208[] = {
-    &gPlayerAnim_L_okarina_get,
-    &gPlayerAnim_om_get,
+static LinkAnimationHeader* sLearnOcarinaSongLinkAnim[] = {
+    &gPlayerAnim_L_okarina_get, // LINK_AGE_ADULT
+    &gPlayerAnim_om_get,        // LINK_AGE_CHILD
 };
 
-static Vec3s D_80855210[2][2] = {
-    { { -200, 700, 100 }, { 800, 600, 800 } },
-    { { -200, 500, 0 }, { 600, 400, 600 } },
+static Vec3s sOcarinaSparklePos[2][2] = {
+    // LINK_AGE_ADULT
+    {
+        { -200, 700, 100 }, // Base Position
+        { 800, 600, 800 },  // Random Offset
+    },
+    // LINK_AGE_CHILD
+    {
+        { -200, 500, 0 },  // Base Position
+        { 600, 400, 600 }, // Random Offset
+    },
 };
 
-void Player_LearnOcarinaSongEffects(PlayState* play, Player* this, CsCmdActorAction* arg2) {
+/**
+ * Animates Player learning an ocarina song, and applies sparkles to the ocarina
+ */
+void Player_LearnSongOcarinaEffects(PlayState* play, Player* this, CsCmdActorAction* arg2) {
     static Vec3f sZeroVec = { 0.0f, 0.0f, 0.0f };
     static Color_RGBA8 sPrimColor = { 255, 255, 255, 0 };
     static Color_RGBA8 sEnvColor = { 0, 128, 128, 0 };
     s32 linkAge = gSaveContext.linkAge;
     Vec3f sparklePos;
-    Vec3f sp34;
+    Vec3f sparkleBasePos;
     Vec3s* ptr;
 
-    func_80851294(play, this, D_80855208[linkAge]);
+    func_80851294(play, this, sLearnOcarinaSongLinkAnim[linkAge]);
 
     if (this->rightHandType != PLAYER_MODELTYPE_RH_FF) {
         this->rightHandType = PLAYER_MODELTYPE_RH_FF;
         return;
     }
 
-    ptr = D_80855210[gSaveContext.linkAge];
+    ptr = sOcarinaSparklePos[gSaveContext.linkAge];
 
-    sp34.x = ptr[0].x + Rand_CenteredFloat(ptr[1].x);
-    sp34.y = ptr[0].y + Rand_CenteredFloat(ptr[1].y);
-    sp34.z = ptr[0].z + Rand_CenteredFloat(ptr[1].z);
+    sparkleBasePos.x = ptr[0].x + Rand_CenteredFloat(ptr[1].x);
+    sparkleBasePos.y = ptr[0].y + Rand_CenteredFloat(ptr[1].y);
+    sparkleBasePos.z = ptr[0].z + Rand_CenteredFloat(ptr[1].z);
 
-    SkinMatrix_Vec3fMtxFMultXYZ(&this->shieldMf, &sp34, &sparklePos);
+    SkinMatrix_Vec3fMtxFMultXYZ(&this->shieldMf, &sparkleBasePos, &sparklePos);
 
     EffectSsKiraKira_SpawnDispersed(play, &sparklePos, &sZeroVec, &sZeroVec, &sPrimColor, &sEnvColor, 600, -10);
 }

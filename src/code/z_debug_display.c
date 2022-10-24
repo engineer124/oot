@@ -4,7 +4,7 @@
 typedef struct {
     /* 0x0 */ s16 drawType;  // indicates which draw function to use when displaying the object
     /* 0x4 */ void* drawArg; // segment address (display list or texture) passed to the draw function when called
-} DebugDispObjectInfo;        // size = 0x8
+} DebugDispObjectInfo;       // size = 0x8
 
 typedef void (*DebugDispObject_DrawFunc)(DebugDispObject*, void*, PlayState*);
 

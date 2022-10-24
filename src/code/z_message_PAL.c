@@ -826,8 +826,8 @@ void Message_HandleOcarina(PlayState* play) {
         } else {
             // "Ocarina（%d）"
             osSyncPrintf("オカリナ（%d） ", msgCtx->ocarinaAction);
-            if (msgCtx->ocarinaAction == OCARINA_ACTION_UNK_0 || msgCtx->ocarinaAction == OCARINA_ACTION_FREE_PLAY ||
-                msgCtx->ocarinaAction >= OCARINA_ACTION_CHECK_SARIA) {
+            if ((msgCtx->ocarinaAction == OCARINA_ACTION_UNK_0) || (msgCtx->ocarinaAction == OCARINA_ACTION_FREE_PLAY) ||
+                (msgCtx->ocarinaAction >= OCARINA_ACTION_CHECK_SARIA)) {
                 msgCtx->msgMode = MSGMODE_OCARINA_STARTING;
                 osSyncPrintf("000000000000  -> ");
             } else if (msgCtx->ocarinaAction >= OCARINA_ACTION_TEACH_MINUET &&
@@ -1093,7 +1093,7 @@ void Message_DrawText(PlayState* play, Gfx** gfxP) {
                 *gfxP = gfx;
                 return;
             case MESSAGE_OCARINA:
-                if (i + 1 == msgCtx->textDrawPos) {
+                if ((i + 1) == msgCtx->textDrawPos) {
                     Message_HandleOcarina(play);
                     *gfxP = gfx;
                     return;
@@ -2867,7 +2867,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
 
             case MSGMODE_FROGS_PLAYING:
                 msgCtx->ocarinaStaff = AudioOcarina_GetPromptStaff();
-                if (msgCtx->ocarinaStaff->pos && sOcarinaButtonIndexBufPos == msgCtx->ocarinaStaff->pos - 1) {
+                if (((u32)msgCtx->ocarinaStaff->pos != 0) && (sOcarinaButtonIndexBufPos == (msgCtx->ocarinaStaff->pos - 1))) {
                     msgCtx->lastOcarinaButtonIndex = msgCtx->ocarinaStaff->buttonIndex;
                     msgCtx->ocarinaStaff->pos = sOcarinaButtonIndexBufPos = 0;
                     Message_ResetOcarinaNoteState();
@@ -3060,7 +3060,6 @@ void Message_Draw(PlayState* play) {
         Graph_BranchDlist(polyOpaP, plusOne);
         POLY_OPA_DISP = plusOne;
     }
-
 
     plusOne = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
     gSPDisplayList(OVERLAY_DISP++, plusOne);
