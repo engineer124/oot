@@ -20,7 +20,7 @@ void KaleidoSetup_Update(PlayState* play) {
         (play->sceneId != SCENE_BOWLING || !Flags_GetSwitch(play, 0x38))) {
 
         if (CHECK_BTN_ALL(input->cur.button, BTN_L) && CHECK_BTN_ALL(input->press.button, BTN_CUP)) {
-            if (BREG(0)) {
+            if (R_DBG_DRAW_ON) {
                 pauseCtx->debugState = 3;
             }
         } else if (CHECK_BTN_ALL(input->press.button, BTN_START)) {

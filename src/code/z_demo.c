@@ -1915,9 +1915,10 @@ void func_80068C3C(PlayState* play, CutsceneContext* csCtx) {
     if (0) {} // Necessary to match
 
     if (gSaveContext.cutsceneIndex >= 0xFFF0) {
-        if (0) {} // Also necessary to match
 
-        if (BREG(0) != 0) {
+        if (1) {}
+
+        if (R_DBG_DRAW_ON) {
             OPEN_DISPS(play->state.gfxCtx, "../z_demo.c", 4101);
 
             prevDisplayList = POLY_OPA_DISP;

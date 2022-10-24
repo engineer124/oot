@@ -1402,6 +1402,7 @@ void DbCamera_Update(DbCamera* dbCamera, Camera* cam) {
                                    0x7F, 0xFF, 0xFF, 0x40, 0, cam->play->view.gfxCtx);
             DebugDisplay_AddObject(dbCamera->at.x, dbCamera->at.y + 1.0f, dbCamera->at.z, 0, 0, 0, 0.02f, 0.02f, 2.0f,
                                    0xFF, 0x7F, 0xFF, 0x40, 0, cam->play->view.gfxCtx);
+
             if (dbCamera->sub.unk_08 == 2) {
                 for (i = 0; i < (dbCamera->sub.nPoints - 1); i++) {
                     if (dbCamera->sub.mode != 1) {

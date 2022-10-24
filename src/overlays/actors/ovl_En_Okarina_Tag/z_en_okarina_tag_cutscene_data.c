@@ -2,7 +2,7 @@
 #include "z64cutscene_commands.h"
 
 // clang-format off
-CutsceneData D_80ABF9D0[] = {
+CutsceneData gWindmillOpenWellCs[] = {
     CS_BEGIN_CUTSCENE(4, 360),
     CS_TERMINATOR(KAKARIKO_VILLAGE_DRAIN_WELL, 200, 201),
     CS_CAM_EYE_LIST(0, 331),

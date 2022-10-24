@@ -210,6 +210,7 @@
 
 #define R_NAVI_MSG_REGION_ALPHA                  nREG(87)
 
+#define R_DBG_DRAW_ON              BREG(0)
 #define R_DBG_PRINT_SCARECROW_CHU_BOWLING        BREG(3)
 
 #endif

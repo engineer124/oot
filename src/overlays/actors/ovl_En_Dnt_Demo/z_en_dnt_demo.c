@@ -324,7 +324,8 @@ void EnDntDemo_Update(Actor* thisx, PlayState* play) {
         this->unkTimer1--;
     }
     this->actionFunc(this, play);
-    if (BREG(0)) {
+
+    if (R_DBG_DRAW_ON) {
         if (this->debugArrowTimer != 0) {
             if (!(this->debugArrowTimer & 1)) {
                 DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,

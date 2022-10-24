@@ -222,7 +222,8 @@ void EnWonderItem_MultitagFree(EnWonderItem* this, PlayState* play) {
                 this->timer = this->timerMod + 81;
                 return;
             }
-            if (BREG(0) != 0) {
+
+            if (R_DBG_DRAW_ON) {
                 DebugDisplay_AddObject(sTagPointsFree[i].x, sTagPointsFree[i].y, sTagPointsFree[i].z,
                                        this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f,
                                        1.0f, 1.0f, 0, 255, 0, 255, 4, play->state.gfxCtx);
@@ -292,7 +293,9 @@ void EnWonderItem_MultitagOrdered(EnWonderItem* this, PlayState* play) {
                     Actor_Kill(&this->actor);
                     return;
                 }
-            } else if (BREG(0) != 0) {
+            } 
+            
+            if (R_DBG_DRAW_ON) {
                 DebugDisplay_AddObject(sTagPointsOrdered[i].x, sTagPointsOrdered[i].y, sTagPointsOrdered[i].z,
                                        this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f,
                                        1.0f, 1.0f, 0, 0, 255, 255, 4, play->state.gfxCtx);
@@ -358,7 +361,8 @@ void EnWonderItem_Update(Actor* thisx, PlayState* play) {
     if (this->wonderMode > 12) {
         colorIndex = 0;
     }
-    if (BREG(0) != 0) {
+
+    if (R_DBG_DRAW_ON) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, debugArrowColors[colorIndex], debugArrowColors[colorIndex + 1],

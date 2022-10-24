@@ -342,7 +342,8 @@ void EnSyatekiItm_Update(Actor* thisx, PlayState* play) {
     if (this->unkTimer != 0) {
         this->unkTimer--;
     }
-    if (BREG(0)) {
+
+    if (R_DBG_DRAW_ON) {
         DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f, 1.0f,
                                1.0f, 255, 0, 0, 255, 4, play->state.gfxCtx);

@@ -87,7 +87,7 @@ void BgSpot02Objects_Init(Actor* thisx, PlayState* play) {
 
             this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, thisx, colHeader);
 
-            if ((GET_EVENTCHKINF(EVENTCHKINF_1D) && (play->sceneId == SCENE_SPOT02) && (thisx->params == 2)) ||
+            if ((GET_EVENTCHKINF(EVENTCHKINF_ROYAL_TOMB_OPENED) && (play->sceneId == SCENE_SPOT02) && (thisx->params == 2)) ||
                 (LINK_IS_ADULT && (thisx->params == 1))) {
                 Actor_Kill(thisx);
             }
@@ -99,7 +99,7 @@ void BgSpot02Objects_Init(Actor* thisx, PlayState* play) {
             this->actionFunc = func_808ACC34;
             thisx->draw = func_808ACCB8;
 
-            if (GET_EVENTCHKINF(EVENTCHKINF_1D)) {
+            if (GET_EVENTCHKINF(EVENTCHKINF_ROYAL_TOMB_OPENED)) {
                 Actor_Kill(thisx);
             }
             break;
@@ -130,7 +130,7 @@ void func_808AC908(BgSpot02Objects* this, PlayState* play) {
     if (play->csCtx.state != 0) {
         if (play->csCtx.npcActions[3] != NULL && play->csCtx.npcActions[3]->action == 2) {
             Audio_PlayActorSfx2(&this->dyna.actor, NA_SE_EV_GRAVE_EXPLOSION);
-            SET_EVENTCHKINF(EVENTCHKINF_1D);
+            SET_EVENTCHKINF(EVENTCHKINF_ROYAL_TOMB_OPENED);
             this->timer = 25;
             pos.x = (Math_SinS(this->dyna.actor.shape.rot.y) * 50.0f) + this->dyna.actor.world.pos.x;
             pos.y = this->dyna.actor.world.pos.y + 30.0f;

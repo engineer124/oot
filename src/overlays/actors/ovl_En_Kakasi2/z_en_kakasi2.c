@@ -213,7 +213,8 @@ void EnKakasi2_Update(Actor* thisx, PlayState* play2) {
         CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
         CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
     }
-    if (BREG(0) != 0) {
+
+    if (R_DBG_DRAW_ON) {
         if (BREG(5) != 0) {
             osSyncPrintf(VT_FGCOL(YELLOW) "☆☆☆☆☆ this->actor.player_distance ☆☆☆☆☆ %f\n" VT_RST,
                          this->actor.xzDistToPlayer);

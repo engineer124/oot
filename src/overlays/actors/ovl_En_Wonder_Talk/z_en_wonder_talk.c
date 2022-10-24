@@ -105,7 +105,7 @@ void func_80B391CC(EnWonderTalk* this, PlayState* play) {
                 // "Attention coordinates"
                 osSyncPrintf(VT_FGCOL(MAGENTA) "☆☆☆☆☆ 注目座標\t       \t☆☆☆☆☆ %f\n" VT_RST, 0.0f);
                 this->unk_15C = 120.0f;
-                if (GET_EVENTCHKINF(EVENTCHKINF_1D)) {
+                if (GET_EVENTCHKINF(EVENTCHKINF_ROYAL_TOMB_OPENED)) {
                     Actor_Kill(&this->actor);
                 }
                 break;
@@ -133,7 +133,7 @@ void func_80B3943C(EnWonderTalk* this, PlayState* play) {
     s16 yawDiffTemp;
 
     this->unk_15A++;
-    if (this->unk_150 == 4 && GET_EVENTCHKINF(EVENTCHKINF_1D)) {
+    if (this->unk_150 == 4 && GET_EVENTCHKINF(EVENTCHKINF_ROYAL_TOMB_OPENED)) {
         Actor_Kill(&this->actor);
         return;
     }
@@ -239,7 +239,7 @@ void EnWonderTalk_Update(Actor* thisx, PlayState* play) {
     this->actionFunc(this, play);
     Actor_SetFocus(&this->actor, this->height);
 
-    if (BREG(0) != 0) {
+    if (R_DBG_DRAW_ON) {
         if (this->unk_15A != 0) {
             if ((this->unk_15A & 1) == 0) {
                 DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,

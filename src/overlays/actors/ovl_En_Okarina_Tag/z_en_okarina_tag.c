@@ -34,7 +34,7 @@ const ActorInit En_Okarina_Tag_InitVars = {
     NULL,
 };
 
-extern CutsceneData D_80ABF9D0[];
+extern CutsceneData gWindmillOpenWellCs[];
 extern CutsceneData D_80ABFB40[];
 
 void EnOkarinaTag_Destroy(Actor* thisx, PlayState* play) {
@@ -55,7 +55,7 @@ void EnOkarinaTag_Init(Actor* thisx, PlayState* play) {
     }
     if (this->ocarinaSong == 0xF) {
         this->ocarinaSong = 0;
-        this->unk_158 = 1;
+        this->anySongAllowed = true;
     }
     this->actor.targetMode = 1;
     if (this->actor.world.rot.z > 0) {
@@ -73,35 +73,39 @@ void EnOkarinaTag_Init(Actor* thisx, PlayState* play) {
     // "Processing range information"
     osSyncPrintf(VT_FGCOL(CYAN) "☆☆☆☆☆ 処理範囲情報\t ☆☆☆☆☆ %f\n" VT_RST, this->interactRange);
     // "Hit?"
-    osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ 当り？\t\t ☆☆☆☆☆ %d\n" VT_RST, this->unk_158);
+    osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ 当り？\t\t ☆☆☆☆☆ %d\n" VT_RST, this->anySongAllowed);
     osSyncPrintf("\n\n");
 
     if ((this->switchFlag >= 0) && (Flags_GetSwitch(play, this->switchFlag))) {
         Actor_Kill(&this->actor);
-    } else {
-        switch (this->type) {
-            case 7:
-                this->actionFunc = func_80ABEF2C;
-                break;
-            case 2:
-                if (LINK_IS_ADULT) {
-                    Actor_Kill(&this->actor);
-                    break;
-                }
-                FALLTHROUGH;
-            case 1:
-            case 4:
-            case 6:
-                this->actionFunc = func_80ABF28C;
-                break;
-            case 5:
-                this->actor.textId = 0x5021;
-                this->actionFunc = func_80ABF708;
-                break;
-            default:
+        return;
+    }
+
+    switch (this->type) {
+        case OCARINASPOT_TYPE_7:
+            this->actionFunc = func_80ABEF2C;
+            break;
+
+        case OCARINASPOT_TYPE_CHECK_STORMS:
+            if (LINK_IS_ADULT) {
                 Actor_Kill(&this->actor);
                 break;
-        }
+            }
+            FALLTHROUGH;
+        case OCARINASPOT_TYPE_CHECK_LULLABY:
+        case OCARINASPOT_TYPE_CHECK_SOT:
+        case OCARINASPOT_TYPE_CHECK_LULLABY_ROYAL_TOMB:
+            this->actionFunc = func_80ABF28C;
+            break;
+
+        case OCARINASPOT_TYPE_5:
+            this->actor.textId = 0x5021;
+            this->actionFunc = func_80ABF708;
+            break;
+
+        default:
+            Actor_Kill(&this->actor);
+            break;
     }
 }
 
@@ -110,7 +114,7 @@ void func_80ABEF2C(EnOkarinaTag* this, PlayState* play) {
     u16 ocarinaSong;
 
     player = GET_PLAYER(play);
-    this->unk_15A++;
+    this->timer++;
     if ((this->switchFlag >= 0) && (Flags_GetSwitch(play, this->switchFlag))) {
         this->actor.flags &= ~ACTOR_FLAG_0;
     } else {
@@ -131,7 +135,7 @@ void func_80ABEF2C(EnOkarinaTag* this, PlayState* play) {
                     this->actionFunc = func_80ABF0CC;
                 } else if ((this->actor.xzDistToPlayer < (50.0f + this->interactRange) &&
                             ((fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 40.0f)))) {
-                    this->unk_15A = 0;
+                    this->timer = 0;
                     player->ocarinaActor = &this->actor;
                 }
             }
@@ -159,7 +163,7 @@ void func_80ABF0CC(EnOkarinaTag* this, PlayState* play) {
             this->actionFunc = func_80ABEF2C;
             return;
         }
-        if (this->unk_158 != 0) {
+        if (this->anySongAllowed) {
             if ((play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_SARIA) ||
                 (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_EPONA) ||
                 (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_ZL) ||
@@ -189,28 +193,32 @@ void func_80ABF0CC(EnOkarinaTag* this, PlayState* play) {
 void func_80ABF28C(EnOkarinaTag* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    this->unk_15A++;
+    this->timer++;
     if ((this->ocarinaSong != 6) || (gSaveContext.scarecrowSpawnSongSet)) {
         if ((this->switchFlag >= 0) && Flags_GetSwitch(play, this->switchFlag)) {
             this->actor.flags &= ~ACTOR_FLAG_0;
-        } else if (((this->type != 4) || !GET_EVENTCHKINF(EVENTCHKINF_4B)) &&
-                   ((this->type != 6) || !GET_EVENTCHKINF(EVENTCHKINF_1D)) &&
+        } else if (((this->type != OCARINASPOT_TYPE_CHECK_SOT) || !GET_EVENTCHKINF(EVENTCHKINF_4B)) &&
+                   ((this->type != OCARINASPOT_TYPE_CHECK_LULLABY_ROYAL_TOMB) || !GET_EVENTCHKINF(EVENTCHKINF_ROYAL_TOMB_OPENED)) &&
                    (this->actor.xzDistToPlayer < (90.0f + this->interactRange)) &&
                    (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 80.0f)) {
             if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
                 switch (this->type) {
-                    case 1:
+                    case OCARINASPOT_TYPE_CHECK_LULLABY:
                         Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_LULLABY);
                         break;
-                    case 2:
+
+                    case OCARINASPOT_TYPE_CHECK_STORMS:
                         Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_STORMS);
                         break;
-                    case 4:
+
+                    case OCARINASPOT_TYPE_CHECK_SOT:
                         Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_TIME);
                         break;
-                    case 6:
+
+                    case OCARINASPOT_TYPE_CHECK_LULLABY_ROYAL_TOMB:
                         Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_LULLABY);
                         break;
+
                     default:
                         // "Ocarina Invisible-kun demo start check error source"
                         osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ オカリナ透明君デモ開始チェックエラー原 ☆☆☆☆☆ %d\n" VT_RST,
@@ -222,7 +230,7 @@ void func_80ABF28C(EnOkarinaTag* this, PlayState* play) {
                 this->actionFunc = func_80ABF4C8;
             } else if ((this->actor.xzDistToPlayer < (50.0f + this->interactRange)) &&
                        (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 40.0f)) {
-                this->unk_15A = 0;
+                this->timer = 0;
                 player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
             }
         }
@@ -239,29 +247,34 @@ void func_80ABF4C8(EnOkarinaTag* this, PlayState* play) {
         if (this->switchFlag >= 0) {
             Flags_SetSwitch(play, this->switchFlag);
         }
+
         switch (this->type) {
-            case 1:
+            case OCARINASPOT_TYPE_CHECK_LULLABY:
                 Flags_SetSwitch(play, this->switchFlag);
                 SET_EVENTCHKINF(EVENTCHKINF_39);
                 break;
-            case 2:
-                play->csCtx.segment = D_80ABF9D0;
+
+            case OCARINASPOT_TYPE_CHECK_STORMS:
+                play->csCtx.segment = gWindmillOpenWellCs;
                 gSaveContext.cutsceneTrigger = 1;
                 // Increase pitch by 3 semitones i.e. 2^(3/12), scale tempo by same ratio
                 // Applies to the windmill bgm once the song of storms fanfare is complete
                 Audio_SetMainBgmTempoFreqAfterFanfare(1.18921f, 90);
                 break;
-            case 4:
+
+            case OCARINASPOT_TYPE_CHECK_SOT:
                 play->csCtx.segment = D_80ABFB40;
                 gSaveContext.cutsceneTrigger = 1;
                 break;
-            case 6:
-                play->csCtx.segment = LINK_IS_ADULT ? SEGMENTED_TO_VIRTUAL(spot02_scene_Cs_003C80)
-                                                    : SEGMENTED_TO_VIRTUAL(spot02_scene_Cs_005020);
+
+            case OCARINASPOT_TYPE_CHECK_LULLABY_ROYAL_TOMB:
+                play->csCtx.segment = LINK_IS_ADULT ? SEGMENTED_TO_VIRTUAL(gGraveyardOpenRoyalTombAdultCs)
+                                                    : SEGMENTED_TO_VIRTUAL(gGraveyardOpenRoyalTombChildCs);
                 gSaveContext.cutsceneTrigger = 1;
-                SET_EVENTCHKINF(EVENTCHKINF_1D);
+                SET_EVENTCHKINF(EVENTCHKINF_ROYAL_TOMB_OPENED);
                 func_80078884(NA_SE_SY_CORRECT_CHIME);
                 break;
+
             default:
                 break;
         }
@@ -288,14 +301,14 @@ void func_80ABF708(EnOkarinaTag* this, PlayState* play) {
         this->actionFunc = func_80ABF7CC;
     } else {
         yawDiff = this->actor.yawTowardsPlayer - this->actor.world.rot.y;
-        this->unk_15A++;
+        this->timer++;
         if (!(this->actor.xzDistToPlayer > 120.0f)) {
             if (CHECK_QUEST_ITEM(QUEST_SONG_SUN)) {
                 this->actor.textId = 0x5021;
             }
             yawDiffNew = ABS(yawDiff);
             if (yawDiffNew < 0x4300) {
-                this->unk_15A = 0;
+                this->timer = 0;
                 func_8002F2CC(&this->actor, play, 70.0f);
             }
         }
@@ -320,9 +333,10 @@ void EnOkarinaTag_Update(Actor* thisx, PlayState* play) {
     EnOkarinaTag* this = (EnOkarinaTag*)thisx;
 
     this->actionFunc(this, play);
-    if (BREG(0) != 0) {
-        if (this->unk_15A != 0) {
-            if (!(this->unk_15A & 1)) {
+
+    if (R_DBG_DRAW_ON) {
+        if (this->timer != 0) {
+            if (!(this->timer & 1)) {
                 DebugDisplay_AddObject(this->actor.world.pos.x, this->actor.world.pos.y, this->actor.world.pos.z,
                                        this->actor.world.rot.x, this->actor.world.rot.y, this->actor.world.rot.z, 1.0f,
                                        1.0f, 1.0f, 120, 120, 120, 255, 4, play->state.gfxCtx);

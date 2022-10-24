@@ -3049,7 +3049,10 @@ void Message_Draw(PlayState* play) {
 
     watchVar = gSaveContext.scarecrowLongSongSet;
     Message_DrawDebugVariableChanged(&watchVar, play->state.gfxCtx);
-    if (BREG(0) != 0 && play->msgCtx.textId != 0) {
+
+    if (1) {}
+
+    if (R_DBG_DRAW_ON && (play->msgCtx.textId != 0)) {
         plusOne = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
         gSPDisplayList(OVERLAY_DISP++, plusOne);
         Message_DrawDebugText(play, &plusOne);
@@ -3057,13 +3060,15 @@ void Message_Draw(PlayState* play) {
         Graph_BranchDlist(polyOpaP, plusOne);
         POLY_OPA_DISP = plusOne;
     }
-    if (1) {}
+
+
     plusOne = Graph_GfxPlusOne(polyOpaP = POLY_OPA_DISP);
     gSPDisplayList(OVERLAY_DISP++, plusOne);
     Message_DrawMain(play, &plusOne);
     gSPEndDisplayList(plusOne++);
     Graph_BranchDlist(polyOpaP, plusOne);
     POLY_OPA_DISP = plusOne;
+
     CLOSE_DISPS(play->state.gfxCtx, "../z_message_PAL.c", 3582);
 }
 
@@ -3100,7 +3105,7 @@ void Message_Update(PlayState* play) {
     s16 playerFocusScreenPosY;
     s16 actorFocusScreenPosY;
 
-    if (BREG(0) != 0) {
+    if (R_DBG_DRAW_ON) {
         if (CHECK_BTN_ALL(input->press.button, BTN_DDOWN) && CHECK_BTN_ALL(input->cur.button, BTN_L)) {
             osSyncPrintf("msgno=%d\n", D_80153D78);
             Message_StartTextbox(play, R_MESSAGE_DEBUGGER_TEXTID, NULL);

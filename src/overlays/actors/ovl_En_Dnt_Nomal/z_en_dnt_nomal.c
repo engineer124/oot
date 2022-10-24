@@ -228,7 +228,8 @@ void EnDntNomal_TargetWait(EnDntNomal* this, PlayState* play) {
     this->targetVtx[3].y = this->targetVtx[2].y = targetY + 24.0f;
 
     SkelAnime_Update(&this->skelAnime);
-    if ((this->targetQuad.base.acFlags & AC_HIT) || BREG(0)) {
+
+    if ((this->targetQuad.base.acFlags & AC_HIT) || R_DBG_DRAW_ON) {
         this->targetQuad.base.acFlags &= ~AC_HIT;
 
         dx = fabsf(targetX - this->targetQuad.info.bumper.hitPos.x);
