@@ -1244,7 +1244,7 @@ u8 D_8016B9F3;
 u8 sFanfareStartTimer;
 u16 sFanfareSeqId;
 
-OcarinaStaff sPlayingStaff;
+OcarinaStaff sPromptStaff;
 OcarinaStaff sPlaybackStaff;
 OcarinaStaff sRecordingStaff;
 u32 sOcarinaUpdateTaskStart;
@@ -1340,7 +1340,7 @@ f32 AudioOcarina_BendPitchTwoSemitones(s8 bendIndex) {
  * If the ocarina is on, but no song has been played then return 0xFE
  * If the ocarina is off, return 0xFF
  */
-u8 AudioOcarina_GetPlayingState(void) {
+u8 AudioOcarina_GetPromptState(void) {
     u8 playedOcarinaSongIndex;
 
     if (sPlayedOcarinaSongIndexPlusOne != 0) {
@@ -1355,7 +1355,7 @@ u8 AudioOcarina_GetPlayingState(void) {
     return playedOcarinaSongIndex;
 }
 
-u8 AudioOcarina_MapNoteToButton(u8 pitchAndBFlatFlag) {
+u8 AudioOcarina_MapPitchToButton(u8 pitchAndBFlatFlag) {
     u8 buttonIndex = sPitchToButtonMap[pitchAndBFlatFlag & 0x3F];
 
     /**
@@ -1377,7 +1377,7 @@ u8 AudioOcarina_MapNoteToButton(u8 pitchAndBFlatFlag) {
     return buttonIndex;
 }
 
-void AudioOcarina_MapNotesToScarecrowButtons(u8 noteSongIndex) {
+void AudioOcarina_MapPitchToScarecrowButtons(u8 noteSongIndex) {
     u8 buttonSongPos = 0;
     u8 noteSongPos = 0;
     u8 pitch;
@@ -1433,7 +1433,7 @@ void AudioOcarina_Start(u16 ocarinaFlags) {
         sOcarinaHasStartedSong = false;
         sPlayedOcarinaSongIndexPlusOne = 0;
         sStaffOcarinaPlayingPos = 0;
-        sPlayingStaff.state = AudioOcarina_GetPlayingState();
+        sPromptStaff.state = AudioOcarina_GetPromptState();
         sIsOcarinaInputEnabled = true;
         sPrevOcarinaWithMusicStaffFlags = 0;
 
@@ -1454,7 +1454,7 @@ void AudioOcarina_Start(u16 ocarinaFlags) {
         }
 
         if (ocarinaFlags & 0xD000) {
-            AudioOcarina_MapNotesToScarecrowButtons(OCARINA_SONG_SCARECROW_SPAWN);
+            AudioOcarina_MapPitchToScarecrowButtons(OCARINA_SONG_SCARECROW_SPAWN);
         }
     } else {
         sOcarinaFlags = 0;
@@ -1996,7 +1996,7 @@ void AudioOcarina_SetRecordingSong(u8 isRecordingComplete) {
             }
 
             // Copies Notes from buffer into scarecrows spawn buttons to be tested for acceptance or rejection
-            AudioOcarina_MapNotesToScarecrowButtons(OCARINA_SONG_MEMORY_GAME);
+            AudioOcarina_MapPitchToScarecrowButtons(OCARINA_SONG_MEMORY_GAME);
 
             // Loop through each of the songs
             for (i = 0; i < OCARINA_SONG_SCARECROW_SPAWN; i++) {
@@ -2098,15 +2098,15 @@ void AudioOcarina_UpdateRecordingStaff(void) {
     }
 }
 
-void AudioOcarina_UpdatePlayingStaff(void) {
-    sPlayingStaff.buttonIndex = sCurOcarinaButtonIndex & 0x3F;
-    sPlayingStaff.state = AudioOcarina_GetPlayingState();
-    sPlayingStaff.pos = sStaffOcarinaPlayingPos;
+void AudioOcarina_UpdatePromptStaff(void) {
+    sPromptStaff.buttonIndex = sCurOcarinaButtonIndex & 0x3F;
+    sPromptStaff.state = AudioOcarina_GetPromptState();
+    sPromptStaff.pos = sStaffOcarinaPlayingPos;
 }
 
 void AudioOcarina_UpdatePlaybackStaff(void) {
     if ((sPlaybackPitch & 0x3F) <= OCARINA_PITCH_EFLAT5) {
-        sPlaybackStaff.buttonIndex = AudioOcarina_MapNoteToButton(sPlaybackPitch);
+        sPlaybackStaff.buttonIndex = AudioOcarina_MapPitchToButton(sPlaybackPitch);
     }
 
     sPlaybackStaff.state = sPlaybackState;
@@ -2124,12 +2124,12 @@ OcarinaStaff* AudioOcarina_GetRecordingStaff(void) {
     return &sRecordingStaff;
 }
 
-OcarinaStaff* AudioOcarina_GetPlayingStaff(void) {
-    if (sPlayingStaff.state < 0xFE) {
+OcarinaStaff* AudioOcarina_GetPromptStaff(void) {
+    if (sPromptStaff.state < 0xFE) {
         sOcarinaFlags = 0;
     }
 
-    return &sPlayingStaff;
+    return &sPromptStaff;
 }
 
 OcarinaStaff* AudioOcarina_GetPlaybackStaff(void) {
@@ -2254,7 +2254,7 @@ void AudioOcarina_Update(void) {
         sPrevOcarinaPitch = sCurOcarinaPitch;
     }
 
-    AudioOcarina_UpdatePlayingStaff();
+    AudioOcarina_UpdatePromptStaff();
     AudioOcarina_UpdatePlaybackStaff();
     AudioOcarina_UpdateRecordingStaff();
 }
@@ -2294,9 +2294,9 @@ void AudioOcarina_PlayLongScarecrowAfterCredits(void) {
 }
 
 void AudioOcarina_ResetStaffs(void) {
-    sPlayingStaff.buttonIndex = OCARINA_BTN_INVALID;
-    sPlayingStaff.state = 0xFF;
-    sPlayingStaff.pos = 0;
+    sPromptStaff.buttonIndex = OCARINA_BTN_INVALID;
+    sPromptStaff.state = 0xFF;
+    sPromptStaff.pos = 0;
     sPlaybackStaff.buttonIndex = OCARINA_BTN_INVALID;
     sPlaybackStaff.state = 0;
     sPlaybackStaff.pos = 0;
@@ -2972,8 +2972,8 @@ void AudioDebug_Draw(GfxPrint* printer) {
                             sPlaybackStaff.pos);
 
             GfxPrint_SetPos(printer, 3, 5);
-            GfxPrint_Printf(printer, "PLAY INFO : %2d %02x %d", sPlayingStaff.buttonIndex, sPlayingStaff.state,
-                            sPlayingStaff.pos);
+            GfxPrint_Printf(printer, "PLAY INFO : %2d %02x %d", sPromptStaff.buttonIndex, sPromptStaff.state,
+                            sPromptStaff.pos);
 
             GfxPrint_SetPos(printer, 3, 6);
             GfxPrint_Printf(printer, "8note REC POINTER : %08x", gScarecrowSpawnSongPtr);

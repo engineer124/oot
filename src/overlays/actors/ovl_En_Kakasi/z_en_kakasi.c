@@ -8,7 +8,7 @@
 #include "vt.h"
 #include "assets/objects/object_ka/object_ka.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void EnKakasi_Init(Actor* thisx, PlayState* play);
 void EnKakasi_Destroy(Actor* thisx, PlayState* play);
@@ -212,18 +212,18 @@ void func_80A8F75C(EnKakasi* this, PlayState* play) {
 
             if (absyawTowardsPlayer < 0x4300) {
                 if (!this->unk_194) {
-                    if (player->stateFlags2 & PLAYER_STATE2_24) {
+                    if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
                         this->subCamId = OnePointCutscene_Init(play, 2260, -99, &this->actor, CAM_ID_MAIN);
 
-                        func_8010BD58(play, OCARINA_ACTION_SCARECROW_LONG_RECORDING);
+                        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_SCARECROW_LONG_RECORDING);
                         this->unk_19A = 0;
                         this->unk_1B8 = 0.0;
-                        player->stateFlags2 |= PLAYER_STATE2_23;
+                        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
                         this->actionFunc = func_80A8F8D0;
                         return;
                     }
                     if (this->actor.xzDistToPlayer < 80.0f) {
-                        player->stateFlags2 |= PLAYER_STATE2_23;
+                        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
                     }
                 }
                 func_8002F2CC(&this->actor, play, 100.0f);
@@ -235,7 +235,7 @@ void func_80A8F75C(EnKakasi* this, PlayState* play) {
 void func_80A8F8D0(EnKakasi* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_04 && play->msgCtx.msgMode == MSGMODE_NONE) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2 && play->msgCtx.msgMode == MSGMODE_NONE) {
         // "end?"
         osSyncPrintf(VT_FGCOL(BLUE) "☆☆☆☆☆ 終り？ ☆☆☆☆☆ \n" VT_RST);
 
@@ -250,9 +250,9 @@ void func_80A8F8D0(EnKakasi* this, PlayState* play) {
             this->subCamId = CAM_ID_NONE;
             this->actionFunc = func_80A8F660;
         }
-    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_01) {
+    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE) {
         func_80A8F320(this, play, 0);
-        player->stateFlags2 |= PLAYER_STATE2_23;
+        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
     }
 }
 
@@ -269,13 +269,13 @@ void func_80A8F9C8(EnKakasi* this, PlayState* play) {
         this->subCamId = OnePointCutscene_Init(play, 2270, -99, &this->actor, CAM_ID_MAIN);
         play->msgCtx.msgMode = MSGMODE_PAUSED;
         func_8002DF54(play, NULL, 8);
-        func_8010BD58(play, OCARINA_ACTION_SCARECROW_LONG_PLAYBACK);
+        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_SCARECROW_LONG_PLAYBACK);
         this->actionFunc = func_80A8FAA4;
     }
 }
 
 void func_80A8FAA4(EnKakasi* this, PlayState* play) {
-    if (play->msgCtx.ocarinaMode != OCARINA_MODE_0F) {
+    if (play->msgCtx.ocarinaMode != OCARINA_MODE_END_MEMORY_GAME) {
         func_80A8F320(this, play, 1);
         return;
     }
@@ -338,7 +338,7 @@ void EnKakasi_Update(Actor* thisx, PlayState* play) {
 void EnKakasi_Draw(Actor* thisx, PlayState* play) {
     EnKakasi* this = (EnKakasi*)thisx;
 
-    if (BREG(3) != 0) {
+    if (R_DBG_PRINT_SCARECROW_CHU_BOWLING) {
         osSyncPrintf("\n\n");
         // "flag!"
         osSyncPrintf(VT_FGCOL(YELLOW) "☆☆☆☆☆ フラグ！ ☆☆☆☆☆ %d\n" VT_RST, gSaveContext.scarecrowLongSongSet);

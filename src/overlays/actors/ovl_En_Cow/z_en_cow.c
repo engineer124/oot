@@ -131,7 +131,7 @@ void EnCow_Init(Actor* thisx, PlayState* play) {
             this->unk_278 = Rand_ZeroFloat(1000.0f) + 40.0f;
             this->unk_27A = 0;
             this->actor.targetMode = 6;
-            DREG(53) = 0;
+            R_LAST_PLAYED_EPONAS_SONG = false;
             break;
         case 1:
             SkelAnime_InitFlex(play, &this->skelAnime, &gCowTailSkel, NULL, this->jointTable, this->morphTable, 6);
@@ -250,22 +250,20 @@ void func_809DF8FC(EnCow* this, PlayState* play) {
 }
 
 void func_809DF96C(EnCow* this, PlayState* play) {
-    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_00) || (play->msgCtx.ocarinaMode == OCARINA_MODE_04)) {
-        if (DREG(53) != 0) {
+    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_NONE) || (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2)) {
+        if (R_LAST_PLAYED_EPONAS_SONG) {
             if (this->unk_276 & 4) {
                 this->unk_276 &= ~0x4;
-                DREG(53) = 0;
+                R_LAST_PLAYED_EPONAS_SONG = false;
+            } else if ((this->actor.xzDistToPlayer < 150.0f) &&
+                       (ABS((s16)(this->actor.yawTowardsPlayer - this->actor.shape.rot.y)) < 0x61A8)) {
+                R_LAST_PLAYED_EPONAS_SONG = false;
+                this->actionFunc = func_809DF8FC;
+                this->actor.flags |= ACTOR_FLAG_16;
+                func_8002F2CC(&this->actor, play, 170.0f);
+                this->actor.textId = 0x2006;
             } else {
-                if ((this->actor.xzDistToPlayer < 150.0f) &&
-                    (ABS((s16)(this->actor.yawTowardsPlayer - this->actor.shape.rot.y)) < 0x61A8)) {
-                    DREG(53) = 0;
-                    this->actionFunc = func_809DF8FC;
-                    this->actor.flags |= ACTOR_FLAG_16;
-                    func_8002F2CC(&this->actor, play, 170.0f);
-                    this->actor.textId = 0x2006;
-                } else {
-                    this->unk_276 |= 4;
-                }
+                this->unk_276 |= 4;
             }
         } else {
             this->unk_276 &= ~0x4;

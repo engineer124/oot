@@ -3,7 +3,7 @@
 #include "vt.h"
 #include "assets/objects/object_fr/object_fr.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void EnFr_Init(Actor* thisx, PlayState* play);
 void EnFr_Destroy(Actor* thisx, PlayState* play);
@@ -610,9 +610,9 @@ s32 EnFr_SetupJumpingUp(EnFr* this, s32 frogIndex) {
 void EnFr_Idle(EnFr* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (player->stateFlags2 & PLAYER_STATE2_25) {
-        if (play->msgCtx.ocarinaMode == OCARINA_MODE_04) {
-            play->msgCtx.ocarinaMode = OCARINA_MODE_00;
+    if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_PLAY) {
+        if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
+            play->msgCtx.ocarinaMode = OCARINA_MODE_NONE;
         }
 
         OnePointCutscene_Init(play, 4110, ~0x62, &this->actor, CAM_ID_MAIN);
@@ -624,7 +624,7 @@ void EnFr_Idle(EnFr* this, PlayState* play) {
         this->reward = GI_NONE;
         this->actionFunc = EnFr_Activate;
     } else if (EnFr_IsAboveAndWithin30DistXZ(player, this)) {
-        player->unk_6A8 = &this->actor;
+        player->ocarinaActor = &this->actor;
     }
 }
 
@@ -668,35 +668,43 @@ void func_80A1BE98(EnFr* this, PlayState* play) {
         }
     }
 
-    func_8010BD58(play, OCARINA_ACTION_CHECK_NOWARP);
+    Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_NOWARP);
     this->actionFunc = EnFr_ListeningToOcarinaNotes;
 }
 
 void EnFr_ListeningToOcarinaNotes(EnFr* this, PlayState* play) {
     this->songIndex = FROG_NO_SONG;
+
     switch (play->msgCtx.ocarinaMode) { // Ocarina Song played
-        case OCARINA_MODE_07:
+        case OCARINA_MODE_PLAYED_ZL:
             this->songIndex = FROG_ZL;
             break;
-        case OCARINA_MODE_06:
+
+        case OCARINA_MODE_PLAYED_EPONA:
             this->songIndex = FROG_EPONA;
             break;
-        case OCARINA_MODE_05:
+
+        case OCARINA_MODE_PLAYED_SARIA:
             this->songIndex = FROG_SARIA;
             break;
-        case OCARINA_MODE_08:
+
+        case OCARINA_MODE_PLAYED_SUNS:
             this->songIndex = FROG_SUNS;
             break;
-        case OCARINA_MODE_09:
+
+        case OCARINA_MODE_PLAYED_SOT:
             this->songIndex = FROG_SOT;
             break;
-        case OCARINA_MODE_0A:
+
+        case OCARINA_MODE_PLAYED_STORMS:
             this->songIndex = FROG_STORMS;
             break;
-        case OCARINA_MODE_04:
+
+        case OCARINA_MODE_END_2:
             EnFr_OcarinaMistake(this, play);
             break;
-        case OCARINA_MODE_01: // Ocarina note played, but no song played
+
+        case OCARINA_MODE_ACTIVE: // Ocarina note played, but no song played
             switch (play->msgCtx.lastOcarinaButtonIndex) {
                 // Jumping frogs in open ocarina based on ocarina note played
                 case OCARINA_BTN_A:
@@ -822,7 +830,7 @@ void EnFr_SetupFrogSong(EnFr* this, PlayState* play) {
     } else {
         this->frogSongTimer = 40;
         this->ocarinaNoteIndex = 0;
-        func_8010BD58(play, OCARINA_ACTION_FROGS);
+        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_FROGS);
         this->ocarinaNote = EnFr_GetNextNoteFrogSong(this->ocarinaNoteIndex);
         EnFr_CheckOcarinaInputFrogSong(this->ocarinaNote);
         this->actionFunc = EnFr_ContinueFrogSong;
@@ -1007,7 +1015,7 @@ void EnFr_Deactivate(EnFr* this, PlayState* play) {
         frogLoop2->isDeactivating = false;
     }
 
-    play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+    play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
     Audio_PlayActorSfx2(&this->actor, NA_SE_EV_FROG_CRY_0);
     if (this->reward == GI_NONE) {
         this->actionFunc = EnFr_Idle;

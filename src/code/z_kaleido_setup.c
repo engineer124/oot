@@ -112,7 +112,7 @@ void KaleidoSetup_Init(PlayState* play) {
     pauseCtx->nameDisplayTimer = 0;
     pauseCtx->nameColorSet = 0;
     pauseCtx->cursorColorSet = 4;
-    pauseCtx->ocarinaSongIdx = -1;
+    pauseCtx->ocarinaSongIndex = -1;
     pauseCtx->cursorSpecialPos = 0;
 
     View_Init(&pauseCtx->view, play->state.gfxCtx);

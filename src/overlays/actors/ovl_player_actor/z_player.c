@@ -234,7 +234,7 @@ void func_8084DC48(Player* this, PlayState* play);
 void func_8084E1EC(Player* this, PlayState* play);
 void func_8084E30C(Player* this, PlayState* play);
 void func_8084E368(Player* this, PlayState* play);
-void func_8084E3C4(Player* this, PlayState* play);
+void Player_PlayOcarina(Player* this, PlayState* play);
 void func_8084E604(Player* this, PlayState* play);
 void func_8084E6D4(Player* this, PlayState* play);
 void func_8084E9AC(Player* this, PlayState* play);
@@ -301,7 +301,7 @@ void func_80851A50(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80851B90(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80851BE8(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80851CA4(PlayState* play, Player* this, CsCmdActorAction* arg2);
-void func_80851D2C(PlayState* play, Player* this, CsCmdActorAction* arg2);
+void Player_StartOcarina(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80851D80(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80851DEC(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80851E28(PlayState* play, Player* this, CsCmdActorAction* arg2);
@@ -333,7 +333,7 @@ void func_80852564(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_808525C0(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80852608(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80852648(PlayState* play, Player* this, CsCmdActorAction* arg2);
-void func_808526EC(PlayState* play, Player* this, CsCmdActorAction* arg2);
+void Player_LearnOcarinaSongEffects(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_8085283C(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_808528C8(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80852944(PlayState* play, Player* this, CsCmdActorAction* arg2);
@@ -3051,9 +3051,9 @@ s32 func_80835C58(PlayState* play, Player* this, PlayerFunc674 func, s32 flags) 
         return 0;
     }
 
-    if (func_8084E3C4 == this->func_674) {
+    if (Player_PlayOcarina == this->func_674) {
         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
-        this->stateFlags2 &= ~(PLAYER_STATE2_24 | PLAYER_STATE2_25);
+        this->stateFlags2 &= ~(ACTOR_FLAG_OCARINA_ACTOR_TRY | ACTOR_FLAG_OCARINA_ACTOR_PLAY);
     } else if (func_808507F4 == this->func_674) {
         func_80832340(play, this);
     }
@@ -3072,7 +3072,7 @@ s32 func_80835C58(PlayState* play, Player* this, PlayerFunc674 func, s32 flags) 
     func_80832DBC(this);
     this->stateFlags1 &= ~(PLAYER_STATE1_2 | PLAYER_STATE1_6 | PLAYER_STATE1_26 | PLAYER_STATE1_28 | PLAYER_STATE1_29 |
                            PLAYER_STATE1_31);
-    this->stateFlags2 &= ~(PLAYER_STATE2_19 | PLAYER_STATE2_27 | PLAYER_STATE2_28);
+    this->stateFlags2 &= ~(PLAYER_STATE2_19 | PLAYER_STATE2_OCARINA_ON | PLAYER_STATE2_28);
     this->stateFlags3 &= ~(PLAYER_STATE3_1 | PLAYER_STATE3_3 | PLAYER_STATE3_7);
     this->unk_84F = 0;
     this->unk_850 = 0;
@@ -5313,13 +5313,13 @@ s32 func_8083B040(Player* this, PlayState* play) {
                         func_80835EA4(play, 2);
                     }
                 } else {
-                    func_80835DE4(play, this, func_8084E3C4, 0);
+                    func_80835DE4(play, this, Player_PlayOcarina, 0);
                     func_808322D0(play, this, &gPlayerAnim_link_normal_okarina_start);
-                    this->stateFlags2 |= PLAYER_STATE2_27;
-                    func_80835EA4(play, (this->unk_6A8 != NULL) ? 0x5B : 0x5A);
-                    if (this->unk_6A8 != NULL) {
-                        this->stateFlags2 |= PLAYER_STATE2_25;
-                        Camera_SetParam(Play_GetCamera(play, CAM_ID_MAIN), 8, this->unk_6A8);
+                    this->stateFlags2 |= PLAYER_STATE2_OCARINA_ON;
+                    func_80835EA4(play, (this->ocarinaActor != NULL) ? 0x5B : 0x5A);
+                    if (this->ocarinaActor != NULL) {
+                        this->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_PLAY;
+                        Camera_SetParam(Play_GetCamera(play, CAM_ID_MAIN), 8, this->ocarinaActor);
                     }
                 }
             } else if (func_8083AD4C(play, this)) {
@@ -9813,7 +9813,7 @@ void func_808473D4(PlayState* play, Player* this) {
                 if (this->unk_860 == 2) {
                     doAction = DO_ACTION_REEL;
                 }
-            } else if ((func_8084E3C4 != this->func_674) && !(this->stateFlags2 & PLAYER_STATE2_CRAWLING)) {
+            } else if ((Player_PlayOcarina != this->func_674) && !(this->stateFlags2 & PLAYER_STATE2_CRAWLING)) {
                 if ((this->doorType != PLAYER_DOORTYPE_NONE) &&
                     (!(this->stateFlags1 & PLAYER_STATE1_11) ||
                      ((heldActor != NULL) && (heldActor->id == ACTOR_EN_RU1)))) {
@@ -10794,11 +10794,11 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
 
         this->naviTextId = 0;
 
-        if (!(this->stateFlags2 & PLAYER_STATE2_25)) {
-            this->unk_6A8 = NULL;
+        if (!(this->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_PLAY)) {
+            this->ocarinaActor = NULL;
         }
 
-        this->stateFlags2 &= ~PLAYER_STATE2_23;
+        this->stateFlags2 &= ~ACTOR_FLAG_OCARINA_ACTOR_NEAR;
         this->unk_6A4 = FLT_MAX;
 
         temp_f0 = this->actor.world.pos.y - this->actor.prevPos.y;
@@ -11286,21 +11286,21 @@ s32 func_8084B3CC(PlayState* play, Player* this) {
     return 0;
 }
 
-void func_8084B498(Player* this) {
+void Player_SetOcarinaItemAction(Player* this) {
     this->itemAction =
         (INV_CONTENT(ITEM_OCARINA_FAIRY) == ITEM_OCARINA_FAIRY) ? PLAYER_IA_OCARINA_FAIRY : PLAYER_IA_OCARINA_TIME;
 }
 
-s32 func_8084B4D4(PlayState* play, Player* this) {
-    if (this->stateFlags3 & PLAYER_STATE3_5) {
-        this->stateFlags3 &= ~PLAYER_STATE3_5;
-        func_8084B498(this);
+s32 Player_ForceOcarina(PlayState* play, Player* this) {
+    if (this->stateFlags3 & PLAYER_STATE3_OCARINA_FORCED) {
+        this->stateFlags3 &= ~PLAYER_STATE3_OCARINA_FORCED;
+        Player_SetOcarinaItemAction(this);
         this->unk_6AD = 4;
         func_8083B040(this, play);
-        return 1;
+        return true;
     }
 
-    return 0;
+    return false;
 }
 
 void func_8084B530(Player* this, PlayState* play) {
@@ -11316,7 +11316,7 @@ void func_8084B530(Player* this, PlayState* play) {
 
         func_8005B1A4(Play_GetCamera(play, CAM_ID_MAIN));
 
-        if (!func_8084B4D4(play, this) && !func_8084B3CC(play, this) && !func_8083ADD4(play, this)) {
+        if (!Player_ForceOcarina(play, this) && !func_8084B3CC(play, this) && !func_8083ADD4(play, this)) {
             if ((this->targetActor != this->interactRangeActor) || !func_8083E5A8(this, play)) {
                 if (this->stateFlags1 & PLAYER_STATE1_23) {
                     s32 sp24 = this->unk_850;
@@ -12501,14 +12501,18 @@ static s16 sWarpSongEntrances[] = {
     ENTR_SPOT05_2, ENTR_SPOT17_4, ENTR_SPOT06_8, ENTR_SPOT11_5, ENTR_SPOT02_7, ENTR_TOKINOMA_7,
 };
 
-void func_8084E3C4(Player* this, PlayState* play) {
+/**
+ * Playing the ocarina
+ * TODO: Unname as it is a `func_674`
+ */
+void Player_PlayOcarina(Player* this, PlayState* play) {
     if (LinkAnimation_Update(play, &this->skelAnime)) {
         func_808322A4(play, this, &gPlayerAnim_link_normal_okarina_swing);
         this->unk_850 = 1;
-        if (this->stateFlags2 & (PLAYER_STATE2_23 | PLAYER_STATE2_25)) {
-            this->stateFlags2 |= PLAYER_STATE2_24;
+        if (this->stateFlags2 & (ACTOR_FLAG_OCARINA_ACTOR_NEAR | ACTOR_FLAG_OCARINA_ACTOR_PLAY)) {
+            this->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_TRY;
         } else {
-            func_8010BD58(play, OCARINA_ACTION_FREE_PLAY);
+            Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_FREE_PLAY);
         }
         return;
     }
@@ -12517,10 +12521,10 @@ void func_8084E3C4(Player* this, PlayState* play) {
         return;
     }
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_04) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
         func_8005B1A4(Play_GetCamera(play, CAM_ID_MAIN));
 
-        if ((this->targetActor != NULL) && (this->targetActor == this->unk_6A8)) {
+        if ((this->targetActor != NULL) && (this->targetActor == this->ocarinaActor)) {
             func_80853148(play, this->targetActor);
         } else if (this->naviTextId < 0) {
             this->targetActor = this->naviActor;
@@ -12530,9 +12534,10 @@ void func_8084E3C4(Player* this, PlayState* play) {
             func_8083A098(this, &gPlayerAnim_link_normal_okarina_end, play);
         }
 
-        this->stateFlags2 &= ~(PLAYER_STATE2_23 | PLAYER_STATE2_24 | PLAYER_STATE2_25);
-        this->unk_6A8 = NULL;
-    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_02) {
+        this->stateFlags2 &=
+            ~(ACTOR_FLAG_OCARINA_ACTOR_NEAR | ACTOR_FLAG_OCARINA_ACTOR_TRY | ACTOR_FLAG_OCARINA_ACTOR_PLAY);
+        this->ocarinaActor = NULL;
+    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_WARP) {
         gSaveContext.respawn[RESPAWN_MODE_RETURN].entranceIndex = sWarpSongEntrances[play->msgCtx.lastPlayedSong];
         gSaveContext.respawn[RESPAWN_MODE_RETURN].playerParams = 0x5FF;
         gSaveContext.respawn[RESPAWN_MODE_RETURN].data = play->msgCtx.lastPlayedSong;
@@ -12544,7 +12549,7 @@ void func_8084E3C4(Player* this, PlayState* play) {
         play->mainCamera.unk_14C &= ~8;
 
         this->stateFlags1 |= PLAYER_STATE1_28 | PLAYER_STATE1_29;
-        this->stateFlags2 |= PLAYER_STATE2_27;
+        this->stateFlags2 |= PLAYER_STATE2_OCARINA_ON;
 
         if (Actor_Spawn(&play->actorCtx, play, ACTOR_DEMO_KANKYO, 0.0f, 0.0f, 0.0f, 0, 0, 0, DEMOKANKYO_WARP_OUT) ==
             NULL) {
@@ -12588,14 +12593,14 @@ void func_8084E6D4(Player* this, PlayState* play) {
 
             if (func_8084DFF4(play, this) && (this->unk_850 == 1)) {
                 cond = ((this->targetActor != NULL) && (this->exchangeItemId < 0)) ||
-                       (this->stateFlags3 & PLAYER_STATE3_5);
+                       (this->stateFlags3 & PLAYER_STATE3_OCARINA_FORCED);
 
                 if (cond || (gSaveContext.healthAccumulator == 0)) {
                     if (cond) {
                         func_8084DF6C(play, this);
                         this->exchangeItemId = EXCH_ITEM_NONE;
 
-                        if (func_8084B4D4(play, this) == 0) {
+                        if (!Player_ForceOcarina(play, this)) {
                             func_80853148(play, this->targetActor);
                         }
                     } else {
@@ -13666,7 +13671,7 @@ static struct_80854B18 D_80854B18[] = {
     { 3, &gPlayerAnim_link_demo_jibunmiru },
     { 9, &gPlayerAnim_link_normal_back_downA },
     { 2, &gPlayerAnim_link_normal_back_down_wake },
-    { -1, func_80851D2C },
+    { -1, Player_StartOcarina },
     { 2, &gPlayerAnim_link_normal_okarina_end },
     { 3, &gPlayerAnim_link_demo_get_itemA },
     { -1, func_808515A4 },
@@ -13816,9 +13821,9 @@ static struct_80854B18 D_80854E50[] = {
     { 12, &gPlayerAnim_d_link_orowait },
     { 12, &gPlayerAnim_demo_link_nwait },
     { 11, NULL },
-    { -1, func_808526EC },
+    { -1, Player_LearnOcarinaSongEffects },
     { 17, &gPlayerAnim_sude_nwait },
-    { -1, func_808526EC },
+    { -1, Player_LearnOcarinaSongEffects },
     { 17, &gPlayerAnim_sude_nwait },
     { 12, &gPlayerAnim_link_demo_gurad_wait },
     { 12, &gPlayerAnim_link_demo_look_hand_wait },
@@ -14229,9 +14234,9 @@ void func_80851CA4(PlayState* play, Player* this, CsCmdActorAction* arg2) {
     }
 }
 
-void func_80851D2C(PlayState* play, Player* this, CsCmdActorAction* arg2) {
+void Player_StartOcarina(PlayState* play, Player* this, CsCmdActorAction* arg2) {
     func_80850F1C(play, this, &gPlayerAnim_link_normal_okarina_start);
-    func_8084B498(this);
+    Player_SetOcarinaItemAction(this);
     Player_SetModels(this, Player_ActionToModelGroup(this, this->itemAction));
 }
 
@@ -14506,10 +14511,10 @@ static Vec3s D_80855210[2][2] = {
     { { -200, 500, 0 }, { 600, 400, 600 } },
 };
 
-void func_808526EC(PlayState* play, Player* this, CsCmdActorAction* arg2) {
-    static Vec3f zeroVec = { 0.0f, 0.0f, 0.0f };
-    static Color_RGBA8 primColor = { 255, 255, 255, 0 };
-    static Color_RGBA8 envColor = { 0, 128, 128, 0 };
+void Player_LearnOcarinaSongEffects(PlayState* play, Player* this, CsCmdActorAction* arg2) {
+    static Vec3f sZeroVec = { 0.0f, 0.0f, 0.0f };
+    static Color_RGBA8 sPrimColor = { 255, 255, 255, 0 };
+    static Color_RGBA8 sEnvColor = { 0, 128, 128, 0 };
     s32 linkAge = gSaveContext.linkAge;
     Vec3f sparklePos;
     Vec3f sp34;
@@ -14530,7 +14535,7 @@ void func_808526EC(PlayState* play, Player* this, CsCmdActorAction* arg2) {
 
     SkinMatrix_Vec3fMtxFMultXYZ(&this->shieldMf, &sp34, &sparklePos);
 
-    EffectSsKiraKira_SpawnDispersed(play, &sparklePos, &zeroVec, &zeroVec, &primColor, &envColor, 600, -10);
+    EffectSsKiraKira_SpawnDispersed(play, &sparklePos, &sZeroVec, &sZeroVec, &sPrimColor, &sEnvColor, 600, -10);
 }
 
 void func_8085283C(PlayState* play, Player* this, CsCmdActorAction* arg2) {

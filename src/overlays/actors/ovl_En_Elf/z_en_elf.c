@@ -7,7 +7,7 @@
 #include "z_en_elf.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
-#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 #define FAIRY_FLAG_TIMED (1 << 8)
 #define FAIRY_FLAG_BIG (1 << 9)
@@ -1348,7 +1348,7 @@ void func_80A052F4(Actor* thisx, PlayState* play) {
 
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_CHOICE) {
         if (Message_ShouldAdvance(play)) {
-            play->msgCtx.unk_E3F2 = 0xFF;
+            play->msgCtx.lastPlayedSongAlt = 0xFF;
 
             switch (play->msgCtx.choiceIndex) {
                 case 0: // yes

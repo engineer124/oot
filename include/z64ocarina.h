@@ -76,22 +76,20 @@ typedef enum {
 } OcarinaSongActionId;
 
 typedef enum {
-    /* 0x00 */ OCARINA_MODE_00,
-    /* 0x01 */ OCARINA_MODE_01,
-    /* 0x02 */ OCARINA_MODE_02,
-    /* 0x03 */ OCARINA_MODE_03,
-    /* 0x04 */ OCARINA_MODE_04,
-    /* 0x05 */ OCARINA_MODE_05,
-    /* 0x06 */ OCARINA_MODE_06,
-    /* 0x07 */ OCARINA_MODE_07,
-    /* 0x08 */ OCARINA_MODE_08,
-    /* 0x09 */ OCARINA_MODE_09,
-    /* 0x0A */ OCARINA_MODE_0A,
-    /* 0x0B */ OCARINA_MODE_0B,
-    /* 0x0C */ OCARINA_MODE_0C,
-    /* 0x0D */ OCARINA_MODE_0D,
-    /* 0x0E */ OCARINA_MODE_0E,
-    /* 0x0F */ OCARINA_MODE_0F
+    /* 0x0 */ OCARINA_MODE_NONE,
+    /* 0x1 */ OCARINA_MODE_ACTIVE,
+    /* 0x2 */ OCARINA_MODE_WARP,
+    /* 0x3 */ OCARINA_MODE_END_1,
+    /* 0x4 */ OCARINA_MODE_END_2,
+    /* 0x5 */ OCARINA_MODE_PLAYED_SARIA,
+    /* 0x6 */ OCARINA_MODE_PLAYED_EPONA,
+    /* 0x7 */ OCARINA_MODE_PLAYED_ZL,
+    /* 0x8 */ OCARINA_MODE_PLAYED_SUNS,
+    /* 0x9 */ OCARINA_MODE_PLAYED_SOT,
+    /* 0xA */ OCARINA_MODE_PLAYED_STORMS,
+    /* 0xB */ OCARINA_MODE_PLAYED_SCARECROW_SPAWN,
+    /* 0xD */ OCARINA_MODE_PLAYED_UNSET = 0xD,
+    /* 0xF */ OCARINA_MODE_END_MEMORY_GAME = 0xF
 } OcarinaMode;
 
 typedef enum {
@@ -145,6 +143,9 @@ typedef enum {
     /* 2  */ OCARINA_RECORD_SCARECROW_SPAWN,
     /* 0xFF */ OCARINA_RECORD_REJECTED = 0xFF
 } OcarinaRecordingState;
+
+#define OCARINA_START_ONE_NOTE 0x8000
+#define OCARINA_START_ALL_NOTES 0xC000
 
 /**
  * bFlat4Flag Note:

@@ -2044,8 +2044,8 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
 
     sp80 = &D_80116068[0];
 
-    if (player->stateFlags2 & PLAYER_STATE2_27) {
-        unkFlag = ACTOR_FLAG_25;
+    if (player->stateFlags2 & PLAYER_STATE2_OCARINA_ON) {
+        unkFlag = ACTOR_FLAG_OCARINA_NO_FREEZE;
     }
 
     if ((player->stateFlags1 & PLAYER_STATE1_6) && ((player->actor.textId & 0xFF00) != 0x600)) {

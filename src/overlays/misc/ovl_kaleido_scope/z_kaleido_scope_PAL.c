@@ -2950,7 +2950,7 @@ void KaleidoScope_Update(PlayState* play) {
                     break;
 
                 case 5:
-                    pauseCtx->ocarinaStaff = AudioOcarina_GetPlayingStaff();
+                    pauseCtx->ocarinaStaff = AudioOcarina_GetPromptStaff();
 
                     if (CHECK_BTN_ALL(input->press.button, BTN_START)) {
                         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
@@ -2974,7 +2974,7 @@ void KaleidoScope_Update(PlayState* play) {
                         Interface_ChangeAlpha(50);
                         pauseCtx->unk_1EC = 0;
                         pauseCtx->state = 7;
-                    } else if (pauseCtx->ocarinaStaff->state == pauseCtx->ocarinaSongIdx) {
+                    } else if (pauseCtx->ocarinaStaff->state == pauseCtx->ocarinaSongIndex) {
                         Audio_PlaySfxGeneral(NA_SE_SY_TRE_BOX_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                         D_8082B258 = 0;

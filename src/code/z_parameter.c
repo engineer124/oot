@@ -3469,7 +3469,7 @@ void Interface_Draw(PlayState* play) {
 
         if ((play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0) &&
             (play->gameOverCtx.state == GAMEOVER_INACTIVE) && (msgCtx->msgMode == MSGMODE_NONE) &&
-            !(player->stateFlags2 & PLAYER_STATE2_24) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
+            !(player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) && (play->transitionTrigger == TRANS_TRIGGER_OFF) &&
             (play->transitionMode == TRANS_MODE_OFF) && !Play_InCsMode(play) && (gSaveContext.minigameState != 1) &&
             (play->shootingGalleryStatus <= 1) && !((play->sceneId == SCENE_BOWLING) && Flags_GetSwitch(play, 0x38))) {
             svar6 = 0;
@@ -4036,7 +4036,7 @@ void Interface_Update(PlayState* play) {
     Health_UpdateMeter(play);
 
     if ((gSaveContext.timer1State >= 3) && (play->pauseCtx.state == 0) && (play->pauseCtx.debugState == 0) &&
-        (msgCtx->msgMode == MSGMODE_NONE) && !(player->stateFlags2 & PLAYER_STATE2_24) &&
+        (msgCtx->msgMode == MSGMODE_NONE) && !(player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) &&
         (play->transitionTrigger == TRANS_TRIGGER_OFF) && (play->transitionMode == TRANS_MODE_OFF) &&
         !Play_InCsMode(play)) {}
 
@@ -4191,7 +4191,7 @@ void Interface_Update(PlayState* play) {
         // exit out of ocarina mode after suns song finishes playing
         if ((msgCtx->ocarinaAction != OCARINA_ACTION_CHECK_NOWARP_DONE) &&
             (gSaveContext.sunsSongState == SUNSSONG_START)) {
-            play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+            play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
         }
 
         // handle suns song in areas where time moves
@@ -4209,12 +4209,12 @@ void Interface_Update(PlayState* play) {
                 if ((gSaveContext.dayTime >= CLOCK_TIME(6, 30)) && (gSaveContext.dayTime <= CLOCK_TIME(18, 0) + 1)) {
                     gSaveContext.sunsSongState = SUNSSONG_INACTIVE;
                     gTimeSpeed = sPrevTimeSpeed;
-                    play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+                    play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
                 }
             } else if (gSaveContext.dayTime > CLOCK_TIME(18, 0) + 1) {
                 gSaveContext.sunsSongState = SUNSSONG_INACTIVE;
                 gTimeSpeed = sPrevTimeSpeed;
-                play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+                play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
             }
         } else if ((play->roomCtx.curRoom.behaviorType1 != ROOM_BEHAVIOR_TYPE1_1) &&
                    (interfaceCtx->restrictions.sunsSong != 3)) {

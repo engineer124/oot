@@ -8,7 +8,7 @@
 #include "vt.h"
 #include "assets/objects/object_ka/object_ka.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_25 | ACTOR_FLAG_27)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_OCARINA_NO_FREEZE | ACTOR_FLAG_27)
 
 static ColliderCylinderInit sCylinderInit = {
     {
@@ -138,12 +138,12 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
                GET_EVENTCHKINF(EVENTCHKINF_9C)) {
 
         this->unk_194 = 0;
-        if (play->msgCtx.ocarinaMode == OCARINA_MODE_0B) {
+        if (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_SCARECROW_SPAWN) {
             if (this->switchFlag >= 0) {
                 Flags_SetSwitch(play, this->switchFlag);
             }
             osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ SAVE 終了 ☆☆☆☆☆ %d\n" VT_RST, this->switchFlag);
-            play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+            play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
             this->actor.draw = func_80A90948;
             Collider_InitCylinder(play, &this->collider);
             Collider_SetCylinder(play, &this->collider, &this->actor, &sCylinderInit);

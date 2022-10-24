@@ -401,7 +401,7 @@ void EnKanban_Update(Actor* thisx, PlayState* play2) {
                     }
                     piece->airTimer = 100;
                     piece->actor.flags &= ~ACTOR_FLAG_0;
-                    piece->actor.flags |= ACTOR_FLAG_25;
+                    piece->actor.flags |= ACTOR_FLAG_OCARINA_NO_FREEZE;
                     this->cutMarkTimer = 5;
                     Audio_PlayActorSfx2(&this->actor, NA_SE_IT_SWORD_STRIKE);
                 }
@@ -723,13 +723,13 @@ void EnKanban_Update(Actor* thisx, PlayState* play2) {
             osSyncPrintf(VT_RST);
             switch (this->ocarinaFlag) {
                 case 0:
-                    if (play->msgCtx.ocarinaMode == OCARINA_MODE_01) {
+                    if (play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE) {
                         this->ocarinaFlag = 1;
                     }
                     break;
                 case 1:
-                    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_04) &&
-                        (play->msgCtx.unk_E3F2 == OCARINA_SONG_LULLABY)) {
+                    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) &&
+                        (play->msgCtx.lastPlayedSongAlt == OCARINA_SONG_LULLABY)) {
                         this->actionState = ENKANBAN_REPAIR;
                         this->bounceX = 1;
                         Audio_PlaySfxGeneral(NA_SE_SY_TRE_BOX_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,

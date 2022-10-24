@@ -7,7 +7,7 @@
 #include "z_en_ma1.h"
 #include "assets/objects/object_ma1/object_ma1.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void EnMa1_Init(Actor* thisx, PlayState* play);
 void EnMa1_Destroy(Actor* thisx, PlayState* play);
@@ -352,41 +352,41 @@ void func_80AA0F44(EnMa1* this, PlayState* play) {
     }
 
     if (GET_EVENTCHKINF(EVENTCHKINF_16)) {
-        if (player->stateFlags2 & PLAYER_STATE2_24) {
-            player->stateFlags2 |= PLAYER_STATE2_25;
-            player->unk_6A8 = &this->actor;
+        if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
+            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_PLAY;
+            player->ocarinaActor = &this->actor;
             this->actor.textId = 0x2061;
             Message_StartTextbox(play, this->actor.textId, NULL);
             this->unk_1E8.unk_00 = 1;
             this->actor.flags |= ACTOR_FLAG_16;
             this->actionFunc = func_80AA106C;
         } else if (this->actor.xzDistToPlayer < 30.0f + (f32)this->collider.dim.radius) {
-            player->stateFlags2 |= PLAYER_STATE2_23;
+            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
         }
     }
 }
 
 void func_80AA106C(EnMa1* this, PlayState* play) {
-    GET_PLAYER(play)->stateFlags2 |= PLAYER_STATE2_23;
+    GET_PLAYER(play)->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
     if (this->unk_1E8.unk_00 == 2) {
         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_MALON);
-        func_8010BD58(play, OCARINA_ACTION_TEACH_EPONA);
+        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_TEACH_EPONA);
         this->actor.flags &= ~ACTOR_FLAG_16;
         this->actionFunc = func_80AA10EC;
     }
 }
 
 void func_80AA10EC(EnMa1* this, PlayState* play) {
-    GET_PLAYER(play)->stateFlags2 |= PLAYER_STATE2_23;
+    GET_PLAYER(play)->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_SONG_DEMO_DONE) {
-        func_8010BD58(play, OCARINA_ACTION_PLAYBACK_EPONA);
+        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_PLAYBACK_EPONA);
         this->actionFunc = func_80AA1150;
     }
 }
 
 void func_80AA1150(EnMa1* this, PlayState* play) {
-    GET_PLAYER(play)->stateFlags2 |= PLAYER_STATE2_23;
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_03) {
+    GET_PLAYER(play)->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) {
         play->nextEntranceIndex = ENTR_SPOT20_0;
         gSaveContext.nextCutsceneIndex = 0xFFF1;
         play->transitionType = TRANS_TYPE_CIRCLE(TCA_WAVE, TCC_WHITE, TCS_FAST);

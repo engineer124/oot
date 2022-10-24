@@ -218,7 +218,7 @@ void EnBomBowMan_RunGame(EnBomBowlMan* this, PlayState* play) {
 
     SkelAnime_Update(&this->skelAnime);
 
-    if (BREG(3)) {
+    if (R_DBG_PRINT_SCARECROW_CHU_BOWLING) {
         osSyncPrintf(VT_FGCOL(RED) "☆ game_play->bomchu_game_flag ☆ %d\n" VT_RST, play->bombchuBowlingStatus);
         // "HOW'S THE FIRST WALL DOING?"
         osSyncPrintf(VT_FGCOL(RED) "☆ 壁１の状態どう？ ☆ %d\n" VT_RST, this->wallStatus[0]);

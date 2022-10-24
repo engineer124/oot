@@ -9,7 +9,7 @@
 #include "assets/scenes/overworld/spot02/spot02_scene.h"
 #include "vt.h"
 
-#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void EnOkarinaTag_Init(Actor* thisx, PlayState* play);
 void EnOkarinaTag_Destroy(Actor* thisx, PlayState* play);
@@ -115,24 +115,24 @@ void func_80ABEF2C(EnOkarinaTag* this, PlayState* play) {
         this->actor.flags &= ~ACTOR_FLAG_0;
     } else {
         if ((this->ocarinaSong != 6) || (gSaveContext.scarecrowSpawnSongSet)) {
-            if (player->stateFlags2 & PLAYER_STATE2_24) {
+            if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
                 // "North! ! ! ! !"
                 osSyncPrintf(VT_FGCOL(RED) "☆☆☆☆☆ 北！！！！！ ☆☆☆☆☆ %f\n" VT_RST, this->actor.xzDistToPlayer);
             }
             if ((this->actor.xzDistToPlayer < (90.0f + this->interactRange)) &&
                 (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 80.0f)) {
-                if (player->stateFlags2 & PLAYER_STATE2_25) {
+                if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_PLAY) {
                     ocarinaSong = this->ocarinaSong;
                     if (ocarinaSong == 6) {
                         ocarinaSong = 0xA;
                     }
-                    player->stateFlags2 |= PLAYER_STATE2_23;
-                    func_8010BD58(play, ocarinaSong + OCARINA_ACTION_CHECK_SARIA);
+                    player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+                    Message_StartOcarinaAllowSunSong(play, ocarinaSong + OCARINA_ACTION_CHECK_SARIA);
                     this->actionFunc = func_80ABF0CC;
                 } else if ((this->actor.xzDistToPlayer < (50.0f + this->interactRange) &&
                             ((fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 40.0f)))) {
                     this->unk_15A = 0;
-                    player->unk_6A8 = &this->actor;
+                    player->ocarinaActor = &this->actor;
                 }
             }
         }
@@ -142,10 +142,10 @@ void func_80ABEF2C(EnOkarinaTag* this, PlayState* play) {
 void func_80ABF0CC(EnOkarinaTag* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_04) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
         this->actionFunc = func_80ABEF2C;
     } else {
-        if (play->msgCtx.ocarinaMode == OCARINA_MODE_03) {
+        if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) {
             if (this->switchFlag >= 0) {
                 Flags_SetSwitch(play, this->switchFlag);
             }
@@ -153,31 +153,35 @@ void func_80ABF0CC(EnOkarinaTag* this, PlayState* play) {
                 play->msgCtx.msgMode = MSGMODE_PAUSED;
             }
             if ((play->sceneId != SCENE_DAIYOUSEI_IZUMI) && (play->sceneId != SCENE_YOUSEI_IZUMI_YOKO)) {
-                play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+                play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
             }
             func_80078884(NA_SE_SY_CORRECT_CHIME);
             this->actionFunc = func_80ABEF2C;
             return;
         }
         if (this->unk_158 != 0) {
-            if ((play->msgCtx.ocarinaMode == OCARINA_MODE_05) || (play->msgCtx.ocarinaMode == OCARINA_MODE_06) ||
-                (play->msgCtx.ocarinaMode == OCARINA_MODE_07) || (play->msgCtx.ocarinaMode == OCARINA_MODE_08) ||
-                (play->msgCtx.ocarinaMode == OCARINA_MODE_09) || (play->msgCtx.ocarinaMode == OCARINA_MODE_0A) ||
-                (play->msgCtx.ocarinaMode == OCARINA_MODE_0D)) {
+            if ((play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_SARIA) ||
+                (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_EPONA) ||
+                (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_ZL) ||
+                (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_SUNS) ||
+                (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_SOT) ||
+                (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_STORMS) ||
+                (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_UNSET)) {
                 if (this->switchFlag >= 0) {
                     Flags_SetSwitch(play, this->switchFlag);
                 }
-                play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+                play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
                 func_80078884(NA_SE_SY_CORRECT_CHIME);
                 this->actionFunc = func_80ABEF2C;
                 return;
             }
         }
-        if ((play->msgCtx.ocarinaMode >= OCARINA_MODE_05) && (play->msgCtx.ocarinaMode < OCARINA_MODE_0E)) {
-            play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+        if ((play->msgCtx.ocarinaMode >= OCARINA_MODE_PLAYED_SARIA) &&
+            (play->msgCtx.ocarinaMode <= OCARINA_MODE_PLAYED_UNSET)) {
+            play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
             this->actionFunc = func_80ABEF2C;
-        } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_01) {
-            player->stateFlags2 |= PLAYER_STATE2_23;
+        } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE) {
+            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
         }
     }
 }
@@ -193,19 +197,19 @@ void func_80ABF28C(EnOkarinaTag* this, PlayState* play) {
                    ((this->type != 6) || !GET_EVENTCHKINF(EVENTCHKINF_1D)) &&
                    (this->actor.xzDistToPlayer < (90.0f + this->interactRange)) &&
                    (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 80.0f)) {
-            if (player->stateFlags2 & PLAYER_STATE2_24) {
+            if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
                 switch (this->type) {
                     case 1:
-                        func_8010BD58(play, OCARINA_ACTION_CHECK_LULLABY);
+                        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_LULLABY);
                         break;
                     case 2:
-                        func_8010BD58(play, OCARINA_ACTION_CHECK_STORMS);
+                        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_STORMS);
                         break;
                     case 4:
-                        func_8010BD58(play, OCARINA_ACTION_CHECK_TIME);
+                        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_TIME);
                         break;
                     case 6:
-                        func_8010BD58(play, OCARINA_ACTION_CHECK_LULLABY);
+                        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_LULLABY);
                         break;
                     default:
                         // "Ocarina Invisible-kun demo start check error source"
@@ -214,12 +218,12 @@ void func_80ABF28C(EnOkarinaTag* this, PlayState* play) {
                         Actor_Kill(&this->actor);
                         break;
                 }
-                player->stateFlags2 |= PLAYER_STATE2_23;
+                player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
                 this->actionFunc = func_80ABF4C8;
             } else if ((this->actor.xzDistToPlayer < (50.0f + this->interactRange)) &&
                        (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 40.0f)) {
                 this->unk_15A = 0;
-                player->stateFlags2 |= PLAYER_STATE2_23;
+                player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
             }
         }
     }
@@ -228,9 +232,9 @@ void func_80ABF28C(EnOkarinaTag* this, PlayState* play) {
 void func_80ABF4C8(EnOkarinaTag* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_04) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
         this->actionFunc = func_80ABF28C;
-    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_03) {
+    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) {
         func_80078884(NA_SE_SY_CORRECT_CHIME);
         if (this->switchFlag >= 0) {
             Flags_SetSwitch(play, this->switchFlag);
@@ -261,18 +265,17 @@ void func_80ABF4C8(EnOkarinaTag* this, PlayState* play) {
             default:
                 break;
         }
-        play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
         this->actionFunc = func_80ABF28C;
     } else {
-        if (play->msgCtx.ocarinaMode >= OCARINA_MODE_05) {
-            if (play->msgCtx.ocarinaMode < OCARINA_MODE_0E) {
-                play->msgCtx.ocarinaMode = OCARINA_MODE_04;
-                this->actionFunc = func_80ABF28C;
-                return;
-            }
+        if ((play->msgCtx.ocarinaMode >= OCARINA_MODE_PLAYED_SARIA) &&
+            (play->msgCtx.ocarinaMode <= OCARINA_MODE_PLAYED_UNSET)) {
+            play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+            this->actionFunc = func_80ABF28C;
+            return;
         }
-        if (play->msgCtx.ocarinaMode == OCARINA_MODE_01) {
-            player->stateFlags2 |= PLAYER_STATE2_23;
+        if (play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE) {
+            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
         }
     }
 }

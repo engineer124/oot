@@ -575,7 +575,7 @@ typedef struct {
     /* 0xE3EA */ u16    lastPlayedSong; // original references : "Ocarina_Flog" , "Ocarina_Free"
     /* 0xE3EE */ u16    ocarinaMode; // original name : "ocarina_mode"
     /* 0xE3F0 */ u16    ocarinaAction; // original name : "ocarina_no"
-    /* 0xE3F2 */ u16    unk_E3F2; // this is like "lastPlayedSong" but set less often, original name : "chk_ocarina_no"
+    /* 0xE3F2 */ u16    lastPlayedSongAlt; // this is like "lastPlayedSong" but set less often, original name : "chk_ocarina_no"
     /* 0xE3F4 */ u16    unk_E3F4; // unused, only set to 0 in z_actor
     /* 0xE3F6 */ u16    textboxBackgroundIdx;
     /* 0xE3F8 */ u8     textboxBackgroundForeColorIdx;
@@ -590,7 +590,7 @@ typedef struct {
     /* 0xE406 */ s16    textboxColorAlphaCurrent;
     /* 0xE408 */ Actor* talkActor;
     /* 0xE40C */ s16    disableWarpSongs; // warp song flag set by scene commands
-    /* 0xE40E */ s16    unk_E40E; // ocarina related
+    /* 0xE40E */ s16    blockSunSong; // ocarina related
     /* 0xE410 */ u8     lastOcarinaButtonIndex;
 } MessageContext; // size = 0xE418
 
@@ -802,7 +802,7 @@ typedef struct {
     /* 0x025E */ u16    nameColorSet; // 0 = white; 1 = grey
     /* 0x0260 */ s16    cursorColorSet; // 0 = white; 4 = yellow; 8 = green
     /* 0x0262 */ s16    promptChoice; // save/continue choice: 0 = yes; 4 = no
-    /* 0x0264 */ s16    ocarinaSongIdx;
+    /* 0x0264 */ s16    ocarinaSongIndex;
     /* 0x0266 */ u8     worldMapPoints[20]; // 0 = hidden; 1 = displayed; 2 = highlighted
     /* 0x027A */ u8     tradeQuestLocation;
     /* 0x027C */ SkelAnime playerSkelAnime;

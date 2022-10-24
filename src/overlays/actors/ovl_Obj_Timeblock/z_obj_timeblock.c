@@ -7,7 +7,7 @@
 #include "z_obj_timeblock.h"
 #include "assets/objects/object_timeblock/object_timeblock.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_4 | ACTOR_FLAG_25 | ACTOR_FLAG_27)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_4 | ACTOR_FLAG_OCARINA_NO_FREEZE | ACTOR_FLAG_27)
 
 void ObjTimeblock_Init(Actor* thisx, PlayState* play);
 void ObjTimeblock_Destroy(Actor* thisx, PlayState* play);
@@ -170,18 +170,18 @@ s32 ObjTimeblock_WaitForOcarina(ObjTimeblock* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (ObjTimeblock_PlayerIsInRange(this, play)) {
-        if (player->stateFlags2 & PLAYER_STATE2_24) {
-            func_8010BD58(play, OCARINA_ACTION_FREE_PLAY);
+        if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
+            Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_FREE_PLAY);
             this->songObserverFunc = ObjTimeblock_WaitForSong;
         } else {
-            player->stateFlags2 |= PLAYER_STATE2_23;
+            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
         }
     }
     return false;
 }
 
 s32 ObjTimeblock_WaitForSong(ObjTimeblock* this, PlayState* play) {
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_04) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
         this->songObserverFunc = ObjTimeblock_WaitForOcarina;
     }
     if (play->msgCtx.lastPlayedSong == OCARINA_SONG_TIME) {

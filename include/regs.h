@@ -47,6 +47,7 @@
 #define R_ENV_FOG_NEAR                           REG(14)
 #define R_ENV_TIME_SPEED_OLD                     REG(15) // Most likely used during development. Unused in the final game.
 #define R_RUN_SPEED_LIMIT                        REG(45)
+
 #define R_ENABLE_ARENA_DBG                       SREG(0)
 #define R_ROOM_IMAGE_NODRAW_FLAGS                SREG(25)
 #define R_ROOM_BG2D_FORCE_SCALEBG                SREG(26)
@@ -58,6 +59,7 @@
 #define R_FB_FILTER_ENV_COLOR(c)                 SREG(85 + (c))
 #define R_ENABLE_FB_FILTER                       SREG(88)
 #define R_PAUSE_MENU_MODE                        SREG(94)
+
 #define R_CAM_XZ_OFFSET_UPDATE_RATE              OREG(2)
 #define R_CAM_Y_OFFSET_UPDATE_RATE               OREG(3)
 #define R_CAM_FOV_UPDATE_RATE                    OREG(4)
@@ -81,15 +83,19 @@
 #define R_CAM_AT_LERP_STEP_SCALE_MIN             OREG(41)
 #define R_CAM_AT_LERP_STEP_SCALE_FAC             OREG(42)
 #define R_CAM_YOFFSET_NORM                       OREG(46)
+
 #define R_CAM_DATA(type)                         PREG(0 + (type))
 #define R_DBG_CAM_UPDATE                         PREG(80)
 #define R_DBG_REG_UPDATE                         PREG(82)
+
 #define R_RELOAD_CAM_PARAMS                      QREG(0)
+
 #define R_SCENE_CAM_TYPE                         YREG(15)
 #define R_TEXTBOX_TEXWIDTH                       YREG(16)
 #define R_TEXTBOX_TEXHEIGHT                      YREG(17)
 #define R_TEXTBOX_WIDTH                          YREG(22)
 #define R_TEXTBOX_HEIGHT                         YREG(23)
+#define R_IS_SHOPPING                            YREG(31)
 #define R_TEXTBOX_ICON_XPOS                      YREG(71)
 #define R_TEXTBOX_ICON_YPOS                      YREG(72)
 #define R_TEXTBOX_ICON_SIZE                      YREG(75)
@@ -97,6 +103,9 @@
 #define R_MESSAGE_DEBUGGER_TEXTID                YREG(79)
 #define R_C_UP_ICON_X                            YREG(88)
 #define R_C_UP_ICON_Y                            YREG(89)
+
+#define R_LAST_PLAYED_EPONAS_SONG                DREG(53)
+
 #define R_MAGIC_FILL_COLOR(i)                    ZREG(0 + (i))
 #define R_C_BTN_COLOR(i)                         ZREG(39 + (i))
 #define R_B_BTN_COLOR(i)                         ZREG(43 + (i))
@@ -113,10 +122,12 @@
 #define R_ITEM_ICON_X(i)                         ZREG(82 + (i))
 #define R_ITEM_ICON_Y(i)                         ZREG(86 + (i))
 #define R_ITEM_ICON_DD(i)                        ZREG(90 + (i))
+
 #define R_TRANS_DBG_ENABLED                      CREG(11)
 #define R_TRANS_DBG_TYPE                         CREG(12)
 #define R_ENV_WIND_DIR(i)                        CREG(16 + (i))
 #define R_ENV_WIND_SPEED                         CREG(19)
+
 #define R_PAUSE_STICK_REPEAT_DELAY               XREG(6)
 #define R_PAUSE_STICK_REPEAT_DELAY_FIRST         XREG(8)
 #define R_A_BTN_Y                                XREG(16)
@@ -144,12 +155,15 @@
 #define R_TEXTBOX_HEIGHT_TARGET                  XREG(75)
 #define R_TEXTBOX_TEXWIDTH_TARGET                XREG(76)
 #define R_TEXTBOX_TEXHEIGHT_TARGET               XREG(77)
+
 #define R_ENV_LIGHT1_DIR(i)                      cREG(3 + (i))
 #define R_ENV_LIGHT2_DIR(i)                      cREG(6 + (i))
+
 #define R_ROOM_CULL_DEBUG_MODE                   iREG(86)
 #define R_ROOM_CULL_NUM_ENTRIES                  iREG(87)
 #define R_ROOM_CULL_USED_ENTRIES                 iREG(88)
 #define R_ROOM_CULL_DEBUG_TARGET                 iREG(89)
+
 #define R_B_LABEL_DD                             WREG(0)
 #define R_OW_MINIMAP_X                           WREG(29)
 #define R_OW_MINIMAP_Y                           WREG(30)
@@ -158,6 +172,7 @@
 #define R_B_LABEL_Y(i)                           WREG(43 + (i))
 #define R_DGN_MINIMAP_X                          WREG(68)
 #define R_DGN_MINIMAP_Y                          WREG(69)
+
 #define R_TEXTBOX_X                              VREG(0)
 #define R_TEXTBOX_Y                              VREG(1)
 #define R_TEXTBOX_CLEF_XPOS                      VREG(7)
@@ -187,9 +202,14 @@
 #define R_GAME_OVER_RUMBLE_STRENGTH              VREG(90)
 #define R_GAME_OVER_RUMBLE_DURATION              VREG(91)
 #define R_GAME_OVER_RUMBLE_DECREASE_RATE         VREG(92)
+
 #define R_DISABLE_INPUT_DISPLAY                  HREG(47)
 #define R_ENABLE_PLAY_LOGS                       HREG(63)
+
 #define R_EN_GOROIWA_SPEED                       mREG(12)
+
 #define R_NAVI_MSG_REGION_ALPHA                  nREG(87)
+
+#define R_DBG_PRINT_SCARECROW_CHU_BOWLING        BREG(3)
 
 #endif

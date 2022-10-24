@@ -170,7 +170,7 @@ void Message_Init(PlayState* play) {
 
     Message_SetTables();
 
-    play->msgCtx.ocarinaMode = OCARINA_MODE_00;
+    play->msgCtx.ocarinaMode = OCARINA_MODE_NONE;
 
     msgCtx->msgMode = MSGMODE_NONE;
     msgCtx->msgLength = 0;
@@ -188,7 +188,7 @@ void Message_Init(PlayState* play) {
 
     Font_LoadOrderedFont(&play->msgCtx.font);
 
-    YREG(31) = 0;
+    R_IS_SHOPPING = false;
 }
 
 void Regs_InitDataImpl(void) {

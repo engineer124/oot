@@ -8,7 +8,7 @@
 #include "assets/objects/object_timeblock/object_timeblock.h"
 #include "vt.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_4 | ACTOR_FLAG_25 | ACTOR_FLAG_27)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_4 | ACTOR_FLAG_OCARINA_NO_FREEZE | ACTOR_FLAG_27)
 
 void ObjWarp2block_Init(Actor* thisx, PlayState* play2);
 void ObjWarp2block_Destroy(Actor* thisx, PlayState* play);
@@ -157,11 +157,11 @@ s32 func_80BA2218(ObjWarp2block* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (func_80BA1ECC(this, play)) {
-        if (player->stateFlags2 & PLAYER_STATE2_24) {
-            func_8010BD58(play, OCARINA_ACTION_FREE_PLAY);
+        if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
+            Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_FREE_PLAY);
             this->func_168 = func_80BA228C;
         } else {
-            player->stateFlags2 |= PLAYER_STATE2_23;
+            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
         }
     }
 
@@ -169,7 +169,7 @@ s32 func_80BA2218(ObjWarp2block* this, PlayState* play) {
 }
 
 s32 func_80BA228C(ObjWarp2block* this, PlayState* play) {
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_04) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
         this->func_168 = func_80BA2218;
     }
 

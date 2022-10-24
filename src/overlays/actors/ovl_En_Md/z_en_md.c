@@ -8,7 +8,7 @@
 #include "assets/objects/object_md/object_md.h"
 #include "overlays/actors/ovl_En_Elf/z_en_elf.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void EnMd_Init(Actor* thisx, PlayState* play);
 void EnMd_Destroy(Actor* thisx, PlayState* play);
@@ -760,16 +760,16 @@ void func_80AAB948(EnMd* this, PlayState* play) {
     }
 
     if ((this->unk_1E0.unk_00 == 0) && (play->sceneId == SCENE_SPOT10)) {
-        if (player->stateFlags2 & PLAYER_STATE2_24) {
-            player->stateFlags2 |= PLAYER_STATE2_25;
-            player->unk_6A8 = &this->actor;
-            func_8010BD58(play, OCARINA_ACTION_CHECK_SARIA);
+        if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
+            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_PLAY;
+            player->ocarinaActor = &this->actor;
+            Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_SARIA);
             this->actionFunc = func_80AABC10;
             return;
         }
 
         if (this->actor.xzDistToPlayer < (30.0f + this->collider.dim.radius)) {
-            player->stateFlags2 |= PLAYER_STATE2_23;
+            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
         }
     }
 }
@@ -777,19 +777,19 @@ void func_80AAB948(EnMd* this, PlayState* play) {
 void func_80AABC10(EnMd* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (play->msgCtx.ocarinaMode >= OCARINA_MODE_04) {
+    if (play->msgCtx.ocarinaMode >= OCARINA_MODE_END_2) {
         this->actionFunc = func_80AAB948;
-        play->msgCtx.ocarinaMode = OCARINA_MODE_04;
-    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_03) {
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) {
         Audio_PlaySfxGeneral(NA_SE_SY_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         this->actor.textId = 0x1067;
         func_8002F2CC(&this->actor, play, this->collider.dim.radius + 30.0f);
 
         this->actionFunc = func_80AAB948;
-        play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
     } else {
-        player->stateFlags2 |= PLAYER_STATE2_23;
+        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
     }
 }
 

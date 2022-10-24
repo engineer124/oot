@@ -648,7 +648,7 @@ void EnOssan_EndInteraction(PlayState* play, EnOssan* this) {
 
     // "End of conversation!"
     osSyncPrintf(VT_FGCOL(YELLOW) "%s[%d]:★★★ 会話終了！！ ★★★" VT_RST "\n", "../z_en_oB1.c", 1337);
-    YREG(31) = 0;
+    R_IS_SHOPPING = false;
     Actor_ProcessTalkRequest(&this->actor, play);
     play->msgCtx.msgMode = MSGMODE_TEXT_CLOSING;
     play->msgCtx.stateTimer = 4;
@@ -683,7 +683,7 @@ s32 EnOssan_TestCancelOption(EnOssan* this, PlayState* play, Input* input) {
 }
 
 void EnOssan_SetStateStartShopping(PlayState* play, EnOssan* this, u8 skipHelloState) {
-    YREG(31) = 1;
+    R_IS_SHOPPING = true;
     this->headRot = this->headTargetRot = 0;
     Interface_SetDoAction(play, DO_ACTION_NEXT);
     EnOssan_UpdateCameraDirection(this, play, 0);

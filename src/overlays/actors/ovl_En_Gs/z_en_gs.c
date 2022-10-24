@@ -9,7 +9,7 @@
 #include "overlays/actors/ovl_En_Elf/z_en_elf.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void EnGs_Init(Actor* thisx, PlayState* play);
 void EnGs_Destroy(Actor* thisx, PlayState* play);
@@ -143,29 +143,31 @@ void func_80A4E470(EnGs* this, PlayState* play) {
     if (this->actor.xzDistToPlayer <= 100.0f) {
         bREG(15) = 1;
         if (this->unk_19D == 0) {
-            player->stateFlags2 |= PLAYER_STATE2_23;
-            if (player->stateFlags2 & PLAYER_STATE2_24) {
-                func_8010BD58(play, OCARINA_ACTION_FREE_PLAY);
+            player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
+            if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
+                Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_FREE_PLAY);
                 this->unk_19D |= 1;
             }
 
         } else if (this->unk_19D & 1) {
-            if (play->msgCtx.ocarinaMode == OCARINA_MODE_04) {
-                if ((play->msgCtx.unk_E3F2 == OCARINA_SONG_SARIAS) || (play->msgCtx.unk_E3F2 == OCARINA_SONG_EPONAS) ||
-                    (play->msgCtx.unk_E3F2 == OCARINA_SONG_LULLABY) || (play->msgCtx.unk_E3F2 == OCARINA_SONG_SUNS) ||
-                    (play->msgCtx.unk_E3F2 == OCARINA_SONG_TIME)) {
+            if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
+                if ((play->msgCtx.lastPlayedSongAlt == OCARINA_SONG_SARIAS) ||
+                    (play->msgCtx.lastPlayedSongAlt == OCARINA_SONG_EPONAS) ||
+                    (play->msgCtx.lastPlayedSongAlt == OCARINA_SONG_LULLABY) ||
+                    (play->msgCtx.lastPlayedSongAlt == OCARINA_SONG_SUNS) ||
+                    (play->msgCtx.lastPlayedSongAlt == OCARINA_SONG_TIME)) {
                     Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ELF, this->actor.world.pos.x,
                                 this->actor.world.pos.y + 40.0f, this->actor.world.pos.z, 0, 0, 0, FAIRY_HEAL_TIMED);
                     Audio_PlayActorSfx2(&this->actor, NA_SE_EV_BUTTERFRY_TO_FAIRY);
-                } else if (play->msgCtx.unk_E3F2 == OCARINA_SONG_STORMS) {
+                } else if (play->msgCtx.lastPlayedSongAlt == OCARINA_SONG_STORMS) {
                     Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ELF, this->actor.world.pos.x,
                                 this->actor.world.pos.y + 40.0f, this->actor.world.pos.z, 0, 0, 0, FAIRY_HEAL_BIG);
                     Audio_PlayActorSfx2(&this->actor, NA_SE_EV_BUTTERFRY_TO_FAIRY);
                 }
                 this->unk_19D = 0;
                 Flags_SetSwitch(play, (this->actor.params >> 8) & 0x3F);
-            } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_01) {
-                player->stateFlags2 |= PLAYER_STATE2_23;
+            } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE) {
+                player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
             }
         }
     }

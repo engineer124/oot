@@ -164,7 +164,7 @@ typedef struct {
 #define ACTOR_FLAG_22 (1 << 22)
 #define ACTOR_FLAG_23 (1 << 23)
 #define ACTOR_FLAG_24 (1 << 24)
-#define ACTOR_FLAG_25 (1 << 25)
+#define ACTOR_FLAG_OCARINA_NO_FREEZE (1 << 25) // actor doesn't freeze when Player has ocarina out or is using a warp song
 #define ACTOR_FLAG_26 (1 << 26)
 #define ACTOR_FLAG_27 (1 << 27)
 #define ACTOR_FLAG_28 (1 << 28)

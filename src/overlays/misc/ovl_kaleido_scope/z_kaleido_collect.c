@@ -178,7 +178,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                 if ((sp216 >= QUEST_SONG_MINUET) && (sp216 < QUEST_KOKIRI_EMERALD)) {
                     if (CHECK_QUEST_ITEM(pauseCtx->cursorPoint[PAUSE_QUEST])) {
                         sp216 = pauseCtx->cursorSlot[PAUSE_QUEST];
-                        pauseCtx->ocarinaSongIdx = gOcarinaSongItemMap[sp216 - QUEST_SONG_MINUET];
+                        pauseCtx->ocarinaSongIndex = gOcarinaSongItemMap[sp216 - QUEST_SONG_MINUET];
                         D_8082A120 = 10;
 
                         for (phi_s3 = 0; phi_s3 < 8; phi_s3++) {
@@ -188,7 +188,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
 
                         D_8082A11C = 0;
                         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_DEFAULT);
-                        AudioOcarina_Start((1 << pauseCtx->ocarinaSongIdx) + 0x8000);
+                        AudioOcarina_Start((1 << pauseCtx->ocarinaSongIndex) + OCARINA_START_ONE_NOTE);
                         pauseCtx->ocarinaStaff = AudioOcarina_GetPlaybackStaff();
                         pauseCtx->ocarinaStaff->pos = 0;
                         pauseCtx->ocarinaStaff->state = 0xFF;
@@ -276,8 +276,8 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                 sp216 = pauseCtx->cursorSlot[PAUSE_QUEST];
                 AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_DEFAULT);
                 AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_DEFAULT);
-                pauseCtx->ocarinaSongIdx = gOcarinaSongItemMap[sp216 - QUEST_SONG_MINUET];
-                AudioOcarina_SetPlaybackSong(pauseCtx->ocarinaSongIdx + 1, 1);
+                pauseCtx->ocarinaSongIndex = gOcarinaSongItemMap[sp216 - QUEST_SONG_MINUET];
+                AudioOcarina_SetPlaybackSong(pauseCtx->ocarinaSongIndex + 1, 1);
                 pauseCtx->unk_1E4 = 2;
                 pauseCtx->ocarinaStaff = AudioOcarina_GetPlaybackStaff();
                 pauseCtx->ocarinaStaff->pos = 0;
@@ -516,7 +516,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                 }
             }
         } else if (((pauseCtx->unk_1E4 >= 4) && (pauseCtx->unk_1E4 <= 6)) || (pauseCtx->unk_1E4 == 8)) {
-            sp224 = pauseCtx->ocarinaSongIdx;
+            sp224 = pauseCtx->ocarinaSongIndex;
             sp226 = gOcarinaSongButtons[sp224].numButtons;
 
             for (sp218 = sp21A, phi_s3 = 0; phi_s3 < sp226; phi_s3++, sp21A += 4) {
@@ -550,7 +550,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
             }
 
             if (pauseCtx->unk_1E4 != 8) {
-                pauseCtx->ocarinaStaff = AudioOcarina_GetPlayingStaff();
+                pauseCtx->ocarinaStaff = AudioOcarina_GetPromptStaff();
 
                 if (pauseCtx->ocarinaStaff->pos != 0) {
                     if (D_8082A11C == (pauseCtx->ocarinaStaff->pos - 1)) {
@@ -609,7 +609,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
 
                     D_8082A11C = 0;
                     AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_DEFAULT);
-                    AudioOcarina_Start((1 << pauseCtx->ocarinaSongIdx) + 0x8000);
+                    AudioOcarina_Start((1 << pauseCtx->ocarinaSongIndex) + OCARINA_START_ONE_NOTE);
                     pauseCtx->ocarinaStaff = AudioOcarina_GetPlaybackStaff();
                     pauseCtx->ocarinaStaff->pos = 0;
                     pauseCtx->ocarinaStaff->state = 0xFE;

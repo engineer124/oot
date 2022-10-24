@@ -8,7 +8,7 @@
 #include "vt.h"
 #include "assets/objects/object_ka/object_ka.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void EnKakasi3_Init(Actor* thisx, PlayState* play);
 void EnKakasi3_Destroy(Actor* thisx, PlayState* play);
@@ -231,33 +231,33 @@ void func_80A91348(EnKakasi3* this, PlayState* play) {
             if (absAngleTowardsLink < 0x4300) {
                 if (!this->unk_194) {
 
-                    if (player->stateFlags2 & PLAYER_STATE2_24) {
+                    if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
                         this->subCamId = OnePointCutscene_Init(play, 2260, -99, &this->actor, CAM_ID_MAIN);
                         play->msgCtx.msgMode = MSGMODE_PAUSED;
                         this->dialogState = TEXT_STATE_EVENT;
                         this->unk_1B8 = 0.0f;
                         Message_StartTextbox(play, 0x40A4, NULL);
-                        player->stateFlags2 |= PLAYER_STATE2_23;
+                        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
                         this->actionFunc = func_80A915B8;
                         return;
                     }
                     if (this->actor.xzDistToPlayer < 80.0f) {
-                        player->stateFlags2 |= PLAYER_STATE2_23;
+                        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
                     }
                 } else if (gSaveContext.scarecrowSpawnSongSet && !this->unk_195) {
 
-                    if (player->stateFlags2 & PLAYER_STATE2_24) {
+                    if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
                         this->subCamId = OnePointCutscene_Init(play, 2260, -99, &this->actor, CAM_ID_MAIN);
                         play->msgCtx.msgMode = MSGMODE_PAUSED;
                         this->dialogState = TEXT_STATE_EVENT;
                         this->unk_1B8 = 0.0f;
                         Message_StartTextbox(play, 0x40A8, NULL);
-                        player->stateFlags2 |= PLAYER_STATE2_23;
+                        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
                         this->actionFunc = func_80A9187C;
                         return;
                     }
                     if (this->actor.xzDistToPlayer < 80.0f) {
-                        player->stateFlags2 |= PLAYER_STATE2_23;
+                        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
                     }
                 }
                 func_8002F2CC(&this->actor, play, 100.0f);
@@ -269,7 +269,7 @@ void func_80A91348(EnKakasi3* this, PlayState* play) {
 void func_80A915B8(EnKakasi3* this, PlayState* play) {
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_EVENT && Message_ShouldAdvance(play)) {
         Message_CloseTextbox(play);
-        func_8010BD58(play, OCARINA_ACTION_SCARECROW_SPAWN_RECORDING);
+        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_SCARECROW_SPAWN_RECORDING);
         this->actionFunc = func_80A91620;
     }
 }
@@ -277,8 +277,9 @@ void func_80A915B8(EnKakasi3* this, PlayState* play) {
 void func_80A91620(EnKakasi3* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_04 ||
-         (play->msgCtx.ocarinaMode >= OCARINA_MODE_05 && play->msgCtx.ocarinaMode < OCARINA_MODE_0B)) &&
+    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_END_2 ||
+         ((play->msgCtx.ocarinaMode >= OCARINA_MODE_PLAYED_SARIA) &&
+          (play->msgCtx.ocarinaMode <= OCARINA_MODE_PLAYED_STORMS))) &&
         (play->msgCtx.msgMode == MSGMODE_NONE)) {
 
         OnePointCutscene_EndCutscene(play, this->subCamId);
@@ -292,7 +293,7 @@ void func_80A91620(EnKakasi3* this, PlayState* play) {
         return;
     }
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_03 && play->msgCtx.msgMode == MSGMODE_NONE) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1 && play->msgCtx.msgMode == MSGMODE_NONE) {
         this->dialogState = TEXT_STATE_EVENT;
         Message_StartTextbox(play, 0x40A5, NULL);
         func_8002DF54(play, NULL, 8);
@@ -300,9 +301,9 @@ void func_80A91620(EnKakasi3* this, PlayState* play) {
         return;
     }
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_01) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE) {
         func_80A90EBC(this, play, 0);
-        player->stateFlags2 |= PLAYER_STATE2_23;
+        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
     }
 }
 
@@ -312,7 +313,7 @@ void func_80A91760(EnKakasi3* this, PlayState* play) {
     SkelAnime_Update(&this->skelAnime);
     if (this->dialogState == Message_GetState(&play->msgCtx) && Message_ShouldAdvance(play)) {
         play->msgCtx.msgMode = MSGMODE_PAUSED;
-        func_8010BD58(play, OCARINA_ACTION_SCARECROW_SPAWN_PLAYBACK);
+        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_SCARECROW_SPAWN_PLAYBACK);
         this->actionFunc = func_80A917FC;
         this->subCamId = OnePointCutscene_Init(play, 2280, -99, &this->actor, CAM_ID_MAIN);
     }
@@ -320,10 +321,10 @@ void func_80A91760(EnKakasi3* this, PlayState* play) {
 
 void func_80A917FC(EnKakasi3* this, PlayState* play) {
 
-    if (play->msgCtx.ocarinaMode != OCARINA_MODE_0F) {
+    if (play->msgCtx.ocarinaMode != OCARINA_MODE_END_MEMORY_GAME) {
         func_80A90EBC(this, play, 1);
     } else {
-        play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
         Message_CloseTextbox(play);
         OnePointCutscene_EndCutscene(play, this->subCamId);
         this->actionFunc = func_80A911F0;
@@ -333,7 +334,7 @@ void func_80A917FC(EnKakasi3* this, PlayState* play) {
 void func_80A9187C(EnKakasi3* this, PlayState* play) {
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_EVENT && Message_ShouldAdvance(play)) {
         Message_CloseTextbox(play);
-        func_8010BD58(play, OCARINA_ACTION_CHECK_SCARECROW_SPAWN);
+        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_SCARECROW_SPAWN);
         this->actionFunc = func_80A918E4;
     }
 }
@@ -341,12 +342,14 @@ void func_80A9187C(EnKakasi3* this, PlayState* play) {
 void func_80A918E4(EnKakasi3* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (BREG(3) != 0) {
+    if (R_DBG_PRINT_SCARECROW_CHU_BOWLING) {
         // "No way!"
         osSyncPrintf(VT_FGCOL(MAGENTA) "☆☆☆☆☆ まさか！ ☆☆☆☆☆ %d\n" VT_RST, play->msgCtx.ocarinaMode);
     }
-    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_04 ||
-         (play->msgCtx.ocarinaMode >= OCARINA_MODE_05 && play->msgCtx.ocarinaMode < OCARINA_MODE_0B)) &&
+
+    if (((play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) ||
+         ((play->msgCtx.ocarinaMode >= OCARINA_MODE_PLAYED_SARIA) &&
+          (play->msgCtx.ocarinaMode <= OCARINA_MODE_PLAYED_STORMS))) &&
         play->msgCtx.msgMode == MSGMODE_NONE) {
 
         Message_StartTextbox(play, 0x40A6, NULL);
@@ -358,9 +361,9 @@ void func_80A918E4(EnKakasi3* this, PlayState* play) {
         return;
     }
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_03 && play->msgCtx.msgMode == MSGMODE_NONE) {
-        play->msgCtx.ocarinaMode = OCARINA_MODE_04;
-        if (BREG(3) != 0) {
+    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) && (play->msgCtx.msgMode == MSGMODE_NONE)) {
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+        if (R_DBG_PRINT_SCARECROW_CHU_BOWLING) {
             osSyncPrintf("\n\n");
             // "With this, other guys are OK! That's it!"
             osSyncPrintf(VT_FGCOL(CYAN) "☆☆☆☆☆ これで、他の奴もＯＫ！だ！ ☆☆☆☆☆ %d\n" VT_RST, play->msgCtx.ocarinaMode);
@@ -373,9 +376,9 @@ void func_80A918E4(EnKakasi3* this, PlayState* play) {
         return;
     }
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_01) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE) {
         func_80A90EBC(this, play, 0);
-        player->stateFlags2 |= PLAYER_STATE2_23;
+        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
     }
 }
 
@@ -397,7 +400,7 @@ void func_80A91A90(EnKakasi3* this, PlayState* play) {
             func_8005B1A4(play->cameraPtrs[this->subCamId]);
         }
         Message_CloseTextbox(play);
-        play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
         func_8002DF54(play, NULL, 7);
         this->actionFunc = func_80A911F0;
     }

@@ -2,7 +2,7 @@
 #include "assets/objects/object_du/object_du.h"
 #include "assets/scenes/overworld/spot18/spot18_scene.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void EnDu_Init(Actor* thisx, PlayState* play);
 void EnDu_Destroy(Actor* thisx, PlayState* play);
@@ -320,10 +320,10 @@ void func_809FE3B4(EnDu* this, PlayState* play) {
 void func_809FE3C0(EnDu* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (player->stateFlags2 & PLAYER_STATE2_24) {
-        func_8010BD88(play, OCARINA_ACTION_CHECK_SARIA);
-        player->stateFlags2 |= PLAYER_STATE2_25;
-        player->unk_6A8 = &this->actor;
+    if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
+        Message_StartOcarinaBlockSunSong(play, OCARINA_ACTION_CHECK_SARIA);
+        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_PLAY;
+        player->ocarinaActor = &this->actor;
         EnDu_SetupAction(this, func_809FE4A4);
         return;
     }
@@ -332,32 +332,32 @@ void func_809FE3C0(EnDu* this, PlayState* play) {
         this->unk_1F4.unk_00 = 0;
     }
     if (this->actor.xzDistToPlayer < 116.0f + this->collider.dim.radius) {
-        player->stateFlags2 |= PLAYER_STATE2_23;
+        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
     }
 }
 
 void func_809FE4A4(EnDu* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_04) {
-        play->msgCtx.ocarinaMode = OCARINA_MODE_00;
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
+        play->msgCtx.ocarinaMode = OCARINA_MODE_NONE;
         EnDu_SetupAction(this, func_809FE3C0);
-    } else if (play->msgCtx.ocarinaMode >= OCARINA_MODE_06) {
+    } else if (play->msgCtx.ocarinaMode >= OCARINA_MODE_PLAYED_EPONA) {
         play->csCtx.segment = SEGMENTED_TO_VIRTUAL(gGoronCityDaruniaWrongCs);
         gSaveContext.cutsceneTrigger = 1;
         this->unk_1E8 = 1;
         EnDu_SetupAction(this, func_809FE890);
-        play->msgCtx.ocarinaMode = OCARINA_MODE_04;
-    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_03) {
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) {
         Audio_PlaySfxGeneral(NA_SE_SY_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         play->csCtx.segment = SEGMENTED_TO_VIRTUAL(gGoronCityDaruniaCorrectCs);
         gSaveContext.cutsceneTrigger = 1;
         this->unk_1E8 = 0;
         EnDu_SetupAction(this, func_809FE890);
-        play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
     } else {
-        player->stateFlags2 |= PLAYER_STATE2_23;
+        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
     }
 }
 

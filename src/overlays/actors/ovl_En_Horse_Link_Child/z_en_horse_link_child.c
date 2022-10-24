@@ -7,7 +7,7 @@
 #include "z_en_horse_link_child.h"
 #include "assets/objects/object_horse_link_child/object_horse_link_child.h"
 
-#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void EnHorseLinkChild_Init(Actor* thisx, PlayState* play);
 void EnHorseLinkChild_Destroy(Actor* thisx, PlayState* play);
@@ -358,7 +358,7 @@ void func_80A6A068(EnHorseLinkChild* this, PlayState* play) {
         return;
     }
 
-    if ((GET_EVENTCHKINF(EVENTCHKINF_16) && (DREG(53) != 0)) ||
+    if ((GET_EVENTCHKINF(EVENTCHKINF_16) && R_LAST_PLAYED_EPONAS_SONG) ||
         ((play->sceneId == SCENE_SPOT20) && (gSaveContext.cutsceneIndex == 0xFFF1))) {
         func_80A6A4DC(this);
     } else {
@@ -434,7 +434,7 @@ void func_80A6A068(EnHorseLinkChild* this, PlayState* play) {
 void func_80A6A4DC(EnHorseLinkChild* this) {
     this->action = 5;
     this->animationIdx = Rand_ZeroOne() > 0.5f ? 0 : 1;
-    DREG(53) = 0;
+    R_LAST_PLAYED_EPONAS_SONG = false;
     Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
                      Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, 0.0f);
 }
@@ -442,8 +442,8 @@ void func_80A6A4DC(EnHorseLinkChild* this) {
 void func_80A6A5A4(EnHorseLinkChild* this, PlayState* play) {
     s16 yawDiff;
 
-    if (DREG(53) != 0) {
-        DREG(53) = 0;
+    if (R_LAST_PLAYED_EPONAS_SONG) {
+        R_LAST_PLAYED_EPONAS_SONG = false;
         Audio_PlaySfxGeneral(NA_SE_EV_KID_HORSE_NEIGH, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         func_80A6A724(this);

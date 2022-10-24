@@ -63,7 +63,7 @@ void ShotSun_Init(Actor* thisx, PlayState* play) {
     if (params == 0x40 || params == 0x41) {
         this->unk_1A4 = 0;
         this->actor.flags |= ACTOR_FLAG_4;
-        this->actor.flags |= ACTOR_FLAG_25;
+        this->actor.flags |= ACTOR_FLAG_OCARINA_NO_FREEZE;
         this->actionFunc = func_80BADF0C;
         this->actor.flags |= ACTOR_FLAG_27;
     } else {
@@ -128,17 +128,17 @@ void func_80BADF0C(ShotSun* this, PlayState* play) {
         this->unk_1A4 = 0;
     } else {
         if (this->unk_1A4 == 0) {
-            if (!(player->stateFlags2 & PLAYER_STATE2_24)) {
-                player->stateFlags2 |= PLAYER_STATE2_23;
+            if (!(player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY)) {
+                player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
                 return;
             } else {
                 this->unk_1A4 = 1;
             }
         }
         if (this->unk_1A4 == 1) {
-            func_8010BD58(play, OCARINA_ACTION_FREE_PLAY);
+            Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_FREE_PLAY);
             this->unk_1A4 = 2;
-        } else if (this->unk_1A4 == 2 && play->msgCtx.ocarinaMode == OCARINA_MODE_04) {
+        } else if (this->unk_1A4 == 2 && play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
             if ((params == 0x40 && play->msgCtx.lastPlayedSong == OCARINA_SONG_SUNS) ||
                 (params == 0x41 && play->msgCtx.lastPlayedSong == OCARINA_SONG_STORMS)) {
                 this->actionFunc = ShotSun_TriggerFairy;

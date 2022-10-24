@@ -1,7 +1,7 @@
 #include "z_en_ma2.h"
 #include "assets/objects/object_ma2/object_ma2.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void EnMa2_Init(Actor* thisx, PlayState* play);
 void EnMa2_Destroy(Actor* thisx, PlayState* play);
@@ -266,31 +266,31 @@ void func_80AA2018(EnMa2* this, PlayState* play) {
 void func_80AA204C(EnMa2* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (player->stateFlags2 & PLAYER_STATE2_24) {
-        player->unk_6A8 = &this->actor;
-        player->stateFlags2 |= PLAYER_STATE2_25;
-        func_8010BD58(play, OCARINA_ACTION_CHECK_EPONA);
+    if (player->stateFlags2 & ACTOR_FLAG_OCARINA_ACTOR_TRY) {
+        player->ocarinaActor = &this->actor;
+        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_PLAY;
+        Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_EPONA);
         this->actionFunc = func_80AA20E4;
     } else if (this->actor.xzDistToPlayer < 30.0f + (f32)this->collider.dim.radius) {
-        player->stateFlags2 |= PLAYER_STATE2_23;
+        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
     }
 }
 
 void func_80AA20E4(EnMa2* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (play->msgCtx.ocarinaMode >= OCARINA_MODE_04) {
+    if (play->msgCtx.ocarinaMode >= OCARINA_MODE_END_2) {
         this->actionFunc = func_80AA204C;
-        play->msgCtx.ocarinaMode = OCARINA_MODE_04;
-    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_03) {
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) {
         Audio_PlaySfxGeneral(NA_SE_SY_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         this->unk_208 = 0x1E;
         SET_INFTABLE(INFTABLE_8E);
         this->actionFunc = func_80AA21C8;
-        play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
     } else {
-        player->stateFlags2 |= PLAYER_STATE2_23;
+        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
     }
 }
 
@@ -298,7 +298,7 @@ void func_80AA21C8(EnMa2* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (DECR(this->unk_208)) {
-        player->stateFlags2 |= PLAYER_STATE2_23;
+        player->stateFlags2 |= ACTOR_FLAG_OCARINA_ACTOR_NEAR;
     } else {
         if (this->unk_1E0.unk_00 == 0) {
             this->actor.flags |= ACTOR_FLAG_16;

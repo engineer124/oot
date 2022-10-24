@@ -439,11 +439,11 @@ typedef struct {
 #define PLAYER_STATE2_20 (1 << 20)
 #define PLAYER_STATE2_21 (1 << 21)
 #define PLAYER_STATE2_22 (1 << 22)
-#define PLAYER_STATE2_23 (1 << 23)
-#define PLAYER_STATE2_24 (1 << 24)
-#define PLAYER_STATE2_25 (1 << 25)
+#define ACTOR_FLAG_OCARINA_ACTOR_NEAR (1 << 23)
+#define ACTOR_FLAG_OCARINA_ACTOR_TRY (1 << 24)
+#define ACTOR_FLAG_OCARINA_ACTOR_PLAY (1 << 25)
 #define PLAYER_STATE2_26 (1 << 26)
-#define PLAYER_STATE2_27 (1 << 27)
+#define PLAYER_STATE2_OCARINA_ON (1 << 27)
 #define PLAYER_STATE2_28 (1 << 28)
 #define PLAYER_STATE2_29 (1 << 29)
 #define PLAYER_STATE2_30 (1 << 30)
@@ -454,7 +454,7 @@ typedef struct {
 #define PLAYER_STATE3_2 (1 << 2)
 #define PLAYER_STATE3_3 (1 << 3)
 #define PLAYER_STATE3_4 (1 << 4)
-#define PLAYER_STATE3_5 (1 << 5)
+#define PLAYER_STATE3_OCARINA_FORCED (1 << 5)
 #define PLAYER_STATE3_RESTORE_NAYRUS_LOVE (1 << 6) // Set by ocarina effects actors when destroyed to signal Nayru's Love may be restored (see `ACTOROVL_ALLOC_ABSOLUTE`)
 #define PLAYER_STATE3_7 (1 << 7)
 
@@ -546,7 +546,7 @@ typedef struct Player {
     /* 0x069C */ char       unk_69C[0x004];
     /* 0x06A0 */ f32        unk_6A0;
     /* 0x06A4 */ f32        unk_6A4;
-    /* 0x06A8 */ Actor*     unk_6A8;
+    /* 0x06A8 */ Actor*     ocarinaActor;
     /* 0x06AC */ s8         unk_6AC;
     /* 0x06AD */ u8         unk_6AD;
     /* 0x06AE */ u16        unk_6AE;
