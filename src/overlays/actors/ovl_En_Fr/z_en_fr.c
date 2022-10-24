@@ -787,18 +787,24 @@ void EnFr_CheckOcarinaInputFrogSong(u8 ocarinaNote) {
         case 0:
             frogIndexButterfly = FROG_BLUE;
             break;
+
         case 1:
             frogIndexButterfly = FROG_YELLOW;
             break;
+
         case 2:
             frogIndexButterfly = FROG_RED;
             break;
+
         case 3:
             frogIndexButterfly = FROG_PURPLE;
             break;
+
         case 4:
             frogIndexButterfly = FROG_WHITE;
+            break;
     }
+
     // Turn on or off butterfly above frog
     for (frogIndex = 0; frogIndex < ARRAY_COUNT(sEnFrPointers.frogs); frogIndex++) {
         frog = sEnFrPointers.frogs[frogIndex];
@@ -885,11 +891,11 @@ void EnFr_ContinueFrogSong(EnFr* this, PlayState* play) {
                 frog = sEnFrPointers.frogs[i];
                 if (frog != NULL && frog->actionFunc == EnFr_ChooseJumpFromLogSpot) {
                     continue;
-                } else {
-                    counter++;
                 }
+                counter++;
             }
-            if (counter == 0 && CHECK_BTN_ALL(play->state.input[0].press.button, BTN_B)) {
+
+            if ((counter == 0) && CHECK_BTN_ALL(play->state.input[0].press.button, BTN_B)) {
                 EnFr_OcarinaMistake(this, play);
                 return;
             }
@@ -901,18 +907,27 @@ void EnFr_ContinueFrogSong(EnFr* this, PlayState* play) {
                 case OCARINA_BTN_A:
                     EnFr_SetupJumpingUp(this, FROG_BLUE);
                     break;
+
                 case OCARINA_BTN_C_DOWN:
                     EnFr_SetupJumpingUp(this, FROG_YELLOW);
                     break;
+
                 case OCARINA_BTN_C_RIGHT:
                     EnFr_SetupJumpingUp(this, FROG_RED);
                     break;
+
                 case OCARINA_BTN_C_LEFT:
                     EnFr_SetupJumpingUp(this, FROG_PURPLE);
                     break;
+
                 case OCARINA_BTN_C_UP:
                     EnFr_SetupJumpingUp(this, FROG_WHITE);
+                    break;
+
+                default:
+                    break;
             }
+
             if (EnFr_IsFrogSongComplete(this, play)) {
                 this->actor.textId = 0x40AC;
                 EnFr_SetupReward(this, play, false);
@@ -1085,7 +1100,9 @@ void EnFr_Draw(Actor* thisx, PlayState* play) {
     s16 frogIndex = this->actor.params - 1;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_en_fr.c", 1754);
+
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
+
     // For the frogs 2 HP, the frog with the next note and the butterfly lights up
     lightRadius = this->isButterflyDrawn ? 95 : -1;
     gDPPipeSync(POLY_OPA_DISP++);
@@ -1093,10 +1110,13 @@ void EnFr_Draw(Actor* thisx, PlayState* play) {
     Lights_PointNoGlowSetInfo(&this->lightInfo, this->posButterflyLight.x, this->posButterflyLight.y,
                               this->posButterflyLight.z, 255, 255, 255, lightRadius);
     gDPSetEnvColor(POLY_OPA_DISP++, sEnFrColor[frogIndex].r, sEnFrColor[frogIndex].g, sEnFrColor[frogIndex].b, 255);
+
     gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeTexIndex]));
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(eyeTextures[this->eyeTexIndex]));
+
     SkelAnime_DrawFlexOpa(play, this->skelAnime.skeleton, this->skelAnime.jointTable, this->skelAnime.dListCount,
                           EnFr_OverrideLimbDraw, EnFr_PostLimbDraw, this);
+
     if (this->isButterflyDrawn) {
         Matrix_Translate(this->posButterfly.x, this->posButterfly.y, this->posButterfly.z, MTXMODE_NEW);
         Matrix_Scale(0.015f, 0.015f, 0.015f, MTXMODE_APPLY);
@@ -1104,5 +1124,6 @@ void EnFr_Draw(Actor* thisx, PlayState* play) {
         SkelAnime_DrawOpa(play, this->skelAnimeButterfly.skeleton, this->skelAnimeButterfly.jointTable, NULL, NULL,
                           NULL);
     }
+
     CLOSE_DISPS(play->state.gfxCtx, "../z_en_fr.c", 1816);
 }
