@@ -2007,7 +2007,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
     Actor* actor;
     Player* player;
     u32* sp80;
-    u32 unkFlag;
+    u32 actorFlagOcarinaNoFreezeMask;
     u32 unkCondition;
     Actor* sp74;
     ActorEntry* actorEntry;
@@ -2021,7 +2021,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
     }
 
     sp74 = NULL;
-    unkFlag = 0;
+    actorFlagOcarinaNoFreezeMask = 0;
 
     if (play->numActorEntries != 0) {
         actorEntry = &play->actorEntryList[0];
@@ -2045,7 +2045,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
     sp80 = &D_80116068[0];
 
     if (player->stateFlags2 & PLAYER_STATE2_OCARINA_ON) {
-        unkFlag = ACTOR_FLAG_OCARINA_NO_FREEZE;
+        actorFlagOcarinaNoFreezeMask = ACTOR_FLAG_OCARINA_NO_FREEZE;
     }
 
     if ((player->stateFlags1 & PLAYER_STATE1_6) && ((player->actor.textId & 0xFF00) != 0x600)) {
@@ -2073,9 +2073,10 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
             } else if (!Object_IsLoaded(&play->objectCtx, actor->objBankIndex)) {
                 Actor_Kill(actor);
                 actor = actor->next;
-            } else if ((unkFlag && !(actor->flags & unkFlag)) ||
-                       (!unkFlag && unkCondition && (sp74 != actor) && (actor != player->naviActor) &&
-                        (actor != player->heldActor) && (&player->actor != actor->parent))) {
+            } else if ((actorFlagOcarinaNoFreezeMask && !(actor->flags & actorFlagOcarinaNoFreezeMask)) ||
+                       (!actorFlagOcarinaNoFreezeMask && unkCondition && (sp74 != actor) &&
+                        (actor != player->naviActor) && (actor != player->heldActor) &&
+                        (&player->actor != actor->parent))) {
                 CollisionCheck_ResetDamage(&actor->colChkInfo);
                 actor = actor->next;
             } else if (actor->update == NULL) {
