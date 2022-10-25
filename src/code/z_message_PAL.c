@@ -2120,11 +2120,14 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
 
             case MSGMODE_OCARINA_PLAYING:
                 msgCtx->ocarinaStaff = AudioOcarina_GetPromptStaff();
+
                 if (msgCtx->ocarinaStaff->pos) {
                     osSyncPrintf("locate=%d  onpu_pt=%d\n", msgCtx->ocarinaStaff->pos, sOcarinaButtonIndexBufPos);
+
                     if (msgCtx->ocarinaStaff->pos == 1 && sOcarinaButtonIndexBufPos == 8) {
                         sOcarinaButtonIndexBufPos = 0;
                     }
+
                     if (sOcarinaButtonIndexBufPos == msgCtx->ocarinaStaff->pos - 1) {
                         msgCtx->lastOcarinaButtonIndex = sOcarinaButtonIndexBuf[msgCtx->ocarinaStaff->pos - 1] =
                             msgCtx->ocarinaStaff->buttonIndex;
@@ -2132,17 +2135,21 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                         sOcarinaButtonIndexBufPos++;
                     }
                 }
+
                 msgCtx->lastPlayedSong = msgCtx->ocarinaStaff->state;
                 if (msgCtx->ocarinaStaff->state < OCARINA_SONG_MEMORY_GAME) {
-                    if (msgCtx->ocarinaStaff->state == OCARINA_SONG_SCARECROW_SPAWN ||
+                    // A song has been played
+                    if ((msgCtx->ocarinaStaff->state == OCARINA_SONG_SCARECROW_SPAWN) ||
                         CHECK_QUEST_ITEM(QUEST_SONG_MINUET + gOcarinaSongItemMap[msgCtx->ocarinaStaff->state])) {
+                        // An available song has been played
                         sLastPlayedSong = msgCtx->lastPlayedSongAlt = msgCtx->lastPlayedSong =
                             msgCtx->ocarinaStaff->state;
                         msgCtx->msgMode = MSGMODE_OCARINA_CORRECT_PLAYBACK;
                         msgCtx->stateTimer = 20;
+
                         if (msgCtx->ocarinaAction == OCARINA_ACTION_CHECK_NOWARP) {
-                            if (msgCtx->ocarinaStaff->state < OCARINA_SONG_SARIAS ||
-                                msgCtx->ocarinaStaff->state == OCARINA_SONG_SCARECROW_SPAWN) {
+                            if ((msgCtx->ocarinaStaff->state < OCARINA_SONG_SARIAS) ||
+                                (msgCtx->ocarinaStaff->state == OCARINA_SONG_SCARECROW_SPAWN)) {
                                 AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
                                 Audio_PlaySfxGeneral(NA_SE_SY_OCARINA_ERROR, &gSfxDefaultPos, 4,
                                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
@@ -2213,8 +2220,8 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                     play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
                     Message_CloseTextbox(play);
                 }
-                if (msgCtx->ocarinaAction != OCARINA_ACTION_FREE_PLAY &&
-                    msgCtx->ocarinaAction != OCARINA_ACTION_CHECK_NOWARP) {
+                if ((msgCtx->ocarinaAction != OCARINA_ACTION_FREE_PLAY) &&
+                    (msgCtx->ocarinaAction != OCARINA_ACTION_CHECK_NOWARP)) {
                     Message_DrawText(play, &gfx);
                 }
                 break;
@@ -2532,7 +2539,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                             osSyncPrintf(VT_FGCOL(YELLOW));
                             osSyncPrintf("Ocarina_PC_Wind=%d(%d) ☆☆☆   ", OCARINA_ACTION_CHECK_MINUET,
                                          msgCtx->ocarinaAction - OCARINA_ACTION_CHECK_MINUET);
-                            if (msgCtx->lastPlayedSong + OCARINA_ACTION_CHECK_MINUET == msgCtx->ocarinaAction) {
+                            if ((msgCtx->lastPlayedSong + OCARINA_ACTION_CHECK_MINUET) == msgCtx->ocarinaAction) {
                                 play->msgCtx.ocarinaMode = OCARINA_MODE_END_1;
                             } else {
                                 play->msgCtx.ocarinaMode = msgCtx->lastPlayedSong - 1;
@@ -2541,7 +2548,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                             osSyncPrintf(VT_FGCOL(GREEN));
                             osSyncPrintf("Ocarina_C_Wind=%d(%d) ☆☆☆   ", OCARINA_ACTION_PROMPT_MINUET,
                                          msgCtx->ocarinaAction - OCARINA_ACTION_PROMPT_MINUET);
-                            if (msgCtx->lastPlayedSong + OCARINA_ACTION_PROMPT_MINUET == msgCtx->ocarinaAction) {
+                            if ((msgCtx->lastPlayedSong + OCARINA_ACTION_PROMPT_MINUET) == msgCtx->ocarinaAction) {
                                 play->msgCtx.ocarinaMode = OCARINA_MODE_END_1;
                             } else {
                                 play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;

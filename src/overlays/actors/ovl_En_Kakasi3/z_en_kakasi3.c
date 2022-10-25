@@ -293,7 +293,7 @@ void func_80A91620(EnKakasi3* this, PlayState* play) {
         return;
     }
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1 && play->msgCtx.msgMode == MSGMODE_NONE) {
+    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) && (play->msgCtx.msgMode == MSGMODE_NONE)) {
         this->dialogState = TEXT_STATE_EVENT;
         Message_StartTextbox(play, 0x40A5, NULL);
         func_8002DF54(play, NULL, 8);
