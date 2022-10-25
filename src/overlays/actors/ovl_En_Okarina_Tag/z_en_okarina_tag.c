@@ -139,7 +139,7 @@ void EnOkarinaTag_Generic_WaitForOcarina(EnOkarinaTag* this, PlayState* play) {
                     ocarinaSong = 0xA;
                 }
                 player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
-                Message_StartOcarinaAllowSunSong(play, ocarinaSong + OCARINA_ACTION_CHECK_SARIA);
+                Message_StartOcarina(play, ocarinaSong + OCARINA_ACTION_CHECK_SARIA);
                 this->actionFunc = EnOkarinaTag_Generic_ListenToOcarina;
             } else if ((this->actor.xzDistToPlayer < (50.0f + this->interactRange) &&
                         ((fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 40.0f)))) {
@@ -230,19 +230,19 @@ void EnOkarinaTag_Specific_WaitForOcarina(EnOkarinaTag* this, PlayState* play) {
         if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
             switch (this->type) {
                 case OCARINASPOT_TYPE_CHECK_ZORA_WATERFALL:
-                    Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_LULLABY);
+                    Message_StartOcarina(play, OCARINA_ACTION_CHECK_LULLABY);
                     break;
 
                 case OCARINASPOT_TYPE_CHECK_WINDMILL:
-                    Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_STORMS);
+                    Message_StartOcarina(play, OCARINA_ACTION_CHECK_STORMS);
                     break;
 
                 case OCARINASPOT_TYPE_CHECK_DOOR_OF_TIME:
-                    Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_TIME);
+                    Message_StartOcarina(play, OCARINA_ACTION_CHECK_TIME);
                     break;
 
                 case OCARINASPOT_TYPE_CHECK_ROYAL_TOMB:
-                    Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_CHECK_LULLABY);
+                    Message_StartOcarina(play, OCARINA_ACTION_CHECK_LULLABY);
                     break;
 
                 default:

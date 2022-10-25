@@ -136,7 +136,7 @@ void func_80BADF0C(ShotSun* this, PlayState* play) {
             }
         }
         if (this->unk_1A4 == 1) {
-            Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_FREE_PLAY);
+            Message_StartOcarina(play, OCARINA_ACTION_FREE_PLAY);
             this->unk_1A4 = 2;
         } else if (this->unk_1A4 == 2 && play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
             if ((params == 0x40 && play->msgCtx.lastPlayedSong == OCARINA_SONG_SUNS) ||

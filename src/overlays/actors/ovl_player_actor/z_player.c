@@ -11290,7 +11290,7 @@ s32 func_8084B3CC(PlayState* play, Player* this) {
     return 0;
 }
 
-void Player_SetOcarinaItemAction(Player* this) {
+void Player_SetItemActionToOcarina(Player* this) {
     this->itemAction =
         (INV_CONTENT(ITEM_OCARINA_FAIRY) == ITEM_OCARINA_FAIRY) ? PLAYER_IA_OCARINA_FAIRY : PLAYER_IA_OCARINA_TIME;
 }
@@ -11298,7 +11298,7 @@ void Player_SetOcarinaItemAction(Player* this) {
 s32 Player_ForceOcarina(PlayState* play, Player* this) {
     if (this->stateFlags3 & PLAYER_STATE3_OCARINA_FORCED) {
         this->stateFlags3 &= ~PLAYER_STATE3_OCARINA_FORCED;
-        Player_SetOcarinaItemAction(this);
+        Player_SetItemActionToOcarina(this);
         this->unk_6AD = 4;
         func_8083B040(this, play);
         return true;
@@ -11324,6 +11324,7 @@ void func_8084B530(Player* this, PlayState* play) {
             if ((this->targetActor != this->interactRangeActor) || !func_8083E5A8(this, play)) {
                 if (this->stateFlags1 & PLAYER_STATE1_23) {
                     s32 sp24 = this->unk_850;
+
                     func_8083A360(play, this);
                     this->unk_850 = sp24;
                 } else if (func_808332B8(this)) {
@@ -12519,7 +12520,7 @@ void Player_PlayOcarina(Player* this, PlayState* play) {
             this->stateFlags2 |= PLAYER_STATE2_OCARINA_START_READY;
         } else {
             // Default start
-            Message_StartOcarinaAllowSunSong(play, OCARINA_ACTION_FREE_PLAY);
+            Message_StartOcarina(play, OCARINA_ACTION_FREE_PLAY);
         }
         return;
     }
@@ -14244,7 +14245,7 @@ void func_80851CA4(PlayState* play, Player* this, CsCmdActorAction* arg2) {
 
 void Player_StartOcarina(PlayState* play, Player* this, CsCmdActorAction* arg2) {
     func_80850F1C(play, this, &gPlayerAnim_link_normal_okarina_start);
-    Player_SetOcarinaItemAction(this);
+    Player_SetItemActionToOcarina(this);
     Player_SetModels(this, Player_ActionToModelGroup(this, this->itemAction));
 }
 

@@ -321,7 +321,7 @@ void func_809FE3C0(EnDu* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
-        Message_StartOcarinaBlockSunSong(play, OCARINA_ACTION_CHECK_SARIA);
+        Message_StartOcarinaBlockSunsSong(play, OCARINA_ACTION_CHECK_SARIA);
         player->stateFlags2 |= PLAYER_STATE2_OCARINA_ON_WITH_ACTOR;
         player->ocarinaActor = &this->actor;
         EnDu_SetupAction(this, func_809FE4A4);
