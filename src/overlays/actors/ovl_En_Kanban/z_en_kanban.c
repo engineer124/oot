@@ -718,15 +718,18 @@ void EnKanban_Update(Actor* thisx, PlayState* play2) {
                     bomb = bomb->next;
                 }
             }
+
             osSyncPrintf(VT_FGCOL(GREEN));
             osSyncPrintf("OCARINA_MODE %d\n", play->msgCtx.ocarinaMode);
             osSyncPrintf(VT_RST);
+
             switch (this->ocarinaFlag) {
                 case 0:
                     if (play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE) {
                         this->ocarinaFlag = 1;
                     }
                     break;
+
                 case 1:
                     if ((play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) &&
                         (play->msgCtx.lastPlayedSongAlt == OCARINA_SONG_LULLABY)) {
@@ -736,8 +739,12 @@ void EnKanban_Update(Actor* thisx, PlayState* play2) {
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     }
                     break;
+
+                default:
+                    break;
             }
             break;
+
         case ENKANBAN_REPAIR: {
             f32 distX;
             f32 distY;
