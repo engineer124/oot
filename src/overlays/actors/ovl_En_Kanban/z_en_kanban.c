@@ -731,7 +731,7 @@ void EnKanban_Update(Actor* thisx, PlayState* play2) {
                     break;
 
                 case 1:
-                    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) &&
+                    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_END) &&
                         (play->msgCtx.lastPlayedSongAlt == OCARINA_SONG_LULLABY)) {
                         this->actionState = ENKANBAN_REPAIR;
                         this->bounceX = 1;

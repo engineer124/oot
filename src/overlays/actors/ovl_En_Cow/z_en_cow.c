@@ -250,7 +250,7 @@ void func_809DF8FC(EnCow* this, PlayState* play) {
 }
 
 void func_809DF96C(EnCow* this, PlayState* play) {
-    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_NONE) || (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2)) {
+    if ((play->msgCtx.ocarinaMode == OCARINA_MODE_NONE) || (play->msgCtx.ocarinaMode == OCARINA_MODE_END)) {
         if (R_LAST_PLAYED_EPONAS_SONG) {
             if (this->unk_276 & 4) {
                 this->unk_276 &= ~0x4;

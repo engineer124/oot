@@ -4192,7 +4192,7 @@ void Interface_Update(PlayState* play) {
         // exit out of ocarina mode after suns song finishes playing
         if ((msgCtx->ocarinaAction != OCARINA_ACTION_CHECK_NOWARP_DONE) &&
             (gSaveContext.sunsSongState == SUNSSONG_START)) {
-            play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+            play->msgCtx.ocarinaMode = OCARINA_MODE_END;
         }
 
         // handle suns song in areas where time moves
@@ -4210,12 +4210,12 @@ void Interface_Update(PlayState* play) {
                 if ((gSaveContext.dayTime >= CLOCK_TIME(6, 30)) && (gSaveContext.dayTime <= CLOCK_TIME(18, 0) + 1)) {
                     gSaveContext.sunsSongState = SUNSSONG_INACTIVE;
                     gTimeSpeed = sPrevTimeSpeed;
-                    play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                    play->msgCtx.ocarinaMode = OCARINA_MODE_END;
                 }
             } else if (gSaveContext.dayTime > CLOCK_TIME(18, 0) + 1) {
                 gSaveContext.sunsSongState = SUNSSONG_INACTIVE;
                 gTimeSpeed = sPrevTimeSpeed;
-                play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                play->msgCtx.ocarinaMode = OCARINA_MODE_END;
             }
         } else if ((play->roomCtx.curRoom.behaviorType1 != ROOM_BEHAVIOR_TYPE1_1) &&
                    (interfaceCtx->restrictions.sunsSong != 3)) {

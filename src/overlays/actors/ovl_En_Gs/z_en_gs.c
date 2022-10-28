@@ -150,7 +150,7 @@ void func_80A4E470(EnGs* this, PlayState* play) {
             }
 
         } else if (this->unk_19D & 1) {
-            if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
+            if (play->msgCtx.ocarinaMode == OCARINA_MODE_END) {
                 if ((play->msgCtx.lastPlayedSongAlt == OCARINA_SONG_SARIAS) ||
                     (play->msgCtx.lastPlayedSongAlt == OCARINA_SONG_EPONAS) ||
                     (play->msgCtx.lastPlayedSongAlt == OCARINA_SONG_LULLABY) ||

@@ -12530,7 +12530,7 @@ void Player_PlayOcarina(Player* this, PlayState* play) {
         return;
     }
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END) {
         func_8005B1A4(Play_GetCamera(play, CAM_ID_MAIN));
 
         if ((this->targetActor != NULL) && (this->targetActor == this->ocarinaActor)) {

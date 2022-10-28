@@ -235,7 +235,7 @@ void func_80A8F75C(EnKakasi* this, PlayState* play) {
 void func_80A8F8D0(EnKakasi* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2 && play->msgCtx.msgMode == MSGMODE_NONE) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END && play->msgCtx.msgMode == MSGMODE_NONE) {
         // "end?"
         osSyncPrintf(VT_FGCOL(BLUE) "☆☆☆☆☆ 終り？ ☆☆☆☆☆ \n" VT_RST);
 

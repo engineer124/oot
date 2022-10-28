@@ -179,7 +179,7 @@ void BgDyYoseizo_Bob(BgDyYoseizo* this, PlayState* play) {
 
 void BgDyYoseizo_CheckMagicAcquired(BgDyYoseizo* this, PlayState* play) {
     if (Flags_GetSwitch(play, 0x38)) {
-        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END;
         if (play->sceneId == SCENE_DAIYOUSEI_IZUMI) {
             if (!gSaveContext.isMagicAcquired && (this->fountainType != FAIRY_UPGRADE_MAGIC)) {
                 Actor_Kill(&this->actor);

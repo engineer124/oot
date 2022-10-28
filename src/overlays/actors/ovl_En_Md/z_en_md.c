@@ -777,17 +777,17 @@ void func_80AAB948(EnMd* this, PlayState* play) {
 void func_80AABC10(EnMd* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (play->msgCtx.ocarinaMode >= OCARINA_MODE_END_2) {
+    if (play->msgCtx.ocarinaMode >= OCARINA_MODE_END) {
         this->actionFunc = func_80AAB948;
-        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
-    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) {
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END;
+    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_EVENT) {
         Audio_PlaySfxGeneral(NA_SE_SY_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         this->actor.textId = 0x1067;
         func_8002F2CC(&this->actor, play, this->collider.dim.radius + 30.0f);
 
         this->actionFunc = func_80AAB948;
-        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END;
     } else {
         player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     }

@@ -1961,7 +1961,7 @@ u8 Message_GetState(MessageContext* msgCtx) {
         state = TEXT_STATE_AWAITING_NEXT;
     } else if (msgCtx->msgMode == MSGMODE_SONG_DEMONSTRATION_DONE) {
         state = TEXT_STATE_SONG_DEMO_DONE;
-    } else if (msgCtx->ocarinaMode == OCARINA_MODE_END_1) {
+    } else if (msgCtx->ocarinaMode == OCARINA_MODE_EVENT) {
         state = TEXT_STATE_8;
     } else if (msgCtx->msgMode == MSGMODE_OCARINA_AWAIT_INPUT) {
         state = TEXT_STATE_9;
@@ -2258,7 +2258,7 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
                     msgCtx->msgMode = MSGMODE_OCARINA_FAIL;
                 } else if (CHECK_BTN_ALL(play->state.input[0].press.button, BTN_B)) {
                     AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
-                    play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                    play->msgCtx.ocarinaMode = OCARINA_MODE_END;
                     Message_CloseTextbox(play);
                 }
                 if ((msgCtx->ocarinaAction != OCARINA_ACTION_FREE_PLAY) &&
@@ -2398,11 +2398,11 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
                             msgCtx->stateTimer = 1;
                         } else {
                             Message_CloseTextbox(play);
-                            play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                            play->msgCtx.ocarinaMode = OCARINA_MODE_END;
                         }
-                    } else {
+                    } else { // MSGMODE_SCARECROW_SPAWN_RECORDING_DONE
                         Message_CloseTextbox(play);
-                        play->msgCtx.ocarinaMode = OCARINA_MODE_END_1;
+                        play->msgCtx.ocarinaMode = OCARINA_MODE_EVENT;
                     }
                 }
                 Message_DrawText(play, &gfx);
@@ -2555,7 +2555,7 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
                          (msgCtx->ocarinaAction >= OCARINA_ACTION_PROMPT_SARIA))) {
                         if (msgCtx->disableWarpSongs || (interfaceCtx->restrictions.warpSongs == 3)) {
                             Message_StartTextbox(play, 0x88C, NULL); // "You can't warp here!"
-                            play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                            play->msgCtx.ocarinaMode = OCARINA_MODE_END;
                         } else if (GET_EVENTINF_HORSES_STATE() != EVENTINF_HORSES_STATE_1) {
                             Message_StartTextbox(play, 0x88D + msgCtx->lastPlayedSong,
                                                  NULL); // "Warp to [place name]?"
@@ -2581,7 +2581,7 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
                             osSyncPrintf("Ocarina_PC_Wind=%d(%d) ☆☆☆   ", OCARINA_ACTION_CHECK_MINUET,
                                          msgCtx->ocarinaAction - OCARINA_ACTION_CHECK_MINUET);
                             if ((msgCtx->lastPlayedSong + OCARINA_ACTION_CHECK_MINUET) == msgCtx->ocarinaAction) {
-                                play->msgCtx.ocarinaMode = OCARINA_MODE_END_1;
+                                play->msgCtx.ocarinaMode = OCARINA_MODE_EVENT;
                             } else {
                                 play->msgCtx.ocarinaMode = msgCtx->lastPlayedSong - 1;
                             }
@@ -2590,9 +2590,9 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
                             osSyncPrintf("Ocarina_C_Wind=%d(%d) ☆☆☆   ", OCARINA_ACTION_PROMPT_MINUET,
                                          msgCtx->ocarinaAction - OCARINA_ACTION_PROMPT_MINUET);
                             if ((msgCtx->lastPlayedSong + OCARINA_ACTION_PROMPT_MINUET) == msgCtx->ocarinaAction) {
-                                play->msgCtx.ocarinaMode = OCARINA_MODE_END_1;
+                                play->msgCtx.ocarinaMode = OCARINA_MODE_EVENT;
                             } else {
-                                play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                                play->msgCtx.ocarinaMode = OCARINA_MODE_END;
                             }
                         }
                         osSyncPrintf(VT_RST);
@@ -2712,7 +2712,7 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
                     osSyncPrintf("aaaaaaaaaaaaaa\n");
                     AudioOcarina_SetRecordingState(OCARINA_RECORD_OFF);
                     msgCtx->stateTimer = 10;
-                    play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                    play->msgCtx.ocarinaMode = OCARINA_MODE_END;
                     Message_CloseTextbox(play);
                     // "Recording complete！！！！！！！！！Recording Complete"
                     osSyncPrintf("録音終了！！！！！！！！！録音終了\n");
@@ -2809,7 +2809,7 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
                 osSyncPrintf("cccccccccccc\n");
                 AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
                 Message_StartTextbox(play, 0x40AD, NULL); // Bonooru doesn't remember your song
-                play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                play->msgCtx.ocarinaMode = OCARINA_MODE_END;
                 break;
 
             case MSGMODE_MEMORY_GAME_START:
@@ -2876,7 +2876,7 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
                     Audio_PlaySfxGeneral(NA_SE_SY_OCARINA_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     msgCtx->stateTimer = 10;
-                    play->msgCtx.ocarinaMode = OCARINA_MODE_END_1;
+                    play->msgCtx.ocarinaMode = OCARINA_MODE_EVENT;
                 } else if (msgCtx->ocarinaStaff->state == OCARINA_SONG_MEMORY_GAME) {
                     // "Musical round succeeded！！！！！！！！！"
                     osSyncPrintf("輪唱成功！！！！！！！！！\n");
@@ -2987,7 +2987,8 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
         }
 
         if ((msgCtx->msgMode >= MSGMODE_OCARINA_PLAYING) && (msgCtx->msgMode < MSGMODE_TEXT_AWAIT_NEXT) &&
-            (msgCtx->ocarinaAction != OCARINA_ACTION_FREE_PLAY) && (msgCtx->ocarinaAction != OCARINA_ACTION_CHECK_NOWARP)) {
+            (msgCtx->ocarinaAction != OCARINA_ACTION_FREE_PLAY) &&
+            (msgCtx->ocarinaAction != OCARINA_ACTION_CHECK_NOWARP)) {
             Gfx_SetupDL_39Ptr(&gfx);
 
             gDPSetCombineLERP(gfx++, PRIMITIVE, ENVIRONMENT, TEXEL0, ENVIRONMENT, TEXEL0, 0, PRIMITIVE, 0, PRIMITIVE,
@@ -3362,7 +3363,7 @@ void Message_Update(PlayState* play) {
                     (play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE)) {
                     if (Message_ShouldAdvance(play)) {
                         osSyncPrintf("OCARINA_MODE=%d -> ", play->msgCtx.ocarinaMode);
-                        play->msgCtx.ocarinaMode = (msgCtx->choiceIndex == 0) ? OCARINA_MODE_WARP : OCARINA_MODE_END_2;
+                        play->msgCtx.ocarinaMode = (msgCtx->choiceIndex == 0) ? OCARINA_MODE_WARP : OCARINA_MODE_END;
                         osSyncPrintf("InRaceSeq=%d(%d) OCARINA_MODE=%d  -->  ", GET_EVENTINF_HORSES_STATE(), 1,
                                      play->msgCtx.ocarinaMode);
                         Message_CloseTextbox(play);
@@ -3449,7 +3450,7 @@ void Message_Update(PlayState* play) {
                 if ((msgCtx->ocarinaAction == OCARINA_ACTION_FREE_PLAY_DONE) &&
                     ((play->msgCtx.ocarinaMode == OCARINA_MODE_ACTIVE) ||
                      (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_SCARECROW_SPAWN))) {
-                    play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                    play->msgCtx.ocarinaMode = OCARINA_MODE_END;
                     if (msgCtx->lastPlayedSongAlt == OCARINA_SONG_SUNS) {
                         play->msgCtx.ocarinaMode = OCARINA_MODE_ACTIVE;
                     }

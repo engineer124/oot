@@ -91,7 +91,7 @@ void OceffSpot_End(OceffSpot* this, PlayState* play) {
                 osSyncPrintf(VT_RST);
             }
         } else {
-            play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+            play->msgCtx.ocarinaMode = OCARINA_MODE_END;
             osSyncPrintf(VT_FGCOL(YELLOW));
             // "Ocarina End"
             osSyncPrintf("z_oceff_spot  オカリナ終了\n");

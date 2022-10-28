@@ -181,7 +181,7 @@ s32 ObjTimeblock_WaitForOcarina(ObjTimeblock* this, PlayState* play) {
 }
 
 s32 ObjTimeblock_WaitForSong(ObjTimeblock* this, PlayState* play) {
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END) {
         this->songObserverFunc = ObjTimeblock_WaitForOcarina;
     }
     if (play->msgCtx.lastPlayedSong == OCARINA_SONG_TIME) {

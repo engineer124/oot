@@ -304,7 +304,7 @@ void func_809C9700(EnBox* this, PlayState* play) {
         if (this->unk_1FB == ENBOX_STATE_1) {
             Message_StartOcarina(play, OCARINA_ACTION_FREE_PLAY);
             this->unk_1FB = ENBOX_STATE_2;
-        } else if (this->unk_1FB == ENBOX_STATE_2 && play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
+        } else if (this->unk_1FB == ENBOX_STATE_2 && play->msgCtx.ocarinaMode == OCARINA_MODE_END) {
             if ((play->msgCtx.lastPlayedSong == OCARINA_SONG_LULLABY && this->type == ENBOX_TYPE_9) ||
                 (play->msgCtx.lastPlayedSong == OCARINA_SONG_SUNS && this->type == ENBOX_TYPE_10)) {
                 this->dyna.actor.flags &= ~ACTOR_FLAG_OCARINA_NO_FREEZE;

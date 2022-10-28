@@ -388,7 +388,7 @@ void func_80AA10EC(EnMa1* this, PlayState* play) {
 
 void func_80AA1150(EnMa1* this, PlayState* play) {
     GET_PLAYER(play)->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_EVENT) {
         play->nextEntranceIndex = ENTR_SPOT20_0;
         gSaveContext.nextCutsceneIndex = 0xFFF1;
         play->transitionType = TRANS_TYPE_CIRCLE(TCA_WAVE, TCC_WHITE, TCS_FAST);

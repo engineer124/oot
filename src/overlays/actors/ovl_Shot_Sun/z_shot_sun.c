@@ -138,7 +138,7 @@ void func_80BADF0C(ShotSun* this, PlayState* play) {
         if (this->unk_1A4 == 1) {
             Message_StartOcarina(play, OCARINA_ACTION_FREE_PLAY);
             this->unk_1A4 = 2;
-        } else if (this->unk_1A4 == 2 && play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
+        } else if (this->unk_1A4 == 2 && play->msgCtx.ocarinaMode == OCARINA_MODE_END) {
             if ((params == 0x40 && play->msgCtx.lastPlayedSong == OCARINA_SONG_SUNS) ||
                 (params == 0x41 && play->msgCtx.lastPlayedSong == OCARINA_SONG_STORMS)) {
                 this->actionFunc = ShotSun_TriggerFairy;

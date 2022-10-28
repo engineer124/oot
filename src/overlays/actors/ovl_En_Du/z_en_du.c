@@ -339,7 +339,7 @@ void func_809FE3C0(EnDu* this, PlayState* play) {
 void func_809FE4A4(EnDu* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END) {
         play->msgCtx.ocarinaMode = OCARINA_MODE_NONE;
         EnDu_SetupAction(this, func_809FE3C0);
     } else if (play->msgCtx.ocarinaMode >= OCARINA_MODE_PLAYED_EPONA) {
@@ -347,15 +347,15 @@ void func_809FE4A4(EnDu* this, PlayState* play) {
         gSaveContext.cutsceneTrigger = 1;
         this->unk_1E8 = 1;
         EnDu_SetupAction(this, func_809FE890);
-        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
-    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) {
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END;
+    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_EVENT) {
         Audio_PlaySfxGeneral(NA_SE_SY_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         play->csCtx.segment = SEGMENTED_TO_VIRTUAL(gGoronCityDaruniaCorrectCs);
         gSaveContext.cutsceneTrigger = 1;
         this->unk_1E8 = 0;
         EnDu_SetupAction(this, func_809FE890);
-        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END;
     } else {
         player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     }

@@ -143,7 +143,7 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
                 Flags_SetSwitch(play, this->switchFlag);
             }
             osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ SAVE 終了 ☆☆☆☆☆ %d\n" VT_RST, this->switchFlag);
-            play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+            play->msgCtx.ocarinaMode = OCARINA_MODE_END;
             this->actor.draw = func_80A90948;
             Collider_InitCylinder(play, &this->collider);
             Collider_SetCylinder(play, &this->collider, &this->actor, &sCylinderInit);

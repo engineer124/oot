@@ -79,8 +79,8 @@ typedef enum {
     /* 0x0 */ OCARINA_MODE_NONE,
     /* 0x1 */ OCARINA_MODE_ACTIVE,
     /* 0x2 */ OCARINA_MODE_WARP,
-    /* 0x3 */ OCARINA_MODE_END_1, // end with event?
-    /* 0x4 */ OCARINA_MODE_END_2,
+    /* 0x3 */ OCARINA_MODE_EVENT, // Something has happened
+    /* 0x4 */ OCARINA_MODE_END,
     /* 0x5 */ OCARINA_MODE_PLAYED_SARIA,
     /* 0x6 */ OCARINA_MODE_PLAYED_EPONA,
     /* 0x7 */ OCARINA_MODE_PLAYED_ZL,

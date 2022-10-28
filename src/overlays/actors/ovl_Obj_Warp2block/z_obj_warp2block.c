@@ -169,7 +169,7 @@ s32 func_80BA2218(ObjWarp2block* this, PlayState* play) {
 }
 
 s32 func_80BA228C(ObjWarp2block* this, PlayState* play) {
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END) {
         this->func_168 = func_80BA2218;
     }
 

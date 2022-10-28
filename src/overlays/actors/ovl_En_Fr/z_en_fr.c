@@ -611,7 +611,7 @@ void EnFr_Idle(EnFr* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (player->stateFlags2 & PLAYER_STATE2_OCARINA_ON_WITH_ACTOR) {
-        if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
+        if (play->msgCtx.ocarinaMode == OCARINA_MODE_END) {
             play->msgCtx.ocarinaMode = OCARINA_MODE_NONE;
         }
 
@@ -700,7 +700,7 @@ void EnFr_ListeningToOcarinaNotes(EnFr* this, PlayState* play) {
             this->songIndex = FROG_STORMS;
             break;
 
-        case OCARINA_MODE_END_2:
+        case OCARINA_MODE_END:
             EnFr_OcarinaMistake(this, play);
             break;
 
@@ -1030,7 +1030,7 @@ void EnFr_Deactivate(EnFr* this, PlayState* play) {
         frogLoop2->isDeactivating = false;
     }
 
-    play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+    play->msgCtx.ocarinaMode = OCARINA_MODE_END;
     Audio_PlayActorSfx2(&this->actor, NA_SE_EV_FROG_CRY_0);
     if (this->reward == GI_NONE) {
         this->actionFunc = EnFr_Idle;

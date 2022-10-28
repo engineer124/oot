@@ -151,7 +151,7 @@ void func_80A1DB60(EnFu* this, PlayState* play) {
     if (play->csCtx.state == CS_STATE_IDLE) {
         this->actionFunc = EnFu_WaitAdult;
         SET_EVENTCHKINF(EVENTCHKINF_5B);
-        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END;
     }
 }
 
@@ -164,11 +164,11 @@ void func_80A1DBA0(EnFu* this, PlayState* play) {
 void func_80A1DBD4(EnFu* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (play->msgCtx.ocarinaMode >= OCARINA_MODE_END_2) {
+    if (play->msgCtx.ocarinaMode >= OCARINA_MODE_END) {
         this->actionFunc = EnFu_WaitAdult;
-        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END;
         this->actor.flags &= ~ACTOR_FLAG_16;
-    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) {
+    } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_EVENT) {
         func_80078884(NA_SE_SY_CORRECT_CHIME);
         this->actionFunc = func_80A1DB60;
         this->actor.flags &= ~ACTOR_FLAG_16;

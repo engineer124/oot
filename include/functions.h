@@ -1802,7 +1802,7 @@ void AudioSeq_InitSequencePlayerChannels(s32 playerIdx);
 void AudioSeq_InitSequencePlayers(void);
 void AudioOcarina_Start(u16 ocarinaFlags);
 void AudioOcarina_SetInstrument(u8 ocarinaInstrumentId);
-void AudioOcarina_SetDemonstrationSong(s8 songIndexPlusOne, s8 playbackState);
+void AudioOcarina_SetDemonstrationSong(s8 songIndexPlusOne, s8 demonstrationState);
 void AudioOcarina_SetRecordingState(u8 recordingState);
 OcarinaStaff* AudioOcarina_GetRecordingStaff(void);
 OcarinaStaff* AudioOcarina_GetPromptStaff(void);

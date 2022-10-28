@@ -955,7 +955,7 @@ void EnSkj_WaitForSong(EnSkj* this, PlayState* play) {
     // Played a song thats not Saria's song
     if (!GET_ITEMGETINF(ITEMGETINF_16) &&
         ((play->msgCtx.msgMode == MSGMODE_OCARINA_FAIL) || (play->msgCtx.msgMode == MSGMODE_OCARINA_FAIL_NO_TEXT))) {
-        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END;
         Message_CloseTextbox(play);
         player->ocarinaActor = &this->actor;
         func_8002F2CC(&this->actor, play, EnSkj_GetItemXzRange(this));
@@ -968,15 +968,15 @@ void EnSkj_WaitForSong(EnSkj* this, PlayState* play) {
             this->unk_2D6 = 0;
             EnSkj_ChangeAnim(this, SKJ_ANIM_WAIT);
         }
-        if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_2) {
+        if (play->msgCtx.ocarinaMode == OCARINA_MODE_END) {
             play->msgCtx.ocarinaMode = OCARINA_MODE_NONE;
             this->unk_2D6 = 0;
             EnSkj_ChangeAnim(this, SKJ_ANIM_WAIT);
             EnSkj_SetupAction(this, SKJ_ACTION_SARIA_SONG_WAIT_IN_RANGE);
-        } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) {
+        } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_EVENT) {
             if (!GET_ITEMGETINF(ITEMGETINF_16)) {
                 // Saria's song has been played for the first titme
-                play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                play->msgCtx.ocarinaMode = OCARINA_MODE_END;
                 func_80078884(NA_SE_SY_CORRECT_CHIME);
                 player->ocarinaActor = &this->actor;
                 func_8002F2CC(&this->actor, play, EnSkj_GetItemXzRange(this));
@@ -993,13 +993,13 @@ void EnSkj_WaitForSong(EnSkj* this, PlayState* play) {
         } else if (play->msgCtx.ocarinaMode >= OCARINA_MODE_PLAYED_SARIA) {
             gSaveContext.sunsSongState = SUNSSONG_INACTIVE;
             if (GET_ITEMGETINF(ITEMGETINF_16)) {
-                play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                play->msgCtx.ocarinaMode = OCARINA_MODE_END;
                 player->ocarinaActor = &this->actor;
                 func_8002F2CC(&this->actor, play, EnSkj_GetItemXzRange(this));
                 this->textId = 0x10BD;
                 EnSkj_SetupAfterSong(this);
             } else {
-                play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                play->msgCtx.ocarinaMode = OCARINA_MODE_END;
                 player->ocarinaActor = &this->actor;
                 func_8002F2CC(&this->actor, play, EnSkj_GetItemXzRange(this));
                 EnSkj_SetupWrongSong(this);
@@ -1412,9 +1412,9 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
 
     EnSkj_TurnPlayer(this, player);
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_1) { // failed the game
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_EVENT) { // failed the game
         Message_CloseTextbox(play);
-        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END;
         player->ocarinaActor = &this->actor;
         func_8002F2CC(&this->actor, play, 26.0f);
         this->textId = 0x102D;
@@ -1422,7 +1422,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
     } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_END_MEMORY_GAME) { // completed the game
         func_80078884(NA_SE_SY_CORRECT_CHIME);
         Message_CloseTextbox(play);
-        play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+        play->msgCtx.ocarinaMode = OCARINA_MODE_END;
         player->ocarinaActor = &this->actor;
         func_8002F2CC(&this->actor, play, 26.0f);
         this->textId = 0x10BF;
@@ -1456,7 +1456,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
                 } else { // took too long, game failed
                     func_80078884(NA_SE_SY_OCARINA_ERROR);
                     Message_CloseTextbox(play);
-                    play->msgCtx.ocarinaMode = OCARINA_MODE_END_2;
+                    play->msgCtx.ocarinaMode = OCARINA_MODE_END;
                     player->ocarinaActor = &this->actor;
                     func_8002F2CC(&this->actor, play, 26.0f);
                     this->textId = 0x102D;
