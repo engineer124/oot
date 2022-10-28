@@ -333,7 +333,7 @@ void func_80852564(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_808525C0(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80852608(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80852648(PlayState* play, Player* this, CsCmdActorAction* arg2);
-void Player_LearnSongOcarinaEffects(PlayState* play, Player* this, CsCmdActorAction* arg2);
+void Player_LookAtOcarina(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_8085283C(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_808528C8(PlayState* play, Player* this, CsCmdActorAction* arg2);
 void func_80852944(PlayState* play, Player* this, CsCmdActorAction* arg2);
@@ -11296,8 +11296,8 @@ void Player_SetItemActionToOcarina(Player* this) {
 }
 
 s32 Player_ForceOcarina(PlayState* play, Player* this) {
-    if (this->stateFlags3 & PLAYER_STATE3_OCARINA_FORCED) {
-        this->stateFlags3 &= ~PLAYER_STATE3_OCARINA_FORCED;
+    if (this->stateFlags3 & PLAYER_STATE3_OCARINA_AFTER_TEXTBOX) {
+        this->stateFlags3 &= ~PLAYER_STATE3_OCARINA_AFTER_TEXTBOX;
         Player_SetItemActionToOcarina(this);
         this->unk_6AD = 4;
         func_8083B040(this, play);
@@ -12516,20 +12516,21 @@ void Player_PlayOcarina(Player* this, PlayState* play) {
         func_808322A4(play, this, &gPlayerAnim_link_normal_okarina_swing);
         this->unk_850 = 1;
         if (this->stateFlags2 & (PLAYER_STATE2_OCARINA_START_OVERRIDE | PLAYER_STATE2_OCARINA_ON_WITH_ACTOR)) {
-            // Leave it to the actor to start the ocarina with the specified flags
+            // Leave it to the actor to start the ocarina textbox with the specified ocarina action
             this->stateFlags2 |= PLAYER_STATE2_OCARINA_START_READY;
         } else {
             // Default start
-            Message_StartOcarina(play, OCARINA_ACTION_FREE_PLAY);
+            Message_DisplayOcarinaStaff(play, OCARINA_ACTION_FREE_PLAY);
         }
         return;
     }
-    // Continue pulling out the ocarina
 
     if (this->unk_850 == 0) {
+        // Continue pulling out the ocarina
         return;
     }
 
+    // Process playing the ocarina, respond to a change in the ocarina mode
     if (play->msgCtx.ocarinaMode == OCARINA_MODE_END) {
         func_8005B1A4(Play_GetCamera(play, CAM_ID_MAIN));
 
@@ -12602,7 +12603,7 @@ void func_8084E6D4(Player* this, PlayState* play) {
 
             if (func_8084DFF4(play, this) && (this->unk_850 == 1)) {
                 cond = ((this->targetActor != NULL) && (this->exchangeItemId < 0)) ||
-                       (this->stateFlags3 & PLAYER_STATE3_OCARINA_FORCED);
+                       (this->stateFlags3 & PLAYER_STATE3_OCARINA_AFTER_TEXTBOX);
 
                 if (cond || (gSaveContext.healthAccumulator == 0)) {
                     if (cond) {
@@ -13830,9 +13831,9 @@ static struct_80854B18 D_80854E50[] = {
     { 12, &gPlayerAnim_d_link_orowait },
     { 12, &gPlayerAnim_demo_link_nwait },
     { 11, NULL },
-    { -1, Player_LearnSongOcarinaEffects },
+    { -1, Player_LookAtOcarina },
     { 17, &gPlayerAnim_sude_nwait },
-    { -1, Player_LearnSongOcarinaEffects },
+    { -1, Player_LookAtOcarina },
     { 17, &gPlayerAnim_sude_nwait },
     { 12, &gPlayerAnim_link_demo_gurad_wait },
     { 12, &gPlayerAnim_link_demo_look_hand_wait },
@@ -14529,9 +14530,10 @@ static Vec3s sOcarinaSparklePos[2][2] = {
 };
 
 /**
- * Animates Player learning an ocarina song, and applies sparkles to the ocarina
+ * Hold the ocarina up and to the side, and gaze at it.
+ * Also adds white sparkles to the ocarina
  */
-void Player_LearnSongOcarinaEffects(PlayState* play, Player* this, CsCmdActorAction* arg2) {
+void Player_LookAtOcarina(PlayState* play, Player* this, CsCmdActorAction* arg2) {
     static Vec3f sZeroVec = { 0.0f, 0.0f, 0.0f };
     static Color_RGBA8 sPrimColor = { 255, 255, 255, 0 };
     static Color_RGBA8 sEnvColor = { 0, 128, 128, 0 };

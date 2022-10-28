@@ -372,7 +372,7 @@ void EnMa1_TeachSong(EnMa1* this, PlayState* play) {
         // Ocarina instrument is set to malon here but is immediately
         // overwritten to malon in the message system, so changing this does nothing
         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_MALON);
-        Message_StartOcarina(play, OCARINA_ACTION_DEMONSTRATE_EPONA);
+        Message_DisplayOcarinaStaff(play, OCARINA_ACTION_DEMONSTRATE_EPONA);
         this->actor.flags &= ~ACTOR_FLAG_16;
         this->actionFunc = func_80AA10EC;
     }
@@ -381,7 +381,7 @@ void EnMa1_TeachSong(EnMa1* this, PlayState* play) {
 void func_80AA10EC(EnMa1* this, PlayState* play) {
     GET_PLAYER(play)->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_SONG_DEMO_DONE) {
-        Message_StartOcarina(play, OCARINA_ACTION_PROMPT_EPONA);
+        Message_DisplayOcarinaStaff(play, OCARINA_ACTION_PROMPT_EPONA);
         this->actionFunc = func_80AA1150;
     }
 }

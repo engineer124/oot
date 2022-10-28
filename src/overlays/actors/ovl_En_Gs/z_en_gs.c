@@ -145,7 +145,7 @@ void func_80A4E470(EnGs* this, PlayState* play) {
         if (this->unk_19D == 0) {
             player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
             if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
-                Message_StartOcarina(play, OCARINA_ACTION_FREE_PLAY);
+                Message_DisplayOcarinaStaff(play, OCARINA_ACTION_FREE_PLAY);
                 this->unk_19D |= 1;
             }
 

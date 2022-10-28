@@ -590,7 +590,7 @@ typedef struct {
     /* 0xE406 */ s16    textboxColorAlphaCurrent;
     /* 0xE408 */ Actor* talkActor;
     /* 0xE40C */ s16    disableWarpSongs; // warp song flag set by scene commands
-    /* 0xE40E */ s16    blockSunsSong; // ocarina related
+    /* 0xE40E */ s16    blockSunsSongEffect; // ocarina related
     /* 0xE410 */ u8     lastOcarinaButtonIndex;
 } MessageContext; // size = 0xE418
 

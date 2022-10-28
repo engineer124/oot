@@ -910,7 +910,7 @@ void EnSkj_WaitInRange(EnSkj* this, PlayState* play) {
         player->actor.world.pos.y = sSmallStumpSkullKid.skullkid->actor.world.pos.y;
         player->actor.world.pos.z = sSmallStumpSkullKid.skullkid->actor.world.pos.z;
         EnSkj_TurnPlayer(sSmallStumpSkullKid.skullkid, player);
-        Message_StartOcarinaBlockSunsSong(play, OCARINA_ACTION_CHECK_SARIA);
+        Message_DisplayOcarinaStaffBlockSunsSongEffect(play, OCARINA_ACTION_CHECK_SARIA);
         EnSkj_SetupWaitForSong(this);
     } else if (D_80B01EA0 != 0) {
         player->actor.world.pos.x = sSmallStumpSkullKid.skullkid->actor.world.pos.x;
@@ -1398,7 +1398,7 @@ void EnSkj_StartOcarinaMinigame(EnSkj* this, PlayState* play) {
     EnSkj_TurnPlayer(this, player);
 
     if (dialogState == TEXT_STATE_CLOSING) {
-        Message_StartOcarina(play, OCARINA_ACTION_MEMORY_GAME);
+        Message_DisplayOcarinaStaff(play, OCARINA_ACTION_MEMORY_GAME);
         if (sOcarinaMinigameSkullKids[SKULL_KID_LEFT].skullkid != NULL) {
             sOcarinaMinigameSkullKids[SKULL_KID_LEFT].skullkid->minigameState = SKULL_KID_OCARINA_PLAY_NOTES;
         }
@@ -1502,11 +1502,11 @@ void EnSkj_OfferNextRound(EnSkj* this, PlayState* play) {
 void EnSkj_WaitForOfferResponse(EnSkj* this, PlayState* play) {
     Player* player;
 
-    if (Message_GetState(&play->msgCtx) == TEXT_STATE_CHOICE && Message_ShouldAdvance(play)) {
+    if ((Message_GetState(&play->msgCtx) == TEXT_STATE_CHOICE) && Message_ShouldAdvance(play)) {
         switch (play->msgCtx.choiceIndex) {
             case 0: // yes
                 player = GET_PLAYER(play);
-                player->stateFlags3 |= PLAYER_STATE3_OCARINA_FORCED;
+                player->stateFlags3 |= PLAYER_STATE3_OCARINA_AFTER_TEXTBOX;
                 this->actionFunc = EnSkj_SetupWaitForOcarina;
                 break;
             case 1: // no

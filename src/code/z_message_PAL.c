@@ -1776,7 +1776,7 @@ void Message_ContinueTextbox(PlayState* play, u16 textId) {
     msgCtx->textboxColorAlphaCurrent = msgCtx->textboxColorAlphaTarget;
 }
 
-void Message_StartOcarinaImpl(PlayState* play, u16 ocarinaActionId) {
+void Message_DisplayOcarinaStaffImpl(PlayState* play, u16 ocarinaActionId) {
     static u16 sOcarinaSongFlagsMap[] = {
         (1 << OCARINA_SONG_MINUET),
         (1 << OCARINA_SONG_BOLERO),
@@ -1897,7 +1897,7 @@ void Message_StartOcarinaImpl(PlayState* play, u16 ocarinaActionId) {
     // "Music Performance Start"
     osSyncPrintf("演奏開始\n");
 
-    if (ocarinaActionId == OCARINA_ACTION_FREE_PLAY || ocarinaActionId == OCARINA_ACTION_CHECK_NOWARP) {
+    if ((ocarinaActionId == OCARINA_ACTION_FREE_PLAY) || (ocarinaActionId == OCARINA_ACTION_CHECK_NOWARP)) {
         msgCtx->msgMode = MSGMODE_OCARINA_STARTING;
         msgCtx->textBoxType = 0x63;
     } else if (ocarinaActionId == OCARINA_ACTION_FROGS) {
@@ -1928,14 +1928,14 @@ void Message_StartOcarinaImpl(PlayState* play, u16 ocarinaActionId) {
     }
 }
 
-void Message_StartOcarina(PlayState* play, u16 ocarinaActionId) {
-    play->msgCtx.blockSunsSong = false;
-    Message_StartOcarinaImpl(play, ocarinaActionId);
+void Message_DisplayOcarinaStaff(PlayState* play, u16 ocarinaActionId) {
+    play->msgCtx.blockSunsSongEffect = false;
+    Message_DisplayOcarinaStaffImpl(play, ocarinaActionId);
 }
 
-void Message_StartOcarinaBlockSunsSong(PlayState* play, u16 ocarinaActionId) {
-    play->msgCtx.blockSunsSong = true;
-    Message_StartOcarinaImpl(play, ocarinaActionId);
+void Message_DisplayOcarinaStaffBlockSunsSongEffect(PlayState* play, u16 ocarinaActionId) {
+    play->msgCtx.blockSunsSongEffect = true;
+    Message_DisplayOcarinaStaffImpl(play, ocarinaActionId);
 }
 
 u8 Message_GetState(MessageContext* msgCtx) {
@@ -2125,13 +2125,13 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
                 sOcarinaNoteFlashTimer = 3;
                 sOcarinaNoteFlashColorIndex = 1;
                 if (msgCtx->msgMode == MSGMODE_OCARINA_STARTING) {
-                    if (msgCtx->ocarinaAction == OCARINA_ACTION_UNK_0 ||
-                        msgCtx->ocarinaAction == OCARINA_ACTION_FREE_PLAY ||
-                        msgCtx->ocarinaAction == OCARINA_ACTION_SCARECROW_SPAWN_RECORDING ||
-                        msgCtx->ocarinaAction == OCARINA_ACTION_CHECK_NOWARP ||
-                        msgCtx->ocarinaAction >= OCARINA_ACTION_CHECK_SARIA) {
-                        if (msgCtx->ocarinaAction == OCARINA_ACTION_FREE_PLAY ||
-                            msgCtx->ocarinaAction == OCARINA_ACTION_CHECK_NOWARP) {
+                    if ((msgCtx->ocarinaAction == OCARINA_ACTION_UNK_0) ||
+                        (msgCtx->ocarinaAction == OCARINA_ACTION_FREE_PLAY) ||
+                        (msgCtx->ocarinaAction == OCARINA_ACTION_SCARECROW_SPAWN_RECORDING) ||
+                        (msgCtx->ocarinaAction == OCARINA_ACTION_CHECK_NOWARP) ||
+                        (msgCtx->ocarinaAction >= OCARINA_ACTION_CHECK_SARIA)) {
+                        if ((msgCtx->ocarinaAction == OCARINA_ACTION_FREE_PLAY) ||
+                            (msgCtx->ocarinaAction == OCARINA_ACTION_CHECK_NOWARP)) {
                             AudioOcarina_Start(sOcarinaAvailableSongs + OCARINA_START_NO_NOTE_LIMIT);
                         } else {
                             // "On Stage Performance"
@@ -2548,11 +2548,13 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
                 break;
 
             case MSGMODE_SONG_PLAYED_ACT:
+                // A song has been played, process the result
                 msgCtx->stateTimer--;
                 if (msgCtx->stateTimer == 0) {
-                    if ((msgCtx->lastPlayedSong < OCARINA_SONG_SARIAS) &&
-                        ((msgCtx->ocarinaAction < OCARINA_ACTION_PROMPT_MINUET) ||
-                         (msgCtx->ocarinaAction >= OCARINA_ACTION_PROMPT_SARIA))) {
+                    if ((msgCtx->lastPlayedSong <= OCARINA_SONG_PRELUDE) &&
+                        !((msgCtx->ocarinaAction >= OCARINA_ACTION_PROMPT_MINUET) &&
+                          (msgCtx->ocarinaAction <= OCARINA_ACTION_PROMPT_PRELUDE))) {
+                        // Played a warp song that was not a prompt
                         if (msgCtx->disableWarpSongs || (interfaceCtx->restrictions.warpSongs == 3)) {
                             Message_StartTextbox(play, 0x88C, NULL); // "You can't warp here!"
                             play->msgCtx.ocarinaMode = OCARINA_MODE_END;
@@ -2581,11 +2583,14 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
                             osSyncPrintf("Ocarina_PC_Wind=%d(%d) ☆☆☆   ", OCARINA_ACTION_CHECK_MINUET,
                                          msgCtx->ocarinaAction - OCARINA_ACTION_CHECK_MINUET);
                             if ((msgCtx->lastPlayedSong + OCARINA_ACTION_CHECK_MINUET) == msgCtx->ocarinaAction) {
+                                // The song played was the song being checked for
                                 play->msgCtx.ocarinaMode = OCARINA_MODE_EVENT;
                             } else {
+                                // The song played was not the song being checked for
                                 play->msgCtx.ocarinaMode = msgCtx->lastPlayedSong - 1;
                             }
                         } else {
+                            // Process prompted songs
                             osSyncPrintf(VT_FGCOL(GREEN));
                             osSyncPrintf("Ocarina_C_Wind=%d(%d) ☆☆☆   ", OCARINA_ACTION_PROMPT_MINUET,
                                          msgCtx->ocarinaAction - OCARINA_ACTION_PROMPT_MINUET);
@@ -2660,7 +2665,7 @@ void Message_DrawMain(PlayState* play, Gfx** gfxP) {
             case MSGMODE_OCARINA_AWAIT_INPUT:
                 Message_DrawText(play, &gfx);
                 if (Message_ShouldAdvance(play)) {
-                    Message_StartOcarina(play, msgCtx->ocarinaAction);
+                    Message_DisplayOcarinaStaff(play, msgCtx->ocarinaAction);
                 }
                 break;
 

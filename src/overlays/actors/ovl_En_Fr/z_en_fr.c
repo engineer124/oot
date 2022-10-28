@@ -668,7 +668,7 @@ void func_80A1BE98(EnFr* this, PlayState* play) {
         }
     }
 
-    Message_StartOcarina(play, OCARINA_ACTION_CHECK_NOWARP);
+    Message_DisplayOcarinaStaff(play, OCARINA_ACTION_CHECK_NOWARP);
     this->actionFunc = EnFr_ListeningToOcarinaNotes;
 }
 
@@ -836,7 +836,7 @@ void EnFr_SetupFrogSong(EnFr* this, PlayState* play) {
     } else {
         this->frogSongTimer = 40;
         this->ocarinaNoteIndex = 0;
-        Message_StartOcarina(play, OCARINA_ACTION_FROGS);
+        Message_DisplayOcarinaStaff(play, OCARINA_ACTION_FROGS);
         this->ocarinaNote = EnFr_GetNextNoteFrogSong(this->ocarinaNoteIndex);
         EnFr_CheckOcarinaInputFrogSong(this->ocarinaNote);
         this->actionFunc = EnFr_ContinueFrogSong;

@@ -439,11 +439,11 @@ typedef struct {
 #define PLAYER_STATE2_20 (1 << 20)
 #define PLAYER_STATE2_21 (1 << 21)
 #define PLAYER_STATE2_22 (1 << 22)
-#define PLAYER_STATE2_OCARINA_START_OVERRIDE (1 << 23) // Indicate that ocarina will be started externally to player instead of the default free start
-#define PLAYER_STATE2_OCARINA_START_READY (1 << 24) // If ocarina-start is overridden, then indicate that Player is ready to start playing ocarina
-#define PLAYER_STATE2_OCARINA_ON_WITH_ACTOR (1 << 25)
+#define PLAYER_STATE2_OCARINA_START_OVERRIDE (1 << 23) // Indicate that the ocarina textbox will be started externally to player. If not set, default to free play ocarina textbox
+#define PLAYER_STATE2_OCARINA_START_READY (1 << 24) // If ocarina-start is overridden or the ocarina is attached to an actor, then indicate that Player is ready to start playing ocarina
+#define PLAYER_STATE2_OCARINA_ON_WITH_ACTOR (1 << 25) // Ocarina is being played to an actor
 #define PLAYER_STATE2_26 (1 << 26)
-#define PLAYER_STATE2_OCARINA_ON (1 << 27)
+#define PLAYER_STATE2_OCARINA_ON (1 << 27) // The `PlayOcarina` `func_674` is being used
 #define PLAYER_STATE2_28 (1 << 28)
 #define PLAYER_STATE2_29 (1 << 29)
 #define PLAYER_STATE2_30 (1 << 30)
@@ -454,7 +454,7 @@ typedef struct {
 #define PLAYER_STATE3_2 (1 << 2)
 #define PLAYER_STATE3_3 (1 << 3)
 #define PLAYER_STATE3_4 (1 << 4)
-#define PLAYER_STATE3_OCARINA_FORCED (1 << 5)  // Makes player take ocarina out right away
+#define PLAYER_STATE3_OCARINA_AFTER_TEXTBOX (1 << 5)  // Makes player take out the ocarina after closing a textbox from either 1) talking to an actor 2) getItem textbox
 #define PLAYER_STATE3_RESTORE_NAYRUS_LOVE (1 << 6) // Set by ocarina effects actors when destroyed to signal Nayru's Love may be restored (see `ACTOROVL_ALLOC_ABSOLUTE`)
 #define PLAYER_STATE3_7 (1 << 7)
 

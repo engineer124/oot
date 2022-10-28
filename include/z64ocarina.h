@@ -38,7 +38,7 @@ typedef enum {
     /* 0x0C */ OCARINA_ACTION_DEMONSTRATE_TIME,
     /* 0x0D */ OCARINA_ACTION_DEMONSTRATE_STORMS,
     /* 0x0E */ OCARINA_ACTION_UNK_E,
-    /* 0x0F */ OCARINA_ACTION_PROMPT_MINUET, // Playing back a particular song
+    /* 0x0F */ OCARINA_ACTION_PROMPT_MINUET, // Playing back a particular song, notes are prompted
     /* 0x10 */ OCARINA_ACTION_PROMPT_BOLERO,
     /* 0x11 */ OCARINA_ACTION_PROMPT_SERENADE,
     /* 0x12 */ OCARINA_ACTION_PROMPT_REQUIEM,
@@ -79,7 +79,7 @@ typedef enum {
     /* 0x0 */ OCARINA_MODE_NONE,
     /* 0x1 */ OCARINA_MODE_ACTIVE,
     /* 0x2 */ OCARINA_MODE_WARP,
-    /* 0x3 */ OCARINA_MODE_EVENT, // Something has happened
+    /* 0x3 */ OCARINA_MODE_EVENT, // Indicate a song has played, but leave it to the actor to respond
     /* 0x4 */ OCARINA_MODE_END,
     /* 0x5 */ OCARINA_MODE_PLAYED_SARIA,
     /* 0x6 */ OCARINA_MODE_PLAYED_EPONA,
@@ -161,6 +161,10 @@ typedef enum {
  *      0x40 - BTN_Z is pressed to lower note by a semitone
  *      0x80 - BTN_R is pressed to raise note by a semitone
  */
+#define OCARINA_BUTTON_MASK_PITCH 0x3F
+#define OCARINA_BUTTON_MASK_FLAG 0xC0
+#define OCARINA_BUTTON_FLAG_BFLAT_LOWER 0x40
+#define OCARINA_BUTTON_FLAG_BFLAT_RAISE 0x80
 
 typedef struct {
     /* 0x0 */ u8 pitch; // number of semitones above middle C

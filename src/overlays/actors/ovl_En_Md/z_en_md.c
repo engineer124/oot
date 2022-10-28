@@ -763,7 +763,7 @@ void func_80AAB948(EnMd* this, PlayState* play) {
         if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
             player->stateFlags2 |= PLAYER_STATE2_OCARINA_ON_WITH_ACTOR;
             player->ocarinaActor = &this->actor;
-            Message_StartOcarina(play, OCARINA_ACTION_CHECK_SARIA);
+            Message_DisplayOcarinaStaff(play, OCARINA_ACTION_CHECK_SARIA);
             this->actionFunc = func_80AABC10;
             return;
         }
