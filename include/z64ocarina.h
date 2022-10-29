@@ -37,7 +37,7 @@ typedef enum {
     /* 0x0B */ OCARINA_ACTION_DEMONSTRATE_SUNS,
     /* 0x0C */ OCARINA_ACTION_DEMONSTRATE_TIME,
     /* 0x0D */ OCARINA_ACTION_DEMONSTRATE_STORMS,
-    /* 0x0E */ OCARINA_ACTION_UNK_E,
+    /* 0x0E */ OCARINA_ACTION_UNK_E, // Treated as a prompt but causes a -1 reads out of bounds, leading to odd behaviour
     /* 0x0F */ OCARINA_ACTION_PROMPT_MINUET, // Playing back a particular song, notes are prompted
     /* 0x10 */ OCARINA_ACTION_PROMPT_BOLERO,
     /* 0x11 */ OCARINA_ACTION_PROMPT_SERENADE,
@@ -50,7 +50,7 @@ typedef enum {
     /* 0x18 */ OCARINA_ACTION_PROMPT_SUNS,
     /* 0x19 */ OCARINA_ACTION_PROMPT_TIME,
     /* 0x1A */ OCARINA_ACTION_PROMPT_STORMS,
-    /* 0x1B */ OCARINA_ACTION_UNK_1B,
+    /* 0x1B */ OCARINA_ACTION_UNK_1B, // Prompt scarecrows?
     /* 0x1C */ OCARINA_ACTION_CHECK_MINUET, // Playing songs for check spots
     /* 0x1D */ OCARINA_ACTION_CHECK_BOLERO,
     /* 0x1E */ OCARINA_ACTION_CHECK_SERENADE,
