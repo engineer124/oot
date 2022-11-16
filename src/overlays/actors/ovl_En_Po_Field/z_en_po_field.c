@@ -698,11 +698,11 @@ void EnPoField_SoulInteract(EnPoField* this, PlayState* play) {
                 if (Inventory_HasEmptyBottle()) {
                     Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_PO_BIG_GET);
                     if (this->actor.params == 0) {
-                        Item_Give(play, ITEM_POE);
+                        Item_Give(play, ITEM_BOTTLE_POE);
                         this->actor.textId = 0x5008;
                     } else {
                         this->actor.textId = 0x508F;
-                        Item_Give(play, ITEM_BIG_POE);
+                        Item_Give(play, ITEM_BOTTLE_BIG_POE);
                         Flags_SetSwitch(play, sSpawnSwitchFlags[this->spawnFlagIndex]);
                     }
                 } else {
