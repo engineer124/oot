@@ -27,7 +27,7 @@ extern CutsceneData D_80B4C5D0[];
 
 #include "z_en_zl1_camera_data.inc.c"
 
-const ActorInit En_Zl1_InitVars = {
+ActorInit En_Zl1_InitVars = {
     ACTOR_EN_ZL1,
     ACTORCAT_NPC,
     FLAGS,
@@ -511,7 +511,7 @@ void func_80B4BF2C(EnZl1* this, PlayState* play) {
             if ((Message_GetState(msgCtx) == TEXT_STATE_EVENT) && Message_ShouldAdvance(play)) {
                 this->actor.textId = 0xFFFF;
                 play->talkWithPlayer(play, &this->actor);
-                func_8002F434(&this->actor, play, GI_LETTER_ZELDA, 120.0f, 10.0f);
+                func_8002F434(&this->actor, play, GI_ZELDAS_LETTER, 120.0f, 10.0f);
                 play->msgCtx.msgMode = MSGMODE_TEXT_CLOSING;
                 play->msgCtx.stateTimer = 4;
                 this->unk_1E2++;
@@ -526,7 +526,7 @@ void func_80B4BF2C(EnZl1* this, PlayState* play) {
                 this->actor.parent = NULL;
                 this->unk_1E2++;
             } else {
-                func_8002F434(&this->actor, play, GI_LETTER_ZELDA, 120.0f, 10.0f);
+                func_8002F434(&this->actor, play, GI_ZELDAS_LETTER, 120.0f, 10.0f);
             }
             break;
         case 3:

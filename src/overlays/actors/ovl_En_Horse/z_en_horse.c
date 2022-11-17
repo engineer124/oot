@@ -68,7 +68,7 @@ static f32 sDemonstrationSpeeds[] = {
 
 static SkeletonHeader* sSkeletonHeaders[] = { &gEponaSkel, &gHorseIngoSkel };
 
-const ActorInit En_Horse_InitVars = {
+ActorInit En_Horse_InitVars = {
     ACTOR_EN_HORSE,
     ACTORCAT_BG,
     FLAGS,
