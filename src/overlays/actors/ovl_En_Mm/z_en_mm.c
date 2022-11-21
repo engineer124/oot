@@ -294,7 +294,7 @@ void func_80AADCD0(EnMm* this, PlayState* play) {
             if (this->curAnimIndex != 5) {
                 if ((this->actor.textId == 0x202A) || (this->actor.textId == 0x202B)) {
                     EnMm_ChangeAnim(this, RM_ANIM_EXCITED, &this->curAnimIndex);
-                    Lib_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+                    Lib_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR);
                 }
             }
         } else {
@@ -423,7 +423,7 @@ void func_80AAE294(EnMm* this, PlayState* play) {
             if (((this->skelAnime.curFrame - this->skelAnime.playSpeed < 9.0f) && (this->skelAnime.curFrame >= 9.0f)) ||
                 ((this->skelAnime.curFrame - this->skelAnime.playSpeed < 19.0f) &&
                  (this->skelAnime.curFrame >= 19.0f))) {
-                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_MORIBLIN_WALK);
+                Actor_PlaySfx(&this->actor, NA_SE_EN_MORIBLIN_WALK);
             }
         }
 

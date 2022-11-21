@@ -177,7 +177,7 @@ void func_80ABCDBC(EnNy* this) {
 }
 
 void EnNy_SetupTurnToStone(EnNy* this) {
-    Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_NYU_HIT_STOP);
+    Actor_PlaySfx(&this->actor, NA_SE_EN_NYU_HIT_STOP);
     this->actionFunc = EnNy_TurnToStone;
     this->unk_1E8 = 0.0f;
 }
@@ -225,7 +225,7 @@ void EnNy_Move(EnNy* this, PlayState* play) {
     s32 stoneTimer;
 
     if (!(this->unk_1F0 < this->actor.yDistToWater)) {
-        Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENEMY_NYU_MOVE - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->actor, NA_SE_EN_NYU_MOVE - SFX_FLAG);
     }
     func_80ABCD40(this);
     stoneTimer = this->stoneTimer;
@@ -253,7 +253,7 @@ void EnNy_TurnToStone(EnNy* this, PlayState* play) {
         phi_f0 = 0.25f;
         if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND_TOUCH) {
             if (!(this->unk_1F0 < this->actor.yDistToWater)) {
-                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_DODO_M_GND);
+                Actor_PlaySfx(&this->actor, NA_SE_EN_DODO_M_GND);
             }
             this->actor.bgCheckFlags &= ~BGCHECKFLAG_GROUND_TOUCH;
             this->actor.speedXZ = 0.0f;
@@ -444,7 +444,7 @@ void EnNy_SetupDie(EnNy* this, PlayState* play) {
         } else {
             Item_DropCollectible(play, &this->actor.world.pos, ITEM00_ARROWS_SMALL);
         }
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_NYU_DEAD);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_NYU_DEAD);
         this->actionFunc = EnNy_Die;
     }
 }

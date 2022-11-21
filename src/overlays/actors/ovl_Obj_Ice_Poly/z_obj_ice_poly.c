@@ -167,7 +167,7 @@ void ObjIcePoly_Melt(ObjIcePoly* this, PlayState* play) {
         this->meltTimer++;
         if (this->meltTimer == 0) {
             this->meltTimer = 40;
-            Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_ICE_MELT);
+            Actor_PlaySfx(&this->actor, NA_SE_EV_ICE_MELT);
         }
     } else {
         if (this->meltTimer != 0) {

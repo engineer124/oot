@@ -266,7 +266,7 @@ void EnSw_Init(Actor* thisx, PlayState* play) {
     }
 
     if (((thisx->params & 0xE000) >> 0xD) >= 3) {
-        AudioSfx_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(NA_SE_SY_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 
@@ -331,7 +331,7 @@ s32 func_80B0C9F0(EnSw* this, PlayState* play) {
             this->unk_392 = 0x10;
             Actor_SetColorFilter(&this->actor, 0x4000, 0xC8, 0, this->unk_392);
             if (Actor_ApplyDamage(&this->actor) != 0) {
-                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_STALTU_DAMAGE);
+                Actor_PlaySfx(&this->actor, NA_SE_EN_STALTU_DAMAGE);
                 return true;
             }
             Enemy_StartFinishingBlow(play, &this->actor);
@@ -356,7 +356,7 @@ s32 func_80B0C9F0(EnSw* this, PlayState* play) {
                 this->actionFunc = func_80B0DB00;
             }
 
-            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_STALWALL_DEAD);
+            Actor_PlaySfx(&this->actor, NA_SE_EN_STALWALL_DEAD);
             return true;
         }
     }
@@ -437,8 +437,8 @@ void func_80B0CEA8(EnSw* this, PlayState* play) {
         Camera* activeCam = GET_ACTIVE_CAM(play);
 
         if (!(Math_Vec3f_DistXYZ(&this->actor.world.pos, &activeCam->eye) >= 380.0f)) {
-            Actor_PlaySfx(&this->actor, ((this->actor.params & 0xE000) >> 0xD) > 0 ? SFX_ID_ENEMY_STALGOLD_ROLL
-                                                                                   : SFX_ID_ENEMY_STALWALL_ROLL);
+            Actor_PlaySfx(&this->actor,
+                          ((this->actor.params & 0xE000) >> 0xD) > 0 ? NA_SE_EN_STALGOLD_ROLL : NA_SE_EN_STALWALL_ROLL);
         }
     }
 }
@@ -498,8 +498,8 @@ void func_80B0D3AC(EnSw* this, PlayState* play) {
         }
         this->unk_38C--;
         if (this->unk_38C == 0) {
-            SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, SFX_ID_ENEMY_STALGOLD_UP_CRY);
-            SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, SFX_ID_ENEMY_DODO_M_UP);
+            SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EN_STALGOLD_UP_CRY);
+            SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EN_DODO_M_UP);
         } else {
             return;
         }
@@ -521,7 +521,7 @@ void func_80B0D3AC(EnSw* this, PlayState* play) {
     }
 
     if (func_80B0C0CC(this, play, 1) == 1) {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_DODO_M_GND);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_DODO_M_GND);
         func_80B0D14C(this, play, 8);
         this->actor.scale.x = 0.02f;
         Actor_SetScale(&this->actor, 0.02f);
@@ -612,7 +612,7 @@ void func_80B0D878(EnSw* this, PlayState* play) {
     this->actor.shape.rot = this->actor.world.rot;
 
     if ((this->unk_394 == 0) && (this->unk_392 == 0)) {
-        AudioSfx_PlaySfx(SFX_ID_SYSTEM_KINSTA_MARK_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(NA_SE_SY_KINSTA_MARK_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         x = (this->unk_364.x * 10.0f);
         y = (this->unk_364.y * 10.0f);
@@ -657,7 +657,7 @@ void func_80B0DB00(EnSw* this, PlayState* play) {
             this->actor.velocity.y = ((this->unk_38A--) * 8.0f) * 0.5f;
         }
 
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_DODO_M_GND);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_DODO_M_GND);
         Actor_SpawnFloorDustRing(play, &this->actor, &this->actor.world.pos, 16.0f, 12, 2.0f, 120, 10, false);
     }
 }
@@ -801,7 +801,7 @@ s32 func_80B0E430(EnSw* this, f32 arg1, s16 arg2, s32 arg3, PlayState* play) {
 
     if (Math_Vec3f_DistXYZ(&this->actor.world.pos, &activeCam->eye) < 380.0f) {
         if (DECR(this->unk_440) == 0) {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_STALWALL_ROLL);
+            Actor_PlaySfx(&this->actor, NA_SE_EN_STALWALL_ROLL);
             this->unk_440 = 4;
         }
     } else {
@@ -827,7 +827,7 @@ void func_80B0E5E0(EnSw* this, PlayState* play) {
     }
 
     if ((DECR(this->unk_442) == 0) && (func_80B0DEA8(this, play, 1))) {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_STALWALL_LAUGH);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_STALWALL_LAUGH);
         this->unk_442 = 20;
         this->actionFunc = func_80B0E728;
     }
@@ -856,7 +856,7 @@ void func_80B0E728(EnSw* this, PlayState* play) {
             func_80B0E314(this, this->unk_448, 8.0f);
 
             if (DECR(this->unk_440) == 0) {
-                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_STALWALL_DASH);
+                Actor_PlaySfx(&this->actor, NA_SE_EN_STALWALL_DASH);
                 this->unk_440 = 4;
             }
 

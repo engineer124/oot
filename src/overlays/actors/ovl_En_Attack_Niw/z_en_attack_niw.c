@@ -365,11 +365,11 @@ void EnAttackNiw_Update(Actor* thisx, PlayState* play) {
     }
     if (this->unk_25E == 0) {
         this->unk_25E = 30;
-        Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_CHICKEN_CRY_A);
+        Actor_PlaySfx(&this->actor, NA_SE_EV_CHICKEN_CRY_A);
     }
     if (this->unk_260 == 0) {
         this->unk_260 = 7;
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_DEKU_WAKEUP);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_DEKU_WAKEUP);
     }
 }
 

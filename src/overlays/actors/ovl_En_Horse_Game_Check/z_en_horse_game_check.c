@@ -150,7 +150,7 @@ s32 EnHorseGameCheck_UpdateIngoRace(EnHorseGameCheckBase* base, PlayState* play)
 
         ingoHorse->inRace = 1;
         this->startFlags |= INGORACE_INGO_MOVE;
-        AudioSfx_PlaySfx(SFX_ID_SYSTEM_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(NA_SE_SY_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 
@@ -183,7 +183,7 @@ s32 EnHorseGameCheck_UpdateIngoRace(EnHorseGameCheckBase* base, PlayState* play)
                 this->result = INGORACE_PLAYER_WIN;
                 this->finishTimer = 55;
                 SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_HORSE_GOAL);
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
             for (i = 0; i < 3; i++) {
@@ -199,7 +199,7 @@ s32 EnHorseGameCheck_UpdateIngoRace(EnHorseGameCheckBase* base, PlayState* play)
                 this->finishTimer = 70;
                 ingoHorse->stateFlags |= ENHORSE_INGO_WON;
                 SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_HORSE_GOAL);
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
             for (i = 0; i < 3; i++) {
@@ -336,7 +336,7 @@ s32 EnHorseGameCheck_UpdateMalonRace(EnHorseGameCheckBase* base, PlayState* play
         horse->inRace = 1;
     } else if ((this->startTimer > 81) && !(this->raceFlags & MALONRACE_START_SFX)) {
         this->raceFlags |= MALONRACE_START_SFX;
-        AudioSfx_PlaySfx(SFX_ID_SYSTEM_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(NA_SE_SY_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 
@@ -379,7 +379,7 @@ s32 EnHorseGameCheck_UpdateMalonRace(EnHorseGameCheckBase* base, PlayState* play
             } else if (this->fenceCheck[15] == 1) {
                 this->lapCount = 2;
                 SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_HORSE_GOAL);
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 this->result = MALONRACE_SUCCESS;
                 this->finishTimer = 70;

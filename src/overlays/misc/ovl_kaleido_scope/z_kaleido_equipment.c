@@ -309,7 +309,7 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
                 pauseCtx->nameDisplayTimer = 0;
                 pauseCtx->cursorSpecialPos = 0;
 
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
                 cursorPoint = cursorX = cursorY = 0;
@@ -356,7 +356,7 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
             if (pauseCtx->stickAdjX < -30) {
                 pauseCtx->nameDisplayTimer = 0;
                 pauseCtx->cursorSpecialPos = 0;
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
                 cursorPoint = cursorX = 3;
@@ -497,18 +497,18 @@ void KaleidoScope_DrawEquipment(PlayState* play) {
                     Interface_LoadItemIcon1(play, 0);
                 }
 
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_DECIDE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 pauseCtx->unk_1E4 = 7;
                 sEquipTimer = 10;
             } else {
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
         }
 
         if (oldCursorPoint != pauseCtx->cursorPoint[PAUSE_EQUIP]) {
-            AudioSfx_PlaySfx(SFX_ID_SYSTEM_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
     } else if ((pauseCtx->unk_1E4 == 7) && (pauseCtx->pageIndex == PAUSE_EQUIP)) {

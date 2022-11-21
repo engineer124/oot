@@ -280,7 +280,7 @@ void func_80064824(PlayState* play, CutsceneContext* csCtx, CsCmdBase* cmd) {
                 play->roomCtx.unk_74[0] += 0x14;
             }
             if (csCtx->frames == 0x30F) {
-                Lib_PlaySfx(SFX_ID_ENVIRONMENT_DEKU_DEATH);
+                Lib_PlaySfx(NA_SE_EV_DEKU_DEATH);
             } else if (csCtx->frames == 0x2CD) {
                 play->roomCtx.unk_74[0] = 0;
             }
@@ -294,7 +294,7 @@ void func_80064824(PlayState* play, CutsceneContext* csCtx, CsCmdBase* cmd) {
             break;
         case 13:
             if (play->roomCtx.unk_74[1] == 0) {
-                Lib_PlaySfx(SFX_ID_ENVIRONMENT_TRIFORCE_FLASH);
+                Lib_PlaySfx(NA_SE_EV_TRIFORCE_FLASH);
             }
             if (play->roomCtx.unk_74[1] < 0xFF) {
                 play->roomCtx.unk_74[1] += 5;
@@ -407,7 +407,7 @@ void func_80064824(PlayState* play, CutsceneContext* csCtx, CsCmdBase* cmd) {
             if (sp3F != 0) {
                 play->envCtx.sandstormState = SANDSTORM_FILL;
             }
-            Lib_PlaySfx_Centered(SFX_ID_ENVIRONMENT_SAND_STORM - SFX_FLAG);
+            Lib_PlaySfx_Centered(NA_SE_EV_SAND_STORM - SFX_FLAG);
             break;
         case 33:
             gSaveContext.sunsSongState = SUNSSONG_START;
@@ -495,7 +495,7 @@ void Cutscene_Command_Terminator(PlayState* play, CutsceneContext* csCtx, CsCmdB
          CHECK_BTN_ALL(play->state.input[0].press.button, BTN_B) ||
          CHECK_BTN_ALL(play->state.input[0].press.button, BTN_START)) &&
         (gSaveContext.fileNum != 0xFEDC) && (play->transitionTrigger == TRANS_TRIGGER_OFF)) {
-        AudioSfx_PlaySfx(SFX_ID_SYSTEM_PIECE_OF_HEART, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(NA_SE_SY_PIECE_OF_HEART, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         temp = 1;
     }
@@ -1249,15 +1249,15 @@ void Cutscene_Command_TransitionFX(PlayState* play, CutsceneContext* csCtx, CsCm
                 if (cmd->base == 1) {
                     play->envCtx.screenFillColor[3] = 255.0f * temp;
                     if ((temp == 0.0f) && (gSaveContext.entranceIndex == ENTR_KENJYANOMA_0)) {
-                        AudioSfx_PlaySfx(SFX_ID_SYSTEM_WHITE_OUT_S, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                        AudioSfx_PlaySfx(NA_SE_SY_WHITE_OUT_S, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     } else if ((temp == 0.0f) && ((gSaveContext.entranceIndex == ENTR_TOKINOMA_0) ||
                                                   (gSaveContext.entranceIndex == ENTR_SPOT15_0) ||
                                                   (gSaveContext.entranceIndex == ENTR_YOUSEI_IZUMI_YOKO_0))) {
-                        AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_WHITE_OUT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                        AudioSfx_PlaySfx(NA_SE_EV_WHITE_OUT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     } else if ((temp == 0.0f) && (play->sceneId == SCENE_GANONTIKA)) {
-                        Lib_PlaySfx_Centered(SFX_ID_ENVIRONMENT_WHITE_OUT);
+                        Lib_PlaySfx_Centered(NA_SE_EV_WHITE_OUT);
                     }
                 } else {
                     play->envCtx.screenFillColor[3] = (1.0f - temp) * 255.0f;

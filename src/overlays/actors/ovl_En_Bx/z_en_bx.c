@@ -183,7 +183,7 @@ void EnBx_Update(Actor* thisx, PlayState* play) {
             }
         }
 
-        Actor_PlaySfx(thisx, SFX_ID_ENEMY_BIRI_SPARK - SFX_FLAG);
+        Actor_PlaySfx(thisx, NA_SE_EN_BIRI_SPARK - SFX_FLAG);
     }
     thisx->focus.pos = thisx->world.pos;
     Collider_UpdateCylinder(thisx, &this->collider);

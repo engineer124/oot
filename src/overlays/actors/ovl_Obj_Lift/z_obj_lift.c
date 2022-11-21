@@ -179,7 +179,7 @@ void ObjLift_Shake(ObjLift* this, PlayState* play) {
     }
 
     if ((this->timer & 3) == 3) {
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 16, SFX_ID_ENVIRONMENT_BLOCK_SHAKE);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 16, NA_SE_EV_BLOCK_SHAKE);
     }
 }
 
@@ -203,7 +203,7 @@ void ObjLift_Fall(ObjLift* this, PlayState* play) {
     if ((this->dyna.actor.floorHeight - this->dyna.actor.world.pos.y) >=
         (sMaxFallDistances[(this->dyna.actor.params >> 1) & 1] - 0.001f)) {
         ObjLift_SpawnFragments(this, play);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 20, SFX_ID_ENVIRONMENT_BOX_BREAK);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 20, NA_SE_EV_BOX_BREAK);
         Flags_SetSwitch(play, (this->dyna.actor.params >> 2) & 0x3F);
         Actor_Kill(&this->dyna.actor);
     }

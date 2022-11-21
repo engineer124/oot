@@ -126,7 +126,7 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
         OnePointCutscene_Attention(play, &this->actor);
         this->actor.flags |= ACTOR_FLAG_0 | ACTOR_FLAG_27;
 
-        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
         if (this->switchFlag >= 0) {
             Flags_SetSwitch(play, this->switchFlag);
         }
@@ -149,7 +149,7 @@ void func_80A90264(EnKakasi2* this, PlayState* play) {
             Collider_SetCylinder(play, &this->collider, &this->actor, &sCylinderInit);
             SkelAnime_InitFlex(play, &this->skelAnime, &object_ka_Skel_0065B0, &object_ka_Anim_000214, NULL, NULL, 0);
             OnePointCutscene_Attention(play, &this->actor);
-            Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+            Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
 
             this->actor.flags |= ACTOR_FLAG_0 | ACTOR_FLAG_27;
             this->actionFunc = func_80A904D8;
@@ -161,7 +161,7 @@ void func_80A904D8(EnKakasi2* this, PlayState* play) {
     f32 frameCount = Animation_GetLastFrame(&object_ka_Anim_000214);
 
     Animation_Change(&this->skelAnime, &object_ka_Anim_000214, 1.0f, 0.0f, (s16)frameCount, ANIMMODE_LOOP, -10.0f);
-    Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_COME_UP_DEKU_JR);
+    Actor_PlaySfx(&this->actor, NA_SE_EV_COME_UP_DEKU_JR);
     this->actionFunc = func_80A90578;
 }
 
@@ -172,7 +172,7 @@ void func_80A90578(EnKakasi2* this, PlayState* play) {
 
     currentFrame = this->skelAnime.curFrame;
     if (currentFrame == 11 || currentFrame == 17) {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_KAKASHI_SWING);
+        Actor_PlaySfx(&this->actor, NA_SE_EV_KAKASHI_SWING);
     }
 
     this->actor.shape.rot.y += 0x800;

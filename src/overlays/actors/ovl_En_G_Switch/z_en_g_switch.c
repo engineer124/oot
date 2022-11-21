@@ -212,7 +212,7 @@ void EnGSwitch_SilverRupeeTracker(EnGSwitch* this, PlayState* play) {
         if (sCollectedCount < 5) {
             // "sound?"
             osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ 音？ ☆☆☆☆☆ %d\n" VT_RST, this->noteIndex);
-            Audio_PlaySfx_Transposed(&gSfxDefaultPos, SFX_ID_ENVIRONMENT_FIVE_COUNT_LUPY, majorScale[this->noteIndex]);
+            Audio_PlaySfx_Transposed(&gSfxDefaultPos, NA_SE_EV_FIVE_COUNT_LUPY, majorScale[this->noteIndex]);
             this->noteIndex = sCollectedCount;
         }
     }
@@ -225,10 +225,10 @@ void EnGSwitch_SilverRupeeTracker(EnGSwitch* this, PlayState* play) {
         if ((play->sceneId == SCENE_MEN) && (this->actor.room == 2)) {
             Flags_SetTempClear(play, this->actor.room);
         } else {
-            Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+            Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
             Flags_SetSwitch(play, this->switchFlag);
         }
-        Lib_PlaySfx(SFX_ID_SYSTEM_GET_RUPY);
+        Lib_PlaySfx(NA_SE_SY_GET_RUPY);
         Actor_Kill(&this->actor);
     }
 }
@@ -240,7 +240,7 @@ void EnGSwitch_SilverRupeeIdle(EnGSwitch* this, PlayState* play) {
     if (this->actor.xyzDistToPlayerSq < SQ(30.0f)) {
         Rupees_ChangeBy(5);
         sCollectedCount++;
-        Lib_PlaySfx(SFX_ID_SYSTEM_GET_RUPY);
+        Lib_PlaySfx(NA_SE_SY_GET_RUPY);
         this->actor.world.pos = player->actor.world.pos;
         this->actor.world.pos.y += 40.0f;
         if (LINK_IS_ADULT) {
@@ -342,8 +342,8 @@ void EnGSwitch_GalleryRupee(EnGSwitch* this, PlayState* play) {
             if (gallery->actor.update != NULL) {
                 gallery->hitCount++;
                 gallery->targetState[this->index] = ENSYATEKIHIT_HIT;
-                Lib_PlaySfx(SFX_ID_ENVIRONMENT_HIT_SOUND);
-                Lib_PlaySfx(SFX_ID_SYSTEM_GET_RUPY);
+                Lib_PlaySfx(NA_SE_EV_HIT_SOUND);
+                Lib_PlaySfx(NA_SE_SY_GET_RUPY);
                 // "Yeah !"
                 osSyncPrintf(VT_FGCOL(YELLOW) "☆☆☆☆☆ いぇぇーす！ＨＩＴ！！ ☆☆☆☆☆ %d\n" VT_RST, gallery->hitCount);
                 EnGSwitch_Break(this, play);
@@ -400,7 +400,7 @@ void EnGSwitch_ArcheryPot(EnGSwitch* this, PlayState* play) {
                                  KAKERA_COLOR_NONE, OBJECT_TSUBO, object_tsubo_DL_001960);
         }
         func_80033480(play, thisPos, 30.0f, 4, 20, 50, 0);
-        SfxSource_PlaySfxAtFixedWorldPos(play, thisPos, 40, SFX_ID_ENVIRONMENT_POT_BROKEN);
+        SfxSource_PlaySfxAtFixedWorldPos(play, thisPos, 40, NA_SE_EV_POT_BROKEN);
         EnGSwitch_Break(this, play);
         this->killTimer = 50;
         this->broken = true;

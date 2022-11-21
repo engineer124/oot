@@ -487,8 +487,8 @@ void func_8002C7BC(TargetContext* targetCtx, Player* player, Actor* actorArg, Pl
                 targetCtx->unk_48 = 0;
             }
 
-            lockOnSfxId = CHECK_FLAG_ALL(actorArg->flags, ACTOR_FLAG_0 | ACTOR_FLAG_2) ? SFX_ID_SYSTEM_LOCK_ON
-                                                                                       : SFX_ID_SYSTEM_LOCK_ON_HUMAN;
+            lockOnSfxId = CHECK_FLAG_ALL(actorArg->flags, ACTOR_FLAG_0 | ACTOR_FLAG_2) ? NA_SE_SY_LOCK_ON
+                                                                                       : NA_SE_SY_LOCK_ON_HUMAN;
             Lib_PlaySfx(lockOnSfxId);
         }
 
@@ -1719,7 +1719,7 @@ void Actor_PlaySfx_Surface(PlayState* play, Actor* actor) {
         sfxId = SurfaceType_GetSfxId(&play->colCtx, actor->floorPoly, actor->floorBgId);
     }
 
-    Lib_PlaySfx_AtPos(&actor->projectedPos, SFX_ID_ENVIRONMENT_BOMB_BOUND);
+    Lib_PlaySfx_AtPos(&actor->projectedPos, NA_SE_EV_BOMB_BOUND);
     Lib_PlaySfx_AtPos(&actor->projectedPos, sfxId + SFX_FLAG);
 }
 
@@ -1776,7 +1776,7 @@ s32 func_8002F9EC(PlayState* play, Actor* actor, CollisionPoly* poly, s32 bgId, 
     if (SurfaceType_GetFloorType(&play->colCtx, poly, bgId) == FLOOR_TYPE_8) {
         play->roomCtx.unk_74[0] = 1;
         CollisionCheck_BlueBlood(play, NULL, pos);
-        Actor_PlaySfx(actor, SFX_ID_ITEM_WALL_HIT_BUYO);
+        Actor_PlaySfx(actor, NA_SE_IT_WALL_HIT_BUYO);
         return true;
     }
 
@@ -2171,7 +2171,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
         actor = NULL;
         if (actorCtx->targetCtx.unk_4B != 0) {
             actorCtx->targetCtx.unk_4B = 0;
-            Lib_PlaySfx(SFX_ID_SYSTEM_LOCK_OFF);
+            Lib_PlaySfx(NA_SE_SY_LOCK_OFF);
         }
     }
 
@@ -2277,7 +2277,7 @@ void func_80030ED8(Actor* actor) {
     } else if (actor->flags & ACTOR_FLAG_SFX_CENTERED) {
         Lib_PlaySfx_Centered(actor->sfx);
     } else if (actor->flags & ACTOR_FLAG_SFX_TIMER) {
-        AudioSfx_SetChannelIO(&gSfxDefaultPos, SFX_ID_SYSTEM_TIMER - SFX_FLAG, (s8)(actor->sfx - 1));
+        AudioSfx_SetChannelIO(&gSfxDefaultPos, NA_SE_SY_TIMER - SFX_FLAG, (s8)(actor->sfx - 1));
     } else {
         Lib_PlaySfx_AtPos(&actor->projectedPos, actor->sfx);
     }
@@ -3068,7 +3068,7 @@ Actor* Actor_Find(ActorContext* actorCtx, s32 actorId, s32 actorCategory) {
  */
 void Enemy_StartFinishingBlow(PlayState* play, Actor* actor) {
     play->actorCtx.freezeFlashTimer = 5;
-    SfxSource_PlaySfxAtFixedWorldPos(play, &actor->world.pos, 20, SFX_ID_ENEMY_LAST_DAMAGE);
+    SfxSource_PlaySfxAtFixedWorldPos(play, &actor->world.pos, 20, NA_SE_EN_LAST_DAMAGE);
 }
 
 s16 func_80032CB4(s16* arg0, s16 arg1, s16 arg2, s16 arg3) {
@@ -3651,7 +3651,7 @@ void func_8003424C(PlayState* play, Vec3f* arg1) {
 
 void Actor_SetColorFilter(Actor* actor, s16 colorFlag, s16 colorIntensityMax, s16 xluFlag, s16 duration) {
     if ((colorFlag == 0x8000) && !(colorIntensityMax & 0x8000)) {
-        Actor_PlaySfx(actor, SFX_ID_ENEMY_LIGHT_ARROW_HIT);
+        Actor_PlaySfx(actor, NA_SE_EN_LIGHT_ARROW_HIT);
     }
 
     actor->colorFilterParams = colorFlag | xluFlag | ((colorIntensityMax & 0xF8) << 5) | duration;
@@ -5019,7 +5019,7 @@ void func_80036E50(u16 textId, s16 arg1) {
                     Flags_SetInfTable(INFTABLE_0C);
                     return;
                 case 0x1033:
-                    AudioSfx_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                    AudioSfx_PlaySfx(NA_SE_SY_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     Flags_SetEventChkInf(EVENTCHKINF_04);
                     Flags_SetInfTable(INFTABLE_0E);
@@ -5483,7 +5483,7 @@ s32 func_80037CB8(PlayState* play, Actor* actor, s16 arg2) {
         case TEXT_STATE_CHOICE:
         case TEXT_STATE_EVENT:
             if (Message_ShouldAdvance(play) && func_80037C94(play, actor, arg2)) {
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_CANCEL, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 msgCtx->msgMode = MSGMODE_TEXT_CLOSING;
                 ret = true;

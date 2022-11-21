@@ -190,14 +190,14 @@ void BgJyaMegami_DetectLight(BgJyaMegami* this, PlayState* play) {
         if (play->gameplayFrames % 4 == 0) {
             BgJyaMegami_SetupSpawnEffect(this, play, (this->crumbleIndex * 0.04f) + 0.05f);
         }
-        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_FACE_CRUMBLE_SLOW - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_FACE_CRUMBLE_SLOW - SFX_FLAG);
     } else if (this->lightTimer > 0) {
         this->lightTimer--;
     }
     if (this->lightTimer > 40) {
         Flags_SetSwitch(play, this->dyna.actor.params & 0x3F);
         BgJyaMegami_SetupExplode(this);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 100, SFX_ID_ENVIRONMENT_FACE_EXPLOSION);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 100, NA_SE_EV_FACE_EXPLOSION);
         OnePointCutscene_Init(play, 3440, -99, &this->dyna.actor, CAM_ID_MAIN);
     } else {
         if (this->lightTimer < 8) {
@@ -236,7 +236,7 @@ void BgJyaMegami_Explode(BgJyaMegami* this, PlayState* play) {
 
     this->explosionTimer++;
     if (this->explosionTimer == 30) {
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 100, SFX_ID_ENVIRONMENT_FACE_BREAKDOWN);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->dyna.actor.world.pos, 100, NA_SE_EV_FACE_BREAKDOWN);
     }
 
     for (i = 0; i < ARRAY_COUNT(this->pieces); i++) {
@@ -278,7 +278,7 @@ void BgJyaMegami_Explode(BgJyaMegami* this, PlayState* play) {
         func_80033480(play, &sp8C, 100.0f, 1, 150, 100, 1);
     }
     if (this->explosionTimer == 60) {
-        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
     }
     if (this->explosionTimer >= 100) {
         Actor_Kill(&this->dyna.actor);

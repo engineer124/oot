@@ -81,7 +81,7 @@ void TransitionCircle_Start(void* thisx) {
     } else {
         this->texY = (s32)(125.0 * (1 << 2));
         if (this->appearanceType == TCA_RIPPLE) {
-            AudioSfx_PlaySfx(SFX_ID_OCARINA_SECRET_WARP_OUT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(NA_SE_OC_SECRET_WARP_OUT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
     }
@@ -107,7 +107,7 @@ void TransitionCircle_Update(void* thisx, s32 updateRate) {
     if (this->direction != 0) {
         if (this->texY == 0) {
             if (this->appearanceType == TCA_RIPPLE) {
-                AudioSfx_PlaySfx(SFX_ID_OCARINA_SECRET_WARP_IN, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_OC_SECRET_WARP_IN, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
         }

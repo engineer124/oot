@@ -141,14 +141,14 @@ void func_808BEFF4(BgYdanMaruta* this, PlayState* play) {
     }
     this->dyna.actor.shape.rot.x += 0x360;
     CollisionCheck_SetAT(play, &play->colChkCtx, &this->collider.base);
-    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_TOGE_STICK_ROLLING - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_TOGE_STICK_ROLLING - SFX_FLAG);
 }
 
 void func_808BF078(BgYdanMaruta* this, PlayState* play) {
     if (this->collider.base.acFlags & AC_HIT) {
         this->unk_16A = 20;
         Flags_SetSwitch(play, this->switchFlag);
-        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
         this->actionFunc = func_808BF108;
         OnePointCutscene_Init(play, 3010, 50, &this->dyna.actor, CAM_ID_MAIN);
     } else {
@@ -178,13 +178,13 @@ void func_808BF108(BgYdanMaruta* this, PlayState* play) {
     this->dyna.actor.world.pos.x = (Math_CosS(this->dyna.actor.shape.rot.y) * temp) + this->dyna.actor.home.pos.x;
     this->dyna.actor.world.pos.z = (Math_SinS(this->dyna.actor.shape.rot.y) * temp) + this->dyna.actor.home.pos.z;
 
-    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_TRAP_OBJ_SLIDE - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_TRAP_OBJ_SLIDE - SFX_FLAG);
 }
 
 void func_808BF1EC(BgYdanMaruta* this, PlayState* play) {
     this->dyna.actor.velocity.y += 1.0f;
     if (Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y, this->dyna.actor.velocity.y)) {
-        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_LADDER_DOUND);
+        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_LADDER_DOUND);
         this->actionFunc = BgYdanMaruta_DoNothing;
     }
 }

@@ -55,22 +55,22 @@ typedef struct {
 #define DEFINE_SFX(enum, _1, _2, _3, _4) enum,
 
 typedef enum {
-    SFX_ID_NONE,
+    NA_SE_NONE,
     SFX_ID_PLAYER_BASE = 0x7FF,
     #include "tables/sfx/playerbank_table.h"
-    SFX_ID_ITEM_BASE = 0x17FF,
+    NA_SE_IT_BASE = 0x17FF,
     #include "tables/sfx/itembank_table.h"
-    SFX_ID_ENVIRONMENT_BASE = 0x27FF,
+    NA_SE_EV_BASE = 0x27FF,
     #include "tables/sfx/environmentbank_table.h"
-    SFX_ID_ENEMY_BASE = 0x37FF,
+    NA_SE_EN_BASE = 0x37FF,
     #include "tables/sfx/enemybank_table.h"
-    SFX_ID_SYSTEM_BASE = 0x47FF,
+    NA_SE_SY_BASE = 0x47FF,
     #include "tables/sfx/systembank_table.h"
-    SFX_ID_OCARINA_BASE = 0x57FF,
+    NA_SE_OC_BASE = 0x57FF,
     #include "tables/sfx/ocarinabank_table.h"
-    SFX_ID_VOICE_BASE = 0x67FF,
+    NA_SE_VO_BASE = 0x67FF,
     #include "tables/sfx/voicebank_table.h"
-    SFX_ID_MAX
+    NA_SE_MAX
 } SfxId;
 
 #undef DEFINE_SFX

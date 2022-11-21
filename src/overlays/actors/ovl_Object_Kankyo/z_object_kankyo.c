@@ -203,22 +203,22 @@ void ObjectKankyo_Fairies(ObjectKankyo* this, PlayState* play) {
             dist = 1.0f;
         }
 
-        Audio_PlaySfx_AtPosWithFreq(&sSfxPos, SFX_ID_ENVIRONMENT_NAVY_FLY - SFX_FLAG, (0.4f * dist) + 0.6f);
+        Audio_PlaySfx_AtPosWithFreq(&sSfxPos, NA_SE_EV_NAVY_FLY - SFX_FLAG, (0.4f * dist) + 0.6f);
         switch (play->csCtx.frames) {
             case 473:
-                Lib_PlaySfx_Centered(SFX_ID_VOICE_NA_HELLO_3);
+                Lib_PlaySfx_Centered(NA_SE_VO_NA_HELLO_3);
                 break;
 
             case 583:
-                Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, SFX_ID_VOICE_NA_HELLO_2, 32);
+                Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_VO_NA_HELLO_2, 32);
                 break;
 
             case 763:
-                Lib_PlaySfx(SFX_ID_ENVIRONMENT_NAVY_CRASH - SFX_FLAG);
+                Lib_PlaySfx(NA_SE_EV_NAVY_CRASH - SFX_FLAG);
                 break;
 
             case 771:
-                Lib_PlaySfx(SFX_ID_VOICE_RT_THROW);
+                Lib_PlaySfx(NA_SE_VO_RT_THROW);
                 break;
 
             default:
@@ -799,7 +799,7 @@ void ObjectKankyo_WaitForSunGraveSparkObject(ObjectKankyo* this, PlayState* play
 void ObjectKankyo_SunGraveSpark(ObjectKankyo* this, PlayState* play) {
     if (play->csCtx.state != 0) {
         if (play->csCtx.npcActions[1] != NULL && play->csCtx.npcActions[1]->action == 2) {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_BIRI_SPARK - SFX_FLAG);
+            Actor_PlaySfx(&this->actor, NA_SE_EN_BIRI_SPARK - SFX_FLAG);
             if ((s16)this->effects[0].alpha + 20 > 255) {
                 this->effects[0].alpha = 255;
             } else {

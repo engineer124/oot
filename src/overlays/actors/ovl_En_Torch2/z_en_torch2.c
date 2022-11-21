@@ -338,7 +338,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
                             EnTorch2_SwingSword(play, input, this);
                             sSwordJumpState++;
                         } else if (sSwordJumpTimer == 19) {
-                            Audio_PlaySfx_DarkLink(&this->actor.projectedPos, SFX_ID_VOICE_LI_AUTO_JUMP);
+                            Audio_PlaySfx_DarkLink(&this->actor.projectedPos, NA_SE_VO_LI_AUTO_JUMP);
                         }
                     }
                 } else {

@@ -177,7 +177,7 @@ void BgJyaGoroiwa_Move(BgJyaGoroiwa* this, PlayState* play) {
         thisx->world.rot.y = 0x4000;
     }
 
-    Actor_PlaySfx(thisx, SFX_ID_ENVIRONMENT_BIGBALL_ROLL - SFX_FLAG);
+    Actor_PlaySfx(thisx, NA_SE_EV_BIGBALL_ROLL - SFX_FLAG);
 }
 
 void BgJyaGoroiwa_SetupWait(BgJyaGoroiwa* this) {

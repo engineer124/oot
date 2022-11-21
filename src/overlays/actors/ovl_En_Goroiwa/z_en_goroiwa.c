@@ -629,7 +629,7 @@ void EnGoroiwa_Roll(EnGoroiwa* this, PlayState* play) {
             EnGoroiwa_SetupRoll(this);
         }
     }
-    Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_BIGBALL_ROLL - SFX_FLAG);
+    Actor_PlaySfx(&this->actor, NA_SE_EV_BIGBALL_ROLL - SFX_FLAG);
 }
 
 void EnGoroiwa_SetupMoveAndFallToGround(EnGoroiwa* this) {

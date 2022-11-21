@@ -283,10 +283,10 @@ void BgMizuWater_ChangeWaterLevel(BgMizuWater* this, PlayState* play) {
 
     if (this->targetY < this->actor.world.pos.y) {
         Rumble_Request(0.0f, 120, 20, 10);
-        Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_WATER_LEVEL_DOWN - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->actor, NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
     } else if (this->targetY > this->actor.world.pos.y) {
         Rumble_Request(0.0f, 120, 20, 10);
-        Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_WATER_LEVEL_DOWN - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->actor, NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
     }
 }
 

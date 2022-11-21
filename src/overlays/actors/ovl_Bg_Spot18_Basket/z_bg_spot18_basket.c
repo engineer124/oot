@@ -230,7 +230,7 @@ void func_808B7BCC(BgSpot18Basket* this, PlayState* play) {
             }
         }
     }
-    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
 }
 
 void func_808B7D38(BgSpot18Basket* this) {
@@ -285,7 +285,7 @@ void func_808B7D50(BgSpot18Basket* this, PlayState* play) {
 
     tempValue = CLAMP(tempValue2, 0.0f, 1.5f);
 
-    Audio_PlaySfx_AtPosWithFreq(&this->dyna.actor.projectedPos, SFX_ID_ENVIRONMENT_WALL_MOVE_SP - SFX_FLAG, tempValue);
+    Audio_PlaySfx_AtPosWithFreq(&this->dyna.actor.projectedPos, NA_SE_EV_WALL_MOVE_SP - SFX_FLAG, tempValue);
 }
 
 void func_808B7F74(BgSpot18Basket* this) {
@@ -347,8 +347,7 @@ void func_808B7FC0(BgSpot18Basket* this, PlayState* play) {
 
     clampedTempUnk210 = CLAMP(tempUnk210, 0.0f, 1.5f);
 
-    Audio_PlaySfx_AtPosWithFreq(&this->dyna.actor.projectedPos, SFX_ID_ENVIRONMENT_WALL_MOVE_SP - SFX_FLAG,
-                                clampedTempUnk210);
+    Audio_PlaySfx_AtPosWithFreq(&this->dyna.actor.projectedPos, NA_SE_EV_WALL_MOVE_SP - SFX_FLAG, clampedTempUnk210);
 }
 
 void func_808B818C(BgSpot18Basket* this) {
@@ -416,9 +415,9 @@ void func_808B81A0(BgSpot18Basket* this, PlayState* play) {
         }
     } else if (this->unk_216 == 2) {
         if (this->unk_218 == 2) {
-            Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+            Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
         } else {
-            Lib_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+            Lib_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR);
         }
     } else if (this->unk_216 == 200) {
         func_808B7BB0(this);

@@ -220,7 +220,7 @@ void EnJj_BeginCutscene(EnJj* this, PlayState* play) {
         DynaPoly_DisableCollision(play, &play->colCtx.dyna, bodyCollisionActor->bgId);
         func_8005B1A4(GET_ACTIVE_CAM(play));
         SET_EVENTCHKINF(EVENTCHKINF_3A);
-        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
     }
 }
 
@@ -258,7 +258,7 @@ void EnJj_CutsceneUpdate(EnJj* this, PlayState* play) {
     }
 
     if (this->unk_30A & 1) {
-        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_JABJAB_BREATHE - SFX_FLAG);
+        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_JABJAB_BREATHE - SFX_FLAG);
 
         if (this->mouthOpenAngle >= -5200) {
             this->mouthOpenAngle -= 102;
@@ -292,7 +292,7 @@ void EnJj_Update(Actor* thisx, PlayState* play) {
         this->actionFunc(this, play);
 
         if (this->skelAnime.curFrame == 41.0f) {
-            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_JABJAB_GROAN);
+            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_JABJAB_GROAN);
         }
     }
 

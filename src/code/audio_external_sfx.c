@@ -173,7 +173,7 @@ void AudioSfx_RemoveMatchingRequests(u8 aspect, SfxBankEntry* entry) {
         }
 
         if (remove) {
-            req->sfxId = SFX_ID_NONE;
+            req->sfxId = NA_SE_NONE;
         }
     }
 }
@@ -189,7 +189,7 @@ void AudioSfx_ProcessRequest(void) {
     u8 evictImportance;
     u8 evictIndex = 0x80;
 
-    if (req->sfxId == SFX_ID_NONE) {
+    if (req->sfxId == NA_SE_NONE) {
         return;
     }
 

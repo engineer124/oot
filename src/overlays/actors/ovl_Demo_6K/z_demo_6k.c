@@ -142,7 +142,7 @@ void Demo6K_Init(Actor* thisx, PlayState* play) {
             Actor_SetScale(&this->actor, 0.0f);
             this->initActionFunc = func_8096784C;
             this->actor.velocity.x = this->actor.velocity.y = this->actor.velocity.z = 0.0f;
-            Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_NABALL_VANISH);
+            Actor_PlaySfx(&this->actor, NA_SE_EV_NABALL_VANISH);
             break;
         case 12:
             Actor_SetScale(&this->actor, 0.0f);
@@ -207,11 +207,11 @@ void func_80966DB0(Demo6K* this, PlayState* play) {
 
 void func_80966E04(Demo6K* this, PlayState* play) {
     if (play->csCtx.frames > 214) {
-        Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_LIGHT_GATHER - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->actor, NA_SE_EV_LIGHT_GATHER - SFX_FLAG);
     }
 
     if (play->csCtx.frames > 264) {
-        Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_GOD_LIGHTBALL_2 - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->actor, NA_SE_EV_GOD_LIGHTBALL_2 - SFX_FLAG);
     }
 
     if ((play->csCtx.state != CS_STATE_IDLE) && (play->csCtx.npcActions[6] != NULL) &&
@@ -222,8 +222,8 @@ void func_80966E04(Demo6K* this, PlayState* play) {
 
 void func_80966E98(Demo6K* this, PlayState* play) {
     if (play->csCtx.frames < 353) {
-        Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_LIGHT_GATHER - SFX_FLAG);
-        Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_GOD_LIGHTBALL_2 - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->actor, NA_SE_EV_LIGHT_GATHER - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->actor, NA_SE_EV_GOD_LIGHTBALL_2 - SFX_FLAG);
     }
 
     if (play->csCtx.frames == 342) {
@@ -231,7 +231,7 @@ void func_80966E98(Demo6K* this, PlayState* play) {
     }
 
     if (this->timer1 == 39) {
-        Lib_PlaySfx_Centered(SFX_ID_ENVIRONMENT_CONSENTRATION);
+        Lib_PlaySfx_Centered(NA_SE_EV_CONSENTRATION);
         Actor_Spawn(&play->actorCtx, play, ACTOR_DEMO_6K, this->actor.world.pos.x, this->actor.world.pos.y + 10.0f,
                     this->actor.world.pos.z, 0, 0, 0, 2);
     }
@@ -300,7 +300,7 @@ void func_8096712C(Demo6K* this, PlayState* play) {
     this->timer2++;
 
     if ((play->sceneId == SCENE_GANONTIKA) && (play->csCtx.frames < D_8096932C[this->actor.params - 3])) {
-        Actor_PlaySfx_Flagged(&this->actor, SFX_ID_ENVIRONMENT_LIGHT_GATHER - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->actor, NA_SE_EV_LIGHT_GATHER - SFX_FLAG);
     }
 }
 
@@ -388,7 +388,7 @@ void func_809674E0(Demo6K* this, PlayState* play) {
         this->actor.world.pos.y += (19.0f - this->actor.world.pos.y) * temp;
         this->actor.world.pos.z += (1613.0f - this->actor.world.pos.z) * temp;
 
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_FANTOM_FIRE - SFX_FLAG);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_FANTOM_FIRE - SFX_FLAG);
     }
 
     Lights_PointNoGlowSetInfo(&this->lightInfo, this->actor.world.pos.x, this->actor.world.pos.y,
@@ -465,7 +465,7 @@ void func_80967AD0(Demo6K* this, PlayState* play) {
     if ((play->csCtx.state != CS_STATE_IDLE) && (play->csCtx.npcActions[1] != NULL)) {
         if (play->csCtx.npcActions[1]->action == 2) {
             this->unk_170++;
-            Actor_PlaySfx_FlaggedCentered(&this->actor, SFX_ID_ENVIRONMENT_RAINBOW_SHOWER - SFX_FLAG);
+            Actor_PlaySfx_FlaggedCentered(&this->actor, NA_SE_EV_RAINBOW_SHOWER - SFX_FLAG);
         }
 
         func_809691BC(this, play, 1);
@@ -506,7 +506,7 @@ void func_80967BF8(Player* player, PlayState* play) {
 }
 
 void func_80967DBC(Demo6K* this, PlayState* play) {
-    Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GANON_ATTACK_DEMO - SFX_FLAG);
+    Actor_PlaySfx(&this->actor, NA_SE_EN_GANON_ATTACK_DEMO - SFX_FLAG);
 
     this->timer2++;
 
@@ -520,13 +520,13 @@ void func_80967DBC(Demo6K* this, PlayState* play) {
         if (this->timer2 > 104) {
             func_80967BF8(GET_PLAYER(play), play);
             Actor_Kill(&this->actor);
-            Actor_PlaySfx(&GET_PLAYER(play)->actor, SFX_ID_ENEMY_FANTOM_HIT_THUNDER);
+            Actor_PlaySfx(&GET_PLAYER(play)->actor, NA_SE_EN_FANTOM_HIT_THUNDER);
         } else if (this->timer2 > 94) {
             Actor_SetScale(&this->actor, this->actor.scale.x + 0.03f);
 
             if (this->timer2 == 95) {
                 osSyncPrintf(VT_FGCOL(CYAN) "  NA_SE_EN_GANON_FIRE_DEMO\n" VT_RST);
-                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GANON_FIRE_DEMO);
+                Actor_PlaySfx(&this->actor, NA_SE_EN_GANON_FIRE_DEMO);
             }
         }
 

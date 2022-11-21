@@ -146,7 +146,7 @@ void BgDdanJd_MoveEffects(BgDdanJd* this, PlayState* play) {
         func_80033480(play, &dustPos, 5.0f, 1, 20, 60, 1);
     }
     if (this->ySpeed == SHORTCUT_Y_SPEED) {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
     }
 }
 
@@ -162,7 +162,7 @@ void BgDdanJd_Move(BgDdanJd* this, PlayState* play) {
         this->actionFunc = BgDdanJd_Idle;
         OnePointCutscene_Init(play, 3060, -99, &this->dyna.actor, CAM_ID_MAIN);
     } else if (Math_StepToF(&this->dyna.actor.world.pos.y, this->targetY, this->ySpeed)) {
-        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_PILLAR_MOVE_STOP);
+        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_PILLAR_MOVE_STOP);
         this->actionFunc = BgDdanJd_Idle;
     }
     BgDdanJd_MoveEffects(this, play);

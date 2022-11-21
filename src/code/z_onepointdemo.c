@@ -458,7 +458,7 @@ s32 OnePointCutscene_SetInfo(PlayState* play, s16 subCamId, s16 csId, Actor* act
             Play_CameraChangeSetting(play, subCamId, CAM_SET_CS_3);
             func_8002DF54(play, &player->actor, 5);
             OnePointCutscene_SetCsCamPoints(subCam, D_80120304 | 0x2000, D_80120300, D_8012013C, D_8012021C);
-            Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+            Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
             OnePointCutscene_Vec3sToVec3f(&mainCam->at, &D_8012013C[D_801202FC - 2].pos);
             OnePointCutscene_Vec3sToVec3f(&mainCam->eye, &D_8012021C[D_801202FC - 2].pos);
             D_8012013C[D_801202FC - 3].pos.x +=
@@ -1336,7 +1336,7 @@ s32 OnePointCutscene_Attention(PlayState* play, Actor* actor) {
     } else {
         s32* data = (s32*)&play->cameraPtrs[vSubCamId]->data1;
 
-        *data = SFX_ID_SYSTEM_CORRECT_CHIME;
+        *data = NA_SE_SY_CORRECT_CHIME;
         return vSubCamId;
     }
 }

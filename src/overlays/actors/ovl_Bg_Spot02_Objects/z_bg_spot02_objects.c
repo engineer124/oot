@@ -129,7 +129,7 @@ void func_808AC908(BgSpot02Objects* this, PlayState* play) {
 
     if (play->csCtx.state != 0) {
         if (play->csCtx.npcActions[3] != NULL && play->csCtx.npcActions[3]->action == 2) {
-            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_GRAVE_EXPLOSION);
+            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_GRAVE_EXPLOSION);
             SET_EVENTCHKINF(EVENTCHKINF_1D);
             this->timer = 25;
             pos.x = (Math_SinS(this->dyna.actor.shape.rot.y) * 50.0f) + this->dyna.actor.world.pos.x;
@@ -158,9 +158,9 @@ void func_808ACA08(BgSpot02Objects* this, PlayState* play) {
 
     if (play->csCtx.frames == 402) {
         if (!LINK_IS_ADULT) {
-            Player_PlaySfx(&player->actor, SFX_ID_VOICE_LI_DEMO_DAMAGE_KID);
+            Player_PlaySfx(&player->actor, NA_SE_VO_LI_DEMO_DAMAGE_KID);
         } else {
-            Player_PlaySfx(&player->actor, SFX_ID_VOICE_LI_DEMO_DAMAGE);
+            Player_PlaySfx(&player->actor, NA_SE_VO_LI_DEMO_DAMAGE);
         }
     }
 }
@@ -175,10 +175,10 @@ void func_808ACAFC(BgSpot02Objects* this, PlayState* play) {
 
 void func_808ACB58(BgSpot02Objects* this, PlayState* play) {
     if (Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y + 255.0f, 1.0f)) {
-        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_STONEDOOR_STOP);
+        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_STONEDOOR_STOP);
         this->actionFunc = func_808AC8FC;
     } else {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_WALL_MOVE_SP - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_WALL_MOVE_SP - SFX_FLAG);
     }
 }
 
@@ -208,7 +208,7 @@ void func_808ACC34(BgSpot02Objects* this, PlayState* play) {
     }
 
     if (play->csCtx.frames == 245 || play->csCtx.frames == 351) {
-        Lib_PlaySfx_Centered(SFX_ID_ENVIRONMENT_LIGHTNING);
+        Lib_PlaySfx_Centered(NA_SE_EV_LIGHTNING);
     }
 }
 
@@ -267,7 +267,7 @@ void func_808ACCB8(Actor* thisx, PlayState* play) {
 void func_808AD3D4(BgSpot02Objects* this, PlayState* play) {
     if (play->csCtx.state != 0 && play->csCtx.npcActions[2] != NULL && play->csCtx.npcActions[2]->action == 2) {
         if (this->timer == 2) {
-            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ITEM_EXPLOSION_ICE);
+            Actor_PlaySfx(&this->dyna.actor, NA_SE_IT_EXPLOSION_ICE);
         }
 
         if (this->timer < 32) {

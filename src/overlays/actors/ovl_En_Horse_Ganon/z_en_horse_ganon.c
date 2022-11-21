@@ -154,7 +154,7 @@ void func_80A686A8(EnHorseGanon* this, PlayState* play) {
 void func_80A68870(EnHorseGanon* this) {
     if ((this->skin.skelAnime.curFrame > D_80A692B8[this->soundCount]) &&
         (this->soundCount != 0 || !(this->skin.skelAnime.curFrame > D_80A692B8[1]))) {
-        AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_HORSE_WALK, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(NA_SE_EV_HORSE_WALK, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 
         this->soundCount++;
@@ -235,11 +235,11 @@ void func_80A68B20(EnHorseGanon* this) {
         sp30 = this->actor.speedXZ / 3.0f;
     } else if (this->currentAnimation == 3) {
         sp30 = this->actor.speedXZ / 5.0f;
-        AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_HORSE_RUN, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(NA_SE_EV_HORSE_RUN, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     } else if (this->currentAnimation == 4) {
         sp30 = this->actor.speedXZ / 7.0f;
-        AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_HORSE_RUN, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(NA_SE_EV_HORSE_RUN, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     } else {
         sp30 = 1.0f;

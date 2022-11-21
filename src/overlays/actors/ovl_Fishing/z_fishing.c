@@ -2226,7 +2226,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
                     D_80B7E11C = 0.5f;
                     D_80B7E118 = Rand_ZeroFloat(1.9f);
                     sFishMouthOffset.y = 500.0f;
-                    Lib_PlaySfx_AtPos(&D_80B7AF94, SFX_ID_ITEM_SWORD_SWING_HARD);
+                    Lib_PlaySfx_AtPos(&D_80B7AF94, NA_SE_IT_SWORD_SWING_HARD);
                 }
             }
             break;
@@ -2246,7 +2246,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
                 D_80B7E0E8.x *= 0.9f;
                 D_80B7E0E8.z *= 0.9f;
                 if (D_80B7A68C == 0) {
-                    Lib_PlaySfx(SFX_ID_ITEM_FISHING_REEL_HIGH - SFX_FLAG);
+                    Lib_PlaySfx(NA_SE_IT_FISHING_REEL_HIGH - SFX_FLAG);
                 }
             }
 
@@ -2302,7 +2302,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
                     D_80B7E154 = 0.0;
                 } else {
                     Math_ApproachF(&D_80B7E148, 0.0f, 1.0f, 0.05f);
-                    Lib_PlaySfx_AtPos(&D_80B7AF94, SFX_ID_ENEMY_FANTOM_FLOAT - SFX_FLAG);
+                    Lib_PlaySfx_AtPos(&D_80B7AF94, NA_SE_EN_FANTOM_FLOAT - SFX_FLAG);
                 }
             } else {
                 spE4 = WATER_SURFACE_Y(play);
@@ -2320,7 +2320,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
 
                     if ((sLurePos.y <= spE4) && (spE4 < spE0) && (spE4 == WATER_SURFACE_Y(play))) {
                         D_80B7E114 = 10;
-                        Lib_PlaySfx_AtPos(&D_80B7AF94, SFX_ID_ENVIRONMENT_BOMB_DROP_WATER);
+                        Lib_PlaySfx_AtPos(&D_80B7AF94, NA_SE_EV_BOMB_DROP_WATER);
                         D_80B7E0F8.y = 0.0f;
                         D_80B7E0E8.y *= 0.2f;
 
@@ -2346,7 +2346,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
                     }
                 } else {
                     Math_ApproachZeroF(&D_80B7E148, 1.0f, 0.05f);
-                    Lib_PlaySfx_AtPos(&D_80B7AF94, SFX_ID_ENEMY_FANTOM_FLOAT - SFX_FLAG);
+                    Lib_PlaySfx_AtPos(&D_80B7AF94, NA_SE_EN_FANTOM_FLOAT - SFX_FLAG);
                 }
             }
 
@@ -2445,8 +2445,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
                         D_80B7E10C = 0.5f;
                         D_80B7E144 += (fabsf(sp70) * (7.5f + (KREG(25) * 0.1f)));
 
-                        Audio_PlaySfx_AtPosWithFreq(&D_80B7AF94, SFX_ID_ENVIRONMENT_LURE_MOVE_W,
-                                                    (sp70 * 1.999f * 0.25f) + 0.75f);
+                        Audio_PlaySfx_AtPosWithFreq(&D_80B7AF94, NA_SE_EV_LURE_MOVE_W, (sp70 * 1.999f * 0.25f) + 0.75f);
 
                         if (D_80B7E0B6 == 2) {
                             D_80B7E128.y = 5.0f * sp70;
@@ -2562,11 +2561,11 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
             if (CHECK_BTN_ALL(input->cur.button, BTN_A)) {
                 if (CHECK_BTN_ALL(input->cur.button, BTN_R)) {
                     D_80B7E144 += 1.5f;
-                    Lib_PlaySfx(SFX_ID_ITEM_FISHING_REEL_HIGH - SFX_FLAG);
+                    Lib_PlaySfx(NA_SE_IT_FISHING_REEL_HIGH - SFX_FLAG);
                     Math_ApproachF(&D_80B7E154, 1000.0f, 1.0f, 2.0f);
                 } else {
                     D_80B7E144 += D_80B7E11C;
-                    Lib_PlaySfx(SFX_ID_ITEM_FISHING_REEL_SLOW - SFX_FLAG);
+                    Lib_PlaySfx(NA_SE_IT_FISHING_REEL_SLOW - SFX_FLAG);
                     Math_ApproachF(&D_80B7E154, 1000.0f, 1.0f, 0.2f);
                 }
 
@@ -2623,7 +2622,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
                 } else {
                     D_80B7E144 += D_80B7E11C;
                 }
-                Lib_PlaySfx(SFX_ID_ITEM_FISHING_REEL_SLOW - SFX_FLAG);
+                Lib_PlaySfx(NA_SE_IT_FISHING_REEL_SLOW - SFX_FLAG);
             }
 
             if ((D_80B7E0AE & 0x1F) == 0) {
@@ -2805,19 +2804,19 @@ void func_80B71278(Fishing* this, u8 arg1) {
 
     if (arg1 == 0) {
         if (temp >= 50) {
-            sfxId = SFX_ID_ENVIRONMENT_DIVE_INTO_WATER;
+            sfxId = NA_SE_EV_DIVE_INTO_WATER;
         } else if (temp >= 40) {
-            sfxId = SFX_ID_ENVIRONMENT_BOMB_DROP_WATER;
+            sfxId = NA_SE_EV_BOMB_DROP_WATER;
         } else {
-            sfxId = SFX_ID_ENVIRONMENT_BOMB_DROP_WATER;
+            sfxId = NA_SE_EV_BOMB_DROP_WATER;
         }
     } else {
         if (temp >= 50) {
-            sfxId = SFX_ID_ENVIRONMENT_JUMP_OUT_WATER;
+            sfxId = NA_SE_EV_JUMP_OUT_WATER;
         } else if (temp >= 40) {
-            sfxId = SFX_ID_ENVIRONMENT_OUT_OF_WATER;
+            sfxId = NA_SE_EV_OUT_OF_WATER;
         } else {
-            sfxId = SFX_ID_ENVIRONMENT_OUT_OF_WATER;
+            sfxId = NA_SE_EV_OUT_OF_WATER;
         }
     }
 
@@ -3523,7 +3522,7 @@ void Fishing_UpdateFish(Actor* thisx, PlayState* play2) {
                 this->unk_194 = 2000.0f;
             } else if (sp124 < 10.0f) {
                 if (sLurePos.y > (WATER_SURFACE_Y(play) - 10.0f)) {
-                    Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_JUMP_OUT_WATER);
+                    Actor_PlaySfx(&this->actor, NA_SE_EV_JUMP_OUT_WATER);
                     Lib_PlaySfx(SFX_ID_PLAYER_CATCH_BOOMERANG);
                 }
 
@@ -3601,7 +3600,7 @@ void Fishing_UpdateFish(Actor* thisx, PlayState* play2) {
                     Rumble_Override(0.0f, spA4, 120, 5);
                     D_80B7E0A4 = 40;
                     D_80B7FDA8 = 10;
-                    Lib_PlaySfx(SFX_ID_ITEM_FISHING_HIT);
+                    Lib_PlaySfx(NA_SE_IT_FISHING_HIT);
                 }
             }
 
@@ -4151,7 +4150,7 @@ void Fishing_UpdateFish(Actor* thisx, PlayState* play2) {
                     this->actor.velocity.x = this->actor.world.pos.x * -0.003f;
                     this->actor.velocity.z = this->actor.world.pos.z * -0.003f;
 
-                    Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_FISH_LEAP);
+                    Actor_PlaySfx(&this->actor, NA_SE_EV_FISH_LEAP);
                     func_80B70CF0(this, play);
 
                     if (Rand_ZeroOne() < 0.5f) {
@@ -5204,7 +5203,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
         sSinkingLureLocation = 0;
         D_80B7A6CC = 20;
         Rumble_Override(0.0f, 150, 10, 10);
-        Lib_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+        Lib_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR);
         SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 20);
     }
 
@@ -5213,7 +5212,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
         D_80B7E0B6 = 0;
         D_80B7A6CC = 20;
         Rumble_Override(0.0f, 150, 10, 10);
-        Lib_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+        Lib_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR);
         SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 20);
     }
 
@@ -5291,9 +5290,9 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
                     }
 
                     if ((D_80B7E088 == 0) || (D_80B7E088 == 3)) {
-                        Lib_PlaySfx(SFX_ID_SYSTEM_CAMERA_ZOOM_DOWN);
+                        Lib_PlaySfx(NA_SE_SY_CAMERA_ZOOM_DOWN);
                     } else {
-                        Lib_PlaySfx(SFX_ID_SYSTEM_CAMERA_ZOOM_UP);
+                        Lib_PlaySfx(NA_SE_SY_CAMERA_ZOOM_UP);
                     }
                 }
             }
@@ -5624,7 +5623,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
     Math_ApproachF(&D_80B7A65C.z, target, 1.0f, 5.0f);
 
     if (D_80B7A65C.z < 1500.0f) {
-        Audio_PlaySfx_AtPosWithFreq(&D_80B7A65C, SFX_ID_ENVIRONMENT_RAIN - SFX_FLAG, D_80B7A668);
+        Audio_PlaySfx_AtPosWithFreq(&D_80B7A65C, NA_SE_EV_RAIN - SFX_FLAG, D_80B7A668);
     }
 
     if (D_80B7A654 != 0) {
@@ -5668,7 +5667,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
 
     SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &sStreamSfxPos, &sStreamSfxProjectedPos, &sProjectedW);
 
-    Lib_PlaySfx_AtPos(&sStreamSfxProjectedPos, SFX_ID_ENVIRONMENT_WATER_WALL - SFX_FLAG);
+    Lib_PlaySfx_AtPos(&sStreamSfxProjectedPos, NA_SE_EV_WATER_WALL - SFX_FLAG);
 
     gSaveContext.minigameScore = (SQ((f32)D_80B7A678) * 0.0036f) + 0.5f;
 

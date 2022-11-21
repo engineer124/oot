@@ -117,9 +117,9 @@ void func_808B318C(BgSpot12Gate* this, PlayState* play) {
         Quake_SetPerturbations(quakeIndex, 3, 0, 0, 0);
         Quake_SetDuration(quakeIndex, 12);
 
-        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BRIDGE_OPEN_STOP);
+        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BRIDGE_OPEN_STOP);
     } else {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALGATE_OPEN - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_METALGATE_OPEN - SFX_FLAG);
     }
 }
 

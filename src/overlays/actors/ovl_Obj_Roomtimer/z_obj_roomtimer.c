@@ -70,14 +70,14 @@ void func_80B9D0B0(ObjRoomtimer* this, PlayState* play) {
         }
         Flags_SetClear(play, this->actor.room);
         Flags_SetSwitch(play, this->switchFlag);
-        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
         Actor_Kill(&this->actor);
         return;
     }
 
     if ((this->actor.params != 0x3FF) && (gSaveContext.timerSeconds == 0)) {
-        AudioSfx_PlaySfx(SFX_ID_OCARINA_ABYSS, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        AudioSfx_PlaySfx(NA_SE_OC_ABYSS, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
+                         &gSfxDefaultReverb);
         Play_TriggerVoidOut(play);
         Actor_Kill(&this->actor);
     }

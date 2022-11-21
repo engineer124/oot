@@ -2113,14 +2113,14 @@ void Interface_SetNaviCall(PlayState* play, u16 naviCallState) {
     if (((naviCallState == 0x1D) || (naviCallState == 0x1E)) && !interfaceCtx->naviCalling &&
         (play->csCtx.state == CS_STATE_IDLE)) {
         // clang-format off
-        if (naviCallState == 0x1E) { AudioSfx_PlaySfx(SFX_ID_VOICE_NAVY_CALL, &gSfxDefaultPos, 4,
+        if (naviCallState == 0x1E) { AudioSfx_PlaySfx(NA_SE_VO_NAVY_CALL, &gSfxDefaultPos, 4,
                                                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                                                             &gSfxDefaultReverb);
         }
         // clang-format on
 
         if (naviCallState == 0x1D) {
-            Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, SFX_ID_VOICE_NA_HELLO_2, 32);
+            Audio_PlaySfx_AtPosWithReverb(&gSfxDefaultPos, NA_SE_VO_NA_HELLO_2, 32);
         }
 
         interfaceCtx->naviCalling = true;
@@ -2165,7 +2165,7 @@ s32 Health_ChangeBy(PlayState* play, s16 amount) {
                  gSaveContext.healthCapacity);
 
     // clang-format off
-    if (amount > 0) { AudioSfx_PlaySfx(SFX_ID_SYSTEM_HP_RECOVER, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+    if (amount > 0) { AudioSfx_PlaySfx(NA_SE_SY_HP_RECOVER, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     } else if (gSaveContext.isDoubleDefenseAcquired && (amount < 0)) {
         amount >>= 1;
@@ -2300,7 +2300,7 @@ s32 Magic_RequestChange(PlayState* play, s16 amount, s16 type) {
 
     if ((type != MAGIC_ADD) && (gSaveContext.magic - amount) < 0) {
         if (gSaveContext.magicCapacity != 0) {
-            AudioSfx_PlaySfx(SFX_ID_SYSTEM_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(NA_SE_SY_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
         return false;
@@ -2319,7 +2319,7 @@ s32 Magic_RequestChange(PlayState* play, s16 amount, s16 type) {
                 gSaveContext.magicState = MAGIC_STATE_CONSUME_SETUP;
                 return true;
             } else {
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 return false;
             }
@@ -2337,7 +2337,7 @@ s32 Magic_RequestChange(PlayState* play, s16 amount, s16 type) {
                 gSaveContext.magicState = MAGIC_STATE_METER_FLASH_3;
                 return true;
             } else {
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 return false;
             }
@@ -2369,7 +2369,7 @@ s32 Magic_RequestChange(PlayState* play, s16 amount, s16 type) {
                 gSaveContext.magicState = MAGIC_STATE_METER_FLASH_2;
                 return true;
             } else {
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_ERROR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 return false;
             }
@@ -2438,7 +2438,7 @@ void Magic_Update(PlayState* play) {
             gSaveContext.magic += 4;
 
             if (gSaveContext.gameMode == GAMEMODE_NORMAL && !IS_CUTSCENE_LAYER) {
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_GAUGE_UP - SFX_FLAG, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_GAUGE_UP - SFX_FLAG, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
 
@@ -2528,7 +2528,7 @@ void Magic_Update(PlayState* play) {
                     !play->actorCtx.lensActive) {
                     // Force lens off and set magic meter state to idle
                     play->actorCtx.lensActive = false;
-                    AudioSfx_PlaySfx(SFX_ID_SYSTEM_GLASSMODE_OFF, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                    AudioSfx_PlaySfx(NA_SE_SY_GLASSMODE_OFF, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     gSaveContext.magicState = MAGIC_STATE_IDLE;
                     sMagicBorderR = sMagicBorderG = sMagicBorderB = 255;
@@ -2581,7 +2581,7 @@ void Magic_Update(PlayState* play) {
         case MAGIC_STATE_ADD:
             // Add magic until target is reached
             gSaveContext.magic += 4;
-            AudioSfx_PlaySfx(SFX_ID_SYSTEM_GAUGE_UP - SFX_FLAG, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(NA_SE_SY_GAUGE_UP - SFX_FLAG, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             if (gSaveContext.magic >= gSaveContext.magicTarget) {
                 gSaveContext.magic = gSaveContext.magicTarget;
@@ -3584,20 +3584,20 @@ void Interface_Draw(PlayState* play) {
                             } else if (gSaveContext.timerSeconds > 60) {
                                 // Beep at "xx:x1" (every 10 seconds)
                                 if (sTimerDigits[4] == 1) {
-                                    AudioSfx_PlaySfx(SFX_ID_SYSTEM_MESSAGE_WOMAN, &gSfxDefaultPos, 4,
+                                    AudioSfx_PlaySfx(NA_SE_SY_MESSAGE_WOMAN, &gSfxDefaultPos, 4,
                                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                                                      &gSfxDefaultReverb);
                                 }
                             } else if (gSaveContext.timerSeconds > 10) {
                                 // Beep on alternating seconds
                                 if ((sTimerDigits[4] % 2) != 0) {
-                                    AudioSfx_PlaySfx(SFX_ID_SYSTEM_WARNING_COUNT_N, &gSfxDefaultPos, 4,
+                                    AudioSfx_PlaySfx(NA_SE_SY_WARNING_COUNT_N, &gSfxDefaultPos, 4,
                                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                                                      &gSfxDefaultReverb);
                                 }
                             } else {
                                 // Beep every second
-                                AudioSfx_PlaySfx(SFX_ID_SYSTEM_WARNING_COUNT_E, &gSfxDefaultPos, 4,
+                                AudioSfx_PlaySfx(NA_SE_SY_WARNING_COUNT_E, &gSfxDefaultPos, 4,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultReverb);
                             }
@@ -3648,7 +3648,7 @@ void Interface_Draw(PlayState* play) {
                                 sTimerStateTimer = 40;
                                 gSaveContext.timerState = TIMER_STATE_UP_FREEZE;
                             } else {
-                                AudioSfx_PlaySfx(SFX_ID_SYSTEM_WARNING_COUNT_N, &gSfxDefaultPos, 4,
+                                AudioSfx_PlaySfx(NA_SE_SY_WARNING_COUNT_N, &gSfxDefaultPos, 4,
                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                                                  &gSfxDefaultReverb);
                             }
@@ -3780,20 +3780,20 @@ void Interface_Draw(PlayState* play) {
                                         } else if (gSaveContext.subTimerSeconds > 60) {
                                             // Beep at "xx:x1" (every 10 seconds)
                                             if (sTimerDigits[4] == 1) {
-                                                AudioSfx_PlaySfx(SFX_ID_SYSTEM_MESSAGE_WOMAN, &gSfxDefaultPos, 4,
+                                                AudioSfx_PlaySfx(NA_SE_SY_MESSAGE_WOMAN, &gSfxDefaultPos, 4,
                                                                  &gSfxDefaultFreqAndVolScale,
                                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                                             }
                                         } else if (gSaveContext.subTimerSeconds > 10) {
                                             // Beep on alternating seconds
                                             if ((sTimerDigits[4] % 2) != 0) {
-                                                AudioSfx_PlaySfx(SFX_ID_SYSTEM_WARNING_COUNT_N, &gSfxDefaultPos, 4,
+                                                AudioSfx_PlaySfx(NA_SE_SY_WARNING_COUNT_N, &gSfxDefaultPos, 4,
                                                                  &gSfxDefaultFreqAndVolScale,
                                                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                                             }
                                         } else {
                                             // Beep every second
-                                            AudioSfx_PlaySfx(SFX_ID_SYSTEM_WARNING_COUNT_E, &gSfxDefaultPos, 4,
+                                            AudioSfx_PlaySfx(NA_SE_SY_WARNING_COUNT_E, &gSfxDefaultPos, 4,
                                                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                                                              &gSfxDefaultReverb);
                                         }
@@ -3812,7 +3812,7 @@ void Interface_Draw(PlayState* play) {
 
                                     // Beep at the minute mark
                                     if ((gSaveContext.subTimerSeconds % 60) == 0) {
-                                        AudioSfx_PlaySfx(SFX_ID_SYSTEM_WARNING_COUNT_N, &gSfxDefaultPos, 4,
+                                        AudioSfx_PlaySfx(NA_SE_SY_WARNING_COUNT_N, &gSfxDefaultPos, 4,
                                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                                                          &gSfxDefaultReverb);
                                     }
@@ -4046,7 +4046,7 @@ void Interface_Update(PlayState* play) {
         gSaveContext.health += 4;
 
         if ((gSaveContext.health & 0xF) < 4) {
-            AudioSfx_PlaySfx(SFX_ID_SYSTEM_HP_RECOVER, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(NA_SE_SY_HP_RECOVER, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
 
@@ -4086,7 +4086,7 @@ void Interface_Update(PlayState* play) {
             if (gSaveContext.rupees < CUR_CAPACITY(UPG_WALLET)) {
                 gSaveContext.rupeeAccumulator--;
                 gSaveContext.rupees++;
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_RUPY_COUNT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_RUPY_COUNT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             } else {
                 // "Rupee Amount MAX = %d"
@@ -4103,12 +4103,12 @@ void Interface_Update(PlayState* play) {
                     gSaveContext.rupees = 0;
                 }
 
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_RUPY_COUNT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_RUPY_COUNT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             } else {
                 gSaveContext.rupeeAccumulator++;
                 gSaveContext.rupees--;
-                AudioSfx_PlaySfx(SFX_ID_SYSTEM_RUPY_COUNT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_SY_RUPY_COUNT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
         } else {

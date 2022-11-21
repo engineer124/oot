@@ -703,8 +703,8 @@ void ObjBean_GrowWaterPhase3(ObjBean* this, PlayState* play) {
                 Item_DropCollectible(play, &itemDropPos, ITEM00_FLEXIBLE);
             }
             this->stateFlags |= BEAN_STATE_BEEN_WATERED;
-            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BUTTERFRY_TO_FAIRY);
-            Lib_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BUTTERFRY_TO_FAIRY);
+            Lib_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR);
         }
     } else if (this->timer <= 0) {
         ObjBean_SetupGrowWaterPhase4(this);

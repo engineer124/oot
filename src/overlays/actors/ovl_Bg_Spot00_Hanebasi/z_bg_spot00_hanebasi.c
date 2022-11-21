@@ -179,15 +179,15 @@ void BgSpot00Hanebasi_DrawbridgeRiseAndFall(BgSpot00Hanebasi* this, PlayState* p
 
     if (this->destAngle < 0) {
         if (this->actionFunc == BgSpot00Hanebasi_DrawbridgeWait) {
-            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BRIDGE_CLOSE_STOP);
+            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BRIDGE_CLOSE_STOP);
         } else {
-            Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_BRIDGE_CLOSE - SFX_FLAG);
+            Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_BRIDGE_CLOSE - SFX_FLAG);
         }
     } else {
         if (this->actionFunc == BgSpot00Hanebasi_DrawbridgeWait) {
-            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BRIDGE_OPEN_STOP);
+            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BRIDGE_OPEN_STOP);
         } else {
-            Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_BRIDGE_OPEN - SFX_FLAG);
+            Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_BRIDGE_OPEN - SFX_FLAG);
         }
     }
 }

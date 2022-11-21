@@ -472,7 +472,7 @@ void func_808B5A94(BgSpot16Bombstone* this, PlayState* play) {
     func_808B5240(this, play);
 
     if (this->unk_154 == 56) {
-        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
     }
 
     if (this->unk_154 > 60) {
@@ -513,7 +513,7 @@ void func_808B5B6C(BgSpot16Bombstone* this, PlayState* play) {
         ((actor->bgCheckFlags & BGCHECKFLAG_GROUND) && actor->velocity.y < 0.0f)) {
         BgSpot16Bombstone_SpawnFragments(this, play);
         BgSpot16Bombstone_SpawnDust(this, play);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &actor->world.pos, 20, SFX_ID_ENVIRONMENT_ROCK_BROKEN);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &actor->world.pos, 20, NA_SE_EV_ROCK_BROKEN);
         Actor_Kill(actor);
         return;
     }

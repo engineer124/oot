@@ -164,7 +164,7 @@ void BgHakaShip_CrashShake(BgHakaShip* this, PlayState* play) {
         this->dyna.actor.gravity = -1.0f;
         this->actionFunc = BgHakaShip_CrashFall;
     }
-    Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCKSINK - SFX_FLAG);
+    Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_BLOCKSINK - SFX_FLAG);
 }
 
 void BgHakaShip_CrashFall(BgHakaShip* this, PlayState* play) {
@@ -177,7 +177,7 @@ void BgHakaShip_CrashFall(BgHakaShip* this, PlayState* play) {
             Actor_Kill(child);
         }
     } else {
-        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BLOCKSINK - SFX_FLAG);
+        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BLOCKSINK - SFX_FLAG);
         if ((this->dyna.actor.home.pos.y - this->dyna.actor.world.pos.y > 500.0f) &&
             DynaPolyActor_IsPlayerOnTop(&this->dyna)) {
             Play_TriggerVoidOut(play);
@@ -230,6 +230,6 @@ void BgHakaShip_Draw(Actor* thisx, PlayState* play) {
         sp2C.z = this->dyna.actor.world.pos.z;
 
         SkinMatrix_Vec3fMtxFMultXYZ(&play->viewProjectionMtxF, &sp2C, &this->bellSfxPos);
-        Lib_PlaySfx_AtPos(&this->bellSfxPos, SFX_ID_ENVIRONMENT_SHIP_BELL - SFX_FLAG);
+        Lib_PlaySfx_AtPos(&this->bellSfxPos, NA_SE_EV_SHIP_BELL - SFX_FLAG);
     }
 }

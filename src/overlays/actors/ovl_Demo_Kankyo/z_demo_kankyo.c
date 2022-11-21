@@ -253,7 +253,7 @@ void DemoKankyo_Init(Actor* thisx, PlayState* play) {
             this->sparkleCounter = 0;
             this->actor.scale.x = this->actor.scale.y = this->actor.scale.z = 1.0f;
             if (this->actor.params == DEMOKANKYO_WARP_OUT) {
-                AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_SARIA_MELODY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                AudioSfx_PlaySfx(NA_SE_EV_SARIA_MELODY, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
             break;
@@ -406,10 +406,10 @@ void DemoKankyo_UpdateClouds(DemoKankyo* this, PlayState* play) {
 }
 
 void DemoKankyo_UpdateDoorOfTime(DemoKankyo* this, PlayState* play) {
-    Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_STONE_STATUE_OPEN - SFX_FLAG);
+    Actor_PlaySfx(&this->actor, NA_SE_EV_STONE_STATUE_OPEN - SFX_FLAG);
     this->unk_150[0].unk_18 += 1.0f;
     if (this->unk_150[0].unk_18 >= 102.0f) {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_STONEDOOR_STOP);
+        Actor_PlaySfx(&this->actor, NA_SE_EV_STONEDOOR_STOP);
         SET_EVENTCHKINF(EVENTCHKINF_4B);
         Actor_Kill(this->actor.child);
         DemoKankyo_SetupAction(this, DemoKankyo_KillDoorOfTimeCollision);
@@ -803,8 +803,8 @@ void DemoKankyo_DrawWarpSparkles(Actor* thisx, PlayState* play) {
                         this->unk_150[i].unk_22++;
                     }
                 } else {
-                    AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_LINK_WARP_OUT - SFX_FLAG, &gSfxDefaultPos, 4,
-                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                    AudioSfx_PlaySfx(NA_SE_EV_LINK_WARP_OUT - SFX_FLAG, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     if (func_800BB2B4(&camPos, &sWarpRoll, &sWarpFoV, sWarpInCameraPoints, &this->unk_150[i].unk_20,
                                       &this->unk_150[i].unk_1C) != 0) {
                         this->unk_150[i].unk_22++;

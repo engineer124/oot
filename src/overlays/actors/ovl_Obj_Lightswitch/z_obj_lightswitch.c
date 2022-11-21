@@ -110,11 +110,11 @@ void ObjLightswitch_SetSwitchFlag(ObjLightswitch* this, PlayState* play) {
         Flags_SetSwitch(play, this->actor.params >> 8 & 0x3F);
 
         if (type == OBJLIGHTSWITCH_TYPE_1) {
-            OnePointCutscene_AttentionSetSfx(play, thisx, SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+            OnePointCutscene_AttentionSetSfx(play, thisx, NA_SE_SY_TRE_BOX_APPEAR);
         } else if (type == OBJLIGHTSWITCH_TYPE_BURN) {
-            OnePointCutscene_AttentionSetSfx(play, thisx, SFX_ID_SYSTEM_ERROR);
+            OnePointCutscene_AttentionSetSfx(play, thisx, NA_SE_SY_ERROR);
         } else {
-            OnePointCutscene_AttentionSetSfx(play, thisx, SFX_ID_SYSTEM_CORRECT_CHIME);
+            OnePointCutscene_AttentionSetSfx(play, thisx, NA_SE_SY_CORRECT_CHIME);
         }
     }
 }
@@ -124,7 +124,7 @@ void ObjLightswitch_ClearSwitchFlag(ObjLightswitch* this, PlayState* play) {
         Flags_UnsetSwitch(play, this->actor.params >> 8 & 0x3F);
 
         if ((this->actor.params >> 4 & 3) == OBJLIGHTSWITCH_TYPE_1) {
-            OnePointCutscene_AttentionSetSfx(play, &this->actor, SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+            OnePointCutscene_AttentionSetSfx(play, &this->actor, NA_SE_SY_TRE_BOX_APPEAR);
         }
     }
 }
@@ -255,7 +255,7 @@ void ObjLightswitch_SetupTurnOn(ObjLightswitch* this) {
 void ObjLightswitch_TurnOn(ObjLightswitch* this, PlayState* play) {
     if (func_8005B198() == this->actor.category || this->toggleDelay <= 0) {
         if (this->timer == 0) {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_TRIFORCE_FLASH);
+            Actor_PlaySfx(&this->actor, NA_SE_EV_TRIFORCE_FLASH);
         }
 
         this->timer++;
@@ -270,7 +270,7 @@ void ObjLightswitch_TurnOn(ObjLightswitch* this, PlayState* play) {
             ObjLightswitch_SetupOn(this);
         } else if (this->timer == 15) {
             this->faceTextureIndex = FACE_EYES_OPEN;
-            Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_FOOT_SWITCH);
+            Actor_PlaySfx(&this->actor, NA_SE_EV_FOOT_SWITCH);
         }
     }
 }
@@ -339,7 +339,7 @@ void ObjLightswitch_TurnOff(ObjLightswitch* this, PlayState* play) {
             ObjLightswitch_SetupOff(this);
         } else if (this->timer == 15) {
             this->faceTextureIndex = FACE_EYES_CLOSED;
-            Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_FOOT_SWITCH);
+            Actor_PlaySfx(&this->actor, NA_SE_EV_FOOT_SWITCH);
         }
     }
 }

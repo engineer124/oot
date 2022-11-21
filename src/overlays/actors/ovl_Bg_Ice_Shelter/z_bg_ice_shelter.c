@@ -349,7 +349,7 @@ void BgIceShelter_Idle(BgIceShelter* this, PlayState* play) {
             }
 
             BgIceShelter_SetupMelt(this);
-            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_ICE_MELT);
+            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_ICE_MELT);
         }
     }
 
@@ -432,7 +432,7 @@ void BgIceShelter_Melt(BgIceShelter* this, PlayState* play) {
         }
 
         if (type == RED_ICE_KING_ZORA) {
-            Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+            Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
         }
 
         Actor_Kill(&this->dyna.actor);

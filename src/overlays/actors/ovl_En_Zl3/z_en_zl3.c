@@ -759,7 +759,7 @@ void func_80B54EA4(EnZl3* this, PlayState* play) {
 }
 
 void func_80B54EF4(EnZl3* this) {
-    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
 }
 
 void func_80B54F18(EnZl3* this, PlayState* play) {
@@ -997,20 +997,20 @@ void func_80B55780(EnZl3* this, PlayState* play) {
 }
 
 void func_80B55808(EnZl3* this) {
-    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
 }
 
 static Vec3f D_80B5A488 = { 0.0f, 0.0f, 0.0f };
 
 void func_80B5582C(EnZl3* this) {
-    Audio_PlaySfx_Randomized(&D_80B5A488, SFX_ID_VOICE_Z1_CRY_0, SFX_ID_VOICE_Z1_CRY_1 - SFX_ID_VOICE_Z1_CRY_0 + 1);
+    Audio_PlaySfx_Randomized(&D_80B5A488, NA_SE_VO_Z1_CRY_0, NA_SE_VO_Z1_CRY_1 - NA_SE_VO_Z1_CRY_0 + 1);
 }
 
 void func_80B5585C(EnZl3* this) {
     SkelAnime* skelAnime = &this->skelAnime;
 
     if ((skelAnime->mode == 2) && Animation_OnFrame(skelAnime, 4.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
     }
 }
 
@@ -1519,18 +1519,18 @@ void func_80B56D44(EnZl3* this, PlayState* play) {
 }
 
 void func_80B56DA4(EnZl3* this) {
-    Lib_PlaySfx_Centered(SFX_ID_ENVIRONMENT_ZELDA_POWER);
+    Lib_PlaySfx_Centered(NA_SE_EV_ZELDA_POWER);
 }
 
 void func_80B56DC8(EnZl3* this) {
-    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_PAIN);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
 }
 
 void func_80B56DEC(EnZl3* this) {
     SkelAnime* skelAnime = &this->skelAnime;
 
     if ((skelAnime->mode == 2) && Animation_OnFrame(skelAnime, 9.0f) != 0) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_Z1_OPENDOOR);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_Z1_OPENDOOR);
     }
 }
 
@@ -2559,8 +2559,8 @@ void func_80B59828(EnZl3* this, PlayState* play) {
 
 void func_80B59A80(EnZl3* this, PlayState* play) {
     if (func_80B59768(this, play)) {
-        AudioSfx_PlaySfx(SFX_ID_OCARINA_REVENGE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
-                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        AudioSfx_PlaySfx(NA_SE_OC_REVENGE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
+                         &gSfxDefaultReverb);
     }
 }
 

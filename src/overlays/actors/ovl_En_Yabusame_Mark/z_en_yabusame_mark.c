@@ -175,11 +175,11 @@ void func_80B42F74(EnYabusameMark* this, PlayState* play) {
             Audio_PlayFanfare(SEQ_ID_ITEM_GET | 0x900);
         }
         if (scoreIndex == 1) {
-            AudioSfx_StopById(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
-            Lib_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+            AudioSfx_StopById(NA_SE_SY_TRE_BOX_APPEAR);
+            Lib_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR);
         }
         if (scoreIndex == 0) {
-            Lib_PlaySfx(SFX_ID_SYSTEM_DECIDE);
+            Lib_PlaySfx(NA_SE_SY_DECIDE);
         }
         EffectSsExtra_Spawn(play, &arrowHitPos, &effectVelocity, &effectAccel, 5, scoreIndex);
     }

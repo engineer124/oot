@@ -917,7 +917,7 @@ void EnSkj_WaitInRange(EnSkj* this, PlayState* play) {
         player->actor.world.pos.y = sSmallStumpSkullKid.skullkid->actor.world.pos.y;
         player->actor.world.pos.z = sSmallStumpSkullKid.skullkid->actor.world.pos.z;
         if ((Player_GetMask(play) == PLAYER_MASK_SKULL) && !GET_ITEMGETINF(ITEMGETINF_39)) {
-            Lib_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR);
+            Lib_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR);
             EnSkj_SetupMaskTrade(this);
         } else {
             EnSkj_SetupTalk(this);
@@ -977,7 +977,7 @@ void EnSkj_WaitForSong(EnSkj* this, PlayState* play) {
             if (!GET_ITEMGETINF(ITEMGETINF_16)) {
                 // Saria's song has been played for the first titme
                 play->msgCtx.ocarinaMode = OCARINA_MODE_04;
-                Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+                Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
                 player->unk_6A8 = &this->actor;
                 func_8002F2CC(&this->actor, play, EnSkj_GetItemXzRange(this));
                 this->textId = 0x10BB;
@@ -1422,7 +1422,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
         this->textId = 0x102D;
         this->actionFunc = EnSkj_FailedMiniGame;
     } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_0F) { // completed the game
-        Lib_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME);
+        Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
         Message_CloseTextbox(play);
         play->msgCtx.ocarinaMode = OCARINA_MODE_04;
         player->unk_6A8 = &this->actor;
@@ -1435,7 +1435,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
                 if (sOcarinaMinigameSkullKids[SKULL_KID_LEFT].skullkid != NULL) {
                     sOcarinaMinigameSkullKids[SKULL_KID_LEFT].skullkid->minigameState = SKULL_KID_OCARINA_WAIT;
                 }
-                if (!AudioSfx_IsPlaying(SFX_ID_SYSTEM_METRONOME)) {
+                if (!AudioSfx_IsPlaying(NA_SE_SY_METRONOME)) {
                     if (sOcarinaMinigameSkullKids[SKULL_KID_RIGHT].skullkid != NULL) {
                         sOcarinaMinigameSkullKids[SKULL_KID_RIGHT].skullkid->minigameState =
                             SKULL_KID_OCARINA_PLAY_NOTES;
@@ -1447,7 +1447,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
                 if (sOcarinaMinigameSkullKids[SKULL_KID_RIGHT].skullkid != NULL) {
                     sOcarinaMinigameSkullKids[SKULL_KID_RIGHT].skullkid->minigameState = SKULL_KID_OCARINA_WAIT;
                 }
-                if (!AudioSfx_IsPlaying(SFX_ID_SYSTEM_METRONOME)) {
+                if (!AudioSfx_IsPlaying(NA_SE_SY_METRONOME)) {
                     Message_UpdateOcarinaMemoryGame(play);
                     this->songFailTimer = 160;
                 }
@@ -1456,7 +1456,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
                 if (this->songFailTimer != 0) {
                     this->songFailTimer--;
                 } else { // took too long, game failed
-                    Lib_PlaySfx(SFX_ID_SYSTEM_OCARINA_ERROR);
+                    Lib_PlaySfx(NA_SE_SY_OCARINA_ERROR);
                     Message_CloseTextbox(play);
                     play->msgCtx.ocarinaMode = OCARINA_MODE_04;
                     player->unk_6A8 = &this->actor;
@@ -1466,7 +1466,7 @@ void EnSkj_WaitForPlayback(EnSkj* this, PlayState* play) {
                 }
                 break;
             case MSGMODE_MEMORY_GAME_START_NEXT_ROUND:
-                if (!AudioSfx_IsPlaying(SFX_ID_SYSTEM_METRONOME)) {
+                if (!AudioSfx_IsPlaying(NA_SE_SY_METRONOME)) {
                     if (sOcarinaMinigameSkullKids[SKULL_KID_LEFT].skullkid != NULL) {
                         sOcarinaMinigameSkullKids[SKULL_KID_LEFT].skullkid->minigameState =
                             SKULL_KID_OCARINA_PLAY_NOTES;

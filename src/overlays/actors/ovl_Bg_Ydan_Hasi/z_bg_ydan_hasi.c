@@ -113,12 +113,12 @@ void BgYdanHasi_MoveWater(BgYdanHasi* this, PlayState* play) {
             Flags_UnsetSwitch(play, this->type);
             this->actionFunc = BgYdanHasi_InitWater;
         }
-        Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, SFX_ID_ENVIRONMENT_WATER_LEVEL_DOWN - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
     } else {
         if (Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y - 47.0f, 0.5f)) {
             this->actionFunc = BgYdanHasi_DecWaterTimer;
         }
-        Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, SFX_ID_ENVIRONMENT_WATER_LEVEL_DOWN - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, NA_SE_EV_WATER_LEVEL_DOWN - SFX_FLAG);
     }
     waterBox = &play->colCtx.colHeader->waterBoxes[1];
     waterBox->ySurface = this->dyna.actor.world.pos.y;
@@ -153,10 +153,10 @@ void BgYdanHasi_UpdateThreeBlocks(BgYdanHasi* this, PlayState* play) {
             this->dyna.actor.draw = NULL;
             this->actionFunc = BgYdanHasi_SetupThreeBlocks;
         } else {
-            Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE - SFX_FLAG);
+            Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
         }
     } else if (!Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y + 120.0f, 3.0f)) {
-        Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, SFX_ID_ENVIRONMENT_ELEVATOR_MOVE - SFX_FLAG);
+        Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, NA_SE_EV_ELEVATOR_MOVE - SFX_FLAG);
 
     } else {
         Actor_PlaySfx_FlaggedTimer(&this->dyna.actor, this->timer);

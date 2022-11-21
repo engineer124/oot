@@ -103,9 +103,9 @@ void func_808B3604(BgSpot12Saku* this, PlayState* play) {
         this->dyna.actor.home.pos.z - (Math_CosS(this->dyna.actor.shape.rot.y + 0x4000) * temp_f18);
     if (fabsf(temp_ret) < 0.0001f) {
         func_808B3714(this);
-        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_BRIDGE_OPEN_STOP);
+        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BRIDGE_OPEN_STOP);
     } else {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALGATE_OPEN - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_METALGATE_OPEN - SFX_FLAG);
     }
 }
 

@@ -202,9 +202,9 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
         if (gSaveContext.sceneLayer == 5) {
             csFrames = play->csCtx.frames;
             if (csFrames == 792) {
-                Actor_PlaySfx(&this->actor, SFX_ID_VOICE_Z0_SURPRISE);
+                Actor_PlaySfx(&this->actor, NA_SE_VO_Z0_SURPRISE);
             } else if (csFrames == 845) {
-                Actor_PlaySfx(&this->actor, SFX_ID_VOICE_Z0_THROW);
+                Actor_PlaySfx(&this->actor, NA_SE_VO_Z0_THROW);
             }
         }
     } else if (type == ENVIEWER_TYPE_7_GANONDORF) {
@@ -226,14 +226,14 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
                 case 380:
                 case 409:
                 case 438:
-                    AudioSfx_PlaySfx(SFX_ID_SYSTEM_DEMO_CUT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                    AudioSfx_PlaySfx(NA_SE_SY_DEMO_CUT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     break;
             }
         }
         if (gSaveContext.sceneLayer == 5) {
             if (play->csCtx.frames == 1508) {
-                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_FANTOM_ST_LAUGH);
+                Actor_PlaySfx(&this->actor, NA_SE_EN_FANTOM_ST_LAUGH);
             }
             if (play->csCtx.frames == 1545) {
                 Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_DEMO_6K, 32.0f, 101.0f, 1226.0f, 0, 0, 0,
@@ -244,29 +244,29 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
             SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_FANFARE, 0, 0, SEQ_ID_OPENING_GANON);
         }
         if (play->csCtx.frames == 960) {
-            AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_HORSE_GROAN, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(NA_SE_EV_HORSE_GROAN, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
     } else if (type == ENVIEWER_TYPE_6_HORSE_GANONDORF) {
         if (gSaveContext.sceneLayer == 5 || gSaveContext.sceneLayer == 10) {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_HORSE_RUN_LEVEL - SFX_FLAG);
+            Actor_PlaySfx(&this->actor, NA_SE_EV_HORSE_RUN_LEVEL - SFX_FLAG);
         }
     } else if (type == ENVIEWER_TYPE_4_HORSE_GANONDORF) {
         s16 curFrame = this->skin.skelAnime.curFrame;
 
         if (this->skin.skelAnime.animation == &gHorseGanonRearingAnim) {
             if (curFrame == 8) {
-                Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_GANON_HORSE_NEIGH);
+                Actor_PlaySfx(&this->actor, NA_SE_EV_GANON_HORSE_NEIGH);
             }
             if (curFrame == 30) {
-                Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_HORSE_LAND2);
+                Actor_PlaySfx(&this->actor, NA_SE_EV_HORSE_LAND2);
             }
         } else if (this->skin.skelAnime.animation == &gHorseGanonIdleAnim) {
             if (curFrame == 25) {
-                Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_HORSE_SANDDUST);
+                Actor_PlaySfx(&this->actor, NA_SE_EV_HORSE_SANDDUST);
             }
         } else if (this->skin.skelAnime.animation == &gHorseGanonGallopingAnim) {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_HORSE_RUN_LEVEL - SFX_FLAG);
+            Actor_PlaySfx(&this->actor, NA_SE_EV_HORSE_RUN_LEVEL - SFX_FLAG);
         }
     }
 
@@ -342,7 +342,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
                         break;
                     case 6:
                         if (play->csCtx.npcActions[1]->action == 12) {
-                            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GANON_VOICE_DEMO);
+                            Actor_PlaySfx(&this->actor, NA_SE_EN_GANON_VOICE_DEMO);
                             Animation_PlayLoopSetSpeed(&this->skin.skelAnime, &gYoungGanondorfHorsebackRideAnim, 3.0f);
                             this->state++;
                         }
@@ -436,7 +436,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
             case 0:
                 if (play->csCtx.state != CS_STATE_IDLE && play->csCtx.npcActions[1] != NULL &&
                     play->csCtx.npcActions[1]->action == 7) {
-                    AudioSfx_PlaySfx(SFX_ID_ENEMY_GANON_LAUGH, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+                    AudioSfx_PlaySfx(NA_SE_EN_GANON_LAUGH, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                     Animation_MorphToPlayOnce(&this->skin.skelAnime, &gYoungGanondorfLaughStartAnim, -5.0f);
                     this->state++;
@@ -729,10 +729,10 @@ void EnViewer_UpdatePosition(EnViewer* this, PlayState* play) {
             if (type == ENVIEWER_TYPE_0_HORSE_ZELDA) {
                 if (!sHorseSfxPlayed) {
                     sHorseSfxPlayed = true;
-                    AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_HORSE_NEIGH, &this->actor.projectedPos, 4,
-                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+                    AudioSfx_PlaySfx(NA_SE_EV_HORSE_NEIGH, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+                                     &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 }
-                Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_HORSE_RUN_LEVEL - SFX_FLAG);
+                Actor_PlaySfx(&this->actor, NA_SE_EV_HORSE_RUN_LEVEL - SFX_FLAG);
             }
 
             startPos.x = play->csCtx.npcActions[0]->startPos.x;
@@ -779,7 +779,7 @@ void EnViewer_UpdatePosition(EnViewer* this, PlayState* play) {
             }
         }
         if (type == ENVIEWER_TYPE_5_GANONDORF) {
-            AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_BURNING - SFX_FLAG, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(NA_SE_EV_BURNING - SFX_FLAG, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             EnViewer_DrawFireEffects(this, play);
         }

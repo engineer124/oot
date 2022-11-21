@@ -243,22 +243,22 @@ void BgBreakwall_Wait(BgBreakwall* this, PlayState* play) {
         Flags_SetSwitch(play, this->dyna.actor.params & 0x3F);
 
         if (wallType == BWALL_KD_FLOOR) {
-            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_EXPLOSION);
+            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_EXPLOSION);
         } else {
-            Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_WALL_BROKEN);
+            Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_WALL_BROKEN);
         }
 
         if ((wallType == BWALL_DC_ENTRANCE) && !Flags_GetEventChkInf(EVENTCHKINF_B0)) {
             Flags_SetEventChkInf(EVENTCHKINF_B0);
             Cutscene_SetSegment(play, gDcOpeningCs);
             gSaveContext.cutsceneTrigger = 1;
-            AudioSfx_PlaySfx(SFX_ID_SYSTEM_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(NA_SE_SY_CORRECT_CHIME, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             func_8002DF54(play, NULL, 0x31);
         }
 
         if (this->dyna.actor.params < 0) {
-            AudioSfx_PlaySfx(SFX_ID_SYSTEM_TRE_BOX_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
 

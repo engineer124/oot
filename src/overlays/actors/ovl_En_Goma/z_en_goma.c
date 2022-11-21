@@ -185,9 +185,9 @@ void EnGoma_SetupFlee(EnGoma* this) {
     this->actionTimer = 20;
 
     if (this->actor.params < 6) {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_BJR_DAM2);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_BJR_DAM2);
     } else {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_JR_DAM2);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_JR_DAM2);
     }
 }
 
@@ -214,9 +214,9 @@ void EnGoma_EggFallToGround(EnGoma* this, PlayState* play) {
         case 0:
             if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
                 if (this->actor.params < 6) {
-                    Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_BJR_EGG1);
+                    Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_BJR_EGG1);
                 } else {
-                    Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_EGG1);
+                    Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_EGG1);
                 }
 
                 if (this->actor.params > 5) {
@@ -331,9 +331,9 @@ void EnGoma_SetupHurt(EnGoma* this, PlayState* play) {
     this->actor.speedXZ = 20.0f;
     this->actor.world.rot.y = this->actor.yawTowardsPlayer + 0x8000;
     if (this->actor.params < 6) {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_BJR_DAM1);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_BJR_DAM1);
     } else {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_JR_DAM1);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_JR_DAM1);
     }
 }
 
@@ -360,9 +360,9 @@ void EnGoma_SetupDie(EnGoma* this) {
     this->actionTimer = 30;
 
     if (this->actor.params < 6) {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_BJR_DEAD);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_BJR_DEAD);
     } else {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_JR_DEAD);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_JR_DEAD);
     }
 
     this->invincibilityTimer = 100;
@@ -378,9 +378,9 @@ void EnGoma_Die(EnGoma* this, PlayState* play) {
 
     if (this->actionTimer == 17) {
         if (this->actor.params < 6) {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_BJR_LAND);
+            Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_BJR_LAND);
         } else {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_JR_LAND);
+            Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_JR_LAND);
         }
     }
 
@@ -418,7 +418,7 @@ void EnGoma_Dead(EnGoma* this, PlayState* play) {
 
             parent->childrenGohmaState[this->actor.params] = -1;
         }
-        AudioSfx_PlaySfx(SFX_ID_ENEMY_EXTINCT, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+        AudioSfx_PlaySfx(NA_SE_EN_EXTINCT, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         Actor_Kill(&this->actor);
         Item_DropCollectibleRandom(play, NULL, &this->actor.world.pos, 0x30);
@@ -491,9 +491,9 @@ void EnGoma_SetupJump(EnGoma* this) {
     this->actor.velocity.y = 8.0f;
 
     if (this->actor.params < 6) {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_BJR_CRY);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_BJR_CRY);
     } else {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_JR_CRY);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_JR_CRY);
     }
 }
 
@@ -505,9 +505,9 @@ void EnGoma_Jump(EnGoma* this, PlayState* play) {
     if (this->actor.velocity.y <= 0.0f && (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
         EnGoma_SetupLand(this);
         if (this->actor.params < 6) {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_BJR_LAND2);
+            Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_BJR_LAND2);
         } else {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_JR_LAND2);
+            Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_JR_LAND2);
         }
     }
     this->visualState = 0;
@@ -529,9 +529,9 @@ void EnGoma_ChasePlayer(EnGoma* this, PlayState* play) {
 
     if (Animation_OnFrame(&this->skelanime, 1.0f) || Animation_OnFrame(&this->skelanime, 5.0f)) {
         if (this->actor.params < 6) {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_BJR_WALK);
+            Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_BJR_WALK);
         } else {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_JR_WALK);
+            Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_JR_WALK);
         }
     }
 
@@ -554,9 +554,9 @@ void EnGoma_SetupStunned(EnGoma* this, PlayState* play) {
     this->actionTimer = (s16)Rand_ZeroFloat(15.0f) + 3;
 
     if (this->actor.params < 6) {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_BJR_FREEZE);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_BJR_FREEZE);
     } else {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_GOMA_JR_FREEZE);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_GOMA_JR_FREEZE);
     }
 }
 
@@ -855,9 +855,9 @@ void EnGoma_SpawnHatchDebris(EnGoma* this, PlayState* play2) {
     s16 i;
 
     if (this->actor.params < 6) {
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, SFX_ID_ENEMY_GOMA_BJR_EGG2);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EN_GOMA_BJR_EGG2);
     } else {
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, SFX_ID_ENEMY_GOMA_EGG2);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EN_GOMA_EGG2);
     }
 
     for (i = 0; i < 15; i++) {

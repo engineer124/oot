@@ -561,7 +561,7 @@ void func_80AEBA2C(EnRu1* this, PlayState* play) {
 
 void func_80AEBAFC(EnRu1* this) {
     if (this->unk_298 == 0) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_DIVE_INTO_WATER);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_EV_DIVE_INTO_WATER);
         this->unk_298 = 1;
     }
 }
@@ -592,14 +592,14 @@ void func_80AEBC30(PlayState* play) {
 
     if (play->csCtx.frames == 0xCD) {
         player = GET_PLAYER(play);
-        AudioSfx_PlaySfx(SFX_ID_ENVIRONMENT_DIVE_INTO_WATER, &player->actor.projectedPos, 4,
-                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
+        AudioSfx_PlaySfx(NA_SE_EV_DIVE_INTO_WATER, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+                         &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     }
 }
 
 void func_80AEBC84(EnRu1* this, PlayState* play) {
     if (play->csCtx.frames == 0x82) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_RT_LAUGH_0);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_RT_LAUGH_0);
     }
 }
 
@@ -839,8 +839,8 @@ void func_80AEC650(EnRu1* this) {
 }
 
 void func_80AEC6B0(EnRu1* this) {
-    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_FALL_DOWN_DIRT);
-    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_RT_FALL);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_EV_FALL_DOWN_DIRT);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_RT_FALL);
 }
 
 void func_80AEC6E4(EnRu1* this, PlayState* play) {
@@ -1191,7 +1191,7 @@ void func_80AED44C(EnRu1* this, PlayState* play) {
 }
 
 void func_80AED4FC(EnRu1* this) {
-    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_LAND_DIRT);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_EV_LAND_DIRT);
 }
 
 void func_80AED520(EnRu1* this, PlayState* play) {
@@ -1199,25 +1199,25 @@ void func_80AED520(EnRu1* this, PlayState* play) {
 
     AudioSfx_PlaySfx(SFX_ID_PLAYER_PULL_UP_RUTO, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_RT_LIFT);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_RT_LIFT);
 }
 
 void func_80AED57C(EnRu1* this) {
     if (this->actor.speedXZ != 0.0f) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_RT_THROW);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_RT_THROW);
     }
 }
 
 void func_80AED5B8(EnRu1* this) {
-    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_RT_CRASH);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_RT_CRASH);
 }
 
 void func_80AED5DC(EnRu1* this) {
-    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_RT_UNBALLANCE);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_RT_UNBALLANCE);
 }
 
 void func_80AED600(EnRu1* this) {
-    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_RT_DISCOVER);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_RT_DISCOVER);
 }
 
 s32 func_80AED624(EnRu1* this, PlayState* play) {
@@ -1806,7 +1806,7 @@ void func_80AEEFEC(EnRu1* this, PlayState* play) {
 
 void func_80AEF080(EnRu1* this) {
     if (Animation_OnFrame(&this->skelAnime, 11.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_ENVIRONMENT_LAND_DIRT);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_EV_LAND_DIRT);
     }
 }
 
@@ -1904,17 +1904,17 @@ void func_80AEF40C(EnRu1* this) {
 }
 
 void func_80AEF4A8(EnRu1* this, PlayState* play) {
-    SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.projectedPos, 20, SFX_ID_VOICE_RT_FALL);
+    SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.projectedPos, 20, NA_SE_VO_RT_FALL);
 }
 
 void func_80AEF4E0(EnRu1* this) {
     if (Animation_OnFrame(&this->skelAnime, 5.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_RT_LAUGH_0);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_RT_LAUGH_0);
     }
 }
 
 void func_80AEF51C(EnRu1* this) {
-    Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_VOICE_RT_THROW);
+    Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_RT_THROW);
 }
 
 void func_80AEF540(EnRu1* this) {

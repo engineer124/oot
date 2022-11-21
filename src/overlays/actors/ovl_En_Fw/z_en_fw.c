@@ -83,7 +83,7 @@ s32 EnFw_DoBounce(EnFw* this, s32 totalBounces, f32 yVelocity) {
         return false;
     }
 
-    Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_DODO_M_GND);
+    Actor_PlaySfx(&this->actor, NA_SE_EN_DODO_M_GND);
     this->bounceCnt--;
     if (this->bounceCnt <= 0) {
         if (this->bounceCnt == 0) {
@@ -233,10 +233,10 @@ void EnFw_Run(EnFw* this, PlayState* play) {
             if (!this->lastDmgHook) {
                 this->actor.velocity.y = 6.0f;
             }
-            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_FLAME_MAN_DAMAGE);
+            Actor_PlaySfx(&this->actor, NA_SE_EN_FLAME_MAN_DAMAGE);
             this->damageTimer = 20;
         } else {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_FLAME_MAN_DAMAGE);
+            Actor_PlaySfx(&this->actor, NA_SE_EN_FLAME_MAN_DAMAGE);
             this->explosionTimer = 6;
         }
         this->actor.speedXZ = 0.0f;
@@ -300,14 +300,14 @@ void EnFw_Run(EnFw* this, PlayState* play) {
         this->actor.world.rot = this->actor.shape.rot;
 
         if (this->slideTimer == 0 && EnFw_PlayerInRange(this, play)) {
-            Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_FLAME_MAN_SURP);
+            Actor_PlaySfx(&this->actor, NA_SE_EN_FLAME_MAN_SURP);
             this->slideSfxTimer = 8;
             this->slideTimer = 8;
         }
 
         if (this->slideTimer != 0) {
             if (DECR(this->slideSfxTimer) == 0) {
-                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_FLAME_MAN_SLIDE);
+                Actor_PlaySfx(&this->actor, NA_SE_EN_FLAME_MAN_SLIDE);
                 this->slideSfxTimer = 4;
             }
             Math_SmoothStepToF(&this->actor.speedXZ, 0.0f, 0.1f, 1.0f, 0.0f);
@@ -322,7 +322,7 @@ void EnFw_Run(EnFw* this, PlayState* play) {
             Math_SmoothStepToF(&this->actor.speedXZ, 6.0f, 0.1f, 1.0f, 0.0f);
             curFrame = this->skelAnime.curFrame;
             if (curFrame == 1 || curFrame == 4) {
-                Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_FLAME_MAN_RUN);
+                Actor_PlaySfx(&this->actor, NA_SE_EN_FLAME_MAN_RUN);
                 EnFw_SpawnDust(this, 8, 0.16f, 0.1f, 1, 0.0f, 20.0f, 0.0f);
             }
         }
@@ -339,7 +339,7 @@ void EnFw_TurnToParentInitPos(EnFw* this, PlayState* play) {
         this->actor.world.rot = this->actor.shape.rot;
         this->actor.velocity.y = 14.0f;
         this->actor.home.pos = this->actor.world.pos;
-        Actor_PlaySfx(&this->actor, SFX_ID_ENEMY_STAL_JUMP);
+        Actor_PlaySfx(&this->actor, NA_SE_EN_STAL_JUMP);
         Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ENFW_ANIM_1);
         this->actionFunc = EnFw_JumpToParentInitPos;
     }

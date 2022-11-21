@@ -87,9 +87,9 @@ void func_80893428(BgJyaAmishutter* this) {
 void func_80893438(BgJyaAmishutter* this) {
     if (Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y + 100.0f, 3.0f)) {
         func_808934B0(this);
-        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_STOP);
+        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_METALDOOR_STOP);
     } else {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_SLIDE - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_METALDOOR_SLIDE - SFX_FLAG);
     }
 }
 
@@ -110,9 +110,9 @@ void func_808934FC(BgJyaAmishutter* this) {
 void func_8089350C(BgJyaAmishutter* this) {
     if (Math_StepToF(&this->dyna.actor.world.pos.y, this->dyna.actor.home.pos.y, 3.0f)) {
         BgJyaAmishutter_SetupWaitForPlayer(this);
-        Actor_PlaySfx(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_STOP);
+        Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_METALDOOR_STOP);
     } else {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, SFX_ID_ENVIRONMENT_METALDOOR_SLIDE - SFX_FLAG);
+        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_METALDOOR_SLIDE - SFX_FLAG);
     }
 }
 

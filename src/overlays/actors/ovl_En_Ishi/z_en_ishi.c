@@ -49,9 +49,9 @@ static f32 D_80A7FA20[] = { 58.0f, 80.0f };
 static f32 D_80A7FA28[] = { 0.0f, 0.005f };
 
 // the sizes of these arrays are very large and take up way more space than it needs to.
-// coincidentally the sizes are the same as the ID for SFX_ID_ENVIRONMENT_ROCK_BROKEN, which may explain a mistake that
+// coincidentally the sizes are the same as the ID for NA_SE_EV_ROCK_BROKEN, which may explain a mistake that
 // could have been made here
-static u16 sBreakSfxIds[0x2852] = { SFX_ID_ENVIRONMENT_ROCK_BROKEN, SFX_ID_ENVIRONMENT_WALL_BROKEN };
+static u16 sBreakSfxIds[0x2852] = { NA_SE_EV_ROCK_BROKEN, NA_SE_EV_WALL_BROKEN };
 
 static u8 sBreakSfxDurations[0x2852] = { 20, 40 };
 
@@ -458,7 +458,7 @@ void EnIshi_Fly(EnIshi* this, PlayState* play) {
         this->actor.minVelocityY = -6.0f;
         sRotSpeedX >>= 2;
         sRotSpeedY >>= 2;
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, SFX_ID_ENVIRONMENT_DIVE_INTO_WATER_L);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EV_DIVE_INTO_WATER_L);
         this->actor.bgCheckFlags &= ~BGCHECKFLAG_WATER_TOUCH;
     }
     Math_StepToF(&this->actor.shape.yOffset, 0.0f, 2.0f);

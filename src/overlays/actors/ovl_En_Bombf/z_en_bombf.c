@@ -356,7 +356,7 @@ void EnBombf_Update(Actor* thisx, PlayState* play) {
                 if (1) {}
                 thisx->world.rot.y = ((thisx->wallYaw - thisx->world.rot.y) + thisx->wallYaw) - 0x8000;
             }
-            Actor_PlaySfx(thisx, SFX_ID_ENVIRONMENT_BOMB_BOUND);
+            Actor_PlaySfx(thisx, NA_SE_EV_BOMB_BOUND);
             Actor_MoveForward(thisx);
             DREG(6) = 1;
             Actor_UpdateBgCheckInfo(play, thisx, 5.0f, 10.0f, 0.0f,
@@ -387,7 +387,7 @@ void EnBombf_Update(Actor* thisx, PlayState* play) {
                 if ((play->gameplayFrames % 2) == 0) {
                     EffectSsGSpk_SpawnFuse(play, thisx, &effPos, &effVelocity, &effAccel);
                 }
-                Actor_PlaySfx(thisx, SFX_ID_ITEM_BOMB_IGNIT - SFX_FLAG);
+                Actor_PlaySfx(thisx, NA_SE_IT_BOMB_IGNIT - SFX_FLAG);
 
                 effPos.y += 3.0f;
                 func_8002829C(play, &effPos, &effVelocity, &dustAccel, &dustColor, &dustColor, 50, 5);
@@ -424,7 +424,7 @@ void EnBombf_Update(Actor* thisx, PlayState* play) {
                     EffectSsBlast_SpawnWhiteShockwave(play, &effPos, &effVelocity, &effAccel);
                 }
 
-                Actor_PlaySfx(thisx, SFX_ID_ITEM_BOMB_EXPLOSION);
+                Actor_PlaySfx(thisx, NA_SE_IT_BOMB_EXPLOSION);
                 play->envCtx.adjLight1Color[0] = play->envCtx.adjLight1Color[1] = play->envCtx.adjLight1Color[2] = 250;
                 play->envCtx.adjAmbientColor[0] = play->envCtx.adjAmbientColor[1] = play->envCtx.adjAmbientColor[2] =
                     250;
@@ -453,14 +453,14 @@ void EnBombf_Update(Actor* thisx, PlayState* play) {
 
     if ((thisx->scale.x >= 0.01f) && (thisx->params != BOMBFLOWER_EXPLOSION)) {
         if (thisx->yDistToWater >= 20.0f) {
-            EffectSsDeadSound_SpawnStationary(play, &thisx->projectedPos, SFX_ID_ITEM_BOMB_UNEXPLOSION, true,
+            EffectSsDeadSound_SpawnStationary(play, &thisx->projectedPos, NA_SE_IT_BOMB_UNEXPLOSION, true,
                                               DEADSOUND_REPEAT_MODE_OFF, 10);
             Actor_Kill(thisx);
             return;
         }
         if (thisx->bgCheckFlags & BGCHECKFLAG_WATER_TOUCH) {
             thisx->bgCheckFlags &= ~BGCHECKFLAG_WATER_TOUCH;
-            Actor_PlaySfx(thisx, SFX_ID_ENVIRONMENT_BOMB_DROP_WATER);
+            Actor_PlaySfx(thisx, NA_SE_EV_BOMB_DROP_WATER);
         }
     }
 }

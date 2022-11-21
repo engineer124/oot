@@ -131,7 +131,7 @@ void EnHeishi3_StandSentinelInGrounds(EnHeishi3* this, PlayState* play) {
         (fabsf(player->actor.world.pos.y - this->actor.world.pos.y) < 100.0f) && (sPlayerCaught == 0)) {
         sPlayerCaught = 1;
         Message_StartTextbox(play, 0x702D, &this->actor);
-        Lib_PlaySfx(SFX_ID_SYSTEM_FOUND);
+        Lib_PlaySfx(NA_SE_SY_FOUND);
         osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ 発見！ ☆☆☆☆☆ \n" VT_RST); // "Discovered!"
         func_8002DF54(play, &this->actor, 1);
         this->actionFunc = EnHeishi3_CatchStart;
@@ -159,7 +159,7 @@ void EnHeishi3_StandSentinelInCastle(EnHeishi3* this, PlayState* play) {
         }
         sPlayerCaught = 1;
         Message_StartTextbox(play, 0x702D, &this->actor);
-        Lib_PlaySfx(SFX_ID_SYSTEM_FOUND);
+        Lib_PlaySfx(NA_SE_SY_FOUND);
         osSyncPrintf(VT_FGCOL(GREEN) "☆☆☆☆☆ 発見！ ☆☆☆☆☆ \n" VT_RST); // "Discovered!"
         func_8002DF54(play, &this->actor, 1);
         this->actionFunc = EnHeishi3_CatchStart;
@@ -179,7 +179,7 @@ void func_80A55BD4(EnHeishi3* this, PlayState* play) {
 
     SkelAnime_Update(&this->skelAnime);
     if (Animation_OnFrame(&this->skelAnime, 1.0f) || Animation_OnFrame(&this->skelAnime, 17.0f)) {
-        Actor_PlaySfx(&this->actor, SFX_ID_ENVIRONMENT_KNIGHT_WALK);
+        Actor_PlaySfx(&this->actor, NA_SE_EV_KNIGHT_WALK);
     }
     if (this->caughtTimer == 0) {
         this->actionFunc = EnHeishi3_ResetAnimationToIdle;
