@@ -1724,7 +1724,7 @@ void Actor_PlaySfx_Surface(PlayState* play, Actor* actor) {
 }
 
 /**
- * Play a sfx at the actor's position using the shared audioFlag system
+ * Play a sfx at the actor's position using the shared audio actorFlag system
  */
 void Actor_PlaySfx_Flagged2(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
@@ -1733,7 +1733,7 @@ void Actor_PlaySfx_Flagged2(Actor* actor, u16 sfxId) {
 }
 
 /**
- * Play a sfx at the center of the screen using the shared audioFlag system
+ * Play a sfx at the center of the screen using the shared audio actorFlag system
  */
 void Actor_PlaySfx_FlaggedCentered2(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
@@ -1742,7 +1742,7 @@ void Actor_PlaySfx_FlaggedCentered2(Actor* actor, u16 sfxId) {
 }
 
 /**
- * Play a sfx at the center of the screen using the shared audioFlag system
+ * Play a sfx at the center of the screen using the shared audio actorFlag system
  */
 void Actor_PlaySfx_FlaggedCentered(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
@@ -1751,7 +1751,7 @@ void Actor_PlaySfx_FlaggedCentered(Actor* actor, u16 sfxId) {
 }
 
 /**
- * Play a sfx at the actor's position using the shared audioFlag system
+ * Play a sfx at the actor's position using the shared audio actorFlag system
  */
 void Actor_PlaySfx_Flagged(Actor* actor, u16 sfxId) {
     actor->flags &=
