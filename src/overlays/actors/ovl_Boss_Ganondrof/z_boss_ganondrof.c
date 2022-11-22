@@ -1239,7 +1239,7 @@ void BossGanondrof_CollisionCheck(BossGanondrof* this, PlayState* play) {
             }
             if (this->flyMode != GND_FLY_PAINTING) {
                 if (acHit && (this->actionFunc != BossGanondrof_Stunned) && (hurtbox->toucher.dmgFlags & DMG_RANGED)) {
-                    Actor_PlaySfx(&this->actor, SFX_ID_PLAYER_WALK_GROUND - SFX_FLAG);
+                    Actor_PlaySfx(&this->actor, NA_SE_PL_WALK_GROUND - SFX_FLAG);
                     osSyncPrintf("hit != 0 \n");
                 } else if (this->actionFunc != BossGanondrof_Charge) {
                     if (this->returnCount == 0) {
@@ -1270,7 +1270,7 @@ void BossGanondrof_CollisionCheck(BossGanondrof* this, PlayState* play) {
                     horse->hitTimer = 20;
                     Actor_PlaySfx(&this->actor, NA_SE_EN_FANTOM_DAMAGE);
                 } else {
-                    Actor_PlaySfx(&this->actor, SFX_ID_PLAYER_WALK_GROUND - SFX_FLAG);
+                    Actor_PlaySfx(&this->actor, NA_SE_PL_WALK_GROUND - SFX_FLAG);
                 }
             } else if (acHit && (hurtbox->toucher.dmgFlags & DMG_RANGED)) {
                 this->work[GND_INVINC_TIMER] = 10;

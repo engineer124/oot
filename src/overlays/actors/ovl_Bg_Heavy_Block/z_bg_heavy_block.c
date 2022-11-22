@@ -350,7 +350,7 @@ void BgHeavyBlock_LiftedUp(BgHeavyBlock* this, PlayState* play) {
 
     if (this->timer == 11) {
         Rumble_Request(0.0f, 255, 20, 20);
-        Player_PlaySfx(&player->actor, SFX_ID_PLAYER_PULL_UP_BIGROCK);
+        Player_PlaySfx(&player->actor, NA_SE_PL_PULL_UP_BIGROCK);
         LOG_STRING("NA_SE_PL_PULL_UP_BIGROCK", "../z_bg_heavy_block.c", 691);
     }
 

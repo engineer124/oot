@@ -888,7 +888,7 @@ void EffectSsEnIce_SpawnFlyingVec3f(PlayState* play, Actor* actor, Vec3f* pos, s
     initParams.scale = scale;
 
     if (actor != NULL) {
-        Actor_PlaySfx(actor, SFX_ID_PLAYER_FREEZE_S);
+        Actor_PlaySfx(actor, NA_SE_PL_FREEZE_S);
     }
 
     EffectSs_Spawn(play, EFFECT_SS_EN_ICE, 80, &initParams);
@@ -914,7 +914,7 @@ void EffectSsEnIce_SpawnFlyingVec3s(PlayState* play, Actor* actor, Vec3s* pos, s
     initParams.scale = scale;
 
     if (actor != NULL) {
-        Actor_PlaySfx(actor, SFX_ID_PLAYER_FREEZE_S);
+        Actor_PlaySfx(actor, NA_SE_PL_FREEZE_S);
     }
 
     EffectSs_Spawn(play, EFFECT_SS_EN_ICE, 80, &initParams);

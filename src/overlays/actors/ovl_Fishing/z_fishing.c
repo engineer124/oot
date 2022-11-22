@@ -2479,7 +2479,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
                     sLureRot.x = 0.0f;
                     if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
                         D_80B7E144 += 6.0f;
-                        Lib_PlaySfx_AtPos(&D_80B7AF94, SFX_ID_PLAYER_WALK_SAND);
+                        Lib_PlaySfx_AtPos(&D_80B7AF94, NA_SE_PL_WALK_SAND);
                     }
                 } else {
                     if (D_80B7E144 > 150.0f) {
@@ -3248,7 +3248,7 @@ void Fishing_UpdateFish(Actor* thisx, PlayState* play2) {
                         Fishing_SpawnRipple(&this->actor.projectedPos, play->specialEffects, &spB8, 30.0f, 400.0f, 150,
                                             90);
 
-                        Actor_PlaySfx(&this->actor, SFX_ID_PLAYER_CATCH_BOOMERANG);
+                        Actor_PlaySfx(&this->actor, NA_SE_PL_CATCH_BOOMERANG);
                         break;
                     }
                 }
@@ -3523,7 +3523,7 @@ void Fishing_UpdateFish(Actor* thisx, PlayState* play2) {
             } else if (sp124 < 10.0f) {
                 if (sLurePos.y > (WATER_SURFACE_Y(play) - 10.0f)) {
                     Actor_PlaySfx(&this->actor, NA_SE_EV_JUMP_OUT_WATER);
-                    Lib_PlaySfx(SFX_ID_PLAYER_CATCH_BOOMERANG);
+                    Lib_PlaySfx(NA_SE_PL_CATCH_BOOMERANG);
                 }
 
                 func_80B70A2C(this, play, false);

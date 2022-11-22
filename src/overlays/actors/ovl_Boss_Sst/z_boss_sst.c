@@ -764,7 +764,7 @@ void BossSst_HeadCharge(BossSst* this, PlayState* play) {
         sHands[LEFT]->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
         sHands[RIGHT]->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
         func_8002F71C(play, &this->actor, 10.0f, this->actor.shape.rot.y, 5.0f);
-        Player_PlaySfx(&GET_PLAYER(play)->actor, SFX_ID_PLAYER_BODY_HIT);
+        Player_PlaySfx(&GET_PLAYER(play)->actor, NA_SE_PL_BODY_HIT);
     }
 }
 
@@ -1574,7 +1574,7 @@ void BossSst_HandSweep(BossSst* this, PlayState* play) {
         this->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
         this->ready = true;
         func_8002F71C(play, &this->actor, 5.0f, this->actor.shape.rot.y - (this->vParity * 0x3800), 0.0f);
-        Player_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
+        Player_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
         newTargetYaw = this->actor.shape.rot.y - (this->vParity * 0x1400);
         if (((s16)(newTargetYaw - this->targetYaw) * this->vParity) > 0) {
             this->targetYaw = newTargetYaw;
@@ -1631,7 +1631,7 @@ void BossSst_HandPunch(BossSst* this, PlayState* play) {
     if (this->actor.bgCheckFlags & BGCHECKFLAG_WALL) {
         BossSst_HandSetupRetreat(this);
     } else if (this->colliderJntSph.base.atFlags & AT_HIT) {
-        Player_PlaySfx(&GET_PLAYER(play)->actor, SFX_ID_PLAYER_BODY_HIT);
+        Player_PlaySfx(&GET_PLAYER(play)->actor, NA_SE_PL_BODY_HIT);
         func_8002F71C(play, &this->actor, 10.0f, this->actor.shape.rot.y, 5.0f);
         BossSst_HandSetupRetreat(this);
     }
@@ -1951,7 +1951,7 @@ void BossSst_HandSwing(BossSst* this, PlayState* play) {
         player->actor.world.pos.x += 70.0f * Math_SinS(this->actor.shape.rot.y);
         player->actor.world.pos.z += 70.0f * Math_CosS(this->actor.shape.rot.y);
         func_8002F71C(play, &this->actor, 15.0f, this->actor.shape.rot.y, 2.0f);
-        Player_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
+        Player_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
     }
 
     Actor_PlaySfx_Flagged(&this->actor, NA_SE_EN_SHADEST_HAND_FLY - SFX_FLAG);
@@ -2073,7 +2073,7 @@ void BossSst_HandReadyCharge(BossSst* this, PlayState* play) {
         OTHER_HAND(this)->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
         sHead->colliderJntSph.base.atFlags &= ~(AT_ON | AT_HIT);
         func_8002F71C(play, &this->actor, 10.0f, this->actor.shape.rot.y, 5.0f);
-        Player_PlaySfx(&GET_PLAYER(play)->actor, SFX_ID_PLAYER_BODY_HIT);
+        Player_PlaySfx(&GET_PLAYER(play)->actor, NA_SE_PL_BODY_HIT);
     }
 }
 
@@ -3036,7 +3036,7 @@ void BossSst_SpawnIceCrystal(BossSst* this, s32 index) {
     ice->scale = 4000;
 
     if ((index % 2) == 0) {
-        Actor_PlaySfx(&this->actor, SFX_ID_PLAYER_FREEZE_S);
+        Actor_PlaySfx(&this->actor, NA_SE_PL_FREEZE_S);
     }
 }
 
@@ -3075,7 +3075,7 @@ void BossSst_IceShatter(BossSst* this) {
     s32 i;
 
     this->effects[0].status = 1;
-    Actor_PlaySfx(&this->actor, SFX_ID_PLAYER_ICE_BROKEN);
+    Actor_PlaySfx(&this->actor, NA_SE_PL_ICE_BROKEN);
 
     for (i = 0; i < 18; i++) {
         BossSstEffect* ice = &this->effects[i];

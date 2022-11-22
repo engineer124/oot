@@ -56,7 +56,7 @@ typedef struct {
 
 typedef enum {
     NA_SE_NONE,
-    SFX_ID_PLAYER_BASE = 0x7FF,
+    NA_SE_PL_BASE = 0x7FF,
     #include "tables/sfx/playerbank_table.h"
     NA_SE_IT_BASE = 0x17FF,
     #include "tables/sfx/itembank_table.h"

@@ -651,7 +651,7 @@ void EnDodongo_SweepTail(EnDodongo* this, PlayState* play) {
             Player* player = GET_PLAYER(play);
 
             if (this->colliderBody.base.at == &player->actor) {
-                Actor_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
+                Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
             }
         }
         CollisionCheck_SetAT(play, &play->colChkCtx, &this->colliderBody.base);

@@ -235,7 +235,7 @@ void EnBom_Update(Actor* thisx, PlayState* play2) {
     }
 
     if (this->timer == 67) {
-        Actor_PlaySfx(thisx, SFX_ID_PLAYER_TAKE_OUT_SHIELD);
+        Actor_PlaySfx(thisx, NA_SE_PL_TAKE_OUT_SHIELD);
         Actor_SetScale(thisx, 0.01f);
     }
 

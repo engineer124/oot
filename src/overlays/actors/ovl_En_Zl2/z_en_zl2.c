@@ -589,7 +589,7 @@ void func_80B4FD90(EnZl2* this, PlayState* play) {
 
 void func_80B4FDD4(EnZl2* this) {
     if (Animation_OnFrame(&this->skelAnime, 14.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_WALK_CONCRETE);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_WALK_CONCRETE);
     }
 }
 

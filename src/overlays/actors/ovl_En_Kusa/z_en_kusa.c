@@ -300,7 +300,7 @@ void EnKusa_Main(EnKusa* this, PlayState* play) {
 
     if (Actor_HasParent(&this->actor, play)) {
         EnKusa_SetupLiftedUp(this);
-        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, SFX_ID_PLAYER_PULL_UP_PLANT);
+        SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, NA_SE_PL_PULL_UP_PLANT);
     } else if (this->collider.base.acFlags & AC_HIT) {
         this->collider.base.acFlags &= ~AC_HIT;
         EnKusa_SpawnFragments(this, play);

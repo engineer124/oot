@@ -1711,9 +1711,9 @@ void Actor_PlaySfx_Surface(PlayState* play, Actor* actor) {
 
     if (actor->bgCheckFlags & BGCHECKFLAG_WATER) {
         if (actor->yDistToWater < 20.0f) {
-            sfxId = SFX_ID_PLAYER_WALK_WATER0 - SFX_FLAG;
+            sfxId = NA_SE_PL_WALK_WATER0 - SFX_FLAG;
         } else {
-            sfxId = SFX_ID_PLAYER_WALK_WATER1 - SFX_FLAG;
+            sfxId = NA_SE_PL_WALK_WATER1 - SFX_FLAG;
         }
     } else {
         sfxId = SurfaceType_GetSfxId(&play->colCtx, actor->floorPoly, actor->floorBgId);

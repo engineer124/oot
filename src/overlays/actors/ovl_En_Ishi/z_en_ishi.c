@@ -345,7 +345,7 @@ void EnIshi_SetupWait(EnIshi* this) {
 }
 
 void EnIshi_Wait(EnIshi* this, PlayState* play) {
-    static u16 liftSfxIds[] = { SFX_ID_PLAYER_PULL_UP_ROCK, SFX_ID_PLAYER_PULL_UP_BIGROCK };
+    static u16 liftSfxIds[] = { NA_SE_PL_PULL_UP_ROCK, NA_SE_PL_PULL_UP_BIGROCK };
     s32 pad;
     s16 type = this->actor.params & 1;
 

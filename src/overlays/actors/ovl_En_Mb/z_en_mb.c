@@ -918,7 +918,7 @@ void EnMb_SpearPatrolPrepareAndCharge(EnMb* this, PlayState* play) {
                     }
                 }
                 if (!(this->attackCollider.base.atFlags & AT_BOUNCED)) {
-                    Actor_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
+                    Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
                 }
                 if (play->grabPlayer(play, player)) {
                     player->actor.parent = &this->actor;
@@ -987,7 +987,7 @@ void EnMb_SpearPatrolImmediateCharge(EnMb* this, PlayState* play) {
                     }
                 }
                 if (!(this->attackCollider.base.atFlags & AT_BOUNCED)) {
-                    Actor_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
+                    Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
                 }
                 if (play->grabPlayer(play, player)) {
                     player->actor.parent = &this->actor;

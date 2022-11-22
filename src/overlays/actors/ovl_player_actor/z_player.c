@@ -1110,8 +1110,8 @@ static struct_80832924 D_80853DF8[] = {
 };
 
 static struct_80832924 D_80853DFC[] = {
-    { SFX_ID_PLAYER_CALM_HIT, 0x82C }, { SFX_ID_PLAYER_CALM_HIT, 0x830 },  { SFX_ID_PLAYER_CALM_HIT, 0x834 },
-    { SFX_ID_PLAYER_CALM_HIT, 0x838 }, { SFX_ID_PLAYER_CALM_HIT, -0x83C },
+    { NA_SE_PL_CALM_HIT, 0x82C }, { NA_SE_PL_CALM_HIT, 0x830 },  { NA_SE_PL_CALM_HIT, 0x834 },
+    { NA_SE_PL_CALM_HIT, 0x838 }, { NA_SE_PL_CALM_HIT, -0x83C },
 };
 
 static struct_80832924 D_80853E10[] = {
@@ -1751,9 +1751,9 @@ void func_808327F8(Player* this, f32 arg1) {
     s32 sfxId;
 
     if (this->currentBoots == PLAYER_BOOTS_IRON) {
-        sfxId = SFX_ID_PLAYER_WALK_HEAVYBOOTS;
+        sfxId = NA_SE_PL_WALK_HEAVYBOOTS;
     } else {
-        sfxId = func_808327A4(this, SFX_ID_PLAYER_WALK_GROUND);
+        sfxId = func_808327A4(this, NA_SE_PL_WALK_GROUND);
     }
 
     Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(&this->actor.projectedPos, sfxId, arg1);
@@ -1763,9 +1763,9 @@ void func_80832854(Player* this) {
     s32 sfxId;
 
     if (this->currentBoots == PLAYER_BOOTS_IRON) {
-        sfxId = SFX_ID_PLAYER_JUMP_HEAVYBOOTS;
+        sfxId = NA_SE_PL_JUMP_HEAVYBOOTS;
     } else {
-        sfxId = func_808327A4(this, SFX_ID_PLAYER_JUMP);
+        sfxId = func_808327A4(this, NA_SE_PL_JUMP);
     }
 
     Player_PlaySfx(&this->actor, sfxId);
@@ -1775,9 +1775,9 @@ void func_808328A0(Player* this) {
     s32 sfxId;
 
     if (this->currentBoots == PLAYER_BOOTS_IRON) {
-        sfxId = SFX_ID_PLAYER_LAND_HEAVYBOOTS;
+        sfxId = NA_SE_PL_LAND_HEAVYBOOTS;
     } else {
-        sfxId = func_808327A4(this, SFX_ID_PLAYER_LAND);
+        sfxId = func_808327A4(this, NA_SE_PL_LAND);
     }
 
     Player_PlaySfx(&this->actor, sfxId);
@@ -1816,7 +1816,7 @@ void func_80832924(Player* this, struct_80832924* entry) {
                 func_808327F8(this, 0.0f);
             } else if (flags == 0x4800) {
                 Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(
-                    &this->actor.projectedPos, this->ageProperties->unk_94 + SFX_ID_PLAYER_WALK_LADDER, 0.0f);
+                    &this->actor.projectedPos, this->ageProperties->unk_94 + NA_SE_PL_WALK_LADDER, 0.0f);
             }
         }
         cont = (entry->field >= 0);
@@ -2487,7 +2487,7 @@ void func_80834594(PlayState* play, Player* this) {
         if (func_8008F2BC(this, this->heldItemAction) >= 0) {
             func_808328EC(this, NA_SE_IT_SWORD_PUTAWAY);
         } else {
-            func_808328EC(this, SFX_ID_PLAYER_CHANGE_ARMS);
+            func_808328EC(this, NA_SE_PL_CHANGE_ARMS);
         }
     }
 
@@ -2496,7 +2496,7 @@ void func_80834594(PlayState* play, Player* this) {
     if (func_8008F2BC(this, this->heldItemAction) >= 0) {
         func_808328EC(this, NA_SE_IT_SWORD_PICKOUT);
     } else if (this->heldItemAction != PLAYER_IA_NONE) {
-        func_808328EC(this, SFX_ID_PLAYER_CHANGE_ARMS);
+        func_808328EC(this, NA_SE_PL_CHANGE_ARMS);
     }
 }
 
@@ -3031,7 +3031,7 @@ s32 func_80835B60(Player* this, PlayState* play) {
         func_80833638(this, func_80835C08);
         LinkAnimation_PlayOnce(play, &this->skelAnime2, &gPlayerAnim_link_boom_catch);
         func_808357E8(this, gPlayerLeftHandBoomerangDLs);
-        Player_PlaySfx(&this->actor, SFX_ID_PLAYER_CATCH_BOOMERANG);
+        Player_PlaySfx(&this->actor, NA_SE_PL_CATCH_BOOMERANG);
         func_80832698(this, NA_SE_VO_LI_SWORD_N);
         return 1;
     }
@@ -3188,7 +3188,7 @@ void func_80835F44(PlayState* play, Player* this, s32 item) {
                     this->currentMask = itemAction - PLAYER_IA_MASK_KEATON + 1;
                 }
 
-                func_808328EC(this, SFX_ID_PLAYER_CHANGE_ARMS);
+                func_808328EC(this, NA_SE_PL_CHANGE_ARMS);
             } else if (((itemAction >= PLAYER_IA_OCARINA_FAIRY) && (itemAction <= PLAYER_IA_OCARINA_OF_TIME)) ||
                        (itemAction >= PLAYER_IA_BOTTLE_FISH)) {
                 if (!func_8008E9C4(this) ||
@@ -3860,7 +3860,7 @@ void func_80837C0C(PlayState* play, Player* this, s32 arg2, f32 arg3, f32 arg4, 
 
     this->unk_890 = 0;
 
-    Player_PlaySfx(&this->actor, SFX_ID_PLAYER_DAMAGE);
+    Player_PlaySfx(&this->actor, NA_SE_PL_DAMAGE);
 
     if (!func_80837B18(play, this, 0 - this->actor.colChkInfo.damage)) {
         this->stateFlags2 &= ~PLAYER_STATE2_7;
@@ -3880,7 +3880,7 @@ void func_80837C0C(PlayState* play, Player* this, s32 arg2, f32 arg3, f32 arg4, 
         func_80832224(this);
         Player_RequestRumble(this, 255, 10, 40, 0);
 
-        Player_PlaySfx(&this->actor, SFX_ID_PLAYER_FREEZE_S);
+        Player_PlaySfx(&this->actor, NA_SE_PL_FREEZE_S);
         func_80832698(this, NA_SE_VO_LI_FREEZE);
     } else if (arg2 == 4) {
         func_80835C58(play, this, func_8084FBF4, 0);
@@ -4154,7 +4154,7 @@ s32 func_808382DC(Player* this, PlayState* play) {
                 s32 sp4C;
 
                 if (ac->flags & ACTOR_FLAG_24) {
-                    Player_PlaySfx(&this->actor, SFX_ID_PLAYER_BODY_HIT);
+                    Player_PlaySfx(&this->actor, NA_SE_PL_BODY_HIT);
                 }
 
                 if (this->stateFlags1 & PLAYER_STATE1_27) {
@@ -5003,7 +5003,7 @@ s32 func_8083A6AC(Player* this, PlayState* play) {
                 this->stateFlags1 &= ~PLAYER_STATE1_17;
             }
 
-            Player_PlaySfx(&this->actor, SFX_ID_PLAYER_SLIPDOWN);
+            Player_PlaySfx(&this->actor, NA_SE_PL_SLIPDOWN);
             func_80832698(this, NA_SE_VO_LI_HANG);
             return 1;
         }
@@ -5518,7 +5518,7 @@ void func_8083BCD0(Player* this, PlayState* play, s32 arg2) {
 
     this->stateFlags2 |= PLAYER_STATE2_19;
 
-    Player_PlaySfx(&this->actor, ((arg2 << 0xE) == 0x8000) ? SFX_ID_PLAYER_ROLL : SFX_ID_PLAYER_SKIP);
+    Player_PlaySfx(&this->actor, ((arg2 << 0xE) == 0x8000) ? NA_SE_PL_ROLL : NA_SE_PL_SKIP);
 }
 
 s32 func_8083BDBC(Player* this, PlayState* play) {
@@ -5971,7 +5971,7 @@ s32 func_8083D12C(PlayState* play, Player* this, Input* arg2) {
 
             if (arg2 != NULL) {
                 this->stateFlags2 |= PLAYER_STATE2_11;
-                Player_PlaySfx(&this->actor, SFX_ID_PLAYER_DIVE_BUBBLE);
+                Player_PlaySfx(&this->actor, NA_SE_PL_DIVE_BUBBLE);
             }
 
             return 1;
@@ -6000,7 +6000,7 @@ s32 func_8083D12C(PlayState* play, Player* this, Input* arg2) {
                                                                      : &gPlayerAnim_link_swimer_swim_deep_end);
 
                 if (func_8083CFA8(play, this, this->actor.velocity.y, 500)) {
-                    Player_PlaySfx(&this->actor, SFX_ID_PLAYER_FACE_UP);
+                    Player_PlaySfx(&this->actor, NA_SE_PL_FACE_UP);
                 }
 
                 return 1;
@@ -7088,7 +7088,7 @@ void func_8084029C(Player* this, f32 arg1) {
 
     if ((this->currentBoots == PLAYER_BOOTS_HOVER) && !(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) &&
         (this->hoverBootsTimer != 0)) {
-        Actor_PlaySfx_Flagged2(&this->actor, SFX_ID_PLAYER_HOBBERBOOTS_LV - SFX_FLAG);
+        Actor_PlaySfx_Flagged2(&this->actor, NA_SE_PL_HOBBERBOOTS_LV - SFX_FLAG);
     } else if (func_8084021C(this->unk_868, arg1, 29.0f, 10.0f) || func_8084021C(this->unk_868, arg1, 29.0f, 24.0f)) {
         func_808327F8(this, this->linearVelocity);
         if (this->linearVelocity > 4.0f) {
@@ -8330,7 +8330,7 @@ void func_8084377C(Player* this, PlayState* play) {
     }
 
     if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND_TOUCH) {
-        func_80832770(this, SFX_ID_PLAYER_BOUND);
+        func_80832770(this, NA_SE_PL_BOUND);
     }
 }
 
@@ -8418,7 +8418,7 @@ void func_80843AE8(PlayState* play, Player* this) {
 }
 
 static struct_80832924 D_808545F0[] = {
-    { SFX_ID_PLAYER_BOUND, 0x103C },
+    { NA_SE_PL_BOUND, 0x103C },
     { 0, 0x408C },
     { 0, 0x40A4 },
     { 0, -0x40AA },
@@ -8446,7 +8446,7 @@ void func_80843CEC(Player* this, PlayState* play) {
         func_80832924(this, D_808545F0);
     } else if (this->skelAnime.animation == &gPlayerAnim_link_normal_electric_shock_end) {
         if (LinkAnimation_OnFrame(&this->skelAnime, 88.0f)) {
-            func_80832770(this, SFX_ID_PLAYER_BOUND);
+            func_80832770(this, NA_SE_PL_BOUND);
         }
     }
 }
@@ -8497,7 +8497,7 @@ s32 func_80843E64(PlayState* play, Player* this) {
         Player_RequestQuake(play, 32967, 2, 30);
         Player_RequestRumble(this, impactInfo->rumbleStrength, impactInfo->rumbleDuration,
                              impactInfo->rumbleDecreaseRate, 0);
-        Player_PlaySfx(&this->actor, SFX_ID_PLAYER_BODY_HIT);
+        Player_PlaySfx(&this->actor, NA_SE_PL_BODY_HIT);
         func_80832698(this, impactInfo->sfxId);
 
         return impactIndex + 1;
@@ -8530,7 +8530,7 @@ void func_8084409C(PlayState* play, Player* this, f32 speedXZ, f32 velocityY) {
         heldActor->speedXZ = speedXZ;
         heldActor->velocity.y = velocityY;
         func_80834644(play, this);
-        Player_PlaySfx(&this->actor, SFX_ID_PLAYER_THROW);
+        Player_PlaySfx(&this->actor, NA_SE_PL_THROW);
         func_80832698(this, NA_SE_VO_LI_SWORD_N);
     }
 }
@@ -8650,8 +8650,8 @@ void func_8084411C(Player* this, PlayState* play) {
 
 static struct_80832924 D_8085460C[] = {
     { NA_SE_VO_LI_SWORD_N, 0x2001 },
-    { SFX_ID_PLAYER_WALK_GROUND, 0x1806 },
-    { SFX_ID_PLAYER_ROLL, 0x806 },
+    { NA_SE_PL_WALK_GROUND, 0x1806 },
+    { NA_SE_PL_ROLL, 0x806 },
     { 0, -0x2812 },
 };
 
@@ -8702,7 +8702,7 @@ void func_80844708(Player* this, PlayState* play) {
                     this->linearVelocity = -this->linearVelocity;
                     Player_RequestQuake(play, 33267, 3, 12);
                     Player_RequestRumble(this, 255, 20, 150, 0);
-                    Player_PlaySfx(&this->actor, SFX_ID_PLAYER_BODY_HIT);
+                    Player_PlaySfx(&this->actor, NA_SE_PL_BODY_HIT);
                     func_80832698(this, NA_SE_VO_LI_CLIMB_END);
                     this->unk_850 = 1;
                     return;
@@ -8725,7 +8725,7 @@ void func_80844708(Player* this, PlayState* play) {
                 func_8083DF68(this, sp38, this->actor.shape.rot.y);
 
                 if (func_8084269C(play, this)) {
-                    Actor_PlaySfx_Flagged2(&this->actor, SFX_ID_PLAYER_ROLL_DUST - SFX_FLAG);
+                    Actor_PlaySfx_Flagged2(&this->actor, NA_SE_PL_ROLL_DUST - SFX_FLAG);
                 }
 
                 func_80832924(this, D_8085460C);
@@ -9358,7 +9358,7 @@ void func_80846358(Player* this, PlayState* play) {
         heldActor->speedXZ = 10.0f;
         heldActor->velocity.y = 20.0f;
         func_80834644(play, this);
-        Player_PlaySfx(&this->actor, SFX_ID_PLAYER_THROW);
+        Player_PlaySfx(&this->actor, NA_SE_PL_THROW);
         func_80832698(this, NA_SE_VO_LI_SWORD_N);
     }
 }
@@ -10356,7 +10356,7 @@ void func_80848B44(PlayState* play, Player* this) {
         shockPos.z = (Rand_CenteredFloat(5.0f) + randBodyPart->z) - this->actor.world.pos.z;
 
         EffectSsFhgFlash_SpawnShock(play, &this->actor, &shockPos, shockScale, FHGFLASH_SHOCK_PLAYER);
-        Actor_PlaySfx_Flagged2(&this->actor, SFX_ID_PLAYER_SPARK - SFX_FLAG);
+        Actor_PlaySfx_Flagged2(&this->actor, NA_SE_PL_SPARK - SFX_FLAG);
     }
 }
 
@@ -11386,8 +11386,8 @@ void func_8084B840(PlayState* play, Player* this, f32 arg2) {
 }
 
 static struct_80832924 D_80854870[] = {
-    { SFX_ID_PLAYER_SLIP, 0x1003 },
-    { SFX_ID_PLAYER_SLIP, -0x1015 },
+    { NA_SE_PL_SLIP, 0x1003 },
+    { NA_SE_PL_SLIP, -0x1015 },
 };
 
 void func_8084B898(Player* this, PlayState* play) {
@@ -11427,8 +11427,8 @@ void func_8084B898(Player* this, PlayState* play) {
 }
 
 static struct_80832924 D_80854878[] = {
-    { SFX_ID_PLAYER_SLIP, 0x1004 },
-    { SFX_ID_PLAYER_SLIP, -0x1018 },
+    { NA_SE_PL_SLIP, 0x1004 },
+    { NA_SE_PL_SLIP, -0x1018 },
 };
 
 static Vec3f D_80854880 = { 0.0f, 26.0f, -40.0f };
@@ -11509,7 +11509,7 @@ void func_8084BBE4(Player* this, PlayState* play) {
         }
 
         if (LinkAnimation_OnFrame(&this->skelAnime, temp)) {
-            func_80832770(this, SFX_ID_PLAYER_WALK_GROUND);
+            func_80832770(this, NA_SE_PL_WALK_GROUND);
             if (this->skelAnime.animation == &gPlayerAnim_link_normal_fall) {
                 this->unk_84F = 1;
             } else {
@@ -11558,13 +11558,13 @@ void func_8084BDFC(Player* this, PlayState* play) {
         func_808328A0(this);
     } else if (LinkAnimation_OnFrame(&this->skelAnime, this->skelAnime.endFrame - 34.0f)) {
         this->stateFlags1 &= ~(PLAYER_STATE1_13 | PLAYER_STATE1_14);
-        Player_PlaySfx(&this->actor, SFX_ID_PLAYER_CLIMB_CLIFF);
+        Player_PlaySfx(&this->actor, NA_SE_PL_CLIMB_CLIFF);
         func_80832698(this, NA_SE_VO_LI_CLIMB_END);
     }
 }
 
 void func_8084BEE4(Player* this) {
-    Player_PlaySfx(&this->actor, (this->unk_84F != 0) ? SFX_ID_PLAYER_WALK_WALL : SFX_ID_PLAYER_WALK_LADDER);
+    Player_PlaySfx(&this->actor, (this->unk_84F != 0) ? NA_SE_PL_WALK_WALL : NA_SE_PL_WALK_LADDER);
 }
 
 void func_8084BF1C(Player* this, PlayState* play) {
@@ -11714,9 +11714,9 @@ static f32 D_80854898[] = { 10.0f, 20.0f };
 static f32 D_808548A0[] = { 40.0f, 50.0f };
 
 static struct_80832924 D_808548A8[] = {
-    { SFX_ID_PLAYER_WALK_LADDER, 0x80A },
-    { SFX_ID_PLAYER_WALK_LADDER, 0x814 },
-    { SFX_ID_PLAYER_WALK_LADDER, -0x81E },
+    { NA_SE_PL_WALK_LADDER, 0x80A },
+    { NA_SE_PL_WALK_LADDER, 0x814 },
+    { NA_SE_PL_WALK_LADDER, -0x81E },
 };
 
 void func_8084C5F8(Player* this, PlayState* play) {
@@ -11942,9 +11942,9 @@ static u8 D_80854998[2][2] = {
 static Vec3s D_8085499C = { -69, 7146, -266 };
 
 static struct_80832924 D_808549A4[] = {
-    { SFX_ID_PLAYER_CALM_HIT, 0x830 }, { SFX_ID_PLAYER_CALM_HIT, 0x83A },  { SFX_ID_PLAYER_CALM_HIT, 0x844 },
-    { SFX_ID_PLAYER_CALM_PAT, 0x85C }, { SFX_ID_PLAYER_CALM_PAT, 0x86E },  { SFX_ID_PLAYER_CALM_PAT, 0x87E },
-    { SFX_ID_PLAYER_CALM_PAT, 0x884 }, { SFX_ID_PLAYER_CALM_PAT, -0x888 },
+    { NA_SE_PL_CALM_HIT, 0x830 }, { NA_SE_PL_CALM_HIT, 0x83A },  { NA_SE_PL_CALM_HIT, 0x844 },
+    { NA_SE_PL_CALM_PAT, 0x85C }, { NA_SE_PL_CALM_PAT, 0x86E },  { NA_SE_PL_CALM_PAT, 0x87E },
+    { NA_SE_PL_CALM_PAT, 0x884 }, { NA_SE_PL_CALM_PAT, -0x888 },
 };
 
 void func_8084CC98(Player* this, PlayState* play) {
@@ -11965,13 +11965,13 @@ void func_8084CC98(Player* this, PlayState* play) {
         arr = D_80854998[(this->mountSide < 0) ? 0 : 1];
 
         if (LinkAnimation_OnFrame(&this->skelAnime, arr[0])) {
-            Player_PlaySfx(&this->actor, SFX_ID_PLAYER_CLIMB_CLIFF);
+            Player_PlaySfx(&this->actor, NA_SE_PL_CLIMB_CLIFF);
             return;
         }
 
         if (LinkAnimation_OnFrame(&this->skelAnime, arr[1])) {
             func_8002DE74(play, this);
-            Player_PlaySfx(&this->actor, SFX_ID_PLAYER_SIT_ON_HORSE);
+            Player_PlaySfx(&this->actor, NA_SE_PL_SIT_ON_HORSE);
             return;
         }
 
@@ -12121,8 +12121,8 @@ void func_8084CC98(Player* this, PlayState* play) {
 
 static struct_80832924 D_808549C4[] = {
     { 0, 0x2800 },
-    { SFX_ID_PLAYER_GET_OFF_HORSE, 0x80A },
-    { SFX_ID_PLAYER_SLIPDOWN, -0x819 },
+    { NA_SE_PL_GET_OFF_HORSE, 0x80A },
+    { NA_SE_PL_SLIPDOWN, -0x819 },
 };
 
 void func_8084D3E4(Player* this, PlayState* play) {
@@ -12156,7 +12156,7 @@ void func_8084D3E4(Player* this, PlayState* play) {
 }
 
 static struct_80832924 D_808549D0[] = {
-    { SFX_ID_PLAYER_SWIM, -0x800 },
+    { NA_SE_PL_SWIM, -0x800 },
 };
 
 void func_8084D530(Player* this, f32* arg1, f32 arg2, s16 arg3) {
@@ -12867,7 +12867,7 @@ void func_8084EFC0(Player* this, PlayState* play) {
 }
 
 static struct_80832924 D_80854A3C[] = {
-    { SFX_ID_PLAYER_PUT_OUT_ITEM, -0x81E },
+    { NA_SE_PL_PUT_OUT_ITEM, -0x81E },
 };
 
 void func_8084F104(Player* this, PlayState* play) {
@@ -12948,7 +12948,7 @@ void func_8084F390(Player* this, PlayState* play) {
     this->stateFlags2 |= PLAYER_STATE2_5 | PLAYER_STATE2_6;
     LinkAnimation_Update(play, &this->skelAnime);
     func_8084269C(play, this);
-    Audio_PlaySfx_AtPosWithSyncedFreqAndVolume(&this->actor.projectedPos, SFX_ID_PLAYER_SLIP_LEVEL - SFX_FLAG,
+    Audio_PlaySfx_AtPosWithSyncedFreqAndVolume(&this->actor.projectedPos, NA_SE_PL_SLIP_LEVEL - SFX_FLAG,
                                                this->actor.speedXZ);
 
     if (func_8083B040(this, play) == 0) {
@@ -13120,7 +13120,7 @@ void func_8084FB10(Player* this, PlayState* play) {
         if (func_80832594(this, 1, 100)) {
             this->unk_84F = -1;
             EffectSsIcePiece_SpawnBurst(play, &this->actor.world.pos, this->actor.scale.x);
-            Player_PlaySfx(&this->actor, SFX_ID_PLAYER_ICE_BROKEN);
+            Player_PlaySfx(&this->actor, NA_SE_PL_ICE_BROKEN);
         } else {
             this->stateFlags2 |= PLAYER_STATE2_14;
         }
@@ -13403,7 +13403,7 @@ void func_8085063C(Player* this, PlayState* play) {
         if (play->msgCtx.choiceIndex == 1) {
             gSaveContext.respawn[RESPAWN_MODE_TOP].data = -respawnData;
             gSaveContext.fw.set = 0;
-            Lib_PlaySfx_AtPos(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, SFX_ID_PLAYER_MAGIC_WIND_VANISH);
+            Lib_PlaySfx_AtPos(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, NA_SE_PL_MAGIC_WIND_VANISH);
         }
 
         func_80853080(this, play);
@@ -13423,7 +13423,7 @@ void func_8085076C(Player* this, PlayState* play) {
 
     if (this->unk_850++ == 20) {
         gSaveContext.respawn[RESPAWN_MODE_TOP].data = respawnData + 1;
-        Lib_PlaySfx_AtPos(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, SFX_ID_PLAYER_MAGIC_WIND_WARP);
+        Lib_PlaySfx_AtPos(&gSaveContext.respawn[RESPAWN_MODE_TOP].pos, NA_SE_PL_MAGIC_WIND_WARP);
     }
 }
 
@@ -13448,7 +13448,7 @@ static LinkAnimationHeader* D_80854A70[] = {
 static u8 D_80854A7C[] = { 70, 10, 10 };
 
 static struct_80832924 D_80854A80[] = {
-    { SFX_ID_PLAYER_SKIP, 0x814 },
+    { NA_SE_PL_SKIP, 0x814 },
     { NA_SE_VO_LI_SWORD_N, 0x2014 },
     { 0, -0x301A },
 };
@@ -13621,9 +13621,9 @@ static void (*D_80854AA4[])(PlayState*, Player*, void*) = {
 
 static struct_80832924 D_80854AF0[] = {
     { 0, 0x2822 },
-    { SFX_ID_PLAYER_CALM_HIT, 0x82D },
-    { SFX_ID_PLAYER_CALM_HIT, 0x833 },
-    { SFX_ID_PLAYER_CALM_HIT, -0x840 },
+    { NA_SE_PL_CALM_HIT, 0x82D },
+    { NA_SE_PL_CALM_HIT, 0x833 },
+    { NA_SE_PL_CALM_HIT, -0x840 },
 };
 
 static struct_80832924 D_80854B00[] = {
@@ -14285,8 +14285,8 @@ void func_80851F84(PlayState* play, Player* this, CsCmdActorAction* arg2) {
 
 static struct_80832924 D_808551BC[] = {
     { NA_SE_VO_LI_RELAX, 0x2023 },
-    { SFX_ID_PLAYER_SLIPDOWN, 0x8EC },
-    { SFX_ID_PLAYER_SLIPDOWN, -0x900 },
+    { NA_SE_PL_SLIPDOWN, 0x8EC },
+    { NA_SE_PL_SLIPDOWN, -0x900 },
 };
 
 void func_80851FB0(PlayState* play, Player* this, CsCmdActorAction* arg2) {
@@ -14302,7 +14302,7 @@ void func_80851FB0(PlayState* play, Player* this, CsCmdActorAction* arg2) {
 }
 
 static struct_80832924 D_808551C8[] = {
-    { SFX_ID_PLAYER_LAND_LADDER, 0x843 },
+    { NA_SE_PL_LAND_LADDER, 0x843 },
     { 0, 0x4854 },
     { 0, 0x485A },
     { 0, -0x4860 },
@@ -14333,8 +14333,8 @@ void func_808520BC(PlayState* play, Player* this, CsCmdActorAction* arg2) {
 }
 
 static struct_80832924 D_808551D8[] = {
-    { SFX_ID_PLAYER_BOUND, 0x1014 },
-    { SFX_ID_PLAYER_BOUND, -0x101E },
+    { NA_SE_PL_BOUND, 0x1014 },
+    { NA_SE_PL_BOUND, -0x101E },
 };
 
 void func_80852174(PlayState* play, Player* this, CsCmdActorAction* arg2) {
@@ -14426,7 +14426,7 @@ void func_80852450(PlayState* play, Player* this, CsCmdActorAction* arg2) {
 }
 
 static struct_80832924 D_808551F8[] = {
-    { SFX_ID_PLAYER_KNOCK, -0x84E },
+    { NA_SE_PL_KNOCK, -0x84E },
 };
 
 void func_80852480(PlayState* play, Player* this, CsCmdActorAction* arg2) {

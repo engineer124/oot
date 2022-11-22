@@ -4502,7 +4502,7 @@ s32 Camera_Subj4(Camera* camera) {
         player = camera->player;
         rwData->isSfxOff = true;
         Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(&player->actor.projectedPos,
-                                                                  SFX_ID_PLAYER_CRAWL + player->unk_89E, 4.0f);
+                                                                  NA_SE_PL_CRAWL + player->unk_89E, 4.0f);
     } else if (eyeLerp < rwData->eyeLerp) {
         rwData->isSfxOff = false;
     }

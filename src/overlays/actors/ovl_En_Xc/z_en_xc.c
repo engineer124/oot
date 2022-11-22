@@ -429,7 +429,7 @@ void EnXc_SetColossusAppearSFX(EnXc* this, PlayState* play) {
                 s32 pad;
 
                 SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &pos, &sXyzDist, wDest);
-                Lib_PlaySfx_AtPos(&sXyzDist, SFX_ID_PLAYER_WALK_CONCRETE);
+                Lib_PlaySfx_AtPos(&sXyzDist, NA_SE_PL_WALK_CONCRETE);
             }
         }
     }
@@ -439,7 +439,7 @@ void func_80B3D118(PlayState* play) {
     s16 sceneId;
 
     if ((gSaveContext.sceneLayer != 4) || (sceneId = play->sceneId, sceneId != SCENE_SPOT11)) {
-        Lib_PlaySfx_Centered(SFX_ID_PLAYER_SKIP);
+        Lib_PlaySfx_Centered(NA_SE_PL_SKIP);
     }
 }
 
@@ -1361,7 +1361,7 @@ void func_80B3F3C8(EnXc* this, PlayState* play) {
 }
 
 void func_80B3F3D8(void) {
-    Lib_PlaySfx_Centered(SFX_ID_PLAYER_SKIP);
+    Lib_PlaySfx_Centered(NA_SE_PL_SKIP);
 }
 
 void EnXc_PlayDiveSFX(Vec3f* src, PlayState* play) {
@@ -1746,14 +1746,14 @@ void EnXc_SetThrownAroundSFX(EnXc* this) {
     SkelAnime* skelAnime = &this->skelAnime;
 
     if (Animation_OnFrame(skelAnime, 9.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_BOUND_GRASS);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_BOUND_GRASS);
         Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_SK_CRASH);
     } else if (Animation_OnFrame(skelAnime, 26.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_BOUND_GRASS);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_BOUND_GRASS);
     } else if (Animation_OnFrame(skelAnime, 28.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_WALK_GRASS);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_WALK_GRASS);
     } else if (Animation_OnFrame(skelAnime, 34.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_WALK_GRASS);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_WALK_GRASS);
     }
 }
 

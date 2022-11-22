@@ -653,7 +653,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
         }
         if (staggerThreshold < sStaggerCount) {
             this->skelAnime.playSpeed *= 0.6f;
-            Audio_PlaySfx_DarkLink(&this->actor.projectedPos, SFX_ID_PLAYER_DAMAGE);
+            Audio_PlaySfx_DarkLink(&this->actor.projectedPos, NA_SE_PL_DAMAGE);
             sStaggerTimer = 0;
             sStaggerCount = 0;
         }

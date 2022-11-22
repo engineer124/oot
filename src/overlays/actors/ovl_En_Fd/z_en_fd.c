@@ -305,7 +305,7 @@ s32 EnFd_ColliderCheck(EnFd* this, PlayState* play) {
             return false;
         }
         this->attackTimer = 30;
-        Actor_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
+        Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
         func_8002F71C(play, &this->actor, this->actor.speedXZ + 2.0f, this->actor.yawTowardsPlayer, 6.0f);
     }
     return false;

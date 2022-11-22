@@ -1557,11 +1557,11 @@ void BossGanon_DeathAndTowerCutscene(BossGanon* this, PlayState* play) {
                 }
 
                 if (this->csTimer == 160) {
-                    Actor_PlaySfx(&this->actor, SFX_ID_PLAYER_BOUND_NOWEAPON);
+                    Actor_PlaySfx(&this->actor, NA_SE_PL_BOUND_NOWEAPON);
                 }
 
                 if (this->csTimer == 187) {
-                    Actor_PlaySfx(&this->actor, SFX_ID_PLAYER_BODY_HIT);
+                    Actor_PlaySfx(&this->actor, NA_SE_PL_BODY_HIT);
                 }
 
                 if (this->csTimer == 180) {
@@ -2464,7 +2464,7 @@ void BossGanon_HitByLightBall(BossGanon* this, PlayState* play) {
                 BossGanonEff_SpawnSparkle(play, &this->unk_1FC, &sp50, &sZeroVec, Rand_ZeroFloat(200.0f) + 500.0f,
                                           0x14);
             }
-            Actor_PlaySfx(&this->actor, SFX_ID_PLAYER_WALK_WATER2);
+            Actor_PlaySfx(&this->actor, NA_SE_PL_WALK_WATER2);
         }
 
         if (Animation_OnFrame(&this->skelAnime, this->fwork[GDF_FWORK_1])) {
@@ -2646,7 +2646,7 @@ void BossGanon_Vulnerable(BossGanon* this, PlayState* play) {
                                               0x14);
                 }
 
-                Actor_PlaySfx(&this->actor, SFX_ID_PLAYER_WALK_WATER2);
+                Actor_PlaySfx(&this->actor, NA_SE_PL_WALK_WATER2);
                 this->timers[3] = 50;
             }
 
@@ -2918,7 +2918,7 @@ void BossGanon_Update(Actor* thisx, PlayState* play2) {
 
         // player hit, spawn shock and play sound effect
         if (this->unk_2E8 != 0) {
-            Lib_PlaySfx_AtPos(&player->actor.projectedPos, SFX_ID_PLAYER_SPARK - SFX_FLAG);
+            Lib_PlaySfx_AtPos(&player->actor.projectedPos, NA_SE_PL_SPARK - SFX_FLAG);
             BossGanonEff_SpawnShock(play, 700.0f, GDF_SHOCK_PLAYER_YELLOW);
         }
     }

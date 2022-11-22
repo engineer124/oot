@@ -4260,9 +4260,9 @@ void Audio_PlaySfx_AtPosForMetalEffectsWithSyncedFreqAndVolume(Vec3f* projectedP
     if ((phi_f0 < freqVolParam) && (phi_v0 != 0)) {
         // For the playerbank, (& 0x80) is a toggle for adult/child for certain groups of sfx
         if ((sfxId & 0x80) != 0) {
-            metalSfxId = SFX_ID_PLAYER_METALEFFECT_ADULT;
+            metalSfxId = NA_SE_PL_METALEFFECT_ADULT;
         } else {
-            metalSfxId = SFX_ID_PLAYER_METALEFFECT_KID;
+            metalSfxId = NA_SE_PL_METALEFFECT_KID;
         }
 
         sSfxSyncedVolumeForMetalEffects = (sp24 * 0.7) + 0.3;
@@ -4296,12 +4296,12 @@ void Audio_PlaySfx_SwordCharge(Vec3f* projectedPos, u8 chargeLevel) {
         sCurChargeLevelSfxFreq = sChargeLevelsSfxFreq[chargeLevel];
         switch (chargeLevel) {
             case 1:
-                AudioSfx_PlaySfx(SFX_ID_PLAYER_SWORD_CHARGE, projectedPos, 4, &sCurChargeLevelSfxFreq,
+                AudioSfx_PlaySfx(NA_SE_PL_SWORD_CHARGE, projectedPos, 4, &sCurChargeLevelSfxFreq,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 break;
 
             case 2:
-                AudioSfx_PlaySfx(SFX_ID_PLAYER_SWORD_CHARGE, projectedPos, 4, &sCurChargeLevelSfxFreq,
+                AudioSfx_PlaySfx(NA_SE_PL_SWORD_CHARGE, projectedPos, 4, &sCurChargeLevelSfxFreq,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 break;
 
@@ -5243,9 +5243,9 @@ void Audio_SetFileSelectSettings(s8 audioSetting) {
 void Audio_SetBaseFilter(u8 filter) {
     if (sAudioBaseFilter != filter) {
         if (filter == 0) {
-            AudioSfx_StopById(SFX_ID_PLAYER_IN_BUBBLE);
+            AudioSfx_StopById(NA_SE_PL_IN_BUBBLE);
         } else if (sAudioBaseFilter == 0) {
-            AudioSfx_PlaySfx(SFX_ID_PLAYER_IN_BUBBLE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
+            AudioSfx_PlaySfx(NA_SE_PL_IN_BUBBLE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
         }
     }

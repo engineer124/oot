@@ -717,7 +717,7 @@ void EnNb_PlayLookRightSFX(EnNb* this) {
     s32 pad[2];
 
     if ((this->skelAnime.mode == 2) && Animation_OnFrame(&this->skelAnime, 9.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_WALK_CONCRETE);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_WALK_CONCRETE);
     }
 }
 
@@ -725,7 +725,7 @@ void EnNb_PlayLookLeftSFX(EnNb* this) {
     s32 pad[2];
 
     if (Animation_OnFrame(&this->skelAnime, 9.0f) || Animation_OnFrame(&this->skelAnime, 13.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_WALK_CONCRETE);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_WALK_CONCRETE);
     }
 }
 

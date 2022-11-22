@@ -156,7 +156,7 @@ void EnBombf_GrowBomb(EnBombf* this, PlayState* play) {
                 func_8002F5C4(&this->actor, &bombFlower->actor, play);
                 this->timer = 180;
                 this->flowerBombScale = 0.0f;
-                Actor_PlaySfx(&this->actor, SFX_ID_PLAYER_PULL_UP_ROCK);
+                Actor_PlaySfx(&this->actor, NA_SE_PL_PULL_UP_ROCK);
                 this->actor.flags &= ~ACTOR_FLAG_0;
             } else {
                 player->actor.child = NULL;

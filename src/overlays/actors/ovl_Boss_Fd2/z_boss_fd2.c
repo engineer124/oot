@@ -295,7 +295,7 @@ void BossFd2_Emerge(BossFd2* this, PlayState* play) {
             Math_ApproachS(&this->actor.shape.rot.y, this->actor.yawTowardsPlayer, 3, 0x7D0);
             if ((this->timers[0] == 1) && (this->actor.xzDistToPlayer < 120.0f)) {
                 func_8002F6D4(play, &this->actor, 3.0f, this->actor.yawTowardsPlayer, 2.0f, 0x20);
-                Actor_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
+                Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
             }
             if (Animation_OnFrame(&this->skelAnime, this->fwork[FD2_END_FRAME])) {
                 BossFd2_SetupIdle(this, play);
@@ -815,7 +815,7 @@ void BossFd2_CollisionCheck(BossFd2* this, PlayState* play) {
         for (i = 0; i < ARRAY_COUNT(this->elements); i++) {
             if (this->collider.elements[i].info.toucherFlags & TOUCH_HIT) {
                 this->collider.elements[i].info.toucherFlags &= ~TOUCH_HIT;
-                Actor_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
+                Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
             }
         }
     }

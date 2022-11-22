@@ -3163,7 +3163,7 @@ void BossTw_TwinrovaUpdate(Actor* thisx, PlayState* play2) {
         sFreezeState = 2;
         BossTw_AddPlayerFreezeEffect(play, NULL);
         Lib_PlaySfx_AtPos(&player->actor.projectedPos, NA_SE_VO_LI_FREEZE);
-        Lib_PlaySfx_AtPos(&player->actor.projectedPos, SFX_ID_PLAYER_FREEZE);
+        Lib_PlaySfx_AtPos(&player->actor.projectedPos, NA_SE_PL_FREEZE);
 
         if (sShieldFireCharge != 0) {
             sShieldFireCharge = 4;

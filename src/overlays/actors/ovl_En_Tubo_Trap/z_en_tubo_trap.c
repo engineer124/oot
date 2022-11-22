@@ -201,7 +201,7 @@ void EnTuboTrap_HandleImpact(EnTuboTrap* this, PlayState* play) {
         if (this->collider.base.at == &player->actor) {
             EnTuboTrap_SpawnEffectsOnLand(this, play);
             SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EV_POT_BROKEN);
-            SfxSource_PlaySfxAtFixedWorldPos(play, &player2->actor.world.pos, 40, SFX_ID_PLAYER_BODY_HIT);
+            SfxSource_PlaySfxAtFixedWorldPos(play, &player2->actor.world.pos, 40, NA_SE_PL_BODY_HIT);
             EnTuboTrap_DropCollectible(this, play);
             Actor_Kill(&this->actor);
             return;

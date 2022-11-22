@@ -450,7 +450,7 @@ void func_809CF984(EnBw* this, PlayState* play) {
         this->actor.speedXZ = -6.0f;
         this->actor.world.rot.y = this->actor.yawTowardsPlayer;
         if ((&player->actor == this->collider1.base.at) && !(this->collider1.base.atFlags & AT_BOUNCED)) {
-            Actor_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
+            Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
         }
     }
     SkelAnime_Update(&this->skelAnime);

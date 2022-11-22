@@ -415,7 +415,7 @@ void func_80AAE294(EnMm* this, PlayState* play) {
 
         if (this->curAnimIndex == 0) {
             if (((s32)this->skelAnime.curFrame == 1) || ((s32)this->skelAnime.curFrame == 6)) {
-                Actor_PlaySfx(&this->actor, SFX_ID_PLAYER_WALK_GROUND);
+                Actor_PlaySfx(&this->actor, NA_SE_PL_WALK_GROUND);
             }
         }
 

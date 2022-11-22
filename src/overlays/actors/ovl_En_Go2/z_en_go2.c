@@ -909,7 +909,7 @@ s32 func_80A44AB0(EnGo2* this, PlayState* play) {
 
                 play->damagePlayer(play, -4);
                 func_8002F71C(play, &this->actor, arg2, this->actor.yawTowardsPlayer, 6.0f);
-                Actor_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
+                Actor_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
                 this->collider.base.ocFlags1 &= ~OC1_TYPE_PLAYER;
             }
         }

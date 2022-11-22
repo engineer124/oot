@@ -568,7 +568,7 @@ void func_80AEBAFC(EnRu1* this) {
 
 void func_80AEBB3C(EnRu1* this) {
     if (Animation_OnFrame(&this->skelAnime, 5.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_FACE_UP);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_FACE_UP);
     }
 }
 
@@ -577,13 +577,13 @@ void func_80AEBB78(EnRu1* this) {
 
     if (Animation_OnFrame(skelAnime, 4.0f) || Animation_OnFrame(skelAnime, 13.0f) ||
         Animation_OnFrame(skelAnime, 22.0f) || Animation_OnFrame(skelAnime, 31.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_SWIM);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_SWIM);
     }
 }
 
 void func_80AEBBF4(EnRu1* this) {
     if (Animation_OnFrame(&this->skelAnime, 8.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_SUBMERGE);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_SUBMERGE);
     }
 }
 
@@ -833,7 +833,7 @@ void func_80AEC650(EnRu1* this) {
 
     if (this->unk_280 == 0) {
         if (Animation_OnFrame(&this->skelAnime, 2.0f) || Animation_OnFrame(&this->skelAnime, 7.0f)) {
-            Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_WALK_DIRT);
+            Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_WALK_DIRT);
         }
     }
 }
@@ -1197,7 +1197,7 @@ void func_80AED4FC(EnRu1* this) {
 void func_80AED520(EnRu1* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    AudioSfx_PlaySfx(SFX_ID_PLAYER_PULL_UP_RUTO, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
+    AudioSfx_PlaySfx(NA_SE_PL_PULL_UP_RUTO, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
     Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_RT_LIFT);
 }
@@ -1899,7 +1899,7 @@ void func_80AEF40C(EnRu1* this) {
     if (Animation_OnFrame(skelAnime, 2.0f) || Animation_OnFrame(skelAnime, 7.0f) ||
         Animation_OnFrame(skelAnime, 12.0f) || Animation_OnFrame(skelAnime, 18.0f) ||
         Animation_OnFrame(skelAnime, 25.0f) || Animation_OnFrame(skelAnime, 33.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, SFX_ID_PLAYER_WALK_DIRT);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_WALK_DIRT);
     }
 }
 

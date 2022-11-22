@@ -354,7 +354,7 @@ void DoorKiller_FallOver(DoorKiller* this, PlayState* play) {
             this->hasHitPlayerOrGround |= 1;
             func_8002F6D4(play, &this->actor, 6.0f, this->actor.yawTowardsPlayer, 6.0f, 16);
             Actor_PlaySfx(&this->actor, NA_SE_EN_KDOOR_HIT);
-            Player_PlaySfx(&player->actor, SFX_ID_PLAYER_BODY_HIT);
+            Player_PlaySfx(&player->actor, NA_SE_PL_BODY_HIT);
         }
     }
     if (!(this->hasHitPlayerOrGround & 1) && (this->timer == 2)) {
