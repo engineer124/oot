@@ -201,13 +201,13 @@ extern volatile OSTime gRSPGfxTimeAcc;
 extern volatile OSTime gRSPOtherTimeAcc;
 extern volatile OSTime gRDPTimeAcc;
 
-extern SfxBankEntry D_8016BAD0[9];
-extern SfxBankEntry D_8016BC80[12];
-extern SfxBankEntry D_8016BEC0[22];
-extern SfxBankEntry D_8016C2E0[20];
-extern SfxBankEntry D_8016C6A0[8];
-extern SfxBankEntry D_8016C820[3];
-extern SfxBankEntry D_8016C8B0[5];
+extern SfxBankEntry gSfxPlayerBank[9];
+extern SfxBankEntry gSfxItemBank[12];
+extern SfxBankEntry gSfxEnvironmentBank[22];
+extern SfxBankEntry gSfxEnemyBank[20];
+extern SfxBankEntry gSfxSystemBank[8];
+extern SfxBankEntry gSfxOcarinaBank[3];
+extern SfxBankEntry gSfxVoiceBank[5];
 extern ActiveSfx gActiveSfx[7][MAX_CHANNELS_PER_BANK]; // total size = 0xA8
 extern u8 gSfxBankMuted[];
 extern u16 gAudioDebugSfxSwapSource[10];

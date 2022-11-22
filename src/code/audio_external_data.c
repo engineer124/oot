@@ -17,12 +17,13 @@ u8 gSfxRequestReadIndex = 0;
  * 6 : Voice Bank           size 5
  */
 SfxBankEntry* gSfxBanks[7] = {
-    D_8016BAD0, D_8016BC80, D_8016BEC0, D_8016C2E0, D_8016C6A0, D_8016C820, D_8016C8B0,
+    gSfxPlayerBank, gSfxItemBank, gSfxEnvironmentBank, gSfxEnemyBank, gSfxSystemBank, gSfxOcarinaBank, gSfxVoiceBank,
 };
 
 u8 gSfxBankSizes[ARRAY_COUNT(gSfxBanks)] = {
-    ARRAY_COUNT(D_8016BAD0), ARRAY_COUNT(D_8016BC80), ARRAY_COUNT(D_8016BEC0), ARRAY_COUNT(D_8016C2E0),
-    ARRAY_COUNT(D_8016C6A0), ARRAY_COUNT(D_8016C820), ARRAY_COUNT(D_8016C8B0),
+    ARRAY_COUNT(gSfxPlayerBank), ARRAY_COUNT(gSfxItemBank),   ARRAY_COUNT(gSfxEnvironmentBank),
+    ARRAY_COUNT(gSfxEnemyBank),  ARRAY_COUNT(gSfxSystemBank), ARRAY_COUNT(gSfxOcarinaBank),
+    ARRAY_COUNT(gSfxVoiceBank),
 };
 
 u8 gSfxChannelLayout = 0;

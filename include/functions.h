@@ -1849,7 +1849,7 @@ void Audio_StopBgmAndFanfare(u16 fadeOutDuration);
 void AudioSfx_MuteBanks(u16 muteMask);
 void AudioSfx_LowerBgmVolume(u8 channelIndex);
 void AudioSfx_RestoreBgmVolume(u8 channelIndex);
-void AudioSfx_PlaySfx(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol, s8* reverbAdd);
+void AudioSfx_PlaySfx(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* volume, s8* reverbAdd);
 void AudioSfx_ProcessRequest(void);
 void AudioSfx_ChooseActiveSfx(u8 bankId);
 void AudioSfx_PlayActiveSfx(u8 bankId);

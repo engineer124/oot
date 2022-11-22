@@ -4,7 +4,7 @@
 #define ABS_ALT(x) ((x) < 0 ? -(x) : (x))
 
 typedef struct {
-    /* 0x0 */ f32 vol;
+    /* 0x0 */ f32 volume;
     /* 0x4 */ f32 freqScale;
     /* 0x8 */ s8 reverb;
     /* 0x9 */ s8 pan;
@@ -4076,7 +4076,7 @@ s8 AudioSfx_ComputeCombFilterGain(f32 posY, u16 sfxParams) {
 #define STEREO_FAR_BEHIND_SCREEN 0x10
 
 void AudioSfx_SetProperties(u8 bankId, u8 entryIndex, u8 channelIndex) {
-    f32 vol = 1.0f;
+    f32 volume = 1.0f;
     s8 volS8;
     s8 reverb = 0;
     f32 freqScale = 1.0f;
@@ -4100,7 +4100,7 @@ void AudioSfx_SetProperties(u8 bankId, u8 entryIndex, u8 channelIndex) {
             FALLTHROUGH;
         case BANK_OCARINA:
             entry->dist = sqrtf(entry->dist);
-            vol = AudioSfx_ComputeVolume(bankId, entryIndex) * *entry->vol;
+            volume = AudioSfx_ComputeVolume(bankId, entryIndex) * *entry->volume;
             reverb = AudioSfx_ComputeReverb(bankId, entryIndex, channelIndex);
             pan = AudioSfx_ComputePan(*entry->posX, *entry->posZ, entry->token);
             freqScale = AudioSfx_ComputeFreqScale(bankId, entryIndex) * *entry->freqScale;
@@ -4145,9 +4145,9 @@ void AudioSfx_SetProperties(u8 bankId, u8 entryIndex, u8 channelIndex) {
             break;
     }
 
-    if (sSfxChannelState[channelIndex].vol != vol) {
-        volS8 = (u8)(vol * 127.0f);
-        sSfxChannelState[channelIndex].vol = vol;
+    if (sSfxChannelState[channelIndex].volume != volume) {
+        volS8 = (u8)(volume * 127.0f);
+        sSfxChannelState[channelIndex].volume = volume;
     } else {
         volS8 = -1;
     }
@@ -4195,7 +4195,7 @@ void AudioSfx_ResetSfxChannelState(void) {
 
     for (i = 0; i < SEQ_NUM_CHANNELS; i++) {
         state = &sSfxChannelState[i];
-        state->vol = 1.0f;
+        state->volume = 1.0f;
         state->freqScale = 1.0f;
         state->reverb = 0;
         state->pan = 0x40;

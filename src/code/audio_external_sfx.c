@@ -7,7 +7,7 @@ typedef struct {
     /* 0x04 */ Vec3f* pos;
     /* 0x08 */ u8 token;
     /* 0x0C */ f32* freqScale;
-    /* 0x10 */ f32* vol;
+    /* 0x10 */ f32* volume;
     /* 0x14 */ s8* reverbAdd;
 } SfxRequest; // size = 0x18
 
@@ -27,13 +27,13 @@ typedef enum {
     /* 5 */ SFX_RM_REQ_BY_ID
 } SfxRemoveRequest;
 
-SfxBankEntry D_8016BAD0[9];
-SfxBankEntry D_8016BC80[12];
-SfxBankEntry D_8016BEC0[22];
-SfxBankEntry D_8016C2E0[20];
-SfxBankEntry D_8016C6A0[8];
-SfxBankEntry D_8016C820[3];
-SfxBankEntry D_8016C8B0[5];
+SfxBankEntry gSfxPlayerBank[9];
+SfxBankEntry gSfxItemBank[12];
+SfxBankEntry gSfxEnvironmentBank[22];
+SfxBankEntry gSfxEnemyBank[20];
+SfxBankEntry gSfxSystemBank[8];
+SfxBankEntry gSfxOcarinaBank[3];
+SfxBankEntry gSfxVoiceBank[5];
 SfxRequest sSfxRequests[0x100];
 u8 sSfxBankListEnd[7];
 u8 sSfxBankFreeListStart[7];
@@ -87,7 +87,7 @@ void AudioSfx_RestoreBgmVolume(u8 channelIndex) {
 /**
  * The main function to request a sfx. All sfx requests begin here.
  */
-void AudioSfx_PlaySfx(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol, s8* reverbAdd) {
+void AudioSfx_PlaySfx(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* volume, s8* reverbAdd) {
     u8 i;
     SfxRequest* req;
 
@@ -96,7 +96,7 @@ void AudioSfx_PlaySfx(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol,
 
         // Debug feature to manually swap in and out sfx
         if (!gAudioDebugSfxSwapOff) {
-            for (i = 0; i < 10; i++) {
+            for (i = 0; i < ARRAY_COUNT(gAudioDebugSfxSwapSource); i++) {
                 if (sfxId == gAudioDebugSfxSwapSource[i]) {
                     if (gAudioDebugSfxSwapMode[i] == 0) { // "SWAP"
                         sfxId = gAudioDebugSfxSwapTarget[i];
@@ -105,7 +105,7 @@ void AudioSfx_PlaySfx(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol,
                         req->pos = pos;
                         req->token = token;
                         req->freqScale = freqScale;
-                        req->vol = vol;
+                        req->volume = volume;
                         req->reverbAdd = reverbAdd;
                         gSfxRequestWriteIndex++;
                         req = &sSfxRequests[gSfxRequestWriteIndex];
@@ -119,7 +119,7 @@ void AudioSfx_PlaySfx(u16 sfxId, Vec3f* pos, u8 token, f32* freqScale, f32* vol,
         req->pos = pos;
         req->token = token;
         req->freqScale = freqScale;
-        req->vol = vol;
+        req->volume = volume;
         req->reverbAdd = reverbAdd;
         gSfxRequestWriteIndex++;
     }
@@ -169,6 +169,9 @@ void AudioSfx_RemoveMatchingRequests(u8 aspect, SfxBankEntry* entry) {
                 if (req->sfxId == entry->sfxId) {
                     remove = true;
                 }
+                break;
+
+            default:
                 break;
         }
 
@@ -271,7 +274,7 @@ void AudioSfx_ProcessRequest(void) {
                     gSfxBanks[bankId][index].state = SFX_STATE_QUEUED;
                     gSfxBanks[bankId][index].freshness = 2;
                     gSfxBanks[bankId][index].freqScale = req->freqScale;
-                    gSfxBanks[bankId][index].vol = req->vol;
+                    gSfxBanks[bankId][index].volume = req->volume;
                     gSfxBanks[bankId][index].reverbAdd = req->reverbAdd;
                     gSfxBanks[bankId][index].sfxParams = sfxParams->params;
                     gSfxBanks[bankId][index].sfxImportance = sfxParams->importance;
@@ -286,6 +289,7 @@ void AudioSfx_ProcessRequest(void) {
                 index = 0;
             }
         }
+
         if (index != 0) {
             index = gSfxBanks[bankId][index].next;
         }
@@ -294,13 +298,14 @@ void AudioSfx_ProcessRequest(void) {
     if ((gSfxBanks[bankId][sSfxBankFreeListStart[bankId]].next != 0xFF) && (index != 0)) {
         // Allocate from free list
         index = sSfxBankFreeListStart[bankId];
+
         entry = &gSfxBanks[bankId][index];
         entry->posX = &req->pos->x;
         entry->posY = &req->pos->y;
         entry->posZ = &req->pos->z;
         entry->token = req->token;
         entry->freqScale = req->freqScale;
-        entry->vol = req->vol;
+        entry->volume = req->volume;
         entry->reverbAdd = req->reverbAdd;
 
         sfxParams = &gSfxParams[SFX_BANK_SHIFT(req->sfxId)][SFX_INDEX(req->sfxId)];
@@ -333,6 +338,7 @@ void AudioSfx_RemoveBankEntry(u8 bankId, u8 entryIndex) {
     } else {
         gSfxBanks[bankId][entry->next].prev = entry->prev;
     }
+
     gSfxBanks[bankId][entry->prev].next = entry->next;
     entry->next = sSfxBankFreeListStart[bankId];
     entry->prev = 0xFF;
@@ -610,7 +616,7 @@ void AudioSfx_PlayActiveSfx(u8 bankId) {
                 AUDIOCMD_CHANNEL_SET_IO(SEQ_PLAYER_SFX, sCurSfxPlayerChannelIndex, 4, entry->sfxId & 0xFF);
 
                 // If the sfx bank has more than 255 entries (greater than a u8 can store),
-                // then store the Id in upper and lower bits
+                // then store the id in upper and lower bits
                 if (gIsLargeSfxBank[bankId]) {
                     // ioPort 5, write the upper bits sfx index to seq 0, for banks with > 0xFF entries
                     AUDIOCMD_CHANNEL_SET_IO(SEQ_PLAYER_SFX, sCurSfxPlayerChannelIndex, 5, (entry->sfxId & 0x100) >> 8);
