@@ -76,7 +76,9 @@ void GameOver_Update(PlayState* play) {
             Environment_InitGameOverLights(play);
             gGameOverTimer = 20;
 
+            //! FAKE:
             if (1) {}
+
             rumbleStrength = R_GAME_OVER_RUMBLE_STRENGTH;
             rumbleDuration = R_GAME_OVER_RUMBLE_DURATION;
             rumbleDecreaseRate = R_GAME_OVER_RUMBLE_DECREASE_RATE;

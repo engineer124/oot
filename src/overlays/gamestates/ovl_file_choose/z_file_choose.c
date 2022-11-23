@@ -221,7 +221,7 @@ void FileSelect_UpdateMainMenu(GameState* thisx) {
                     this->nextTitleLabel = FS_TITLE_ERASE_FILE;
                 } else {
                     this->configMode = CM_MAIN_TO_OPTIONS;
-                    this->kbdButton = 0;
+                    this->kbdButton = FS_KBD_BTN_HIRA;
                     this->kbdX = 0;
                     this->kbdY = 0;
                     this->charBgAlpha = 0;
@@ -348,27 +348,52 @@ void FileSelect_RotateToMain(GameState* thisx) {
 }
 
 static void (*sConfigModeUpdateFuncs[])(GameState*) = {
-    FileSelect_StartFadeIn,        FileSelect_FinishFadeIn,
-    FileSelect_UpdateMainMenu,     FileSelect_SetupCopySource,
-    FileSelect_SelectCopySource,   FileSelect_SetupCopyDest1,
-    FileSelect_SetupCopyDest2,     FileSelect_SelectCopyDest,
-    FileSelect_ExitToCopySource1,  FileSelect_ExitToCopySource2,
-    FileSelect_SetupCopyConfirm1,  FileSelect_SetupCopyConfirm2,
-    FileSelect_CopyConfirm,        FileSelect_ReturnToCopyDest,
-    FileSelect_CopyAnim1,          FileSelect_CopyAnim2,
-    FileSelect_CopyAnim3,          FileSelect_CopyAnim4,
-    FileSelect_CopyAnim5,          FileSelect_ExitCopyToMain,
-    FileSelect_SetupEraseSelect,   FileSelect_EraseSelect,
-    FileSelect_SetupEraseConfirm1, FileSelect_SetupEraseConfirm2,
-    FileSelect_EraseConfirm,       FileSelect_ExitToEraseSelect1,
-    FileSelect_ExitToEraseSelect2, FileSelect_EraseAnim1,
-    FileSelect_EraseAnim2,         FileSelect_EraseAnim3,
-    FileSelect_ExitEraseToMain,    FileSelect_UnusedCM31,
-    FileSelect_RotateToNameEntry,  FileSelect_UpdateKeyboardCursor,
-    FileSelect_StartNameEntry,     FileSelect_RotateToMain,
-    FileSelect_RotateToOptions,    FileSelect_UpdateOptionsMenu,
-    FileSelect_StartOptions,       FileSelect_RotateToMain,
-    FileSelect_UnusedCMDelay,
+    // Main Menu
+    FileSelect_StartFadeIn,          // CM_FADE_IN_START
+    FileSelect_FinishFadeIn,         // CM_FADE_IN_END
+    FileSelect_UpdateMainMenu,       // CM_MAIN_MENU
+    // Copy File
+    FileSelect_SetupCopySource,      // CM_SETUP_COPY_SOURCE
+    FileSelect_SelectCopySource,     // CM_SELECT_COPY_SOURCE
+    FileSelect_SetupCopyDest1,       // CM_SETUP_COPY_DEST_1
+    FileSelect_SetupCopyDest2,       // CM_SETUP_COPY_DEST_2
+    FileSelect_SelectCopyDest,       // CM_SELECT_COPY_DEST
+    FileSelect_ExitToCopySource1,    // CM_EXIT_TO_COPY_SOURCE_1
+    FileSelect_ExitToCopySource2,    // CM_EXIT_TO_COPY_SOURCE_2
+    FileSelect_SetupCopyConfirm1,    // CM_SETUP_COPY_CONFIRM_1
+    FileSelect_SetupCopyConfirm2,    // CM_SETUP_COPY_CONFIRM_2
+    FileSelect_CopyConfirm,          // CM_COPY_CONFIRM
+    FileSelect_ReturnToCopyDest,     // CM_RETURN_TO_COPY_DEST
+    FileSelect_CopyAnim1,            // CM_COPY_ANIM_1
+    FileSelect_CopyAnim2,            // CM_COPY_ANIM_2
+    FileSelect_CopyAnim3,            // CM_COPY_ANIM_3
+    FileSelect_CopyAnim4,            // CM_COPY_ANIM_4
+    FileSelect_CopyAnim5,            // CM_COPY_ANIM_5
+    FileSelect_ExitCopyToMain,       // CM_COPY_RETURN_MAIN
+    // Erase File
+    FileSelect_SetupEraseSelect,     // CM_SETUP_ERASE_SELECT
+    FileSelect_EraseSelect,          // CM_ERASE_SELECT
+    FileSelect_SetupEraseConfirm1,   // CM_SETUP_ERASE_CONFIRM_1
+    FileSelect_SetupEraseConfirm2,   // CM_SETUP_ERASE_CONFIRM_2
+    FileSelect_EraseConfirm,         // CM_ERASE_CONFIRM
+    FileSelect_ExitToEraseSelect1,   // CM_EXIT_TO_ERASE_SELECT_1
+    FileSelect_ExitToEraseSelect2,   // CM_EXIT_TO_ERASE_SELECT_2
+    FileSelect_EraseAnim1,           // CM_ERASE_ANIM_1
+    FileSelect_EraseAnim2,           // CM_ERASE_ANIM_2
+    FileSelect_EraseAnim3,           // CM_ERASE_ANIM_3
+    FileSelect_ExitEraseToMain,      // CM_EXIT_ERASE_TO_MAIN
+    FileSelect_UnusedCM31,           // CM_UNUSED_31
+    // New File Name Entry
+    FileSelect_RotateToNameEntry,    // CM_ROTATE_TO_NAME_ENTRY
+    FileSelect_UpdateKeyboardCursor, // CM_NAME_ENTRY
+    FileSelect_StartNameEntry,       // CM_START_NAME_ENTRY
+    FileSelect_RotateToMain,         // CM_NAME_ENTRY_TO_MAIN
+    // Options
+    FileSelect_RotateToOptions,      // CM_MAIN_TO_OPTIONS
+    FileSelect_UpdateOptionsMenu,    // CM_OPTIONS_MENU
+    FileSelect_StartOptions,         // CM_START_OPTIONS
+    FileSelect_RotateToMain,         // CM_OPTIONS_TO_MAIN
+    FileSelect_UnusedCMDelay,        // CM_UNUSED_DELAY
 };
 
 /**
@@ -1056,7 +1081,7 @@ void FileSelect_DrawWindowContents(GameState* thisx) {
     gDPPipeSync(POLY_OPA_DISP++);
 
     // draw confirm buttons (yes/quit)
-    for (quadVtxIndex = 0, i = 0; i < 2; i++, quadVtxIndex += 4) {
+    for (quadVtxIndex = 0, i = FS_BTN_CONFIRM_YES; i <= FS_BTN_CONFIRM_QUIT; i++, quadVtxIndex += 4) {
         temp = this->confirmButtonTexIndices[i];
 
         gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, this->windowColor[0], this->windowColor[1], this->windowColor[2],
@@ -1241,24 +1266,24 @@ void FileSelect_FadeMainToSelect(GameState* thisx) {
 
     for (i = 0; i < 3; i++) {
         if (i != this->buttonIndex) {
-            this->fileButtonAlpha[i] -= 25;
+            this->fileButtonAlpha[i] -= 200 / 8;
             this->actionButtonAlpha[FS_BTN_ACTION_COPY] = this->actionButtonAlpha[FS_BTN_ACTION_ERASE] =
                 this->optionButtonAlpha = this->fileButtonAlpha[i];
 
             if (SLOT_OCCUPIED(sramCtx, i)) {
                 this->nameAlpha[i] = this->nameBoxAlpha[i] = this->fileButtonAlpha[i];
-                this->connectorAlpha[i] -= 31;
+                this->connectorAlpha[i] -= 255 / 8;
             }
         }
     }
 
-    this->titleAlpha[0] -= 31;
-    this->titleAlpha[1] += 31;
+    this->titleAlpha[0] -= 255 / 8;
+    this->titleAlpha[1] += 255 / 8;
     this->actionTimer--;
 
     if (this->actionTimer == 0) {
         this->actionTimer = 8;
-        this->selectMode++;
+        this->selectMode++; // SM_MOVE_FILE_TO_TOP
         this->confirmButtonIndex = FS_BTN_CONFIRM_YES;
     }
 }
@@ -1279,7 +1304,7 @@ void FileSelect_MoveSelectedFileToTop(GameState* thisx) {
     if ((this->actionTimer == 0) || (this->buttonYOffsets[this->buttonIndex] == fileYOffsets[this->buttonIndex])) {
         this->buttonYOffsets[FS_BTN_SELECT_YES] = this->buttonYOffsets[FS_BTN_SELECT_QUIT] = -24;
         this->actionTimer = 8;
-        this->selectMode++;
+        this->selectMode++; // SM_FADE_IN_FILE_INFO
     }
 }
 
@@ -1302,7 +1327,7 @@ void FileSelect_FadeInFileInfo(GameState* thisx) {
     if (this->actionTimer == 0) {
         this->fileInfoAlpha[this->buttonIndex] = 200;
         this->actionTimer = 8;
-        this->selectMode++;
+        this->selectMode++; // SM_CONFIRM_FILE
     }
 
     this->confirmButtonAlpha[FS_BTN_CONFIRM_YES] = this->confirmButtonAlpha[FS_BTN_CONFIRM_QUIT] =
@@ -1324,15 +1349,15 @@ void FileSelect_ConfirmFile(GameState* thisx) {
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             this->selectMode = SM_FADE_OUT;
             func_800F6964(0xF);
-        } else {
+        } else { // FS_BTN_CONFIRM_QUIT
             Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CLOSE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-            this->selectMode++;
+            this->selectMode++; // SM_FADE_OUT_FILE_INFO
         }
     } else if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CLOSE, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        this->selectMode++;
+        this->selectMode++; // SM_FADE_OUT_FILE_INFO
     } else if (ABS(this->stickAdjY) >= 30) {
         Audio_PlaySfxGeneral(NA_SE_SY_FSEL_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                              &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -1347,8 +1372,8 @@ void FileSelect_ConfirmFile(GameState* thisx) {
 void FileSelect_FadeOutFileInfo(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
 
-    this->fileInfoAlpha[this->buttonIndex] -= 25;
-    this->nameBoxAlpha[this->buttonIndex] += 25;
+    this->fileInfoAlpha[this->buttonIndex] -= 200 / 8;
+    this->nameBoxAlpha[this->buttonIndex] += 200 / 8;
     this->actionTimer--;
 
     if (this->actionTimer == 0) {
@@ -1360,7 +1385,8 @@ void FileSelect_FadeOutFileInfo(GameState* thisx) {
         this->selectMode++;
     }
 
-    this->confirmButtonAlpha[0] = this->confirmButtonAlpha[1] = this->fileInfoAlpha[this->buttonIndex];
+    this->confirmButtonAlpha[FS_BTN_CONFIRM_YES] = this->confirmButtonAlpha[FS_BTN_CONFIRM_QUIT] =
+        this->fileInfoAlpha[this->buttonIndex];
 }
 
 /**
@@ -1382,7 +1408,7 @@ void FileSelect_MoveSelectedFileToSlot(GameState* thisx) {
 
     for (i = 0; i < 3; i++) {
         if (i != this->buttonIndex) {
-            this->fileButtonAlpha[i] += 25;
+            this->fileButtonAlpha[i] += 200 / 8;
 
             if (this->fileButtonAlpha[i] >= 200) {
                 this->fileButtonAlpha[i] = 200;
@@ -1393,13 +1419,13 @@ void FileSelect_MoveSelectedFileToSlot(GameState* thisx) {
 
             if (SLOT_OCCUPIED(sramCtx, i)) {
                 this->nameBoxAlpha[i] = this->nameAlpha[i] = this->fileButtonAlpha[i];
-                this->connectorAlpha[i] += 31;
+                this->connectorAlpha[i] += 255 / 8;
             }
         }
     }
 
-    this->titleAlpha[0] -= 31;
-    this->titleAlpha[1] += 31;
+    this->titleAlpha[0] -= 255 / 8;
+    this->titleAlpha[1] += 255 / 8;
     this->actionTimer--;
 
     if (this->actionTimer == 0) {
@@ -1514,8 +1540,14 @@ void FileSelect_LoadGame(GameState* thisx) {
 }
 
 static void (*sSelectModeUpdateFuncs[])(GameState*) = {
-    FileSelect_FadeMainToSelect, FileSelect_MoveSelectedFileToTop,  FileSelect_FadeInFileInfo, FileSelect_ConfirmFile,
-    FileSelect_FadeOutFileInfo,  FileSelect_MoveSelectedFileToSlot, FileSelect_FadeOut,        FileSelect_LoadGame,
+    FileSelect_FadeMainToSelect,       // SM_FADE_MAIN_TO_SELECT
+    FileSelect_MoveSelectedFileToTop,  // SM_MOVE_FILE_TO_TOP
+    FileSelect_FadeInFileInfo,         // SM_FADE_IN_FILE_INFO
+    FileSelect_ConfirmFile,            // SM_CONFIRM_FILE
+    FileSelect_FadeOutFileInfo,        // SM_FADE_OUT_FILE_INFO
+    FileSelect_MoveSelectedFileToSlot, // SM_MOVE_FILE_TO_SLOT
+    FileSelect_FadeOut,                // SM_FADE_OUT
+    FileSelect_LoadGame,               // SM_LOAD_GAME
 };
 
 void FileSelect_SelectModeUpdate(GameState* thisx) {
@@ -1539,7 +1571,7 @@ void FileSelect_SelectModeDraw(GameState* thisx) {
     eyeZ = 1000.0f * Math_SinS(ZREG(11)) + 1000.0f * Math_CosS(ZREG(11));
 
     FileSelect_SetView(this, eyeX, eyeY, eyeZ);
-    SkyboxDraw_Draw(&this->skyboxCtx, this->state.gfxCtx, 1, this->envCtx.skyboxBlend, eyeX, eyeY, eyeZ);
+    SkyboxDraw_Draw(&this->skyboxCtx, this->state.gfxCtx, SKYBOX_NORMAL_SKY, this->envCtx.skyboxBlend, eyeX, eyeY, eyeZ);
     gDPSetTextureLUT(POLY_OPA_DISP++, G_TT_NONE);
     ZREG(11) += ZREG(10);
     Environment_UpdateSkybox(SKYBOX_NORMAL_SKY, &this->envCtx, &this->skyboxCtx);
@@ -1577,15 +1609,15 @@ void FileSelect_SelectModeDraw(GameState* thisx) {
 }
 
 static void (*sFileSelectDrawFuncs[])(GameState*) = {
-    FileSelect_InitModeDraw,
-    FileSelect_ConfigModeDraw,
-    FileSelect_SelectModeDraw,
+    FileSelect_InitModeDraw,   // FS_MENU_MODE_INIT
+    FileSelect_ConfigModeDraw, // FS_MENU_MODE_CONFIG
+    FileSelect_SelectModeDraw, // FS_MENU_MODE_SELECT
 };
 
 static void (*sFileSelectUpdateFuncs[])(GameState*) = {
-    FileSelect_InitModeUpdate,
-    FileSelect_ConfigModeUpdate,
-    FileSelect_SelectModeUpdate,
+    FileSelect_InitModeUpdate,   // FS_MENU_MODE_INIT
+    FileSelect_ConfigModeUpdate, // FS_MENU_MODE_CONFIG
+    FileSelect_SelectModeUpdate, // FS_MENU_MODE_SELECT
 };
 
 void FileSelect_Main(GameState* thisx) {

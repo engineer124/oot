@@ -218,9 +218,9 @@ void FileSelect_SetNameEntryVtx(GameState* thisx) {
         this->nameEntryVtx[0x27].v.tc[1] = this->nameEntryVtx[0x29].v.tc[0] = this->nameEntryVtx[0x2A].v.tc[1] =
             this->nameEntryVtx[0x2B].v.tc[0] = this->nameEntryVtx[0x2B].v.tc[1] = 0x300;
 
-    if ((this->kbdButton == 0) || (this->kbdButton == 1) || (this->kbdButton == 4)) {
+    if ((this->kbdButton == FS_KBD_BTN_HIRA) || (this->kbdButton == FS_KBD_BTN_KATA) || (this->kbdButton == FS_KBD_BTN_END)) {
         this->nameEntryVtx[0x29].v.tc[0] = this->nameEntryVtx[0x2B].v.tc[0] = 0x700;
-    } else if ((this->kbdButton == 2) || (this->kbdButton == 3)) {
+    } else if ((this->kbdButton == FS_KBD_BTN_ENG) || (this->kbdButton == FS_KBD_BTN_BACKSPACE)) {
         this->nameEntryVtx[0x29].v.tc[0] = this->nameEntryVtx[0x2B].v.tc[0] = 0x500;
     }
 
@@ -500,7 +500,7 @@ void FileSelect_StartNameEntry(GameState* thisx) {
         this->nameEntryBoxAlpha = 255;
         this->kbdX = 0;
         this->kbdY = 0;
-        this->kbdButton = 99;
+        this->kbdButton = FS_KBD_BTN_NONE;
         this->configMode = CM_NAME_ENTRY;
     }
 }
@@ -515,7 +515,7 @@ void FileSelect_UpdateKeyboardCursor(GameState* thisx) {
     FileSelectState* this = (FileSelectState*)thisx;
     s16 prevKbdX;
 
-    this->kbdButton = 99;
+    this->kbdButton = FS_KBD_BTN_NONE;
 
     if (this->kbdY != 5) {
         if (this->stickAdjX < -30) {
