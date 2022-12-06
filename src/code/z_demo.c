@@ -1348,8 +1348,8 @@ s32 Cutscene_Command_CameraEyePoints(PlayState* play, CutsceneContext* csCtx, u8
             csCtx->unk_18 = cmdBase->startFrame;
             if (D_8015FCC8 != 0) {
                 Play_CameraChangeSetting(play, csCtx->subCamId, CAM_SET_CS_0);
-                Play_ChangeCameraStatus(play, sReturnToCamId, CAM_STAT_WAIT);
-                Play_ChangeCameraStatus(play, csCtx->subCamId, CAM_STAT_ACTIVE);
+                Play_ChangeCameraStatus(play, sReturnToCamId, CAM_STATUS_WAIT);
+                Play_ChangeCameraStatus(play, csCtx->subCamId, CAM_STATUS_ACTIVE);
                 Camera_ResetAnim(Play_GetCamera(play, csCtx->subCamId));
                 Camera_SetCSParams(Play_GetCamera(play, csCtx->subCamId), csCtx->subCamLookAtPoints,
                                    csCtx->subCamEyePoints, GET_PLAYER(play), relativeToLink);
@@ -1385,8 +1385,8 @@ s32 Cutscene_Command_CameraLookAtPoints(PlayState* play, CutsceneContext* csCtx,
             D_8015FCC0 = cmdBase->startFrame;
             if (D_8015FCC8 != 0) {
                 Play_CameraChangeSetting(play, csCtx->subCamId, CAM_SET_CS_0);
-                Play_ChangeCameraStatus(play, sReturnToCamId, CAM_STAT_WAIT);
-                Play_ChangeCameraStatus(play, csCtx->subCamId, CAM_STAT_ACTIVE);
+                Play_ChangeCameraStatus(play, sReturnToCamId, CAM_STATUS_WAIT);
+                Play_ChangeCameraStatus(play, csCtx->subCamId, CAM_STATUS_ACTIVE);
                 Camera_ResetAnim(Play_GetCamera(play, csCtx->subCamId));
                 Camera_SetCSParams(Play_GetCamera(play, csCtx->subCamId), csCtx->subCamLookAtPoints,
                                    csCtx->subCamEyePoints, GET_PLAYER(play), relativeToLink);
@@ -1426,8 +1426,8 @@ s32 Cutscene_Command_07(PlayState* play, CutsceneContext* csCtx, u8* cmd, u8 unu
             if (D_8015FCC8 != 0) {
                 subCam = Play_GetCamera(play, csCtx->subCamId);
                 subCam->player = NULL;
-                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-                Play_ChangeCameraStatus(play, csCtx->subCamId, CAM_STAT_ACTIVE);
+                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+                Play_ChangeCameraStatus(play, csCtx->subCamId, CAM_STATUS_ACTIVE);
                 Play_CameraChangeSetting(play, csCtx->subCamId, CAM_SET_FREE0);
                 sp28 = csCtx->subCamLookAtPoints->cameraRoll * 1.40625f;
                 Camera_SetViewParam(subCam, CAM_VIEW_ROLL, &sp28);
@@ -1469,8 +1469,8 @@ s32 Cutscene_Command_08(PlayState* play, CutsceneContext* csCtx, u8* cmd, u8 unu
             if (D_8015FCC8 != 0) {
                 subCam = Play_GetCamera(play, csCtx->subCamId);
                 subCam->player = NULL;
-                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-                Play_ChangeCameraStatus(play, csCtx->subCamId, CAM_STAT_ACTIVE);
+                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+                Play_ChangeCameraStatus(play, csCtx->subCamId, CAM_STATUS_ACTIVE);
                 Play_CameraChangeSetting(play, csCtx->subCamId, CAM_SET_FREE0);
                 sp3C.x = csCtx->subCamLookAtPoints->pos.x;
                 sp3C.y = csCtx->subCamLookAtPoints->pos.y;
@@ -1971,7 +1971,7 @@ void func_80068DC0(PlayState* play, CutsceneContext* csCtx) {
                     Play_CopyCamera(play, sReturnToCamId, csCtx->subCamId);
             }
 
-            Play_ChangeCameraStatus(play, sReturnToCamId, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, sReturnToCamId, CAM_STATUS_ACTIVE);
             Play_ClearCamera(play, csCtx->subCamId);
             func_8005B1A4(play->cameraPtrs[sReturnToCamId]);
         }

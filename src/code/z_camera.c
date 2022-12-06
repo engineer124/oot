@@ -1411,6 +1411,7 @@ void func_80046E20(Camera* camera, VecGeo* eyeAdjustment, f32 minDist, f32 arg3,
                 Camera_AddVecGeoToVec3f(eye, eye, &sp40);
             }
             break;
+
         default:
             if (anim->unk_18 != 0) {
                 anim->swingUpdateRateTimer = OREG(52);
@@ -1499,6 +1500,7 @@ s32 Camera_Normal1(Camera* camera) {
             sUpdateCameraDirection = 0;
             rwData->startSwingTimer = OREG(50) + OREG(51);
             break;
+
         default:
             break;
     }
@@ -1613,7 +1615,7 @@ s32 Camera_Normal1(Camera* camera) {
     }
 
     Camera_AddVecGeoToVec3f(eyeNext, at, &eyeAdjustment);
-    if ((camera->status == CAM_STAT_ACTIVE) && !(roData->interfaceField & NORMAL1_FLAG_4)) {
+    if ((camera->status == CAM_STATUS_ACTIVE) && !(roData->interfaceField & NORMAL1_FLAG_4)) {
         rwData->swingYawTarget = camera->playerPosRot.rot.y - 0x7FFF;
         if (rwData->startSwingTimer > 0) {
             func_80046E20(camera, &eyeAdjustment, roData->distMin, roData->unk_0C, &sp98, &rwData->swing);
@@ -1743,6 +1745,7 @@ s32 Camera_Normal2(Camera* camera) {
             camera->animState = 1;
             camera->yawUpdateRateInv = 50.0f;
             break;
+
         default:
             if (camera->playerGroundY == playerPosRot->pos.y) {
                 rwData->unk_24 = playerPosRot->pos.y;
@@ -1815,7 +1818,7 @@ s32 Camera_Normal2(Camera* camera) {
 
     Camera_AddVecGeoToVec3f(eyeNext, at, &adjGeo);
 
-    if (camera->status == CAM_STAT_ACTIVE) {
+    if (camera->status == CAM_STATUS_ACTIVE) {
         bgChk.pos = *eyeNext;
         if (!camera->play->envCtx.skyboxDisabled || roData->interfaceField & NORMAL2_FLAG_4) {
             Camera_BGCheckInfo(camera, at, &bgChk);
@@ -1898,6 +1901,9 @@ s32 Camera_Normal3(Camera* camera) {
             rwData->yawTimer = R_CAM_DEFAULT_ANIM_TIME;
             camera->animState = 1;
             rwData->swing.swingUpdateRateTimer = 0;
+            FALLTHROUGH;
+        default:
+            break;
     }
 
     if (rwData->distTimer != 0) {
@@ -1974,7 +1980,7 @@ s32 Camera_Normal3(Camera* camera) {
 
     Camera_AddVecGeoToVec3f(eyeNext, at, &sp84);
 
-    if (camera->status == CAM_STAT_ACTIVE) {
+    if (camera->status == CAM_STATUS_ACTIVE) {
         func_80046E20(camera, &sp84, roData->distMin, roData->yawUpdateSpeed, &sp8C, &rwData->swing);
     } else {
         *eye = *eyeNext;
@@ -2055,6 +2061,9 @@ s32 Camera_Parallel1(Camera* camera) {
             rwData->unk_00.x = 0.0f;
             rwData->yTarget = playerPosRot->pos.y - camera->playerPosDelta.y;
             camera->animState++;
+            break;
+
+        default:
             break;
     }
 
@@ -2160,7 +2169,7 @@ s32 Camera_Parallel1(Camera* camera) {
         }
     }
     Camera_AddVecGeoToVec3f(eyeNext, at, &spA8);
-    if (camera->status == CAM_STAT_ACTIVE) {
+    if (camera->status == CAM_STATUS_ACTIVE) {
         sp6C.pos = *eyeNext;
         if (!camera->play->envCtx.skyboxDisabled || roData->interfaceField & PARALLEL1_FLAG_4) {
             Camera_BGCheckInfo(camera, at, &sp6C);
@@ -2331,7 +2340,7 @@ s32 Camera_Jump1(Camera* camera) {
     eyeNext->x = newEye.x;
     eyeNext->z = newEye.z;
     eyeNext->y += (newEye.y - eyeNext->y) * CAM_DATA_SCALED(R_CAM_JUMP1_EYE_Y_STEP_SCALE);
-    if ((camera->status == CAM_STAT_ACTIVE) && !(roData->interfaceField & JUMP1_FLAG_4)) {
+    if ((camera->status == CAM_STATUS_ACTIVE) && !(roData->interfaceField & JUMP1_FLAG_4)) {
         func_80046E20(camera, &eyeDiffGeo, roData->distMin, roData->yawUpateRateTarget, &spA4, &rwData->swing);
         if (roData->interfaceField & JUMP1_FLAG_2) {
             camera->inputDir.x = -eyeAtOffset.pitch;
@@ -2636,6 +2645,7 @@ s32 Camera_Jump3(Camera* camera) {
             camera->animState++;
             rwData->swing.swingUpdateRateTimer = 0;
             break;
+
         default:
             if (rwData->animTimer != 0) {
                 rwData->animTimer--;
@@ -2710,7 +2720,7 @@ s32 Camera_Jump3(Camera* camera) {
     }
 
     Camera_AddVecGeoToVec3f(eyeNext, at, &eyeDiffGeo);
-    if ((camera->status == CAM_STAT_ACTIVE) && !(roData->interfaceField & JUMP3_FLAG_4)) {
+    if ((camera->status == CAM_STATUS_ACTIVE) && !(roData->interfaceField & JUMP3_FLAG_4)) {
         func_80046E20(camera, &eyeDiffGeo, roData->distMin, roData->swingUpdateRate, &spBC, &rwData->swing);
         if (roData->interfaceField & JUMP3_FLAG_2) {
             camera->inputDir.x = -eyeAtOffset.pitch;
@@ -2890,7 +2900,7 @@ s32 Camera_Battle1(Camera* camera) {
         rwData->yPosOffset = playerPosRot->pos.y - camera->playerPosDelta.y;
     }
 
-    if (camera->status == CAM_STAT_ACTIVE) {
+    if (camera->status == CAM_STATUS_ACTIVE) {
         sUpdateCameraDirection = 1;
         camera->inputDir.x = -atToEyeDir.pitch;
         camera->inputDir.y = atToEyeDir.yaw - 0x7FFF;
@@ -2985,7 +2995,7 @@ s32 Camera_Battle1(Camera* camera) {
         spB4.pitch = Camera_LERPCeilS(tmpAng1, atToEyeNextDir.pitch, rwData->unk_10, 0xA);
         Camera_AddVecGeoToVec3f(eyeNext, at, &spB4);
         spBC.pos = *eyeNext;
-        if (camera->status == CAM_STAT_ACTIVE) {
+        if (camera->status == CAM_STATUS_ACTIVE) {
             if (!camera->play->envCtx.skyboxDisabled || roData->interfaceField & BATTLE1_FLAG_0) {
                 Camera_BGCheckInfo(camera, at, &spBC);
             } else if (roData->interfaceField & BATTLE1_FLAG_1) {
@@ -3066,6 +3076,9 @@ s32 Camera_Battle4(Camera* camera) {
         case 20:
             rwData->animTimer = 50;
             camera->animState++;
+            break;
+
+        default:
             break;
     }
 
@@ -3189,7 +3202,7 @@ s32 Camera_KeepOn1(Camera* camera) {
         rwData->unk_00 = spC0.r;
         rwData->unk_08 = playerPosRot->pos.y - camera->playerPosDelta.y;
     }
-    if (camera->status == CAM_STAT_ACTIVE) {
+    if (camera->status == CAM_STATUS_ACTIVE) {
         sUpdateCameraDirection = 1;
         camera->inputDir.x = -spC0.pitch;
         camera->inputDir.y = spC0.yaw - 0x7FFF;
@@ -3232,9 +3245,9 @@ s32 Camera_KeepOn1(Camera* camera) {
             if (camera->playerGroundY == camera->playerPosRot.pos.y || camera->player->actor.gravity > -0.1f ||
                 camera->player->stateFlags1 & PLAYER_STATE1_21) {
                 rwData->unk_08 = playerPosRot->pos.y;
-                sp80 = 0;
+                sp80 = false;
             } else {
-                sp80 = 1;
+                sp80 = true;
             }
 
             Camera_CalcAtForLockOn(camera, &spB8, &camera->targetPosRot.pos, sp80 ? roData->unk_28 : roData->unk_00,
@@ -3244,13 +3257,16 @@ s32 Camera_KeepOn1(Camera* camera) {
             OLib_Vec3fDiffToVecGeo(&spC8, &sp114, &camera->targetPosRot.pos);
             sp84 = spC8.r > sp104 ? 1.0f : spC8.r / sp104;
             break;
+
         default:
             *at = playerPosRot->pos;
             at->y += playerHeight;
             rwData->unk_0C = NULL;
             break;
     }
+
     OLib_Vec3fDiffToVecGeo(&spD8, at, eyeNext);
+
     if (spD8.r < roData->unk_04) {
         sp104 = roData->unk_04;
         spE8 = R_CAM_R_UPDATE_RATE_INV;
@@ -3322,7 +3338,7 @@ s32 Camera_KeepOn1(Camera* camera) {
         spD8.pitch = Camera_LERPCeilS(spE2, spB8.pitch, CAM_DATA_SCALED(OREG(12)), 0xA);
         Camera_AddVecGeoToVec3f(eyeNext, at, &spD8);
         sp8C.pos = *eyeNext;
-        if (camera->status == CAM_STAT_ACTIVE) {
+        if (camera->status == CAM_STATUS_ACTIVE) {
             if (!camera->play->envCtx.skyboxDisabled || roData->interfaceField & KEEPON1_FLAG_0) {
                 Camera_BGCheckInfo(camera, at, &sp8C);
             } else if (roData->interfaceField & KEEPON1_FLAG_1) {
@@ -3505,8 +3521,8 @@ s32 Camera_KeepOn3(Camera* camera) {
         at->y += (rwData->atTarget.y - at->y) / rwData->animTimer;
         at->z += (rwData->atTarget.z - at->z) / rwData->animTimer;
         // needed to match
-        if (!prevTargetPlayerDist) {}
-        atToEyeAdj.r = ((rwData->eyeToAtTargetR * rwData->animTimer) + atToEyeNextDir.r) + 1.0f;
+        if (prevTargetPlayerDist) {}
+        atToEyeAdj.r = atToEyeNextDir.r + (rwData->eyeToAtTargetR * rwData->animTimer) + 1.0f;
         atToEyeAdj.yaw = atToEyeNextDir.yaw + (s16)(rwData->eyeToAtTargetYaw * rwData->animTimer);
         atToEyeAdj.pitch = atToEyeNextDir.pitch + (s16)(rwData->eyeToAtTargetPitch * rwData->animTimer);
         Camera_AddVecGeoToVec3f(eyeNext, at, &atToEyeAdj);
@@ -3801,11 +3817,14 @@ s32 Camera_KeepOn4(Camera* camera) {
             camera->animState++;
             rwData->unk_12 = 1;
             break;
+
         case 10:
             rwData->unk_08 = playerPosRot->pos.y - camera->playerPosDelta.y;
+            FALLTHROUGH;
         default:
             break;
     }
+
     camera->xzOffsetUpdateRate = 0.25f;
     camera->yOffsetUpdateRate = 0.25f;
     camera->atLERPStepScale = 0.75f;
@@ -4018,9 +4037,7 @@ s32 Camera_Fixed2(Camera* camera) {
     Fixed2ReadOnlyData* roData = &camera->paramData.fixd2.roData;
     Fixed2ReadWriteData* rwData = &camera->paramData.fixd2.rwData;
     s32 pad;
-    f32 playerHeight;
-
-    playerHeight = Player_GetHeight(camera->player);
+    f32 playerHeight = Player_GetHeight(camera->player);
 
     if (RELOAD_PARAMS(camera) || R_RELOAD_CAM_PARAMS) {
         CameraModeValue* values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
@@ -4271,7 +4288,7 @@ s32 Camera_Subj3(Camera* camera) {
     Subj3ReadOnlyData* roData = &camera->paramData.subj3.roData;
     Subj3ReadWriteData* rwData = &camera->paramData.subj3.rwData;
     CameraModeValue* values;
-    Vec3f* pad2;
+    Vec3f* pad;
     f32 playerHeight;
 
     Actor_GetFocus(&sp60, &camera->player->actor);
@@ -4319,11 +4336,8 @@ s32 Camera_Subj3(Camera* camera) {
     tGeo.yaw = rwData->yaw;
     tGeo.pitch = rwData->pitch;
     if (rwData->animTimer != 0) {
-        temp_f0_3 = (1.0f / rwData->animTimer);
-        pad2 = at;
-        at->x = at->x + (sp98.x - pad2->x) * temp_f0_3;
-        at->y = at->y + (sp98.y - pad2->y) * temp_f0_3;
-        at->z = at->z + (sp98.z - pad2->z) * temp_f0_3;
+        temp_f0_3 = 1.0f / rwData->animTimer;
+        VEC3F_LERPIMPDST(at, at, &sp98, temp_f0_3);
 
         temp_f0_3 = (1.0f / R_CAM_DEFAULT_ANIM_TIME);
         sp58 = (tGeo.r - sp84.r) * temp_f0_3;
@@ -5231,7 +5245,7 @@ s32 Camera_Unique9(Camera* camera) {
 
     if (camera->animState == 0) {
         camera->animState++;
-        rwData->curKeyFrameIdx = -1;
+        rwData->curKeyFrameIndex = -1;
         rwData->keyFrameTimer = 1;
         rwData->unk_38 = 0;
         rwData->playerPos.x = playerPosRot.pos.x;
@@ -5247,9 +5261,9 @@ s32 Camera_Unique9(Camera* camera) {
 
     if (rwData->keyFrameTimer == 0) {
         rwData->isNewKeyFrame = true;
-        rwData->curKeyFrameIdx++;
-        if (rwData->curKeyFrameIdx < ONEPOINT_CS_INFO(camera)->keyFrameCnt) {
-            rwData->curKeyFrame = &ONEPOINT_CS_INFO(camera)->keyFrames[rwData->curKeyFrameIdx];
+        rwData->curKeyFrameIndex++;
+        if (rwData->curKeyFrameIndex < ONEPOINT_CS_INFO(camera)->keyFrameCnt) {
+            rwData->curKeyFrame = &ONEPOINT_CS_INFO(camera)->keyFrames[rwData->curKeyFrameIndex];
             rwData->keyFrameTimer = rwData->curKeyFrame->timerInit;
 
             if (rwData->curKeyFrame->unk_01 != 0xFF) {
@@ -5553,7 +5567,7 @@ s32 Camera_Unique9(Camera* camera) {
             scratchGeo.yaw = Camera_LERPCeilS(rwData->atEyeOffsetTarget.yaw, eyeNextAtOffset.yaw,
                                               rwData->curKeyFrame->lerpStepScale, 1);
             Camera_AddVecGeoToVec3f(eyeNext, at, &scratchGeo);
-            goto setAtFOVRoll;
+            goto setAtFovRoll;
         case 3:
             // linear interplation of eye/at/fov/roll using the step scale using eyeTarget
             camera->eyeNext.x =
@@ -5565,7 +5579,7 @@ s32 Camera_Unique9(Camera* camera) {
             FALLTHROUGH;
         case 11:
         case 12:
-        setAtFOVRoll:
+        setAtFovRoll:
             // linear interpolation of at/fov/roll using the step scale.
             camera->at.x = Camera_LERPCeilF(rwData->atTarget.x, camera->at.x, rwData->curKeyFrame->lerpStepScale, 1.0f);
             camera->at.y = Camera_LERPCeilF(rwData->atTarget.y, camera->at.y, rwData->curKeyFrame->lerpStepScale, 1.0f);
@@ -5605,19 +5619,19 @@ s32 Camera_Unique9(Camera* camera) {
             break;
         case 24:
             // Set current keyframe to the roll target?
-            rwData->curKeyFrameIdx = rwData->rollTarget;
+            rwData->curKeyFrameIndex = rwData->rollTarget;
             break;
         case 19: {
             // Change the parent camera (or default)'s mode to normal
-            s32 camIdx = camera->parentCamId <= CAM_ID_NONE ? CAM_ID_MAIN : camera->parentCamId;
+            s32 camId = camera->parentCamId <= CAM_ID_NONE ? CAM_ID_MAIN : camera->parentCamId;
 
-            Camera_ChangeModeFlags(camera->play->cameraPtrs[camIdx], CAM_MODE_NORMAL, 1);
+            Camera_ChangeModeFlags(camera->play->cameraPtrs[camId], CAM_MODE_NORMAL, 1);
         }
             FALLTHROUGH;
         case 18: {
             // copy the current camera to the parent (or default)'s camera.
-            s32 camIdx = camera->parentCamId <= CAM_ID_NONE ? CAM_ID_MAIN : camera->parentCamId;
-            Camera* cam = camera->play->cameraPtrs[camIdx];
+            s32 camId = camera->parentCamId <= CAM_ID_NONE ? CAM_ID_MAIN : camera->parentCamId;
+            Camera* cam = camera->play->cameraPtrs[camId];
 
             *eye = *eyeNext;
             Camera_Copy(cam, camera);
@@ -5722,7 +5736,7 @@ s32 Camera_Demo1(Camera* camera) {
     Vec3f csAtUpdate;
     f32 newRoll;
     Vec3f* eyeNext = &camera->eyeNext;
-    f32* cameraFOV = &camera->fov;
+    f32* fov = &camera->fov;
     s16* relativeToPlayer = &camera->data2;
     Demo1ReadWriteData* rwData = &camera->paramData.demo1.rwData;
 
@@ -5750,8 +5764,8 @@ s32 Camera_Demo1(Camera* camera) {
             FALLTHROUGH;
         case 1:
             // follow CutsceneCameraPoints.  function returns 1 if at the end.
-            if (func_800BB2B4(&csEyeUpdate, &newRoll, cameraFOV, csEyePoints, &rwData->keyframe, &rwData->curFrame) ||
-                func_800BB2B4(&csAtUpdate, &newRoll, cameraFOV, csAtPoints, &rwData->keyframe, &rwData->curFrame)) {
+            if (func_800BB2B4(&csEyeUpdate, &newRoll, fov, csEyePoints, &rwData->keyframe, &rwData->curFrame) ||
+                func_800BB2B4(&csAtUpdate, &newRoll, fov, csAtPoints, &rwData->keyframe, &rwData->curFrame)) {
                 camera->animState++;
             }
             if (*relativeToPlayer) {
@@ -5772,6 +5786,9 @@ s32 Camera_Demo1(Camera* camera) {
             *eye = *eyeNext;
             camera->roll = newRoll * 256.0f;
             camera->dist = OLib_Vec3fDist(at, eye);
+            break;
+
+        default:
             break;
     }
     return true;
@@ -5859,6 +5876,7 @@ s32 Camera_Demo3(Camera* camera) {
             eyeOffset.yaw = (D_8011D658[0].yaw * rwData->yawDir) + camPlayerPosRot->rot.y;
             rwData->unk_0C = 1.0f;
             break;
+
         case 1:
             temp_f0 = (rwData->animFrame - 2) * (1.0f / 146.0f);
 
@@ -5880,6 +5898,7 @@ s32 Camera_Demo3(Camera* camera) {
 
             rwData->unk_0C -= (1.0f / 365.0f);
             break;
+
         case 2:
             temp_f0 = (rwData->animFrame - 0x94) * 0.1f;
 
@@ -5901,6 +5920,7 @@ s32 Camera_Demo3(Camera* camera) {
             eyeOffset.yaw = (atOffset.yaw * rwData->yawDir) + camPlayerPosRot->rot.y;
             rwData->unk_0C -= 0.04f;
             break;
+
         case 3:
             temp_f0 = (rwData->animFrame - 0x9F) * (1.0f / 9.0f);
 
@@ -5922,6 +5942,7 @@ s32 Camera_Demo3(Camera* camera) {
             eyeOffset.yaw = (atOffset.yaw * rwData->yawDir) + camPlayerPosRot->rot.y;
             rwData->unk_0C += (4.0f / 45.0f);
             break;
+
         case 30:
             camera->stateFlags |= CAM_STATE_10;
             if (camera->stateFlags & CAM_STATE_3) {
@@ -5932,6 +5953,7 @@ s32 Camera_Demo3(Camera* camera) {
         case 20:
             skipUpdateEye = true;
             break;
+
         case 4:
             eyeOffset.r = 80.0f;
             eyeOffset.pitch = 0;
@@ -6042,6 +6064,7 @@ s32 Camera_Demo5(Camera* camera) {
     eyeTargetDist = OLib_Vec3fDist(&camera->targetPosRot.pos, &camera->eye);
     OLib_Vec3fDiffToVecGeo(&eyePlayerGeo, &playerhead.pos, &camera->eyeNext);
     sp4A = eyePlayerGeo.yaw - playerTargetGeo.yaw;
+
     if (camera->target->category == ACTORCAT_PLAYER) {
         // camera is targeting a(the) player actor
         if (eyePlayerGeo.r > 30.0f) {
@@ -6103,8 +6126,8 @@ s32 Camera_Demo5(Camera* camera) {
         // The distance between the camera's current position and the target is less than 700 units
         // and the angle between the camera's position and the player, and the player to the target
         // is less than ~76.9 degrees
-        if (targetScreenPosX >= 0x15 && targetScreenPosX < 0x12C && targetScreenPosY >= 0x29 &&
-            targetScreenPosY < 0xC8 && eyePlayerGeo.r > 30.0f) {
+        if ((targetScreenPosX > 20) && (targetScreenPosX < SCREEN_WIDTH - 20) && (targetScreenPosY > 40) &&
+            (targetScreenPosY < SCREEN_HEIGHT - 40) && (eyePlayerGeo.r > 30.0f)) {
             D_8011D88C[0].timerInit = camera->timer;
             ONEPOINT_CS_INFO(camera)->keyFrames = D_8011D88C;
             ONEPOINT_CS_INFO(camera)->keyFrameCnt = ARRAY_COUNT(D_8011D88C);
@@ -6310,6 +6333,9 @@ s32 Camera_Demo6(Camera* camera) {
                 return true;
             }
             break;
+
+        default:
+            break;
     }
 
     rwData->animTimer++;
@@ -6355,7 +6381,7 @@ s32 Camera_Demo9(Camera* camera) {
     Vec3f* eyeNext = &camera->eyeNext;
     Demo9ReadOnlyData* roData = &camera->paramData.demo9.roData;
     Vec3f* at = &camera->at;
-    f32* camFOV = &camera->fov;
+    f32* fov = &camera->fov;
     Demo9ReadWriteData* rwData = &camera->paramData.demo9.rwData;
 
     mainCam = Play_GetCamera(camera->play, CAM_ID_MAIN);
@@ -6396,9 +6422,9 @@ s32 Camera_Demo9(Camera* camera) {
 
                 // Run the at and eye cs interpolation functions, if either of them returns 1 (that no more points
                 // exist) change the animation state to 2 (standby)
-                if (func_800BB2B4(&csEyeUpdate, &newRoll, camFOV, onePointCamData->eyePoints, &rwData->keyframe,
+                if (func_800BB2B4(&csEyeUpdate, &newRoll, fov, onePointCamData->eyePoints, &rwData->keyframe,
                                   &rwData->curFrame) != 0 ||
-                    func_800BB2B4(&csAtUpdate, &newRoll, camFOV, onePointCamData->atPoints, &rwData->keyframe,
+                    func_800BB2B4(&csAtUpdate, &newRoll, fov, onePointCamData->atPoints, &rwData->keyframe,
                                   &rwData->curFrame) != 0) {
                     camera->animState = 2;
                 }
@@ -6459,6 +6485,7 @@ s32 Camera_Demo9(Camera* camera) {
                 }
             }
             break;
+
         case 2:
             // standby while the timer finishes, change the animState to finish when
             // the timer runs out.
@@ -6467,8 +6494,9 @@ s32 Camera_Demo9(Camera* camera) {
                 camera->animState++;
             }
             break;
+
         case 4:
-            // do nothing.
+        default:
             break;
     }
 
@@ -6904,32 +6932,31 @@ s32 Camera_Special9(Camera* camera) {
             FALLTHROUGH;
         case 1:
             doorParams->timer1--;
-            if (doorParams->timer1 <= 0) {
-                camera->animState++;
-                if (roData->interfaceField & SPECIAL9_FLAG_0) {
-                    bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
-                    Camera_Vec3sToVec3f(eyeNext, &bgCamFuncData->pos);
-                    spAC = *eye = *eyeNext;
-                } else {
-                    s16 yaw;
-
-                    // 0xE38 ~ 20 degrees
-                    eyeAdjustment.pitch = 0xE38;
-                    // 0xAAA ~ 15 degrees.
-                    yaw = 0xAAA * ((camera->play->state.frames & 1) ? 1 : -1);
-                    eyeAdjustment.yaw = rwData->targetYaw + yaw;
-                    eyeAdjustment.r = 200.0f * yNormal;
-                    Camera_AddVecGeoToVec3f(eyeNext, at, &eyeAdjustment);
-                    spAC = *eye = *eyeNext;
-                    if (Camera_CheckOOB(camera, &spAC, &playerPosRot->pos)) {
-                        yaw = -yaw;
-                        eyeAdjustment.yaw = rwData->targetYaw + yaw;
-                        Camera_AddVecGeoToVec3f(eyeNext, at, &eyeAdjustment);
-                        *eye = *eyeNext;
-                    }
-                }
-            } else {
+            if (doorParams->timer1 > 0) {
                 break;
+            }
+            camera->animState++;
+            if (roData->interfaceField & SPECIAL9_FLAG_0) {
+                bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
+                Camera_Vec3sToVec3f(eyeNext, &bgCamFuncData->pos);
+                spAC = *eye = *eyeNext;
+            } else {
+                s16 yaw;
+
+                // 0xE38 ~ 20 degrees
+                eyeAdjustment.pitch = 0xE38;
+                // 0xAAA ~ 15 degrees.
+                yaw = 0xAAA * ((camera->play->state.frames & 1) ? 1 : -1);
+                eyeAdjustment.yaw = rwData->targetYaw + yaw;
+                eyeAdjustment.r = 200.0f * yNormal;
+                Camera_AddVecGeoToVec3f(eyeNext, at, &eyeAdjustment);
+                spAC = *eye = *eyeNext;
+                if (Camera_CheckOOB(camera, &spAC, &playerPosRot->pos)) {
+                    yaw = -yaw;
+                    eyeAdjustment.yaw = rwData->targetYaw + yaw;
+                    Camera_AddVecGeoToVec3f(eyeNext, at, &eyeAdjustment);
+                    *eye = *eyeNext;
+                }
             }
             FALLTHROUGH;
         case 2:
@@ -6938,12 +6965,11 @@ s32 Camera_Special9(Camera* camera) {
 
             Camera_LERPCeilVec3f(&spAC, at, 0.25f, 0.25f, 0.1f);
             doorParams->timer2--;
-            if (doorParams->timer2 <= 0) {
-                camera->animState++;
-                rwData->targetYaw = rwData->targetYaw - 0x7FFF;
-            } else {
+            if (doorParams->timer2 > 0) {
                 break;
             }
+            camera->animState++;
+            rwData->targetYaw = rwData->targetYaw - 0x7FFF;
             FALLTHROUGH;
         case 3:
             spAC = playerPosRot->pos;
@@ -6955,11 +6981,10 @@ s32 Camera_Special9(Camera* camera) {
             Camera_AddVecGeoToVec3f(eyeNext, at, &eyeAdjustment);
             *eye = *eyeNext;
             doorParams->timer3--;
-            if (doorParams->timer3 <= 0) {
-                camera->animState++;
-            } else {
+            if (doorParams->timer3 > 0) {
                 break;
             }
+            camera->animState++;
             FALLTHROUGH;
         case 4:
             camera->animState++;
@@ -7087,7 +7112,7 @@ void Camera_Init(Camera* camera, View* view, CollisionContext* colCtx, PlayState
     camera->quakeOffset.x = camera->quakeOffset.y = camera->quakeOffset.z = 0;
     camera->atLERPStepScale = 1;
     sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_IGNORE, CAM_HUD_VISIBILITY_IGNORE, 0);
-    sDbgModeIdx = -1;
+    sDbgModeIndex = -1;
     D_8011D3F0 = 3;
     osSyncPrintf(VT_FGCOL(BLUE) "camera: initialize --- " VT_RST " UID %d\n", camera->uid);
 }
@@ -7102,11 +7127,13 @@ void func_80057FC4(Camera* camera) {
                 Camera_ChangeDoorCam(camera, NULL, -99, 0, 0, 18, 10);
                 camera->prevSetting = camera->setting = CAM_SET_DUNGEON0;
                 break;
+
             case ROOM_BEHAVIOR_TYPE1_0:
                 osSyncPrintf("camera: room type: default set field\n");
                 Camera_ChangeDoorCam(camera, NULL, -99, 0, 0, 18, 10);
                 camera->prevSetting = camera->setting = CAM_SET_NORMAL0;
                 break;
+
             default:
                 osSyncPrintf("camera: room type: default set etc (%d)\n", camera->play->roomCtx.curRoom.behaviorType1);
                 Camera_ChangeDoorCam(camera, NULL, -99, 0, 0, 18, 10);
@@ -7198,15 +7225,15 @@ s16 Camera_ChangeStatus(Camera* camera, s16 status) {
     s32 i;
 
     if (PREG(82)) {
-        osSyncPrintf("camera: change camera status: cond %c%c\n", status == CAM_STAT_ACTIVE ? 'o' : 'x',
-                     camera->status != CAM_STAT_ACTIVE ? 'o' : 'x');
+        osSyncPrintf("camera: change camera status: cond %c%c\n", status == CAM_STATUS_ACTIVE ? 'o' : 'x',
+                     camera->status != CAM_STATUS_ACTIVE ? 'o' : 'x');
     }
 
     if (PREG(82)) {
         osSyncPrintf("camera: res: stat (%d/%d/%d)\n", camera->camId, camera->setting, camera->mode);
     }
 
-    if (status == CAM_STAT_ACTIVE && camera->status != CAM_STAT_ACTIVE) {
+    if (status == CAM_STATUS_ACTIVE && camera->status != CAM_STATUS_ACTIVE) {
         values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
         for (i = 0; i < sCameraSettings[camera->setting].cameraModes[camera->mode].valueCnt; i++) {
             valueP = &values[i];
@@ -7236,18 +7263,23 @@ void Camera_PrintSettings(Camera* camera) {
                     case 0:
                         sp58[i] = 'c';
                         break;
+
                     case 1:
                         sp58[i] = 'w';
                         break;
+
                     case 3:
                         sp58[i] = 's';
                         break;
+
                     case 7:
                         sp58[i] = 'a';
                         break;
+
                     case 0x100:
                         sp58[i] = 'd';
                         break;
+
                     default:
                         sp58[i] = '*';
                         break;
@@ -7267,7 +7299,7 @@ void Camera_PrintSettings(Camera* camera) {
         func_8006376C(5, 0x18, 4, sCameraModeNames[camera->mode]);
         func_8006376C(3, 0x19, 5, "F:");
         func_8006376C(5, 0x19, 4,
-                      sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx]);
+                      sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].updateFunc]);
 
         i = 0;
         if (camera->bgCamIndex < 0) {
@@ -7448,9 +7480,9 @@ s32 Camera_DbgChangeMode(Camera* camera) {
             changeDir = -1;
         }
         if (changeDir != 0) {
-            sDbgModeIdx = (sDbgModeIdx + changeDir) % 6;
-            if (Camera_ChangeSetting(camera, D_8011DAFC[sDbgModeIdx]) > 0) {
-                osSyncPrintf("camera: force change SET to %s!\n", sCameraSettingNames[D_8011DAFC[sDbgModeIdx]]);
+            sDbgModeIndex = (sDbgModeIndex + changeDir) % 6;
+            if (Camera_ChangeSetting(camera, D_8011DAFC[sDbgModeIndex]) > 0) {
+                osSyncPrintf("camera: force change SET to %s!\n", sCameraSettingNames[D_8011DAFC[sDbgModeIndex]]);
             }
         }
     }
@@ -7565,7 +7597,7 @@ Vec3s Camera_Update(Camera* camera) {
         osSyncPrintf("camera: in %x\n", camera);
     }
 
-    if (camera->status == CAM_STAT_CUT) {
+    if (camera->status == CAM_STATUS_CUT) {
         if (R_DBG_CAM_UPDATE) {
             osSyncPrintf("camera: cut out %x\n", camera);
         }
@@ -7607,7 +7639,7 @@ Vec3s Camera_Update(Camera* camera) {
         camera->playerPosRot = curPlayerPosRot;
 
         if (sOOBTimer < 200) {
-            if (camera->status == CAM_STAT_ACTIVE) {
+            if (camera->status == CAM_STATUS_ACTIVE) {
                 Camera_UpdateWater(camera);
                 Camera_UpdateHotRoom(camera);
             }
@@ -7640,7 +7672,7 @@ Vec3s Camera_Update(Camera* camera) {
     Camera_PrintSettings(camera);
     Camera_DbgChangeMode(camera);
 
-    if (camera->status == CAM_STAT_WAIT) {
+    if (camera->status == CAM_STATUS_WAIT) {
         if (R_DBG_CAM_UPDATE) {
             osSyncPrintf("camera: wait out %x\n", camera);
         }
@@ -7653,17 +7685,17 @@ Vec3s Camera_Update(Camera* camera) {
 
     if (R_DBG_CAM_UPDATE) {
         osSyncPrintf("camera: engine (%d %d %d) %04x \n", camera->setting, camera->mode,
-                     sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx, camera->stateFlags);
+                     sCameraSettings[camera->setting].cameraModes[camera->mode].updateFunc, camera->stateFlags);
     }
 
     if (sOOBTimer < 200) {
-        sCameraFunctions[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx](camera);
+        sCameraFunctions[sCameraSettings[camera->setting].cameraModes[camera->mode].updateFunc](camera);
     } else if (camera->player != NULL) {
         OLib_Vec3fDiffToVecGeo(&eyeAtAngle, &camera->at, &camera->eye);
         Camera_CalcAtDefault(camera, &eyeAtAngle, 0.0f, 0);
     }
 
-    if (camera->status == CAM_STAT_ACTIVE) {
+    if (camera->status == CAM_STATUS_ACTIVE) {
         if ((gSaveContext.gameMode != GAMEMODE_NORMAL) && (gSaveContext.gameMode != GAMEMODE_END_CREDITS)) {
             sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_NONE, CAM_HUD_VISIBILITY_ALL, 0);
             Camera_UpdateInterface(sCameraInterfaceField);
@@ -7689,8 +7721,8 @@ Vec3s Camera_Update(Camera* camera) {
     if (R_DBG_CAM_UPDATE) {
         osSyncPrintf("camera: engine (%s(%d) %s(%d) %s(%d)) ok!\n", &sCameraSettingNames[camera->setting],
                      camera->setting, &sCameraModeNames[camera->mode], camera->mode,
-                     &sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx],
-                     sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx);
+                     &sCameraFunctionNames[sCameraSettings[camera->setting].cameraModes[camera->mode].updateFunc],
+                     sCameraSettings[camera->setting].cameraModes[camera->mode].updateFunc);
     }
 
     // enable/disable debug cam
@@ -7716,7 +7748,7 @@ Vec3s Camera_Update(Camera* camera) {
 
     OREG(0) &= ~8;
 
-    if (camera->status == CAM_STAT_UNK3) {
+    if (camera->status == CAM_STATUS_UNK3) {
         return camera->inputDir;
     }
 
@@ -7807,7 +7839,7 @@ void Camera_Finish(Camera* camera) {
     Player* player = GET_PLAYER(camera->play);
 
     if (camera->timer == 0) {
-        Play_ChangeCameraStatus(camera->play, camera->parentCamId, CAM_STAT_ACTIVE);
+        Play_ChangeCameraStatus(camera->play, camera->parentCamId, CAM_STATUS_ACTIVE);
 
         if ((camera->parentCamId == CAM_ID_MAIN) && (camera->csId != 0)) {
             player->actor.freezeTimer = 0;
@@ -7947,7 +7979,7 @@ s32 Camera_ChangeModeFlags(Camera* camera, s16 mode, u8 flags) {
                 break;
         }
         modeChangeFlags &= ~0x10;
-        if (camera->status == CAM_STAT_ACTIVE) {
+        if (camera->status == CAM_STATUS_ACTIVE) {
             switch (modeChangeFlags) {
                 case 1:
                     func_80078884(0);

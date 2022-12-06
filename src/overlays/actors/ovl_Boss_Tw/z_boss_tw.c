@@ -1501,8 +1501,8 @@ void BossTw_TwinrovaMergeCS(BossTw* this, PlayState* play) {
             func_80064520(play, &play->csCtx);
             func_8002DF54(play, &this->actor, 0x39);
             this->subCamId = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
             this->subCamDist = 800.0f;
             this->subCamYaw = M_PI;
             sKoumePtr->actor.world.rot.x = 0;
@@ -1797,8 +1797,8 @@ void BossTw_TwinrovaIntroCS(BossTw* this, PlayState* play) {
                 func_80064520(play, &play->csCtx);
                 func_8002DF54(play, &this->actor, 0x39);
                 this->subCamId = Play_CreateSubCamera(play);
-                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-                Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+                Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
                 this->subCamEye.x = 0.0f;
                 this->subCamEye.y = 350;
                 this->subCamEye.z = 200;
@@ -2684,8 +2684,8 @@ void BossTw_TwinrovaDeathCS(BossTw* this, PlayState* play) {
             func_80064520(play, &play->csCtx);
             func_8002DF54(play, &this->actor, 8);
             this->subCamId = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
             this->subCamEye = mainCam->eye;
             this->subCamAt = mainCam->at;
             SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 1);

@@ -447,8 +447,8 @@ void func_80A79C78(EnIn* this, PlayState* play) {
     Vec3s zeroVec = { 0, 0, 0 };
 
     this->subCamId = Play_CreateSubCamera(play);
-    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-    Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+    Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
     subCamAt.x = this->actor.world.pos.x;
     subCamAt.y = this->actor.world.pos.y + 60.0f;
     subCamAt.z = this->actor.world.pos.z;
@@ -764,8 +764,8 @@ void func_80A7AA40(EnIn* this, PlayState* play) {
 
     this->subCamId = Play_CreateSubCamera(play);
     this->returnToCamId = play->activeCamId;
-    Play_ChangeCameraStatus(play, this->returnToCamId, CAM_STAT_WAIT);
-    Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+    Play_ChangeCameraStatus(play, this->returnToCamId, CAM_STATUS_WAIT);
+    Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
 
     this->subCamAtOffset.x = 0.0f;
     this->subCamAtOffset.y = 50.0f;
@@ -854,7 +854,7 @@ void func_80A7ABD4(EnIn* this, PlayState* play) {
 }
 
 void func_80A7AE84(EnIn* this, PlayState* play) {
-    Play_ChangeCameraStatus(play, this->returnToCamId, CAM_STAT_ACTIVE);
+    Play_ChangeCameraStatus(play, this->returnToCamId, CAM_STATUS_ACTIVE);
     Play_ClearCamera(play, this->subCamId);
     func_8002DF54(play, &this->actor, 7);
     Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_ALL);

@@ -575,8 +575,8 @@ void EnTa_CreateFloorCamera(EnTa* this, PlayState* play) {
 
     this->subCamId = Play_CreateSubCamera(play);
     this->returnToCamId = play->activeCamId;
-    Play_ChangeCameraStatus(play, this->returnToCamId, CAM_STAT_WAIT);
-    Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+    Play_ChangeCameraStatus(play, this->returnToCamId, CAM_STATUS_WAIT);
+    Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
 
     subCamEye.x = 1053.0f;
     subCamEye.y = 11.0f;
@@ -590,7 +590,7 @@ void EnTa_CreateFloorCamera(EnTa* this, PlayState* play) {
 }
 
 void EnTa_RemoveFloorCamera(EnTa* this, PlayState* play) {
-    Play_ChangeCameraStatus(play, this->returnToCamId, CAM_STAT_ACTIVE);
+    Play_ChangeCameraStatus(play, this->returnToCamId, CAM_STATUS_ACTIVE);
     Play_ClearCamera(play, this->subCamId);
 }
 

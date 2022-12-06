@@ -198,8 +198,8 @@ void func_808FD5F4(BossGanon2* this, PlayState* play) {
                 func_80064520(play, &play->csCtx);
                 func_8002DF54(play, &this->actor, 8);
                 this->subCamId = Play_CreateSubCamera(play);
-                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-                Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+                Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
                 this->unk_39C = 1;
                 sZelda = (EnZl3*)Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_EN_ZL3, 970.0f, 1086.0f,
                                                     -200.0f, 0, 0, 0, 1);
@@ -337,8 +337,8 @@ void func_808FD5F4(BossGanon2* this, PlayState* play) {
                 this->unk_398 = 0;
                 func_80064520(play, &play->csCtx);
                 this->subCamId = Play_CreateSubCamera(play);
-                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-                Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+                Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
             } else {
                 break;
             }
@@ -1297,8 +1297,8 @@ void func_80900890(BossGanon2* this, PlayState* play) {
         case 0:
             func_80064520(play, &play->csCtx);
             this->subCamId = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
             func_8002DF54(play, &this->actor, 8);
             this->unk_39C = 1;
             this->subCamEye = mainCam1->eye;
@@ -1355,8 +1355,8 @@ void func_80900890(BossGanon2* this, PlayState* play) {
         case 10:
             func_80064520(play, &play->csCtx);
             this->subCamId = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
             this->unk_39C = 11;
             this->unk_334 = 1;
             func_8002DF54(play, &this->actor, 0x60);
@@ -1483,8 +1483,8 @@ void func_8090120C(BossGanon2* this, PlayState* play) {
         case 0:
             func_80064520(play, &play->csCtx);
             this->subCamId = Play_CreateSubCamera(play);
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-            Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+            Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
             func_8002DF54(play, &this->actor, 8);
             this->unk_39C = 1;
             this->unk_398 = 0;
@@ -1639,8 +1639,8 @@ void func_8090120C(BossGanon2* this, PlayState* play) {
                 (player->meleeWeaponState != 0) && (player->heldItemAction == PLAYER_IA_SWORD_MASTER)) {
                 func_80064520(play, &play->csCtx);
                 this->subCamId = Play_CreateSubCamera(play);
-                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-                Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+                Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+                Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
                 this->unk_39C = 7;
                 this->unk_398 = 0;
                 Animation_MorphToPlayOnce(&this->skelAnime, &gGanonFinalBlowAnim, 0.0f);

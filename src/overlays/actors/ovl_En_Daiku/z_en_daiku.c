@@ -464,8 +464,8 @@ void EnDaiku_InitSubCamera(EnDaiku* this, PlayState* play) {
     this->subCamAtNext.z = this->subCamAt.z = this->actor.world.pos.z;
 
     this->subCamId = Play_CreateSubCamera(play);
-    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-    Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+    Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
 
     Play_CameraSetAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
     Play_CameraSetFov(play, this->subCamId, play->mainCamera.fov);
@@ -492,7 +492,7 @@ void EnDaiku_EscapeSuccess(EnDaiku* this, PlayState* play) {
     Vec3f vec;
 
     Play_ClearCamera(play, this->subCamId);
-    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_ACTIVE);
+    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_ACTIVE);
     this->subCamActive = false;
 
     if (GET_EVENTCHKINF_CARPENTERS_FREE_ALL()) {

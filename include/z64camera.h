@@ -9,11 +9,11 @@
 #define CAM_DEG_TO_BINANG(degrees) (s16)((degrees) * 182.04167f + .5f)
 #define CAM_BINANG_TO_DEG(binang) ((f32)(binang) * (360.0001525f / 65535.0f))
 
-#define CAM_STAT_CUT        0
-#define CAM_STAT_WAIT       1
-#define CAM_STAT_UNK3       3
-#define CAM_STAT_ACTIVE     7
-#define CAM_STAT_UNK100     0x100
+#define CAM_STATUS_CUT    0
+#define CAM_STATUS_WAIT   1
+#define CAM_STATUS_UNK3   3
+#define CAM_STATUS_ACTIVE 7
+#define CAM_STATUS_UNK100 0x100
 
 #define NUM_CAMS 4
 
@@ -1263,7 +1263,7 @@ typedef struct {
     /* 0x28 */ f32 fovTarget;
     /* 0x2C */ VecGeo atEyeOffsetTarget;
     /* 0x34 */ s16 rollTarget;
-    /* 0x36 */ s16 curKeyFrameIdx;
+    /* 0x36 */ s16 curKeyFrameIndex;
     /* 0x38 */ s16 unk_38;
     /* 0x3A */ s16 isNewKeyFrame;
     /* 0x3C */ s16 keyFrameTimer;

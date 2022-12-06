@@ -309,8 +309,8 @@ void func_80A5372C(EnHeishi2* this, PlayState* play) {
     Animation_Change(&this->skelAnime, &gEnHeishiIdleAnim, 1.0f, 0.0f, (s16)frameCount, ANIMMODE_LOOP, -10.0f);
     this->unk_2F2[0] = 200;
     this->subCamId = Play_CreateSubCamera(play);
-    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-    Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+    Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
     this->subCamEye.x = 947.0f;
     this->subCamEye.y = 1195.0f;
     this->subCamEye.z = 2682.0f;
@@ -331,7 +331,7 @@ void func_80A53850(EnHeishi2* this, PlayState* play) {
     gate = (BgSpot15Saku*)this->gate;
     if ((this->unk_2F2[0] == 0) || (gate->unk_168 == 0)) {
         Play_ClearCamera(play, this->subCamId);
-        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_ACTIVE);
+        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_ACTIVE);
         Message_CloseTextbox(play);
         this->unk_30C = 1;
         func_8002DF54(play, NULL, 7);
@@ -473,8 +473,8 @@ void func_80A53DF8(EnHeishi2* this, PlayState* play) {
     Animation_Change(&this->skelAnime, &gEnHeishiIdleAnim, 1.0f, 0.0f, (s16)frameCount, ANIMMODE_LOOP, -10.0f);
     this->unk_2F2[0] = 200;
     this->subCamId = Play_CreateSubCamera(play);
-    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-    Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+    Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
     this->subCamEyeInit.x = -71.0f;
     this->subCamEye.x = -71.0f;
     this->subCamEyeInit.y = 571.0f;
@@ -499,7 +499,7 @@ void func_80A53F30(EnHeishi2* this, PlayState* play) {
     gate = (BgGateShutter*)this->gate;
     if ((this->unk_2F2[0] == 0) || (gate->openingState == 0)) {
         Play_ClearCamera(play, this->subCamId);
-        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_ACTIVE);
+        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_ACTIVE);
         if (this->unk_30A != 2) {
             if (this->unk_30A == 0) {
                 this->actor.textId = 0x2015;

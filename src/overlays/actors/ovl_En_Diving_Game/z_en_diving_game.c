@@ -298,8 +298,8 @@ void func_809EE194(EnDivingGame* this, PlayState* play) {
 void EnDivingGame_SetupRupeeThrow(EnDivingGame* this, PlayState* play) {
     SkelAnime_Update(&this->skelAnime);
     this->subCamId = Play_CreateSubCamera(play);
-    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
-    Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+    Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
+    Play_ChangeCameraStatus(play, this->subCamId, CAM_STATUS_ACTIVE);
     this->spawnRuppyTimer = 10;
     this->subCamAtNext.x = -210.0f;
     this->subCamAtNext.y = -80.0f;
@@ -404,7 +404,7 @@ void func_809EE780(EnDivingGame* this, PlayState* play) {
     SkelAnime_Update(&this->skelAnime);
     if (this->subCamTimer == 0) {
         Play_ClearCamera(play, this->subCamId);
-        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_ACTIVE);
+        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_ACTIVE);
         this->actor.textId = 0x405A;
         Message_ContinueTextbox(play, this->actor.textId);
         this->unk_292 = TEXT_STATE_EVENT;

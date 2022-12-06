@@ -258,7 +258,7 @@ s32 OnePointCutscene_SetInfo(PlayState* play, s16 subCamId, s16 csId, Actor* act
                 csInfo->keyFrames = D_801211D4;
                 csInfo->keyFrameCnt = 2;
             }
-            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_UNK3);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_UNK3);
             func_800C0808(play, subCamId, player, CAM_SET_CS_C);
         } break;
         case 2290: {
@@ -1171,10 +1171,10 @@ s16 OnePointCutscene_Init(PlayState* play, s16 csId, s16 timer, Actor* actor, s1
     // Inserts the cutscene camera into the cutscene queue in front of parentCam
 
     vChildCamId = play->cameraPtrs[parentCamId]->childCamId;
-    vSubCamStatus = CAM_STAT_ACTIVE;
+    vSubCamStatus = CAM_STATUS_ACTIVE;
     if (vChildCamId >= CAM_ID_SUB_FIRST) {
         OnePointCutscene_SetAsChild(play, vChildCamId, subCamId);
-        vSubCamStatus = CAM_STAT_WAIT;
+        vSubCamStatus = CAM_STATUS_WAIT;
     } else {
         Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_NOTHING_ALT);
     }
@@ -1192,9 +1192,9 @@ s16 OnePointCutscene_Init(PlayState* play, s16 csId, s16 timer, Actor* actor, s1
     subCam->csId = csId;
 
     if (parentCamId == CAM_ID_MAIN) {
-        Play_ChangeCameraStatus(play, parentCamId, CAM_STAT_UNK3);
+        Play_ChangeCameraStatus(play, parentCamId, CAM_STATUS_UNK3);
     } else {
-        Play_ChangeCameraStatus(play, parentCamId, CAM_STAT_WAIT);
+        Play_ChangeCameraStatus(play, parentCamId, CAM_STATUS_WAIT);
     }
     OnePointCutscene_SetInfo(play, subCamId, csId, actor, timer);
     Play_ChangeCameraStatus(play, subCamId, vSubCamStatus);
@@ -1212,7 +1212,7 @@ s16 OnePointCutscene_Init(PlayState* play, s16 csId, s16 timer, Actor* actor, s1
                          vNextCamId, nextCsId, thisCsId);
             if (play->cameraPtrs[vNextCamId]->csId != 5010) {
                 if ((vNextCamId = OnePointCutscene_RemoveCamera(play, vNextCamId)) != CAM_ID_NONE) {
-                    Play_ChangeCameraStatus(play, vNextCamId, CAM_STAT_ACTIVE);
+                    Play_ChangeCameraStatus(play, vNextCamId, CAM_STATUS_ACTIVE);
                 }
             } else {
                 vCurCamId = vNextCamId;

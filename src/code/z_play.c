@@ -245,11 +245,11 @@ void Play_Init(GameState* thisx) {
     }
 
     Camera_Init(&this->mainCamera, &this->view, &this->colCtx, this);
-    Camera_ChangeStatus(&this->mainCamera, CAM_STAT_ACTIVE);
+    Camera_ChangeStatus(&this->mainCamera, CAM_STATUS_ACTIVE);
 
     for (i = 0; i < 3; i++) {
         Camera_Init(&this->subCameras[i], &this->view, &this->colCtx, this);
-        Camera_ChangeStatus(&this->subCameras[i], CAM_STAT_UNK100);
+        Camera_ChangeStatus(&this->subCameras[i], CAM_STATUS_UNK100);
     }
 
     this->cameraPtrs[CAM_ID_MAIN] = &this->mainCamera;
@@ -1491,7 +1491,7 @@ s16 Play_GetActiveCamId(PlayState* this) {
 s16 Play_ChangeCameraStatus(PlayState* this, s16 camId, s16 status) {
     s16 camIdx = (camId == CAM_ID_NONE) ? this->activeCamId : camId;
 
-    if (status == CAM_STAT_ACTIVE) {
+    if (status == CAM_STATUS_ACTIVE) {
         this->activeCamId = camIdx;
     }
 
@@ -1506,7 +1506,7 @@ void Play_ClearCamera(PlayState* this, s16 camId) {
     }
 
     if (this->cameraPtrs[camIdx] != NULL) {
-        Camera_ChangeStatus(this->cameraPtrs[camIdx], CAM_STAT_UNK100);
+        Camera_ChangeStatus(this->cameraPtrs[camIdx], CAM_STATUS_UNK100);
         this->cameraPtrs[camIdx] = NULL;
         osSyncPrintf("camera control: " VT_BGCOL(CYAN) " " VT_COL(WHITE, BLUE) " clear sub camera [%d] " VT_BGCOL(
                          CYAN) " " VT_RST "\n",
@@ -1640,7 +1640,7 @@ void func_800C08AC(PlayState* this, s16 camId, s16 arg2) {
     }
 
     if (arg2 <= 0) {
-        Play_ChangeCameraStatus(this, CAM_ID_MAIN, CAM_STAT_ACTIVE);
+        Play_ChangeCameraStatus(this, CAM_ID_MAIN, CAM_STATUS_ACTIVE);
         this->cameraPtrs[CAM_ID_MAIN]->childCamId = this->cameraPtrs[CAM_ID_MAIN]->parentCamId = CAM_ID_MAIN;
     } else {
         OnePointCutscene_Init(this, 1020, arg2, NULL, CAM_ID_MAIN);
@@ -1664,7 +1664,7 @@ s16 func_800C09D8(PlayState* this, s16 camId, s16 arg2) {
         return 0;
     } else if (camera->uid != arg2) {
         return 0;
-    } else if (camera->status != CAM_STAT_ACTIVE) {
+    } else if (camera->status != CAM_STATUS_ACTIVE) {
         return 2;
     } else {
         return 1;

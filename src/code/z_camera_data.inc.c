@@ -7,7 +7,7 @@ typedef struct {
 } CameraModeValue;
 
 typedef struct {
-    s16 funcIdx;
+    s16 updateFunc;
     s16 valueCnt;
     CameraModeValue* values;
 } CameraMode;
@@ -2554,7 +2554,7 @@ s32 (*sCameraFunctions[])(Camera*) = {
 s32 sInitRegs = 1;
 
 s32 gDbgCamEnabled = 0;
-s32 sDbgModeIdx = -1;
+s32 sDbgModeIndex = -1;
 s16 sNextUID = 0;
 
 s32 sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_NONE, CAM_HUD_VISIBILITY_ALL, 1);

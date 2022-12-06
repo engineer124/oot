@@ -556,10 +556,10 @@ void func_80999EE0(DoorWarp1* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (this->rutoWarpState == WARP_BLUE_RUTO_STATE_3) {
-        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
+        Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STATUS_WAIT);
         sRutoWarpSubCamId = Play_CreateSubCamera(play);
 
-        Play_ChangeCameraStatus(play, sRutoWarpSubCamId, CAM_STAT_ACTIVE);
+        Play_ChangeCameraStatus(play, sRutoWarpSubCamId, CAM_STATUS_ACTIVE);
         at.x = this->actor.world.pos.x;
         at.y = 49.0f;
         at.z = this->actor.world.pos.z;
@@ -582,7 +582,7 @@ void func_80999FE4(DoorWarp1* this, PlayState* play) {
         OnePointCutscene_Init(play, 0x25E9, 999, &this->actor, CAM_ID_MAIN);
         // Using `CAM_ID_NONE` here defaults to the active camera
         Play_CopyCamera(play, CAM_ID_NONE, sRutoWarpSubCamId);
-        Play_ChangeCameraStatus(play, sRutoWarpSubCamId, CAM_STAT_WAIT);
+        Play_ChangeCameraStatus(play, sRutoWarpSubCamId, CAM_STATUS_WAIT);
         this->rutoWarpState = WARP_BLUE_RUTO_STATE_WARPING;
         DoorWarp1_SetupAction(this, DoorWarp1_RutoWarpOut);
     }
