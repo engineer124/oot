@@ -1403,6 +1403,8 @@ void AudioOcarina_MapPitchToScarecrowButtons(u8 noteSongIndex) {
 
 #define OCARINA_FLAG_ON 0x80000000
 
+#define IS_SCARECROW_SPAWN_SET (sOcarinaSongNotes[OCARINA_SONG_SCARECROW_SPAWN][1].volume != 0xFF)
+
 /**
  * Ocarina flags:
  * bitmask 0x3FFF:
@@ -1420,20 +1422,24 @@ void AudioOcarina_MapPitchToScarecrowButtons(u8 noteSongIndex) {
 void AudioOcarina_Start(u16 ocarinaFlags) {
     u8 songIndex;
 
-    if ((sOcarinaSongNotes[OCARINA_SONG_SCARECROW_SPAWN][1].volume != 0xFF) &&
+    // Set scarecrow spawn flag for various cases.
+    // If scarecrow is set, then it should already be set in the arg `ocarinaFlags`
+    if (IS_SCARECROW_SPAWN_SET &&
         ((ocarinaFlags & OCARINA_SONGS_PLAYABLE_SONGS_BASE) == OCARINA_SONGS_PLAYABLE_SONGS_BASE)) {
         ocarinaFlags |= (1 << OCARINA_SONG_SCARECROW_SPAWN);
     }
-
-    if ((ocarinaFlags == (OCARINA_SONGS_PLAYABLE_SONGS_BASE | OCARINA_START_NO_NOTE_LIMIT)) &&
-        (sOcarinaSongNotes[OCARINA_SONG_SCARECROW_SPAWN][1].volume != 0xFF)) {
+    // If (ocarinaFlags == 0xCFFF), then 0x1000 was already set above
+    if ((ocarinaFlags == (OCARINA_SONGS_PLAYABLE_SONGS_BASE | OCARINA_START_NO_NOTE_LIMIT)) && IS_SCARECROW_SPAWN_SET) {
+        // Equivalent to `ocarinaFlags |= (1 << OCARINA_SONG_SCARECROW_SPAWN);`
         ocarinaFlags =
-            OCARINA_SONGS_PLAYABLE_SONGS_BASE | (1 << OCARINA_SONG_SCARECROW_SPAWN) | OCARINA_START_NO_NOTE_LIMIT;
+            (OCARINA_SONGS_PLAYABLE_SONGS_BASE | OCARINA_START_NO_NOTE_LIMIT) | (1 << OCARINA_SONG_SCARECROW_SPAWN);
     }
-
-    if ((ocarinaFlags == OCARINA_SONGS_PLAYABLE_SONGS_BASE) &&
-        (sOcarinaSongNotes[OCARINA_SONG_SCARECROW_SPAWN][1].volume != 0xFF)) {
-        ocarinaFlags = OCARINA_SONGS_PLAYABLE_SONGS_BASE | (1 << OCARINA_SONG_SCARECROW_SPAWN);
+    // If (ocarinaFlags == 0xFFF), then 0x1000 was already set above
+    if ((ocarinaFlags == (OCARINA_SONGS_PLAYABLE_SONGS_BASE | OCARINA_START_EIGHT_NOTE_LIMIT)) &&
+        IS_SCARECROW_SPAWN_SET) {
+        // Equivalent to `ocarinaFlags |= (1 << OCARINA_SONG_SCARECROW_SPAWN);`
+        ocarinaFlags =
+            (OCARINA_SONGS_PLAYABLE_SONGS_BASE | OCARINA_START_EIGHT_NOTE_LIMIT) | (1 << OCARINA_SONG_SCARECROW_SPAWN);
     }
 
     if (ocarinaFlags != (OCARINA_SONGS_PLAYABLE_SONGS | OCARINA_START_NO_NOTE_LIMIT)) {
