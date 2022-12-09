@@ -6,7 +6,7 @@
 
 #include "z_en_syateki_niw.h"
 #include "assets/objects/object_niw/object_niw.h"
-#include "vt.h"
+#include "terminal.h"
 
 #define FLAGS ACTOR_FLAG_4
 
@@ -489,7 +489,7 @@ void func_80B12460(EnSyatekiNiw* this, PlayState* play) {
 
 void func_80B128D8(EnSyatekiNiw* this, PlayState* play) {
     if (this->unk_25E == 1) {
-        gSaveContext.timer1State = 0;
+        gSaveContext.timerState = TIMER_STATE_OFF;
     }
 }
 

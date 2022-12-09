@@ -7,7 +7,7 @@
 #include "z_bg_heavy_block.h"
 #include "assets/objects/object_heavy_object/object_heavy_object.h"
 #include "quake.h"
-#include "vt.h"
+#include "terminal.h"
 
 #define FLAGS 0
 
@@ -89,7 +89,7 @@ void BgHeavyBlock_Init(Actor* thisx, PlayState* play) {
     ActorShape_Init(&thisx->shape, 0.0f, NULL, 0.0f);
     this->pieceFlags = 0;
 
-    if (play->sceneId == SCENE_GANON_TOU) {
+    if (play->sceneId == SCENE_OUTSIDE_GANONS_CASTLE) {
         thisx->params &= 0xFF00;
         thisx->params |= 4;
     }

@@ -5,7 +5,7 @@
  */
 
 #include "z_en_wonder_talk2.h"
-#include "vt.h"
+#include "terminal.h"
 
 #define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_27)
 
@@ -84,7 +84,7 @@ void EnWonderTalk2_Init(Actor* thisx, PlayState* play) {
         Actor_Kill(&this->actor);
         return;
     }
-    if ((this->talkMode == 1) && (play->sceneId == SCENE_MEN) && (this->switchFlag != 0x08) &&
+    if ((this->talkMode == 1) && (play->sceneId == SCENE_GERUDO_TRAINING_GROUND) && (this->switchFlag != 0x08) &&
         (this->switchFlag != 0x16) && (this->switchFlag != 0x2F)) {
 
         this->unk_15A = false;
