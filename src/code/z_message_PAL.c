@@ -2489,7 +2489,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                             if (msgCtx->lastPlayedSong == OCARINA_SONG_SCARECROW_SPAWN) {
                                 play->msgCtx.ocarinaMode = OCARINA_MODE_0B;
                             } else if (msgCtx->lastPlayedSong == OCARINA_SONG_SNOW) {
-                                play->msgCtx.ocarinaMode = OCARINA_MODE_PLAYED_CUSTOM;
+                                play->msgCtx.ocarinaMode = OCARINA_MODE_PLAYED_SNOW;
                             }
                         } else if (msgCtx->ocarinaAction >= OCARINA_ACTION_CHECK_MINUET) {
                             osSyncPrintf(VT_FGCOL(YELLOW));

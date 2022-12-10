@@ -10862,7 +10862,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
     Collider_ResetQuadAC(play, &this->shieldQuad.base);
     Collider_ResetQuadAT(play, &this->shieldQuad.base);
 
-    if (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_CUSTOM) {
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_SNOW) {
         Player_ToggleSnowTunic();
         func_8002F7DC(&this->actor, NA_SE_SY_CORRECT_CHIME);
         play->msgCtx.ocarinaMode = OCARINA_MODE_04;

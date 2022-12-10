@@ -38,7 +38,7 @@ typedef enum {
     /* 0x0B */ OCARINA_ACTION_TEACH_SUNS,
     /* 0x0C */ OCARINA_ACTION_TEACH_TIME,
     /* 0x0D */ OCARINA_ACTION_TEACH_STORMS,
-               OCARINA_ACTION_TEACH_CUSTOM,
+               OCARINA_ACTION_TEACH_SNOW,
     /* 0x0E */ OCARINA_ACTION_UNK_E,
     /* 0x0F */ OCARINA_ACTION_PLAYBACK_MINUET, // Playing back a particular song
     /* 0x10 */ OCARINA_ACTION_PLAYBACK_BOLERO,
@@ -92,7 +92,7 @@ typedef enum {
     /* 0x08 */ OCARINA_MODE_08,
     /* 0x09 */ OCARINA_MODE_09,
     /* 0x0A */ OCARINA_MODE_0A,
-               OCARINA_MODE_PLAYED_CUSTOM,
+               OCARINA_MODE_PLAYED_SNOW,
     /* 0x0B */ OCARINA_MODE_0B,
     /* 0x0D */ OCARINA_MODE_0D,
     /* 0x0E */ OCARINA_MODE_0E,
