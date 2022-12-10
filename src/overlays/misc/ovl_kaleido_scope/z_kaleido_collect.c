@@ -39,22 +39,50 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
         0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     };
     static s16 D_8082A164[] = {
-        150, 255, 100, 255, 255, 255, 255, 255, 255, 255, 255, 255,
+        150, 255, 100, 255, 255, 255, 255, 255, 255, 255, 255, 255, 0,
     };
     static s16 D_8082A17C[] = {
-        255, 80, 150, 160, 100, 240, 255, 255, 255, 255, 255, 255,
+        255, 80, 150, 160, 100, 240, 255, 255, 255, 255, 255, 255, 255,
     };
     static s16 D_8082A194[] = {
-        100, 40, 255, 0, 255, 100, 255, 255, 255, 255, 255, 255,
+        100, 40, 255, 0, 255, 100, 255, 255, 255, 255, 255, 255, 230,
+    };
+    enum {
+        /* -3 */ CURSOR_TO_LEFT = -3, // Cursor on the "scroll to left page" position
+        /* -2 */ CURSOR_TO_RIGHT,     // Cursor on the "scroll to right page" position
+        /* -1 */ CURSOR_NONE          // No position in that direction, cursor stays where it is
     };
     static s8 D_8082A1AC[][4] = {
-        { 0x05, 0x01, 0x05, 0xFE }, { 0x00, 0x02, 0x02, 0xFE }, { 0xFF, 0x13, 0x03, 0x01 }, { 0x04, 0x02, 0x11, 0x02 },
-        { 0x05, 0x03, 0x18, 0x05 }, { 0xFF, 0xFF, 0x04, 0x00 }, { 0x0C, 0xFF, 0xFD, 0x07 }, { 0x0D, 0xFF, 0x06, 0x08 },
-        { 0x0E, 0xFF, 0x07, 0x09 }, { 0x0F, 0xFF, 0x08, 0x0A }, { 0x10, 0xFF, 0x09, 0x0B }, { 0x11, 0xFF, 0x0A, 0x12 },
-        { 0x17, 0x06, 0xFD, 0x0D }, { 0x17, 0x07, 0x0C, 0x0E }, { 0x17, 0x08, 0x0D, 0x0F }, { 0x18, 0x09, 0x0E, 0x10 },
-        { 0x18, 0x0A, 0x0F, 0x11 }, { 0x18, 0x0B, 0x10, 0x03 }, { 0x02, 0xFF, 0x0B, 0x13 }, { 0x02, 0xFF, 0x12, 0x14 },
-        { 0x02, 0xFF, 0x13, 0xFE }, { 0xFF, 0x17, 0xFD, 0x16 }, { 0xFF, 0x17, 0x15, 0x18 }, { 0x15, 0x0C, 0xFD, 0x18 },
-        { 0xFF, 0x10, 0x16, 0x04 }, { 0x00, 0x00, 0x00, 0x00 },
+        /* QUEST_MEDALLION_FOREST */
+        { QUEST_MEDALLION_LIGHT, QUEST_MEDALLION_FIRE, QUEST_MEDALLION_LIGHT, CURSOR_TO_RIGHT },
+        /* QUEST_MEDALLION_FIRE */
+        { QUEST_MEDALLION_FOREST, QUEST_MEDALLION_WATER, QUEST_MEDALLION_WATER, CURSOR_TO_RIGHT },
+        /* QUEST_MEDALLION_WATER */ { CURSOR_NONE, QUEST_GORON_RUBY, QUEST_MEDALLION_SPIRIT, QUEST_MEDALLION_FIRE },
+        /* QUEST_MEDALLION_SPIRIT */
+        { QUEST_MEDALLION_SHADOW, QUEST_MEDALLION_WATER, QUEST_SONG_STORMS, QUEST_MEDALLION_WATER },
+        /* QUEST_MEDALLION_SHADOW */
+        { QUEST_MEDALLION_LIGHT, QUEST_MEDALLION_SPIRIT, QUEST_HEART_PIECE, QUEST_MEDALLION_LIGHT },
+        /* QUEST_MEDALLION_LIGHT */ { CURSOR_NONE, CURSOR_NONE, QUEST_MEDALLION_SHADOW, QUEST_MEDALLION_FOREST },
+        /* QUEST_SONG_MINUET */ { QUEST_SONG_LULLABY, CURSOR_NONE, CURSOR_TO_LEFT, QUEST_SONG_BOLERO },
+        /* QUEST_SONG_BOLERO */ { QUEST_SONG_EPONA, CURSOR_NONE, QUEST_SONG_MINUET, QUEST_SONG_SERENADE },
+        /* QUEST_SONG_SERENADE */ { QUEST_SONG_SARIA, CURSOR_NONE, QUEST_SONG_BOLERO, QUEST_SONG_REQUIEM },
+        /* QUEST_SONG_REQUIEM */ { QUEST_SONG_SUN, CURSOR_NONE, QUEST_SONG_SERENADE, QUEST_SONG_NOCTURNE },
+        /* QUEST_SONG_NOCTURNE */ { QUEST_SONG_TIME, CURSOR_NONE, QUEST_SONG_REQUIEM, QUEST_SONG_PRELUDE },
+        /* QUEST_SONG_PRELUDE */ { QUEST_SONG_STORMS, CURSOR_NONE, QUEST_SONG_NOCTURNE, QUEST_SONG_SNOW },
+        /* QUEST_SONG_LULLABY */ { QUEST_SKULL_TOKEN, QUEST_SONG_MINUET, CURSOR_TO_LEFT, QUEST_SONG_EPONA },
+        /* QUEST_SONG_EPONA */ { QUEST_SKULL_TOKEN, QUEST_SONG_BOLERO, QUEST_SONG_LULLABY, QUEST_SONG_SARIA },
+        /* QUEST_SONG_SARIA */ { QUEST_SKULL_TOKEN, QUEST_SONG_SERENADE, QUEST_SONG_EPONA, QUEST_SONG_SUN },
+        /* QUEST_SONG_SUN */ { QUEST_HEART_PIECE, QUEST_SONG_REQUIEM, QUEST_SONG_SARIA, QUEST_SONG_TIME },
+        /* QUEST_SONG_TIME */ { QUEST_HEART_PIECE, QUEST_SONG_NOCTURNE, QUEST_SONG_SUN, QUEST_SONG_STORMS },
+        /* QUEST_SONG_STORMS */ { QUEST_HEART_PIECE, QUEST_SONG_PRELUDE, QUEST_SONG_TIME, QUEST_SONG_SNOW },
+        /* QUEST_SONG_SNOW */ { QUEST_HEART_PIECE, QUEST_KOKIRI_EMERALD, QUEST_SONG_PRELUDE, QUEST_MEDALLION_SPIRIT },
+        /* QUEST_KOKIRI_EMERALD */ { QUEST_MEDALLION_WATER, CURSOR_NONE, QUEST_SONG_SNOW, QUEST_GORON_RUBY },
+        /* QUEST_GORON_RUBY */ { QUEST_MEDALLION_WATER, CURSOR_NONE, QUEST_KOKIRI_EMERALD, QUEST_ZORA_SAPPHIRE },
+        /* QUEST_ZORA_SAPPHIRE */ { QUEST_MEDALLION_WATER, CURSOR_NONE, QUEST_GORON_RUBY, CURSOR_TO_RIGHT },
+        /* QUEST_STONE_OF_AGONY */ { CURSOR_NONE, QUEST_SKULL_TOKEN, CURSOR_TO_LEFT, QUEST_GERUDOS_CARD },
+        /* QUEST_GERUDOS_CARD */ { CURSOR_NONE, QUEST_SKULL_TOKEN, QUEST_STONE_OF_AGONY, QUEST_HEART_PIECE },
+        /* QUEST_SKULL_TOKEN */ { QUEST_STONE_OF_AGONY, QUEST_SONG_LULLABY, CURSOR_TO_LEFT, QUEST_HEART_PIECE },
+        /* QUEST_HEART_PIECE */ { CURSOR_NONE, QUEST_SONG_TIME, QUEST_GERUDOS_CARD, QUEST_MEDALLION_SHADOW },
     };
     PauseContext* pauseCtx = &play->pauseCtx;
     Input* input = &play->state.input[0];
@@ -139,12 +167,12 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 }
 
-                if (pauseCtx->cursorPoint[PAUSE_QUEST] != 0x18) {
+                if (pauseCtx->cursorPoint[PAUSE_QUEST] != QUEST_HEART_PIECE) {
                     if (CHECK_QUEST_ITEM(pauseCtx->cursorPoint[PAUSE_QUEST])) {
-                        if (pauseCtx->cursorPoint[PAUSE_QUEST] < 6) {
+                        if (pauseCtx->cursorPoint[PAUSE_QUEST] <= QUEST_MEDALLION_LIGHT) {
                             cursorItem = ITEM_MEDALLION_FOREST + pauseCtx->cursorPoint[PAUSE_QUEST];
                             osSyncPrintf("000 ccc=%d\n", cursorItem);
-                        } else if (pauseCtx->cursorPoint[PAUSE_QUEST] < 0x12) {
+                        } else if (pauseCtx->cursorPoint[PAUSE_QUEST] <= QUEST_SONG_SNOW) {
                             cursorItem = ITEM_SCALE_GOLDEN + pauseCtx->cursorPoint[PAUSE_QUEST];
                             osSyncPrintf("111 ccc=%d\n", cursorItem);
                         } else {
@@ -188,7 +216,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
 
                         D_8082A11C = 0;
                         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_DEFAULT);
-                        AudioOcarina_Start((1 << pauseCtx->ocarinaSongIdx) + 0x8000);
+                        AudioOcarina_Start((1 << pauseCtx->ocarinaSongIdx) + OCA_FLAG_8000);
                         pauseCtx->ocarinaStaff = AudioOcarina_GetPlaybackStaff();
                         pauseCtx->ocarinaStaff->pos = 0;
                         pauseCtx->ocarinaStaff->state = 0xFF;
@@ -215,7 +243,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
             }
         } else if (pauseCtx->cursorSpecialPos == PAUSE_CURSOR_PAGE_LEFT) {
             if (pauseCtx->stickAdjX > 30) {
-                pauseCtx->cursorPoint[PAUSE_QUEST] = 0x15;
+                pauseCtx->cursorPoint[PAUSE_QUEST] = QUEST_STONE_OF_AGONY;
                 pauseCtx->nameDisplayTimer = 0;
                 pauseCtx->cursorSpecialPos = 0;
                 sp216 = pauseCtx->cursorPoint[PAUSE_QUEST];
@@ -241,9 +269,9 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
                 Audio_PlaySfxGeneral(NA_SE_SY_CURSOR, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 if (CHECK_QUEST_ITEM(pauseCtx->cursorPoint[PAUSE_QUEST])) {
-                    if (pauseCtx->cursorPoint[PAUSE_QUEST] < 6) {
+                    if (pauseCtx->cursorPoint[PAUSE_QUEST] <= QUEST_MEDALLION_LIGHT) {
                         cursorItem = ITEM_MEDALLION_FOREST + pauseCtx->cursorPoint[PAUSE_QUEST];
-                    } else if (pauseCtx->cursorPoint[PAUSE_QUEST] < 0xC) {
+                    } else if (pauseCtx->cursorPoint[PAUSE_QUEST] <= QUEST_SONG_PRELUDE) {
                         cursorItem = ITEM_BOMB_BAG_30 + pauseCtx->cursorPoint[PAUSE_QUEST];
                     } else {
                         cursorItem = ITEM_MEDALLION_SPIRIT + pauseCtx->cursorPoint[PAUSE_QUEST];
@@ -459,7 +487,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
         gDPSetCombineMode(POLY_OPA_DISP++, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
 
         sp21A += 4;
-        if ((pauseCtx->cursorSpecialPos == 0) && (sp216 >= 6) && (sp216 < 0x12)) {
+        if ((pauseCtx->cursorSpecialPos == 0) && (sp216 >= 6) && (sp216 < QUEST_KOKIRI_EMERALD)) {
             if ((pauseCtx->unk_1E4 < 3) || (pauseCtx->unk_1E4 == 5) || (pauseCtx->unk_1E4 == 8)) {
                 if (pauseCtx->cursorItem[pauseCtx->pageIndex] != PAUSE_ITEM_NONE) {
                     pauseCtx->cursorColorSet = 8;
@@ -609,7 +637,7 @@ void KaleidoScope_DrawQuestStatus(PlayState* play, GraphicsContext* gfxCtx) {
 
                     D_8082A11C = 0;
                     AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_DEFAULT);
-                    AudioOcarina_Start((1 << pauseCtx->ocarinaSongIdx) + 0x8000);
+                    AudioOcarina_Start((1 << pauseCtx->ocarinaSongIdx) + OCA_FLAG_8000);
                     pauseCtx->ocarinaStaff = AudioOcarina_GetPlaybackStaff();
                     pauseCtx->ocarinaStaff->pos = 0;
                     pauseCtx->ocarinaStaff->state = 0xFE;

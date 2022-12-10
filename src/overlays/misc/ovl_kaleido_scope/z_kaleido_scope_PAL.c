@@ -1270,7 +1270,7 @@ void KaleidoScope_DrawInfoPanel(PlayState* play) {
             } else if ((pauseCtx->pageIndex == PAUSE_MAP) && sInDungeonScene) {
 
             } else if ((pauseCtx->pageIndex == PAUSE_QUEST) && (pauseCtx->cursorSlot[PAUSE_QUEST] >= 6) &&
-                       (pauseCtx->cursorSlot[PAUSE_QUEST] <= 0x11)) {
+                       (pauseCtx->cursorSlot[PAUSE_QUEST] < QUEST_KOKIRI_EMERALD)) {
                 if (pauseCtx->namedItem != PAUSE_ITEM_NONE) {
                     pauseCtx->infoPanelVtx[16].v.ob[0] = pauseCtx->infoPanelVtx[18].v.ob[0] =
                         WREG(55 + gSaveContext.language);
@@ -1342,6 +1342,10 @@ void KaleidoScope_UpdateNamePanel(PlayState* play) {
         ((pauseCtx->pageIndex == PAUSE_MAP) && (pauseCtx->cursorSpecialPos != 0))) {
 
         pauseCtx->namedItem = pauseCtx->cursorItem[pauseCtx->pageIndex];
+        if ((pauseCtx->pageIndex == PAUSE_QUEST) && (pauseCtx->cursorSlot[PAUSE_QUEST] == QUEST_SONG_SNOW)) {
+            // No name panel yet
+            pauseCtx->namedItem = PAUSE_ITEM_NONE;
+        }
         sp2A = pauseCtx->namedItem;
 
         osCreateMesgQueue(&pauseCtx->loadQueue, &pauseCtx->loadMsg, 1);
@@ -1379,7 +1383,7 @@ void KaleidoScope_UpdateNamePanel(PlayState* play) {
         }
     } else if (pauseCtx->nameColorSet == 0) {
         if (((pauseCtx->pageIndex == PAUSE_QUEST) && (pauseCtx->cursorSlot[PAUSE_QUEST] >= 6) &&
-             (pauseCtx->cursorSlot[PAUSE_QUEST] <= 0x11) && (pauseCtx->unk_1E4 == 8)) ||
+             (pauseCtx->cursorSlot[PAUSE_QUEST] < QUEST_KOKIRI_EMERALD) && (pauseCtx->unk_1E4 == 8)) ||
             (pauseCtx->pageIndex == PAUSE_ITEM) ||
             ((pauseCtx->pageIndex == PAUSE_EQUIP) && (pauseCtx->cursorX[PAUSE_EQUIP] != 0))) {
             if (pauseCtx->namedItem != ITEM_SOLD_OUT) {
@@ -1759,19 +1763,19 @@ static s16 D_8082B12C[] = { -114, 12, 44, 76 };
 static u8 D_8082B134[] = { 1, 5, 9, 13 };
 
 static s16 D_8082B138[] = {
-    74,  74,  46,  18,  18,  46,   -108, -90,  -72, -54, -36, -18, -108, -90, -72, -54,
-    -36, -18, 20,  46,  72,  -110, -86,  -110, -54, -98, -86, -74, -62,  -50, -38, -26,
-    -14, -98, -86, -74, -62, -50,  -38,  -26,  -14, -88, -81, -72, -90,  -83, -74,
+    74,  74,  46,  18,  18,  46,  -108, -90, -72,  -54, -36, -18, -108, -90, -72, -54,
+    -36, -18, 0,   20,  46,  72,  -110, -86, -110, -54, -98, -86, -74,  -62, -50, -38,
+    -26, -14, -98, -86, -74, -62, -50,  -38, -26,  -14, -88, -81, -72,  -90, -83, -74,
 };
 
 static s16 D_8082B198[] = {
-    38, 6,   -12, 6,   38,  56,  -20, -20, -20, -20, -20, -20, 2,   2,   2,   2,   2,   2,  -46, -46, -46, 58, 58, 34,
-    58, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, 34, 34,  34,  36,  36, 36,
+    38, 6,  -12, 6,   38,  56,  -20, -20, -20, -20, -20, -20, 2,   2,   2,   2,   2,   2,   -20, -46, -46, -46, 58, 58,
+    34, 58, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, -52, 34,  34,  34,  36,  36, 36,
 };
 
 static s16 D_8082B1F8[] = {
     24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24, 24,
-    48, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
+    24, 48, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16,
 };
 
 void KaleidoScope_InitVertices(PlayState* play, GraphicsContext* gfxCtx) {
@@ -2144,12 +2148,12 @@ void KaleidoScope_InitVertices(PlayState* play, GraphicsContext* gfxCtx) {
         phi_t4 += 4;
     }
 
-    pauseCtx->questVtx = Graph_Alloc(gfxCtx, 188 * sizeof(Vtx));
+    pauseCtx->questVtx = Graph_Alloc(gfxCtx, 192 * sizeof(Vtx));
 
-    for (phi_t4 = 0, phi_t3 = 0; phi_t3 < 47; phi_t3++, phi_t4 += 4) {
+    for (phi_t4 = 0, phi_t3 = 0; phi_t3 < 48; phi_t3++, phi_t4 += 4) {
         phi_t2_2 = D_8082B1F8[phi_t3];
 
-        if ((phi_t3 < 6) || (phi_t3 >= 41)) {
+        if ((phi_t3 < 6) || (phi_t3 >= 42)) {
             pauseCtx->questVtx[phi_t4 + 0].v.ob[0] = pauseCtx->questVtx[phi_t4 + 2].v.ob[0] = D_8082B138[phi_t3];
 
             pauseCtx->questVtx[phi_t4 + 1].v.ob[0] = pauseCtx->questVtx[phi_t4 + 3].v.ob[0] =
@@ -2174,7 +2178,7 @@ void KaleidoScope_InitVertices(PlayState* play, GraphicsContext* gfxCtx) {
                 phi_t2_2 = 8;
             }
         } else {
-            if ((phi_t3 >= 6) && (phi_t3 <= 17)) {
+            if ((phi_t3 >= QUEST_SONG_MINUET) && (phi_t3 < QUEST_KOKIRI_EMERALD)) {
                 phi_t2_2 = 16;
             }
 
@@ -2391,23 +2395,23 @@ void KaleidoScope_UpdateCursorSize(PlayState* play) {
             temp2 = 4;
             temp3 = 12;
             temp4 = 12;
-            if (pauseCtx->cursorSlot[pauseCtx->pageIndex] == 0x18) {
+            if (pauseCtx->cursorSlot[pauseCtx->pageIndex] == QUEST_HEART_PIECE) {
                 temp1 = -2;
                 temp2 = 2;
                 temp3 = 32;
                 temp4 = 32;
-            } else if (pauseCtx->cursorSlot[pauseCtx->pageIndex] == 0x17) {
+            } else if (pauseCtx->cursorSlot[pauseCtx->pageIndex] == QUEST_SKULL_TOKEN) {
                 temp1 = -4;
                 temp2 = 4;
                 temp4 = 13;
                 temp3 = 34;
-            } else if (pauseCtx->cursorSlot[pauseCtx->pageIndex] < 6) {
+            } else if (pauseCtx->cursorSlot[pauseCtx->pageIndex] < QUEST_SONG_MINUET) {
                 temp1 = -1;
                 temp2 = 1;
                 temp3 = 10;
                 temp4 = 10;
             } else if ((pauseCtx->cursorSlot[pauseCtx->pageIndex] >= 6) &&
-                       (pauseCtx->cursorSlot[pauseCtx->pageIndex] < 0x12)) {
+                       (pauseCtx->cursorSlot[pauseCtx->pageIndex] < QUEST_KOKIRI_EMERALD)) {
                 temp1 = -5;
                 temp2 = 3;
                 temp3 = 8;

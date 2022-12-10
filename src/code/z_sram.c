@@ -326,7 +326,7 @@ static Inventory sDebugSaveInventory = {
       ((1 << EQUIP_INV_BOOTS_IRON) << (EQUIP_TYPE_BOOTS * 4)) |
       ((1 << EQUIP_INV_BOOTS_HOVER) << (EQUIP_TYPE_BOOTS * 4)))),
     0x125249,                                                       // upgrades
-    0x1E3FFFF,                                                      // questItems
+    0x3C7FFFF,                                                      // questItems
     { 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 }, // dungeonItems
     { 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8 },    // dungeonKeys
     0,                                                              // defenseHearts

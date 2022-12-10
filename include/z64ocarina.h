@@ -16,6 +16,7 @@ typedef enum {
     /*  9 */ OCARINA_SONG_SUNS,
     /* 10 */ OCARINA_SONG_TIME,
     /* 11 */ OCARINA_SONG_STORMS,
+             OCARINA_SONG_SNOW,
     /* 12 */ OCARINA_SONG_SCARECROW_SPAWN,
     /* 13 */ OCARINA_SONG_MEMORY_GAME,
     /* 14 */ OCARINA_SONG_MAX,
@@ -37,6 +38,7 @@ typedef enum {
     /* 0x0B */ OCARINA_ACTION_TEACH_SUNS,
     /* 0x0C */ OCARINA_ACTION_TEACH_TIME,
     /* 0x0D */ OCARINA_ACTION_TEACH_STORMS,
+               OCARINA_ACTION_TEACH_CUSTOM,
     /* 0x0E */ OCARINA_ACTION_UNK_E,
     /* 0x0F */ OCARINA_ACTION_PLAYBACK_MINUET, // Playing back a particular song
     /* 0x10 */ OCARINA_ACTION_PLAYBACK_BOLERO,
@@ -50,6 +52,7 @@ typedef enum {
     /* 0x18 */ OCARINA_ACTION_PLAYBACK_SUNS,
     /* 0x19 */ OCARINA_ACTION_PLAYBACK_TIME,
     /* 0x1A */ OCARINA_ACTION_PLAYBACK_STORMS,
+               OCARINA_ACTION_PLAYBACK_SNOW,
     /* 0x1B */ OCARINA_ACTION_UNK_1B,
     /* 0x1C */ OCARINA_ACTION_CHECK_MINUET, // Playing songs for check spots
     /* 0x1D */ OCARINA_ACTION_CHECK_BOLERO,
@@ -63,6 +66,7 @@ typedef enum {
     /* 0x25 */ OCARINA_ACTION_CHECK_SUNS,
     /* 0x26 */ OCARINA_ACTION_CHECK_TIME,
     /* 0x27 */ OCARINA_ACTION_CHECK_STORMS,
+               OCARINA_ACTION_CHECK_SNOW,
     /* 0x28 */ OCARINA_ACTION_CHECK_SCARECROW_SPAWN, // Playing back the song as adult that was set as child
     /* 0x29 */ OCARINA_ACTION_FREE_PLAY_DONE,
     /* 0x2A */ OCARINA_ACTION_SCARECROW_LONG_RECORDING,
@@ -81,14 +85,15 @@ typedef enum {
     /* 0x02 */ OCARINA_MODE_02,
     /* 0x03 */ OCARINA_MODE_03,
     /* 0x04 */ OCARINA_MODE_04,
+    // Ocarina Played Songs
     /* 0x05 */ OCARINA_MODE_05,
     /* 0x06 */ OCARINA_MODE_06,
     /* 0x07 */ OCARINA_MODE_07,
     /* 0x08 */ OCARINA_MODE_08,
     /* 0x09 */ OCARINA_MODE_09,
     /* 0x0A */ OCARINA_MODE_0A,
+               OCARINA_MODE_PLAYED_CUSTOM,
     /* 0x0B */ OCARINA_MODE_0B,
-    /* 0x0C */ OCARINA_MODE_0C,
     /* 0x0D */ OCARINA_MODE_0D,
     /* 0x0E */ OCARINA_MODE_0E,
     /* 0x0F */ OCARINA_MODE_0F
@@ -145,6 +150,14 @@ typedef enum {
     /*    2 */ OCARINA_RECORD_SCARECROW_SPAWN,
     /* 0xFF */ OCARINA_RECORD_REJECTED = 0xFF
 } OcarinaRecordingState;
+
+// Named after original values
+#define OCA_FLAG_4000 0x4000000
+#define OCA_FLAG_8000 0x8000000
+#define OCA_FLAG_C000 (OCA_FLAG_4000 | OCA_FLAG_8000)
+#define OCA_FLAG_ON 0x80000000
+#define OCA_FLAG_OFF 0xFFFF
+#define OCA_FLAG_SONG_MASK ((1 << OCARINA_SONG_MAX) - 1)
 
 /**
  * bFlat4Flag Note:

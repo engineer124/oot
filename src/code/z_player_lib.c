@@ -865,6 +865,19 @@ Gfx* sBootDListGroups[][2] = {
     { gLinkAdultLeftHoverBootDL, gLinkAdultRightHoverBootDL }, // PLAYER_BOOTS_HOVER
 };
 
+void Player_ToggleSnowTunic(void) {
+    static u8 sPlayerSnowTunicToggle = 1;
+    Color_RGB8 sTunicColorDefault = { 30, 105, 27 };
+    Color_RGB8 sTunicColorSnow = { 255, 255, 255 };
+
+    if (sPlayerSnowTunicToggle) {
+        sTunicColors[PLAYER_TUNIC_KOKIRI] = sTunicColorSnow;
+    } else {
+        sTunicColors[PLAYER_TUNIC_KOKIRI] = sTunicColorDefault;
+    }
+    sPlayerSnowTunicToggle ^= 1;
+}
+
 void Player_DrawImpl(PlayState* play, void** skeleton, Vec3s* jointTable, s32 dListCount, s32 lod, s32 tunic, s32 boots,
                      s32 face, OverrideLimbDrawOpa overrideLimbDraw, PostLimbDrawOpa postLimbDraw, void* data) {
     Color_RGB8* color;

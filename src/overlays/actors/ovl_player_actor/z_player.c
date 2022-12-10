@@ -10861,6 +10861,12 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
 
     Collider_ResetQuadAC(play, &this->shieldQuad.base);
     Collider_ResetQuadAT(play, &this->shieldQuad.base);
+
+    if (play->msgCtx.ocarinaMode == OCARINA_MODE_PLAYED_CUSTOM) {
+        Player_ToggleSnowTunic();
+        func_8002F7DC(&this->actor, NA_SE_SY_CORRECT_CHIME);
+        play->msgCtx.ocarinaMode = OCARINA_MODE_04;
+    }
 }
 
 static Vec3f D_80854838 = { 0.0f, 0.0f, -30.0f };

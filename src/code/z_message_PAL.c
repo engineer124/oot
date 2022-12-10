@@ -88,9 +88,9 @@ s16 sOcarinaButtonAlphaValues[9] = { 0 };
 
 // Maps the ocarina song order to the quest item order
 s16 gOcarinaSongItemMap[] = {
-    OCARINA_SONG_MINUET,   OCARINA_SONG_BOLERO,  OCARINA_SONG_SERENADE, OCARINA_SONG_REQUIEM,
-    OCARINA_SONG_NOCTURNE, OCARINA_SONG_PRELUDE, OCARINA_SONG_LULLABY,  OCARINA_SONG_EPONAS,
-    OCARINA_SONG_SARIAS,   OCARINA_SONG_SUNS,    OCARINA_SONG_TIME,     OCARINA_SONG_STORMS,
+    OCARINA_SONG_MINUET,  OCARINA_SONG_BOLERO,  OCARINA_SONG_SERENADE, OCARINA_SONG_REQUIEM, OCARINA_SONG_NOCTURNE,
+    OCARINA_SONG_PRELUDE, OCARINA_SONG_LULLABY, OCARINA_SONG_EPONAS,   OCARINA_SONG_SARIAS,  OCARINA_SONG_SUNS,
+    OCARINA_SONG_TIME,    OCARINA_SONG_STORMS,  OCARINA_SONG_SNOW,
 };
 
 s32 sCharTexSize;
@@ -141,7 +141,7 @@ void Message_UpdateOcarinaMemoryGame(PlayState* play) {
         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_DEFAULT);
         msgCtx->ocarinaStaff = AudioOcarina_GetPlayingStaff();
         msgCtx->ocarinaStaff->pos = sOcarinaButtonIndexBufPos = 0;
-        AudioOcarina_Start((1 << OCARINA_SONG_MEMORY_GAME) + 0x8000);
+        AudioOcarina_Start((1 << OCARINA_SONG_MEMORY_GAME) + OCA_FLAG_8000);
         msgCtx->textDrawPos = msgCtx->decodedTextLen;
     } else if (msgCtx->msgMode == MSGMODE_MEMORY_GAME_RIGHT_SKULLKID_PLAYING) {
         AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_FLUTE);
@@ -1740,19 +1740,13 @@ void Message_ContinueTextbox(PlayState* play, u16 textId) {
 
 void Message_StartOcarina(PlayState* play, u16 ocarinaActionId) {
     static u16 sOcarinaSongFlagsMap[] = {
-        (1 << OCARINA_SONG_MINUET),
-        (1 << OCARINA_SONG_BOLERO),
-        (1 << OCARINA_SONG_SERENADE),
-        (1 << OCARINA_SONG_REQUIEM),
-        (1 << OCARINA_SONG_NOCTURNE),
-        (1 << OCARINA_SONG_PRELUDE),
-        (1 << OCARINA_SONG_LULLABY),
-        (1 << OCARINA_SONG_EPONAS),
-        (1 << OCARINA_SONG_SARIAS),
-        (1 << OCARINA_SONG_SUNS),
-        (1 << OCARINA_SONG_TIME),
-        (1 << OCARINA_SONG_STORMS),
-        (1 << OCARINA_SONG_SCARECROW_SPAWN),
+        (1 << OCARINA_SONG_MINUET),   (1 << OCARINA_SONG_BOLERO),
+        (1 << OCARINA_SONG_SERENADE), (1 << OCARINA_SONG_REQUIEM),
+        (1 << OCARINA_SONG_NOCTURNE), (1 << OCARINA_SONG_PRELUDE),
+        (1 << OCARINA_SONG_LULLABY),  (1 << OCARINA_SONG_EPONAS),
+        (1 << OCARINA_SONG_SARIAS),   (1 << OCARINA_SONG_SUNS),
+        (1 << OCARINA_SONG_TIME),     (1 << OCARINA_SONG_STORMS),
+        (1 << OCARINA_SONG_SNOW),     (1 << OCARINA_SONG_SCARECROW_SPAWN),
     };
     MessageContext* msgCtx = &play->msgCtx;
     s32 textId;
@@ -1763,7 +1757,7 @@ void Message_StartOcarina(PlayState* play, u16 ocarinaActionId) {
 
     osSyncPrintf(VT_FGCOL(GREEN));
 
-    for (i = sOcarinaSongBitFlags = 0; i <= (QUEST_SONG_STORMS - QUEST_SONG_MINUET); i++) {
+    for (i = sOcarinaSongBitFlags = 0; i <= (QUEST_SONG_SNOW - QUEST_SONG_MINUET); i++) {
         if (CHECK_QUEST_ITEM(QUEST_SONG_MINUET + i)) {
             osSyncPrintf("ocarina_check_bit[%d]=%x\n", i, sOcarinaSongFlagsMap[i]);
             sOcarinaSongBitFlags |= sOcarinaSongFlagsMap[i];
@@ -1973,9 +1967,9 @@ void Message_SetView(View* view) {
 void Message_DrawMain(PlayState* play, Gfx** p) {
     static s16 sOcarinaEffectActorIds[] = {
         ACTOR_OCEFF_WIPE3, ACTOR_OCEFF_WIPE2, ACTOR_OCEFF_WIPE,  ACTOR_OCEFF_SPOT,
-        ACTOR_OCEFF_WIPE,  ACTOR_OCEFF_STORM, ACTOR_OCEFF_WIPE4,
+        ACTOR_OCEFF_WIPE,  ACTOR_OCEFF_STORM, ACTOR_OCEFF_WIPE2, ACTOR_OCEFF_WIPE4,
     };
-    static s16 sOcarinaEffectActorParams[] = { 0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 0x0000, 0x0000 };
+    static s16 sOcarinaEffectActorParams[] = { 0x0000, 0x0000, 0x0000, 0x0000, 0x0001, 0x0000, 0x0001, 0x0000 };
     static void* sOcarinaNoteTextures[] = {
         gOcarinaATex, gOcarinaCDownTex, gOcarinaCRightTex, gOcarinaCLeftTex, gOcarinaCUpTex,
     };
@@ -1998,9 +1992,9 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
     static s16 sOcarinaNoteFlashTimer = 12;
     static s16 sOcarinaNoteFlashColorIndex = 1;
     static s16 sOcarinaSongFanfares[] = {
-        NA_BGM_OCA_MINUET,   NA_BGM_OCA_BOLERO, NA_BGM_OCA_SERENADE, NA_BGM_OCA_REQUIEM,
-        NA_BGM_OCA_NOCTURNE, NA_BGM_OCA_LIGHT,  NA_BGM_OCA_SARIA,    NA_BGM_OCA_EPONA,
-        NA_BGM_OCA_ZELDA,    NA_BGM_OCA_SUNS,   NA_BGM_OCA_TIME,     NA_BGM_OCA_STORM,
+        NA_BGM_OCA_MINUET, NA_BGM_OCA_BOLERO, NA_BGM_OCA_SERENADE,   NA_BGM_OCA_REQUIEM, NA_BGM_OCA_NOCTURNE,
+        NA_BGM_OCA_LIGHT,  NA_BGM_OCA_SARIA,  NA_BGM_OCA_EPONA,      NA_BGM_OCA_ZELDA,   NA_BGM_OCA_SUNS,
+        NA_BGM_OCA_TIME,   NA_BGM_OCA_STORM,  NA_BGM_SMALL_ITEM_GET,
     };
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
     MessageContext* msgCtx = &play->msgCtx;
@@ -2075,7 +2069,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                         msgCtx->ocarinaAction >= OCARINA_ACTION_CHECK_SARIA) {
                         if (msgCtx->ocarinaAction == OCARINA_ACTION_FREE_PLAY ||
                             msgCtx->ocarinaAction == OCARINA_ACTION_CHECK_NOWARP) {
-                            AudioOcarina_Start(sOcarinaSongBitFlags + 0xC000);
+                            AudioOcarina_Start(sOcarinaSongBitFlags + OCA_FLAG_C000);
                         } else {
                             // "On Stage Performance"
                             osSyncPrintf("台上演奏\n");
@@ -2083,14 +2077,14 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                         }
                     } else {
                         osSyncPrintf("Na_StartOcarinaSinglePlayCheck2( message->ocarina_no );\n");
-                        AudioOcarina_Start((1 << msgCtx->ocarinaAction) + 0x8000);
+                        AudioOcarina_Start((1 << msgCtx->ocarinaAction) + OCA_FLAG_8000);
                     }
                     msgCtx->msgMode = MSGMODE_OCARINA_PLAYING;
                 } else if (msgCtx->msgMode == MSGMODE_SONG_DEMONSTRATION_STARTING) {
                     msgCtx->stateTimer = 20;
                     msgCtx->msgMode = MSGMODE_SONG_DEMONSTRATION_SELECT_INSTRUMENT;
                 } else {
-                    AudioOcarina_Start((1 << (msgCtx->ocarinaAction + 0x11)) + 0x8000);
+                    AudioOcarina_Start((1 << (msgCtx->ocarinaAction - OCARINA_ACTION_PLAYBACK_MINUET)) + 0x8000);
                     // "Performance Check"
                     osSyncPrintf("演奏チェック=%d\n", msgCtx->ocarinaAction - OCARINA_ACTION_PLAYBACK_MINUET);
                     msgCtx->msgMode = MSGMODE_SONG_PLAYBACK;
@@ -2494,6 +2488,8 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                             play->msgCtx.ocarinaMode = OCARINA_MODE_01;
                             if (msgCtx->lastPlayedSong == OCARINA_SONG_SCARECROW_SPAWN) {
                                 play->msgCtx.ocarinaMode = OCARINA_MODE_0B;
+                            } else if (msgCtx->lastPlayedSong == OCARINA_SONG_SNOW) {
+                                play->msgCtx.ocarinaMode = OCARINA_MODE_PLAYED_CUSTOM;
                             }
                         } else if (msgCtx->ocarinaAction >= OCARINA_ACTION_CHECK_MINUET) {
                             osSyncPrintf(VT_FGCOL(YELLOW));
@@ -2829,7 +2825,7 @@ void Message_DrawMain(PlayState* play, Gfx** p) {
                 msgCtx->ocarinaStaff->pos = sOcarinaButtonIndexBufPos = 0;
                 play->msgCtx.ocarinaMode = OCARINA_MODE_01;
                 Message_ResetOcarinaNoteState();
-                AudioOcarina_Start(sOcarinaSongBitFlags + 0xC000);
+                AudioOcarina_Start(sOcarinaSongBitFlags + OCA_FLAG_C000);
                 msgCtx->msgMode = MSGMODE_FROGS_PLAYING;
                 break;
             case MSGMODE_FROGS_PLAYING:

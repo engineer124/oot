@@ -1025,6 +1025,7 @@ s32 Player_ActionToExplosive(Player* this, s32 itemAction);
 s32 Player_GetExplosiveHeld(Player* this);
 s32 func_8008F2BC(Player* this, s32 itemAction);
 s32 Player_GetEnvironmentalHazard(PlayState* play);
+void Player_ToggleSnowTunic(void);
 void Player_DrawImpl(PlayState* play, void** skeleton, Vec3s* jointTable, s32 dListCount, s32 lod, s32 tunic,
                      s32 boots, s32 face, OverrideLimbDrawOpa overrideLimbDraw, PostLimbDrawOpa postLimbDraw,
                      void* data);
@@ -1658,7 +1659,7 @@ void AudioSeq_SkipForwardSequence(SequencePlayer* seqPlayer);
 void AudioSeq_ResetSequencePlayer(SequencePlayer* seqPlayer);
 void AudioSeq_InitSequencePlayerChannels(s32 playerIdx);
 void AudioSeq_InitSequencePlayers(void);
-void AudioOcarina_Start(u16 ocarinaFlags);
+void AudioOcarina_Start(u32 ocarinaFlags);
 void AudioOcarina_SetInstrument(u8 ocarinaInstrumentId);
 void AudioOcarina_SetPlaybackSong(s8 songIndexPlusOne, s8 playbackState);
 void AudioOcarina_SetRecordingState(u8 recordingState);

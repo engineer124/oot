@@ -99,8 +99,15 @@ void OceffWipe2_Draw(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_oceff_wipe2.c", 400),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
 
-    gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 170, 255);
-    gDPSetEnvColor(POLY_XLU_DISP++, 255, 100, 0, 128);
+    if (this->actor.params == 0) {
+        // Epona's Song
+        gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 170, 255);
+        gDPSetEnvColor(POLY_XLU_DISP++, 255, 100, 0, 128);
+    } else if (this->actor.params == 1) {
+        // Symphony of Snow
+        gDPSetPrimColor(POLY_XLU_DISP++, 0, 0, 255, 255, 255, 255);
+        gDPSetEnvColor(POLY_XLU_DISP++, 255, 255, 255, 128);
+    }
     gSPDisplayList(POLY_XLU_DISP++, sMaterialDL);
     gSPDisplayList(POLY_XLU_DISP++, Gfx_TwoTexScroll(play->state.gfxCtx, G_TX_RENDERTILE, scroll * 6, scroll * (-6), 64,
                                                      64, 1, scroll * (-6), 0, 64, 64));
