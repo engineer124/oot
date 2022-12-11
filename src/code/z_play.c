@@ -1180,7 +1180,7 @@ void Play_Draw(PlayState* this) {
                 }
 
                 if ((R_HREG_MODE != HREG_MODE_PLAY) || R_PLAY_DRAW_SKYBOX) {
-                    if ((this->skyboxCtx.unk_140 != 0) && (GET_ACTIVE_CAM(this)->setting != CAM_SET_PREREND_FIXED)) {
+                    if ((this->skyboxCtx.unk_140 != 0) && (GET_ACTIVE_CAM(this)->setting != CAM_SET_FIXED_LOCKED)) {
                         Vec3f quakeOffset;
 
                         Camera_GetQuakeOffset(&quakeOffset, GET_ACTIVE_CAM(this));

@@ -3933,6 +3933,10 @@ s32 Camera_KeepOn0(Camera* camera) {
     return true;
 }
 
+/**
+ * Camera is fixed to a certain position and rotation:
+ * `CAM_SET_MARKET_BALCONY` and `CAM_SET_CHU_BOWLING`
+ */
 s32 Camera_Fixed1(Camera* camera) {
     Fixed1ReadOnlyData* roData = &camera->paramData.fixd1.roData;
     Fixed1ReadWriteData* rwData = &camera->paramData.fixd1.rwData;
@@ -4088,6 +4092,7 @@ s32 Camera_Fixed2(Camera* camera) {
 
 /**
  * Camera's position is fixed, does not move, or rotate
+ * `CAM_SET_FIXED_LOCKED`
  */
 s32 Camera_Fixed3(Camera* camera) {
     Vec3f* eye = &camera->eye;
@@ -5122,7 +5127,7 @@ s32 Camera_Unique6(Camera* camera) {
 
 /**
  * Camera is at a fixed point specified by the scene's camera data,
- * camera rotates to follow player
+ * camera rotates to follow player, `CAM_SET_FIXED_PIVOT`
  */
 s32 Camera_Unique7(Camera* camera) {
     s32 pad;

@@ -357,7 +357,7 @@ void Room_DrawImageSingle(PlayState* play, Room* room, u32 flags) {
     Gfx* gfx;
     RoomShapeImageSingle* roomShape;
     RoomShapeDListsEntry* entry;
-    u32 isFixedCamera;
+    u32 isLockedCamera;
     u32 drawBackground;
     u32 drawOpa;
     u32 drawXlu;
@@ -365,10 +365,10 @@ void Room_DrawImageSingle(PlayState* play, Room* room, u32 flags) {
     OPEN_DISPS(play->state.gfxCtx, "../z_room.c", 628);
 
     activeCam = GET_ACTIVE_CAM(play);
-    isFixedCamera = (activeCam->setting == CAM_SET_PREREND_FIXED);
+    isLockedCamera = (activeCam->setting == CAM_SET_FIXED_LOCKED);
     roomShape = &room->roomShape->image.single;
     entry = SEGMENTED_TO_VIRTUAL(roomShape->base.entry);
-    drawBackground = (flags & ROOM_DRAW_OPA) && isFixedCamera && (roomShape->source != NULL) &&
+    drawBackground = (flags & ROOM_DRAW_OPA) && isLockedCamera && (roomShape->source != NULL) &&
                      !(R_ROOM_IMAGE_NODRAW_FLAGS & ROOM_IMAGE_NODRAW_BACKGROUND);
     drawOpa = (flags & ROOM_DRAW_OPA) && (entry->opa != NULL) && !(R_ROOM_IMAGE_NODRAW_FLAGS & ROOM_IMAGE_NODRAW_OPA);
     drawXlu = (flags & ROOM_DRAW_XLU) && (entry->xlu != NULL) && !(R_ROOM_IMAGE_NODRAW_FLAGS & ROOM_IMAGE_NODRAW_XLU);
@@ -450,7 +450,7 @@ void Room_DrawImageMulti(PlayState* play, Room* room, u32 flags) {
     RoomShapeImageMulti* roomShape;
     RoomShapeImageMultiBgEntry* bgEntry;
     RoomShapeDListsEntry* dListsEntry;
-    u32 isFixedCamera;
+    u32 isLockedCamera;
     u32 drawBackground;
     u32 drawOpa;
     u32 drawXlu;
@@ -458,13 +458,13 @@ void Room_DrawImageMulti(PlayState* play, Room* room, u32 flags) {
     OPEN_DISPS(play->state.gfxCtx, "../z_room.c", 752);
 
     activeCam = GET_ACTIVE_CAM(play);
-    isFixedCamera = (activeCam->setting == CAM_SET_PREREND_FIXED);
+    isLockedCamera = (activeCam->setting == CAM_SET_FIXED_LOCKED);
     roomShape = &room->roomShape->image.multi;
     dListsEntry = SEGMENTED_TO_VIRTUAL(roomShape->base.entry);
 
     bgEntry = Room_GetImageMultiBgEntry(roomShape, play);
 
-    drawBackground = (flags & ROOM_DRAW_OPA) && isFixedCamera && (bgEntry->source != NULL) &&
+    drawBackground = (flags & ROOM_DRAW_OPA) && isLockedCamera && (bgEntry->source != NULL) &&
                      !(R_ROOM_IMAGE_NODRAW_FLAGS & ROOM_IMAGE_NODRAW_BACKGROUND);
     drawOpa =
         (flags & ROOM_DRAW_OPA) && (dListsEntry->opa != NULL) && !(R_ROOM_IMAGE_NODRAW_FLAGS & ROOM_IMAGE_NODRAW_OPA);

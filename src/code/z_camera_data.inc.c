@@ -142,9 +142,9 @@ char sCameraSettingNames[][12] = {
     "CIRCLE0    ", // CAM_SET_PIVOT_CRAWLSPACE
     "CIRCLE2    ", // CAM_SET_PIVOT_SHOP_BROWSING
     "CIRCLE3    ", // CAM_SET_PIVOT_IN_FRONT
-    "PREREND0   ", // CAM_SET_PREREND_FIXED
-    "PREREND1   ", // CAM_SET_PREREND_PIVOT
-    "PREREND3   ", // CAM_SET_PREREND_SIDE_SCROLL
+    "PREREND0   ", // CAM_SET_FIXED_LOCKED
+    "PREREND1   ", // CAM_SET_FIXED_PIVOT
+    "PREREND3   ", // CAM_SET_FIXED_SIDE_SCROLL
     "DOOR0      ", // CAM_SET_DOOR0
     "DOORC      ", // CAM_SET_DOORC
     "RAIL3      ", // CAM_SET_CRAWLSPACE
@@ -870,29 +870,29 @@ CameraModeValue sDataOnlyNullFlags[] = {
 
 /**
  *=====================================================================
- *                 Custom Data: PREREND_FIXED Setting
+ *                 Custom Data: FIXED_LOCKED Setting
  *=====================================================================
  */
 
-CameraModeValue sSetPrerendFixedModeZTargetFriendlyData[] = {
+CameraModeValue sSetFixedLockedModeZTargetFriendlyData[] = {
     CAM_FUNCDATA_INTERFACE_FIELD(CAM_INTERFACE_FIELD(CAM_LETTERBOX_MEDIUM, CAM_HUD_VISIBILITY_ALL, 0)),
 };
 
 /**
  *=====================================================================
- *                Custom Data: PREREND_PIVOT Setting
+ *                Custom Data: FIXED_PIVOT Setting
  *=====================================================================
  */
 
-CameraModeValue sSetPrerendPivotModeNormalData[] = {
+CameraModeValue sSetFixedPivotModeNormalData[] = {
     CAM_FUNCDATA_UNIQ7(60, CAM_INTERFACE_FIELD(CAM_LETTERBOX_NONE, CAM_HUD_VISIBILITY_ALL, 0)),
 };
 
-CameraModeValue sSetPrerendPivotModeZTargetFriendlyData[] = {
+CameraModeValue sSetFixedPivotModeZTargetFriendlyData[] = {
     CAM_FUNCDATA_UNIQ7(60, CAM_INTERFACE_FIELD(CAM_LETTERBOX_MEDIUM, CAM_HUD_VISIBILITY_ALL, 0)),
 };
 
-CameraModeValue sSetPrerendPivotModeTalkData[] = {
+CameraModeValue sSetFixedPivotModeTalkData[] = {
     CAM_FUNCDATA_KEEP0(30, 0, 4, CAM_INTERFACE_FIELD(CAM_LETTERBOX_LARGE, CAM_HUD_VISIBILITY_A_HEARTS_MAGIC_FORCE, 0)),
 };
 
@@ -1962,21 +1962,21 @@ CameraMode sCamSetPivotInFrontModes[] = {
     CAM_SETTING_MODE_ENTRY(CAM_FUNC_KEEP1, sSetNormal0ModeFollowBoomerangData),        // CAM_MODE_FOLLOW_BOOMERANG
 };
 
-CameraMode sCamSetPreRendFixedModes[] = {
-    CAM_SETTING_MODE_ENTRY(CAM_FUNC_FIXD3, sDataOnlyNullFlags),                      // CAM_MODE_NORMAL
-    { CAM_FUNC_NONE, 0, NULL },                                                      // CAM_MODE_Z_PARALLEL
-    CAM_SETTING_MODE_ENTRY(CAM_FUNC_FIXD3, sSetPrerendFixedModeZTargetFriendlyData), // CAM_MODE_Z_TARGET_FRIENDLY
-    CAM_SETTING_MODE_ENTRY(CAM_FUNC_FIXD3, sSetPrerendFixedModeZTargetFriendlyData), // CAM_MODE_TALK
+CameraMode sCamSetFixedLockedModes[] = {
+    CAM_SETTING_MODE_ENTRY(CAM_FUNC_FIXD3, sDataOnlyNullFlags),                     // CAM_MODE_NORMAL
+    { CAM_FUNC_NONE, 0, NULL },                                                     // CAM_MODE_Z_PARALLEL
+    CAM_SETTING_MODE_ENTRY(CAM_FUNC_FIXD3, sSetFixedLockedModeZTargetFriendlyData), // CAM_MODE_Z_TARGET_FRIENDLY
+    CAM_SETTING_MODE_ENTRY(CAM_FUNC_FIXD3, sSetFixedLockedModeZTargetFriendlyData), // CAM_MODE_TALK
 };
 
-CameraMode sCamSetPreRendPivotModes[] = {
-    CAM_SETTING_MODE_ENTRY(CAM_FUNC_UNIQ7, sSetPrerendPivotModeNormalData),          // CAM_MODE_NORMAL
-    { CAM_FUNC_NONE, 0, NULL },                                                      // CAM_MODE_Z_PARALLEL
-    CAM_SETTING_MODE_ENTRY(CAM_FUNC_UNIQ7, sSetPrerendPivotModeZTargetFriendlyData), // CAM_MODE_Z_TARGET_FRIENDLY
-    CAM_SETTING_MODE_ENTRY(CAM_FUNC_KEEP0, sSetPrerendPivotModeTalkData),            // CAM_MODE_TALK
+CameraMode sCamSetFixedPivotModes[] = {
+    CAM_SETTING_MODE_ENTRY(CAM_FUNC_UNIQ7, sSetFixedPivotModeNormalData),          // CAM_MODE_NORMAL
+    { CAM_FUNC_NONE, 0, NULL },                                                    // CAM_MODE_Z_PARALLEL
+    CAM_SETTING_MODE_ENTRY(CAM_FUNC_UNIQ7, sSetFixedPivotModeZTargetFriendlyData), // CAM_MODE_Z_TARGET_FRIENDLY
+    CAM_SETTING_MODE_ENTRY(CAM_FUNC_KEEP0, sSetFixedPivotModeTalkData),            // CAM_MODE_TALK
 };
 
-CameraMode sCamSetPreRendSideScrollModes[] = {
+CameraMode sCamSetFixedSideScrollModes[] = {
     CAM_SETTING_MODE_ENTRY(CAM_FUNC_SPEC6, sDataOnlyNullFlags), // CAM_MODE_NORMAL
 };
 
@@ -2365,9 +2365,9 @@ CameraSetting sCameraSettings[] = {
     { { 0x85000001 }, sCamSetPivotCrawlspaceModes },      // CAM_SET_PIVOT_CRAWLSPACE
     { { 0x85000001 }, sCamSetPivotShopBrowsingModes },    // CAM_SET_PIVOT_SHOP_BROWSING
     { { 0x851E1FFF }, sCamSetPivotInFrontModes },         // CAM_SET_PIVOT_IN_FRONT
-    { { 0x8C00000D }, sCamSetPreRendFixedModes },         // CAM_SET_PREREND_FIXED
-    { { 0x8C00000D }, sCamSetPreRendPivotModes },         // CAM_SET_PREREND_PIVOT
-    { { 0x8C000001 }, sCamSetPreRendSideScrollModes },    // CAM_SET_PREREND_SIDE_SCROLL
+    { { 0x8C00000D }, sCamSetFixedLockedModes },          // CAM_SET_FIXED_LOCKED
+    { { 0x8C00000D }, sCamSetFixedPivotModes },           // CAM_SET_FIXED_PIVOT
+    { { 0x8C000001 }, sCamSetFixedSideScrollModes },      // CAM_SET_FIXED_SIDE_SCROLL
     { { 0xC5000001 }, sCamSetDoor0Modes },                // CAM_SET_DOOR0
     { { 0xC5000003 }, sCamSetDoorCModes },                // CAM_SET_DOORC
     { { 0xC5000001 }, sCamSetCrawlspaceModes },           // CAM_SET_CRAWLSPACE
