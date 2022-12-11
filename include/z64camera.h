@@ -583,7 +583,7 @@ typedef struct {
     /* 0x08 */ f32 maxDist;
     /* 0x0C */ f32 minMaxDistFactor;
     /* 0x10 */ f32 yawUpdateRateTarget;
-    /* 0x14 */ f32 xzUpdRateTarget;
+    /* 0x14 */ f32 xzUpdateRateTarget;
     /* 0x18 */ f32 fovTarget;
     /* 0x1C */ f32 atLERPStepScale;
     /* 0x20 */ s16 interfaceField;

@@ -2460,7 +2460,7 @@ s32 Camera_Jump2(Camera* camera) {
         roData->maxDist = GET_NEXT_SCALED_RO_DATA(values) * playerHeight * yNormal;
         roData->minMaxDistFactor = GET_NEXT_SCALED_RO_DATA(values);
         roData->yawUpdateRateTarget = GET_NEXT_RO_DATA(values);
-        roData->xzUpdRateTarget = GET_NEXT_SCALED_RO_DATA(values);
+        roData->xzUpdateRateTarget = GET_NEXT_SCALED_RO_DATA(values);
         roData->fovTarget = GET_NEXT_RO_DATA(values);
         roData->atLERPStepScale = GET_NEXT_SCALED_RO_DATA(values);
         roData->interfaceField = GET_NEXT_RO_DATA(values);
@@ -2512,7 +2512,7 @@ s32 Camera_Jump2(Camera* camera) {
     camera->yawUpdateRateInv =
         Camera_ScaledStepToCeilF(roData->yawUpdateRateTarget, camera->yawUpdateRateInv, sp90, 0.1f);
     camera->xzOffsetUpdateRate =
-        Camera_ScaledStepToCeilF(roData->xzUpdRateTarget, camera->xzOffsetUpdateRate, sp90, 0.1f);
+        Camera_ScaledStepToCeilF(roData->xzUpdateRateTarget, camera->xzOffsetUpdateRate, sp90, 0.1f);
     camera->yOffsetUpdateRate =
         Camera_ScaledStepToCeilF(CAM_DATA_SCALED(R_CAM_Y_OFFSET_UPDATE_RATE), camera->yOffsetUpdateRate, sp8C, 0.1f);
 
