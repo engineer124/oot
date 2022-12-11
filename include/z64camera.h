@@ -582,7 +582,7 @@ typedef struct {
     /* 0x04 */ f32 minDist;
     /* 0x08 */ f32 maxDist;
     /* 0x0C */ f32 minMaxDistFactor;
-    /* 0x10 */ f32 yawUpdRateTarget;
+    /* 0x10 */ f32 yawUpdateRateTarget;
     /* 0x14 */ f32 xzUpdRateTarget;
     /* 0x18 */ f32 fovTarget;
     /* 0x1C */ f32 atLERPStepScale;
