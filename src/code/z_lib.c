@@ -570,7 +570,7 @@ s16 Math_SmoothStepToS(s16* pValue, s16 target, s16 fractionInv, s16 step, s16 m
  * Changes pValue by step towards target. If step is more than 1/scale of the remaining distance, step by that instead.
  */
 void Math_ApproachS(s16* pValue, s16 target, s16 fractionInv, s16 maxStep) {
-    s16 step = (target - *pValue);
+    s16 step = target - *pValue;
 
     step /= fractionInv;
 
