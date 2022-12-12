@@ -440,31 +440,31 @@ void Environment_Init(PlayState* play2, EnvironmentContext* envCtx, s32 unused) 
     Rumble_Reset();
 }
 
-u8 Environment_SmoothStepToU8(u8* pvalue, u8 target, u8 fractionInv, u8 maxStep, u8 minStep) {
-    s16 step = 0;
+u8 Environment_SmoothStepToU8(u8* pvalue, u8 target, u8 fractionInv, u8 step, u8 minStep) {
+    s16 stepSize = 0;
     s16 diff = target - *pvalue;
 
     if (target != *pvalue) {
-        step = diff / fractionInv;
-        if ((step >= (s16)minStep) || (step <= (s16)-minStep)) {
-            if (step > (s16)maxStep) {
-                step = maxStep;
+        stepSize = diff / fractionInv;
+        if ((stepSize >= (s16)minStep) || (stepSize <= (s16)-minStep)) {
+            if (stepSize > (s16)step) {
+                stepSize = step;
             }
-            if (step < (s16)-maxStep) {
-                step = -maxStep;
+            if (stepSize < (s16)-step) {
+                stepSize = -step;
             }
-            *pvalue += (u8)step;
+            *pvalue += (u8)stepSize;
         } else {
-            if (step < (s16)minStep) {
-                step = minStep;
-                *pvalue += (u8)step;
+            if (stepSize < (s16)minStep) {
+                stepSize = minStep;
+                *pvalue += (u8)stepSize;
                 if (*pvalue > target) {
                     *pvalue = target;
                 }
             }
-            if (step > (s16)-minStep) {
-                step = -minStep;
-                *pvalue += (u8)step;
+            if (stepSize > (s16)-minStep) {
+                stepSize = -minStep;
+                *pvalue += (u8)stepSize;
                 if (*pvalue < target) {
                     *pvalue = target;
                 }
@@ -474,31 +474,31 @@ u8 Environment_SmoothStepToU8(u8* pvalue, u8 target, u8 fractionInv, u8 maxStep,
     return diff;
 }
 
-u8 Environment_SmoothStepToS8(s8* pvalue, s8 target, u8 fractionInv, u8 maxStep, u8 minStep) {
-    s16 step = 0;
+u8 Environment_SmoothStepToS8(s8* pvalue, s8 target, u8 fractionInv, u8 step, u8 minStep) {
+    s16 stepSize = 0;
     s16 diff = target - *pvalue;
 
     if (target != *pvalue) {
-        step = diff / fractionInv;
-        if ((step >= (s16)minStep) || (step <= (s16)-minStep)) {
-            if (step > (s16)maxStep) {
-                step = maxStep;
+        stepSize = diff / fractionInv;
+        if ((stepSize >= (s16)minStep) || (stepSize <= (s16)-minStep)) {
+            if (stepSize > (s16)step) {
+                stepSize = step;
             }
-            if (step < (s16)-maxStep) {
-                step = -maxStep;
+            if (stepSize < (s16)-step) {
+                stepSize = -step;
             }
-            *pvalue += (s8)step;
+            *pvalue += (s8)stepSize;
         } else {
-            if (step < (s16)minStep) {
-                step = minStep;
-                *pvalue += (s8)step;
+            if (stepSize < (s16)minStep) {
+                stepSize = minStep;
+                *pvalue += (s8)stepSize;
                 if (*pvalue > target) {
                     *pvalue = target;
                 }
             }
-            if (step > (s16)-minStep) {
-                step = -minStep;
-                *pvalue += (s8)step;
+            if (stepSize > (s16)-minStep) {
+                stepSize = -minStep;
+                *pvalue += (s8)stepSize;
                 if (*pvalue < target) {
                     *pvalue = target;
                 }

@@ -71,18 +71,64 @@ f32 Camera_InterpolateCurve(f32 a, f32 b) {
 /**
  * @param[in] target target value
  * @param[in] cur current value
- * @param[in] stepScale fraction of (target - cur) to step towards target
+ * @param[in] fraction fraction of (target - cur) to step towards target
  * @param[in] minDiff minimum value of (target - cur) perform a step. Otherwise, return `target`
  *
  * @return new current value
  */
-f32 Camera_SmoothStepToCeilF(f32 target, f32 cur, f32 stepScale, f32 minDiff) {
+f32 Camera_SmoothStepToCeilF(f32 target, f32 cur, f32 fraction, f32 minDiff) {
     f32 diff = target - cur;
     f32 step;
-    f32 ret;
+    f32 nextCur;
 
     if (fabsf(diff) >= minDiff) {
-        step = diff * stepScale;
+        step = diff * fraction;
+        nextCur = cur + step;
+    } else {
+        nextCur = target;
+    }
+
+    return nextCur;
+}
+
+/**
+ * @param[in] target target value
+ * @param[in] cur current value
+ * @param[in] fraction fraction of (target - cur) to step towards target
+ * @param[in] minDiff minimum value of (target - cur) perform a step. Otherwise, return `current`
+ *
+ * @return new current value
+ */
+f32 Camera_SmoothStepToFloorF(f32 target, f32 cur, f32 fraction, f32 minDiff) {
+    f32 diff = target - cur;
+    f32 step;
+    f32 nextCur;
+
+    if (fabsf(diff) >= minDiff) {
+        step = diff * fraction;
+        nextCur = cur + step;
+    } else {
+        nextCur = cur;
+    }
+
+    return nextCur;
+}
+
+/**
+ * @param[in] target target value
+ * @param[in] cur current value
+ * @param[in] fraction fraction of (target - cur) to step towards target
+ * @param[in] minDiff minimum value of (target - cur) perform a step. Otherwise, return `target`
+ *
+ * @return new current value
+ */
+s16 Camera_SmoothStepToCeilS(s16 target, s16 cur, f32 fraction, s16 minDiff) {
+    s16 diff = target - cur;
+    s16 step;
+    s32 ret;
+
+    if (ABS(diff) >= minDiff) {
+        step = diff * fraction + 0.5f;
         ret = cur + step;
     } else {
         ret = target;
@@ -94,18 +140,18 @@ f32 Camera_SmoothStepToCeilF(f32 target, f32 cur, f32 stepScale, f32 minDiff) {
 /**
  * @param[in] target target value
  * @param[in] cur current value
- * @param[in] stepScale fraction of (target - cur) to step towards target
+ * @param[in] fraction fraction of (target - cur) to step towards target
  * @param[in] minDiff minimum value of (target - cur) perform a step. Otherwise, return `current`
  *
  * @return new current value
  */
-f32 Camera_SmoothStepToFloorF(f32 target, f32 cur, f32 stepScale, f32 minDiff) {
-    f32 diff = target - cur;
-    f32 step;
-    f32 ret;
+s16 Camera_SmoothStepToFloorS(s16 target, s16 cur, f32 fraction, s16 minDiff) {
+    s16 diff = target - cur;
+    s16 step;
+    s32 ret;
 
-    if (fabsf(diff) >= minDiff) {
-        step = diff * stepScale;
+    if (ABS(diff) >= minDiff) {
+        step = diff * fraction + 0.5f;
         ret = cur + step;
     } else {
         ret = cur;
@@ -117,61 +163,16 @@ f32 Camera_SmoothStepToFloorF(f32 target, f32 cur, f32 stepScale, f32 minDiff) {
 /**
  * @param[in] target target value
  * @param[in] cur current value
- * @param[in] stepScale fraction of (target - cur) to step towards target
+ * @param[in] yFraction fraction of (target - cur) to step towards target
+ * @param[in] xzFraction fraction of (target - cur) to step towards target
  * @param[in] minDiff minimum value of (target - cur) perform a step. Otherwise, return `target`
  *
  * @return new current value
  */
-s16 Camera_SmoothStepToCeilS(s16 target, s16 cur, f32 stepScale, s16 minDiff) {
-    s16 diff = target - cur;
-    s16 step;
-    s32 ret;
-
-    if (ABS(diff) >= minDiff) {
-        step = diff * stepScale + 0.5f;
-        ret = cur + step;
-    } else {
-        ret = target;
-    }
-
-    return ret;
-}
-
-/**
- * @param[in] target target value
- * @param[in] cur current value
- * @param[in] stepScale fraction of (target - cur) to step towards target
- * @param[in] minDiff minimum value of (target - cur) perform a step. Otherwise, return `current`
- *
- * @return new current value
- */
-s16 Camera_SmoothStepToFloorS(s16 target, s16 cur, f32 stepScale, s16 minDiff) {
-    s16 diff = target - cur;
-    s16 step;
-    s32 ret;
-
-    if (ABS(diff) >= minDiff) {
-        step = diff * stepScale + 0.5f;
-        ret = cur + step;
-    } else {
-        ret = cur;
-    }
-
-    return ret;
-}
-
-/**
- * @param[in] target target value
- * @param[in] cur current value
- * @param[in] stepScale fraction of (target - cur) to step towards target
- * @param[in] minDiff minimum value of (target - cur) perform a step. Otherwise, return `target`
- *
- * @return new current value
- */
-void Camera_SmoothStepToCeilVec3f(Vec3f* target, Vec3f* cur, f32 yStepScale, f32 xzStepScale, f32 minDiff) {
-    cur->x = Camera_SmoothStepToCeilF(target->x, cur->x, xzStepScale, minDiff);
-    cur->y = Camera_SmoothStepToCeilF(target->y, cur->y, yStepScale, minDiff);
-    cur->z = Camera_SmoothStepToCeilF(target->z, cur->z, xzStepScale, minDiff);
+void Camera_SmoothStepToCeilVec3f(Vec3f* target, Vec3f* cur, f32 yFraction, f32 xzFraction, f32 minDiff) {
+    cur->x = Camera_SmoothStepToCeilF(target->x, cur->x, xzFraction, minDiff);
+    cur->y = Camera_SmoothStepToCeilF(target->y, cur->y, yFraction, minDiff);
+    cur->z = Camera_SmoothStepToCeilF(target->z, cur->z, xzFraction, minDiff);
 }
 
 void func_80043ABC(Camera* camera) {
