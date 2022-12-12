@@ -442,24 +442,24 @@ f32 Fishing_RandZeroOne(void) {
     return fabsf(rand);
 }
 
-s16 Fishing_SmoothStepToS(s16* pValue, s16 target, s16 fractionInv, s16 maxStep) {
-    s16 step;
+s16 Fishing_SmoothStepToS(s16* pValue, s16 target, s16 fractionInv, s16 step) {
+    s16 stepSize;
     s16 diff;
 
     diff = target - *pValue;
-    step = diff / fractionInv;
+    stepSize = diff / fractionInv;
 
-    if (step > maxStep) {
-        step = maxStep;
+    if (stepSize > step) {
+        stepSize = step;
     }
 
-    if (step < -maxStep) {
-        step = -maxStep;
+    if (stepSize < -step) {
+        stepSize = -step;
     }
 
-    *pValue += step;
+    *pValue += stepSize;
 
-    return step;
+    return stepSize;
 }
 
 void Fishing_SpawnRipple(Vec3f* projectedPos, FishingEffect* effect, Vec3f* pos, f32 arg3, f32 arg4, s16 arg5,
