@@ -3474,17 +3474,18 @@ s32 Actor_OtherIsTargeted(PlayState* play, Actor* actor) {
     }
 }
 
-f32 func_80033AEC(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
+f32 Actor_SmoothStepToVec3f(Vec3f* target, Vec3f* pValue, f32 fraction, f32 maxStep, f32 minDistUpper,
+                            f32 minDistLower) {
     f32 ret = 0.0f;
 
-    if (arg4 <= Math_Vec3f_DistXYZ(arg0, arg1)) {
-        ret = Math_SmoothStepToF(&arg1->x, arg0->x, arg2, arg3, 0.0f);
-        ret += Math_SmoothStepToF(&arg1->y, arg0->y, arg2, arg3, 0.0f);
-        ret += Math_SmoothStepToF(&arg1->z, arg0->z, arg2, arg3, 0.0f);
-    } else if (arg5 < Math_Vec3f_DistXYZ(arg0, arg1)) {
-        ret = Math_SmoothStepToF(&arg1->x, arg0->x, arg2, arg3, 0.0f);
-        ret += Math_SmoothStepToF(&arg1->y, arg0->y, arg2, arg3, 0.0f);
-        ret += Math_SmoothStepToF(&arg1->z, arg0->z, arg2, arg3, 0.0f);
+    if (Math_Vec3f_DistXYZ(target, pValue) >= minDistUpper) {
+        ret = Math_SmoothStepToF(&pValue->x, target->x, fraction, maxStep, 0.0f);
+        ret += Math_SmoothStepToF(&pValue->y, target->y, fraction, maxStep, 0.0f);
+        ret += Math_SmoothStepToF(&pValue->z, target->z, fraction, maxStep, 0.0f);
+    } else if (Math_Vec3f_DistXYZ(target, pValue) > minDistLower) {
+        ret = Math_SmoothStepToF(&pValue->x, target->x, fraction, maxStep, 0.0f);
+        ret += Math_SmoothStepToF(&pValue->y, target->y, fraction, maxStep, 0.0f);
+        ret += Math_SmoothStepToF(&pValue->z, target->z, fraction, maxStep, 0.0f);
     }
 
     return ret;

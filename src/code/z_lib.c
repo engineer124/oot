@@ -401,30 +401,30 @@ void IChain_Apply_Vec3s(u8* ptr, InitChainEntry* ichain) {
  * Changes pValue by step towards target. If this step is more than fraction of the remaining distance, step by that
  * instead, with a minimum step of minStep. Returns remaining distance to target.
  */
-f32 Math_SmoothStepToF(f32* pValue, f32 target, f32 fraction, f32 step, f32 minStep) {
+f32 Math_SmoothStepToF(f32* pValue, f32 target, f32 fraction, f32 maxStep, f32 minStep) {
     if (*pValue != target) {
-        f32 stepSize = (target - *pValue) * fraction;
+        f32 step = (target - *pValue) * fraction;
 
-        if ((stepSize >= minStep) || (stepSize <= -minStep)) {
-            if (stepSize > step) {
-                stepSize = step;
+        if ((step >= minStep) || (step <= -minStep)) {
+            if (step > maxStep) {
+                step = maxStep;
             }
 
-            if (stepSize < -step) {
-                stepSize = -step;
+            if (step < -maxStep) {
+                step = -maxStep;
             }
 
-            *pValue += stepSize;
+            *pValue += step;
         } else {
-            if (stepSize < minStep) {
+            if (step < minStep) {
                 *pValue += minStep;
-                stepSize = minStep;
+                step = minStep;
 
-                if (target < *pValue) {
+                if (*pValue > target) {
                     *pValue = target;
                 }
             }
-            if (stepSize > -minStep) {
+            if (step > -minStep) {
                 *pValue += -minStep;
 
                 if (*pValue < target) {
@@ -440,41 +440,41 @@ f32 Math_SmoothStepToF(f32* pValue, f32 target, f32 fraction, f32 step, f32 minS
 /**
  * Changes pValue by step towards target. If step is more than fraction of the remaining distance, step by that instead.
  */
-void Math_ApproachF(f32* pValue, f32 target, f32 fraction, f32 step) {
+void Math_ApproachF(f32* pValue, f32 target, f32 fraction, f32 maxStep) {
     if (*pValue != target) {
-        f32 stepSize = (target - *pValue) * fraction;
+        f32 step = (target - *pValue) * fraction;
 
-        if (stepSize > step) {
-            stepSize = step;
-        } else if (stepSize < -step) {
-            stepSize = -step;
+        if (step > maxStep) {
+            step = maxStep;
+        } else if (step < -maxStep) {
+            step = -maxStep;
         }
 
-        *pValue += stepSize;
+        *pValue += step;
     }
 }
 
 /**
  * Changes pValue by step towards zero. If step is more than fraction of the remaining distance, step by that instead.
  */
-void Math_ApproachZeroF(f32* pValue, f32 fraction, f32 step) {
-    f32 stepSize = *pValue * fraction;
+void Math_ApproachZeroF(f32* pValue, f32 fraction, f32 maxStep) {
+    f32 step = *pValue * fraction;
 
-    if (stepSize > step) {
-        stepSize = step;
-    } else if (stepSize < -step) {
-        stepSize = -step;
+    if (step > maxStep) {
+        step = maxStep;
+    } else if (step < -maxStep) {
+        step = -maxStep;
     }
 
-    *pValue -= stepSize;
+    *pValue -= step;
 }
 
 /**
  * Changes pValue by step towards target angle in degrees. If this step is more than fraction of the remaining distance,
  * step by that instead, with a minimum step of minStep. Returns the value of the step taken.
  */
-f32 Math_SmoothStepToDegF(f32* pValue, f32 target, f32 fraction, f32 step, f32 minStep) {
-    f32 stepSize = 0.0f;
+f32 Math_SmoothStepToDegF(f32* pValue, f32 target, f32 fraction, f32 maxStep, f32 minStep) {
+    f32 step = 0.0f;
     f32 diff = target - *pValue;
 
     if (*pValue != target) {
@@ -484,29 +484,29 @@ f32 Math_SmoothStepToDegF(f32* pValue, f32 target, f32 fraction, f32 step, f32 m
             diff = 360.0f + diff;
         }
 
-        stepSize = diff * fraction;
+        step = diff * fraction;
 
-        if ((stepSize >= minStep) || (stepSize <= -minStep)) {
-            if (stepSize > step) {
-                stepSize = step;
+        if ((step >= minStep) || (step <= -minStep)) {
+            if (step > maxStep) {
+                step = maxStep;
             }
 
-            if (stepSize < -step) {
-                stepSize = -step;
+            if (step < -maxStep) {
+                step = -maxStep;
             }
 
-            *pValue += stepSize;
+            *pValue += step;
         } else {
-            if (stepSize < minStep) {
-                stepSize = minStep;
-                *pValue += stepSize;
+            if (step < minStep) {
+                step = minStep;
+                *pValue += step;
                 if (*pValue > target) {
                     *pValue = target;
                 }
             }
-            if (stepSize > -minStep) {
-                stepSize = -minStep;
-                *pValue += stepSize;
+            if (step > -minStep) {
+                step = -minStep;
+                *pValue += step;
                 if (*pValue < target) {
                     *pValue = target;
                 }
@@ -522,30 +522,30 @@ f32 Math_SmoothStepToDegF(f32* pValue, f32 target, f32 fraction, f32 step, f32 m
         *pValue += 360.0f;
     }
 
-    return stepSize;
+    return step;
 }
 
 /**
  * Changes pValue by step towards target. If this step is more than 1/scale of the remaining distance, step by that
  * instead, with a minimum step of minStep. Returns remaining distance to target.
  */
-s16 Math_SmoothStepToS(s16* pValue, s16 target, s16 scale, s16 step, s16 minStep) {
-    s16 stepSize = 0;
+s16 Math_SmoothStepToS(s16* pValue, s16 target, s16 fractionInv, s16 maxStep, s16 minStep) {
+    s16 step = 0;
     s16 diff = target - *pValue;
 
     if (*pValue != target) {
-        stepSize = diff / scale;
+        step = diff / fractionInv;
 
-        if ((stepSize > minStep) || (stepSize < -minStep)) {
-            if (stepSize > step) {
-                stepSize = step;
+        if ((step > minStep) || (step < -minStep)) {
+            if (step > maxStep) {
+                step = maxStep;
             }
 
-            if (stepSize < -step) {
-                stepSize = -step;
+            if (step < -maxStep) {
+                step = -maxStep;
             }
 
-            *pValue += stepSize;
+            *pValue += step;
         } else {
             if (diff >= 0) {
                 *pValue += minStep;
@@ -569,17 +569,17 @@ s16 Math_SmoothStepToS(s16* pValue, s16 target, s16 scale, s16 step, s16 minStep
 /**
  * Changes pValue by step towards target. If step is more than 1/scale of the remaining distance, step by that instead.
  */
-void Math_ApproachS(s16* pValue, s16 target, s16 scale, s16 step) {
-    s16 diff = target - *pValue;
+void Math_ApproachS(s16* pValue, s16 target, s16 fractionInv, s16 maxStep) {
+    s16 step = (target - *pValue);
 
-    diff /= scale;
+    step /= fractionInv;
 
-    if (diff > step) {
-        *pValue += step;
-    } else if (diff < -step) {
-        *pValue -= step;
+    if (step > maxStep) {
+        *pValue += maxStep;
+    } else if (step < -maxStep) {
+        *pValue -= maxStep;
     } else {
-        *pValue += diff;
+        *pValue += step;
     }
 }
 

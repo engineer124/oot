@@ -159,7 +159,7 @@ void EnBa_Idle(EnBa* this, PlayState* play) {
     this->unk_2FC.y -= 448.0f;
     this->unk_2FC.x += this->unk_308.x;
     this->unk_2FC.z += this->unk_308.y;
-    func_80033AEC(&this->unk_2FC, &this->unk_158[13], 1.0f, this->actor.speedXZ, 0.0f, 0.0f);
+    Actor_SmoothStepToVec3f(&this->unk_2FC, &this->unk_158[13], 1.0f, this->actor.speedXZ, 0.0f, 0.0f);
     for (i = 12; i >= 0; i--) {
         func_80035844(&this->unk_158[i + 1], &this->unk_158[i], &sp5C, 0);
         Matrix_Translate(this->unk_158[i + 1].x, this->unk_158[i + 1].y, this->unk_158[i + 1].z, MTXMODE_NEW);
@@ -344,7 +344,7 @@ void EnBa_RecoilFromDamage(EnBa* this, PlayState* play) {
     this->unk_2FC.y -= 448.0f;
     this->unk_2FC.x += this->unk_308.x;
     this->unk_2FC.z += this->unk_308.y;
-    func_80033AEC(&this->unk_2FC, &this->unk_158[13], 1.0f, this->actor.speedXZ, 0.0f, 0.0f);
+    Actor_SmoothStepToVec3f(&this->unk_2FC, &this->unk_158[13], 1.0f, this->actor.speedXZ, 0.0f, 0.0f);
     for (i = 12; i >= 0; i--) {
         func_80035844(&this->unk_158[i + 1], &this->unk_158[i], &sp6C, 0);
         Matrix_Translate(this->unk_158[i + 1].x, this->unk_158[i + 1].y, this->unk_158[i + 1].z, MTXMODE_NEW);

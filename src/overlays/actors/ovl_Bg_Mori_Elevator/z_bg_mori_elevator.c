@@ -38,40 +38,37 @@ static InitChainEntry sInitChain[] = {
     ICHAIN_VEC3F_DIV1000(scale, 1000, ICHAIN_STOP),
 };
 
-f32 func_808A1800(f32* pValue, f32 target, f32 scale, f32 maxStep, f32 minStep) {
-    f32 var = (target - *pValue) * scale;
+f32 BgMoriElevator_SmoothStepToF(f32* pValue, f32 target, f32 fraction, f32 maxStep, f32 minStep) {
+    f32 step = (target - *pValue) * fraction;
 
     if (*pValue < target) {
-        if (maxStep < var) {
-            var = maxStep;
+        if (step > maxStep) {
+            step = maxStep;
         } else {
-            if (var < minStep) {
-                var = minStep;
+            if (step < minStep) {
+                step = minStep;
             }
         }
-        *pValue = (*pValue + var);
-
-        if (target < *pValue) {
+        *pValue += step;
+        if (*pValue > target) {
             *pValue = target;
         }
     } else {
-        if (target < *pValue) {
-            if (var < (-maxStep)) {
-                var = (-maxStep);
-            } else {
-                if ((-minStep) < var) {
-                    var = (-minStep);
-                }
+        if (*pValue > target) {
+            if (step < -maxStep) {
+                step = -maxStep;
+            } else if (step > -minStep) {
+                step = -minStep;
             }
-            *pValue = (*pValue + var);
+            *pValue += step;
             if (*pValue < target) {
                 *pValue = target;
             }
         } else {
-            var = 0.0f;
+            step = 0.0f;
         }
     }
-    return var;
+    return step;
 }
 
 void func_808A18FC(BgMoriElevator* this, f32 distTo) {
@@ -157,8 +154,9 @@ void func_808A1C30(BgMoriElevator* this) {
 void BgMoriElevator_MoveIntoGround(BgMoriElevator* this, PlayState* play) {
     f32 distToTarget;
 
-    func_808A1800(&this->dyna.actor.velocity.y, 2.0f, 0.05f, 1.0f, 0.0f);
-    distToTarget = func_808A1800(&this->dyna.actor.world.pos.y, 73.0f, 0.08f, this->dyna.actor.velocity.y, 1.5f);
+    BgMoriElevator_SmoothStepToF(&this->dyna.actor.velocity.y, 2.0f, 0.05f, 1.0f, 0.0f);
+    distToTarget =
+        BgMoriElevator_SmoothStepToF(&this->dyna.actor.world.pos.y, 73.0f, 0.08f, this->dyna.actor.velocity.y, 1.5f);
     if (fabsf(distToTarget) < 0.001f) {
         BgMoriElevator_SetupSetPosition(this);
         Audio_PlayActorSfx2(&this->dyna.actor, NA_SE_EV_ELEVATOR_STOP);
@@ -176,8 +174,9 @@ void func_808A1CF4(BgMoriElevator* this, PlayState* play) {
 void BgMoriElevator_MoveAboveGround(BgMoriElevator* this, PlayState* play) {
     f32 distToTarget;
 
-    func_808A1800(&this->dyna.actor.velocity.y, 2.0f, 0.05f, 1.0f, 0.0f);
-    distToTarget = func_808A1800(&this->dyna.actor.world.pos.y, 233.0f, 0.08f, this->dyna.actor.velocity.y, 1.5f);
+    BgMoriElevator_SmoothStepToF(&this->dyna.actor.velocity.y, 2.0f, 0.05f, 1.0f, 0.0f);
+    distToTarget =
+        BgMoriElevator_SmoothStepToF(&this->dyna.actor.world.pos.y, 233.0f, 0.08f, this->dyna.actor.velocity.y, 1.5f);
     if (fabsf(distToTarget) < 0.001f) {
         BgMoriElevator_SetupSetPosition(this);
         Audio_PlayActorSfx2(&this->dyna.actor, NA_SE_EV_ELEVATOR_STOP);
@@ -229,8 +228,9 @@ void BgMoriElevator_StopMovement(BgMoriElevator* this) {
 void func_808A2008(BgMoriElevator* this, PlayState* play) {
     f32 distTo;
 
-    func_808A1800(&this->dyna.actor.velocity.y, 12.0f, 0.1f, 1.0f, 0.0f);
-    distTo = func_808A1800(&this->dyna.actor.world.pos.y, this->targetY, 0.1f, this->dyna.actor.velocity.y, 0.3f);
+    BgMoriElevator_SmoothStepToF(&this->dyna.actor.velocity.y, 12.0f, 0.1f, 1.0f, 0.0f);
+    distTo = BgMoriElevator_SmoothStepToF(&this->dyna.actor.world.pos.y, this->targetY, 0.1f,
+                                          this->dyna.actor.velocity.y, 0.3f);
     if (fabsf(distTo) < 0.001f) {
         BgMoriElevator_SetupSetPosition(this);
         Audio_PlayActorSfx2(&this->dyna.actor, NA_SE_EV_ELEVATOR_STOP);

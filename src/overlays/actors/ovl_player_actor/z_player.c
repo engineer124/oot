@@ -3335,24 +3335,29 @@ void func_808368EC(Player* this, PlayState* play) {
     this->unk_87C = this->actor.shape.rot.y - previousYaw;
 }
 
-s32 func_808369C8(s16* pValue, s16 arg1, s16 arg2, s16 arg3, s16 arg4, s16 arg5) {
-    s16 temp1;
-    s16 temp2;
-    s16 temp3;
+s32 func_808369C8(s16* pValue, s16 target, s16 step, s16 maxValue, s16 pValueRef, s16 pValueRefMaxDiff) {
+    s16 pValueRefDiff;
+    s16 pValueRefDiffClamped;
+    s16 pValueBeforeMax;
 
-    temp1 = temp2 = arg4 - *pValue;
-    temp2 = CLAMP(temp2, -arg5, arg5);
-    *pValue += (s16)(temp1 - temp2);
+    // Ensure that pValue is within `pValueRefMaxDiff` degrees of `pValueRef`.
+    // If within that range, no change to pValue.
+    // If not, move pValue to `pValueRefMaxDiff` degrees away from `pValueRef`.
+    pValueRefDiff = pValueRefDiffClamped = pValueRef - *pValue;
+    pValueRefDiffClamped = CLAMP(pValueRefDiffClamped, -pValueRefMaxDiff, pValueRefMaxDiff);
+    *pValue += (s16)(pValueRefDiff - pValueRefDiffClamped);
 
-    Math_ScaledStepToS(pValue, arg1, arg2);
+    // Step to target
+    Math_ScaledStepToS(pValue, target, step);
 
-    temp3 = *pValue;
-    if (*pValue < -arg3) {
-        *pValue = -arg3;
-    } else if (*pValue > arg3) {
-        *pValue = arg3;
+    // Return excess angle that was put over the max value
+    pValueBeforeMax = *pValue;
+    if (*pValue < -maxValue) {
+        *pValue = -maxValue;
+    } else if (*pValue > maxValue) {
+        *pValue = maxValue;
     }
-    return temp3 - *pValue;
+    return pValueBeforeMax - *pValue;
 }
 
 s32 func_80836AB8(Player* this, s32 arg1) {
@@ -9736,7 +9741,7 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     MREG(64) = 0;
 }
 
-void func_808471F4(s16* pValue) {
+void Player_ScaledStepToZeroRot(s16* pValue) {
     s16 step;
 
     step = (ABS(*pValue) * 100.0f) / 1000.0f;
@@ -9750,44 +9755,44 @@ void func_80847298(Player* this) {
 
     if (!(this->unk_6AE & 2)) {
         sp26 = this->actor.focus.rot.y - this->actor.shape.rot.y;
-        func_808471F4(&sp26);
+        Player_ScaledStepToZeroRot(&sp26);
         this->actor.focus.rot.y = this->actor.shape.rot.y + sp26;
     }
 
     if (!(this->unk_6AE & 1)) {
-        func_808471F4(&this->actor.focus.rot.x);
+        Player_ScaledStepToZeroRot(&this->actor.focus.rot.x);
     }
 
     if (!(this->unk_6AE & 8)) {
-        func_808471F4(&this->unk_6B6);
+        Player_ScaledStepToZeroRot(&this->unk_6B6);
     }
 
     if (!(this->unk_6AE & 0x40)) {
-        func_808471F4(&this->unk_6BC);
+        Player_ScaledStepToZeroRot(&this->unk_6BC);
     }
 
     if (!(this->unk_6AE & 4)) {
-        func_808471F4(&this->actor.focus.rot.z);
+        Player_ScaledStepToZeroRot(&this->actor.focus.rot.z);
     }
 
     if (!(this->unk_6AE & 0x10)) {
-        func_808471F4(&this->unk_6B8);
+        Player_ScaledStepToZeroRot(&this->unk_6B8);
     }
 
     if (!(this->unk_6AE & 0x20)) {
-        func_808471F4(&this->unk_6BA);
+        Player_ScaledStepToZeroRot(&this->unk_6BA);
     }
 
     if (!(this->unk_6AE & 0x80)) {
         if (this->unk_6B0 != 0) {
-            func_808471F4(&this->unk_6B0);
+            Player_ScaledStepToZeroRot(&this->unk_6B0);
         } else {
-            func_808471F4(&this->unk_6BE);
+            Player_ScaledStepToZeroRot(&this->unk_6BE);
         }
     }
 
     if (!(this->unk_6AE & 0x100)) {
-        func_808471F4(&this->unk_6C0);
+        Player_ScaledStepToZeroRot(&this->unk_6C0);
     }
 
     this->unk_6AE = 0;
