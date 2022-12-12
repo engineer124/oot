@@ -347,8 +347,8 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ f32 yOffset;
-    /* 0x04 */ f32 distMin;
-    /* 0x08 */ f32 distMax;
+    /* 0x04 */ f32 minDist;
+    /* 0x08 */ f32 maxDist;
     /* 0x0C */ f32 unk_0C;
     /* 0x10 */ f32 unk_10;
     /* 0x14 */ f32 unk_14;
@@ -364,7 +364,7 @@ typedef struct {
     /* 0x20 */ f32 unk_20;
     /* 0x24 */ s16 slopePitchAdj;
     /* 0x26 */ s16 swingYawTarget;
-    /* 0x28 */ s16 unk_28;
+    /* 0x28 */ s16 distTimer;
     /* 0x2A */ s16 startSwingTimer;
 } Normal1ReadWriteData; // size = 0x2C
 
@@ -406,8 +406,8 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ f32 unk_00;
-    /* 0x04 */ f32 unk_04;
-    /* 0x08 */ f32 unk_08;
+    /* 0x04 */ f32 minDist;
+    /* 0x08 */ f32 maxDist;
     /* 0x0C */ f32 unk_0C;
     /* 0x10 */ f32 unk_10;
     /* 0x14 */ f32 unk_14;
@@ -450,8 +450,8 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ f32 yOffset;
-    /* 0x04 */ f32 distMin;
-    /* 0x08 */ f32 distMax;
+    /* 0x04 */ f32 minDist;
+    /* 0x08 */ f32 maxDist;
     /* 0x0C */ f32 yawUpdateSpeed;
     /* 0x10 */ f32 unk_10;
     /* 0x14 */ f32 fovTarget;
@@ -542,8 +542,8 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ f32 atYOffset;
-    /* 0x04 */ f32 distMin;
-    /* 0x08 */ f32 distMax;
+    /* 0x04 */ f32 minDist;
+    /* 0x08 */ f32 maxDist;
     /* 0x0C */ f32 yawUpateRateTarget;
     /* 0x10 */ f32 maxYawUpdate;
     /* 0x14 */ f32 unk_14; // never used.
@@ -585,7 +585,7 @@ typedef struct {
     /* 0x10 */ f32 yawUpdateRateTarget;
     /* 0x14 */ f32 xzUpdateRateTarget;
     /* 0x18 */ f32 fovTarget;
-    /* 0x1C */ f32 atLERPStepScale;
+    /* 0x1C */ f32 atUpdateRate;
     /* 0x20 */ s16 interfaceField;
 } Jump2ReadOnlyData; // size = 0x24
 
@@ -619,8 +619,8 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ f32 yOffset;
-    /* 0x04 */ f32 distMin;
-    /* 0x08 */ f32 distMax;
+    /* 0x04 */ f32 minDist;
+    /* 0x08 */ f32 maxDist;
     /* 0x0C */ f32 swingUpdateRate;
     /* 0x10 */ f32 unk_10;
     /* 0x14 */ f32 unk_14;
@@ -633,7 +633,7 @@ typedef struct {
 typedef struct {
     /* 0x00 */ SwingAnimation swing;
     /* 0x1C */ f32 unk_1C;
-    /* 0x20 */ s16 animTimer;
+    /* 0x20 */ s16 distTimer;
     /* 0x22 */ s16 mode;
 } Jump3ReadWriteData; // size = 0x24
 
@@ -1086,8 +1086,8 @@ typedef struct {
 
 typedef struct {
     /* 0x00 */ f32 yOffset;
-    /* 0x04 */ f32 distMin;
-    /* 0x08 */ f32 distMax;
+    /* 0x04 */ f32 minDist;
+    /* 0x08 */ f32 maxDist;
     /* 0x0C */ char unk_0C[4]; // unused
     /* 0x10 */ f32 fovTarget;
     /* 0x14 */ f32 atLERPScaleMax;
@@ -1542,7 +1542,7 @@ typedef struct Camera {
     /* 0x0E4 */ Vec3f posOffset;
     /* 0x0F0 */ Vec3f playerPosDelta;
     /* 0x0FC */ f32 fov;
-    /* 0x100 */ f32 atLERPStepScale;
+    /* 0x100 */ f32 atUpdateRate;
     /* 0x104 */ f32 playerGroundY;
     /* 0x108 */ Vec3f floorNorm;
     /* 0x114 */ f32 waterYPos;

@@ -4525,7 +4525,7 @@ void Audio_SplitBgmChannels(s8 volSplit) {
     }
 }
 
-void Audio_PlaySariaBgm(Vec3f* pos, u16 seqId, u16 distMax) {
+void Audio_PlaySariaBgm(Vec3f* pos, u16 seqId, u16 maxDist) {
     f32 absY;
     f32 dist;
     u8 vol;
@@ -4555,10 +4555,10 @@ void Audio_PlaySariaBgm(Vec3f* pos, u16 seqId, u16 distMax) {
         absY = pos->y;
     }
 
-    if ((distMax / 15.0f) < absY) {
+    if ((maxDist / 15.0f) < absY) {
         vol = 0;
-    } else if (dist < distMax) {
-        vol = (1.0f - (dist / distMax)) * 127.0f;
+    } else if (dist < maxDist) {
+        vol = (1.0f - (dist / maxDist)) * 127.0f;
     } else {
         vol = 0;
     }

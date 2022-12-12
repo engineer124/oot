@@ -1555,7 +1555,7 @@ s32 Play_CameraSetAtEye(PlayState* this, s16 camId, Vec3f* at, Vec3f* eye) {
         camera->posOffset.x = camera->posOffset.y = camera->posOffset.z = 0.0f;
     }
 
-    camera->atLERPStepScale = 0.01f;
+    camera->atUpdateRate = 0.01f;
 
     return ret;
 }
@@ -1583,7 +1583,7 @@ s32 Play_CameraSetAtEyeUp(PlayState* this, s16 camId, Vec3f* at, Vec3f* eye, Vec
         camera->posOffset.x = camera->posOffset.y = camera->posOffset.z = 0.0f;
     }
 
-    camera->atLERPStepScale = 0.01f;
+    camera->atUpdateRate = 0.01f;
 
     return ret;
 }

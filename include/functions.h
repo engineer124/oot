@@ -1696,7 +1696,7 @@ void func_800F4C58(Vec3f* pos, u16 sfxId, u8);
 void func_800F4E30(Vec3f* pos, f32);
 void Audio_ClearSariaBgm(void);
 void Audio_ClearSariaBgmAtPos(Vec3f* pos);
-void Audio_PlaySariaBgm(Vec3f* pos, u16 seqId, u16 distMax);
+void Audio_PlaySariaBgm(Vec3f* pos, u16 seqId, u16 maxDist);
 void Audio_ClearSariaBgm2(void);
 void Audio_PlayMorningSceneSequence(u16 seqId);
 void Audio_PlaySceneSequence(u16 seqId);

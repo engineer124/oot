@@ -398,33 +398,33 @@ void IChain_Apply_Vec3s(u8* ptr, InitChainEntry* ichain) {
 }
 
 /**
- * Changes pValue by step towards target. If this step is more than fraction of the remaining distance, step by that
- * instead, with a minimum step of minStep. Returns remaining distance to target.
+ * Changes pValue by a fraction of the remaining distance, with a minimum step of minStep and a maximum step of maxStep.
+ * Returns remaining distance to target.
  */
-f32 Math_SmoothStepToF(f32* pValue, f32 target, f32 fraction, f32 step, f32 minStep) {
+f32 Math_SmoothStepToF(f32* pValue, f32 target, f32 fraction, f32 maxStep, f32 minStep) {
     if (*pValue != target) {
-        f32 stepSize = (target - *pValue) * fraction;
+        f32 step = (target - *pValue) * fraction;
 
-        if ((stepSize >= minStep) || (stepSize <= -minStep)) {
-            if (stepSize > step) {
-                stepSize = step;
+        if ((step >= minStep) || (step <= -minStep)) {
+            if (step > maxStep) {
+                step = maxStep;
             }
 
-            if (stepSize < -step) {
-                stepSize = -step;
+            if (step < -maxStep) {
+                step = -maxStep;
             }
 
-            *pValue += stepSize;
+            *pValue += step;
         } else {
-            if (stepSize < minStep) {
+            if (step < minStep) {
                 *pValue += minStep;
-                stepSize = minStep;
+                step = minStep;
 
-                if (target < *pValue) {
+                if (*pValue > target) {
                     *pValue = target;
                 }
             }
-            if (stepSize > -minStep) {
+            if (step > -minStep) {
                 *pValue += -minStep;
 
                 if (*pValue < target) {
