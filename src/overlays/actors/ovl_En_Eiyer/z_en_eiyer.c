@@ -445,7 +445,7 @@ void EnEiyer_Glide(EnEiyer* this, PlayState* play) {
         EnEiyer_SetupStartAttack(this);
     }
 
-    Actor_PlaySfx_Flagged(&this->actor, NA_SE_EN_EIER_FLY - SFX_FLAG);
+    Actor_PlaySfx_Shared(&this->actor, NA_SE_EN_EIER_FLY - SFX_FLAG);
 }
 
 void EnEiyer_StartAttack(EnEiyer* this, PlayState* play) {
@@ -469,7 +469,7 @@ void EnEiyer_StartAttack(EnEiyer* this, PlayState* play) {
     this->actor.world.rot.x = -this->actor.shape.rot.x;
     Math_StepToF(&this->actor.speedXZ, 5.0f, 0.3f);
     Math_ApproachS(&this->actor.world.rot.y, this->actor.yawTowardsPlayer, 2, 0x71C);
-    Actor_PlaySfx_Flagged(&this->actor, NA_SE_EN_EIER_FLY - SFX_FLAG);
+    Actor_PlaySfx_Shared(&this->actor, NA_SE_EN_EIER_FLY - SFX_FLAG);
 }
 
 void EnEiyer_DiveAttack(EnEiyer* this, PlayState* play) {
@@ -484,7 +484,7 @@ void EnEiyer_DiveAttack(EnEiyer* this, PlayState* play) {
         this->collider.base.atFlags &= ~(AT_ON | AT_HIT);
     }
 
-    Actor_PlaySfx_Flagged(&this->actor, NA_SE_EN_EIER_FLY - SFX_FLAG);
+    Actor_PlaySfx_Shared(&this->actor, NA_SE_EN_EIER_FLY - SFX_FLAG);
 }
 
 void EnEiyer_Land(EnEiyer* this, PlayState* play) {

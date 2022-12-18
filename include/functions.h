@@ -430,12 +430,12 @@ void func_8002F758(PlayState* play, Actor* actor, f32 arg2, s16 arg3, f32 arg4, 
 void func_8002F7A0(PlayState* play, Actor* actor, f32 arg2, s16 arg3, f32 arg4);
 void Player_PlaySfx(Actor* actor, u16 sfxId);
 void Actor_PlaySfx(Actor* actor, u16 sfxId);
-void Actor_PlaySfx_Surface(PlayState* play, Actor* actor);
-void Actor_PlaySfx_Flagged2(Actor* actor, u16 sfxId);
-void Actor_PlaySfx_FlaggedCentered2(Actor* actor, u16 sfxId);
-void Actor_PlaySfx_FlaggedCentered(Actor* actor, u16 sfxId);
-void Actor_PlaySfx_Flagged(Actor* actor, u16 sfxId);
-void Actor_PlaySfx_FlaggedTimer(Actor* actor, s32 timer);
+void Actor_PlaySfx_BombOnSurface(PlayState* play, Actor* actor);
+void Actor_PlaySfx_Shared2(Actor* actor, u16 sfxId);
+void Actor_PlaySfx_SharedCentered2(Actor* actor, u16 sfxId);
+void Actor_PlaySfx_SharedCentered(Actor* actor, u16 sfxId);
+void Actor_PlaySfx_Shared(Actor* actor, u16 sfxId);
+void Actor_PlaySfx_SharedTimer(Actor* actor, s32 timer);
 s32 func_8002F9EC(PlayState* play, Actor* actor, CollisionPoly* poly, s32 bgId, Vec3f* pos);
 void Actor_DisableLens(PlayState* play);
 void Actor_InitContext(PlayState* play, ActorContext* actorCtx, ActorEntry* playerEntry);

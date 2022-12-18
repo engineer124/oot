@@ -211,7 +211,7 @@ void func_808A3E54(BgMoriHineri* this, PlayState* play) {
         }
     }
     if ((sSubCamId >= CAM_ID_SUB_FIRST) && ((GET_ACTIVE_CAM(play)->eye.z - this->dyna.actor.world.pos.z) < 1100.0f)) {
-        Actor_PlaySfx_FlaggedCentered(&this->dyna.actor, NA_SE_EV_FLOOR_ROLLING - SFX_FLAG);
+        Actor_PlaySfx_SharedCentered(&this->dyna.actor, NA_SE_EV_FLOOR_ROLLING - SFX_FLAG);
     }
 }
 

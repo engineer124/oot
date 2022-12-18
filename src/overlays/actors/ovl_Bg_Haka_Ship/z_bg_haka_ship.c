@@ -164,7 +164,7 @@ void BgHakaShip_CrashShake(BgHakaShip* this, PlayState* play) {
         this->dyna.actor.gravity = -1.0f;
         this->actionFunc = BgHakaShip_CrashFall;
     }
-    Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_BLOCKSINK - SFX_FLAG);
+    Actor_PlaySfx_Shared(&this->dyna.actor, NA_SE_EV_BLOCKSINK - SFX_FLAG);
 }
 
 void BgHakaShip_CrashFall(BgHakaShip* this, PlayState* play) {

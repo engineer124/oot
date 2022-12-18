@@ -261,7 +261,7 @@ void func_808B8F08(BgSpot18Obj* this, PlayState* play) {
         Lib_PlaySfx(NA_SE_SY_CORRECT_CHIME);
         Actor_PlaySfx(&this->dyna.actor, NA_SE_EV_BLOCK_BOUND);
     } else {
-        Actor_PlaySfx_Flagged(&this->dyna.actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
+        Actor_PlaySfx_Shared(&this->dyna.actor, NA_SE_EV_ROCK_SLIDE - SFX_FLAG);
     }
 }
 

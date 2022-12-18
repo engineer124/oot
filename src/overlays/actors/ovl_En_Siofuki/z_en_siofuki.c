@@ -201,7 +201,7 @@ void func_80AFC218(EnSiofuki* this, PlayState* play) {
                 break;
         }
     } else {
-        Actor_PlaySfx_FlaggedTimer(&this->dyna.actor, this->timer);
+        Actor_PlaySfx_SharedTimer(&this->dyna.actor, this->timer);
     }
 
     if (((((u16)this->dyna.actor.params >> 0xC) & 0xF) == EN_SIOFUKI_LOWERING) &&

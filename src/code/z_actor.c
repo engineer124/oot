@@ -1729,7 +1729,7 @@ void Actor_PlaySfx(Actor* actor, u16 sfxId) {
     Lib_PlaySfx_AtPos(&actor->projectedPos, sfxId);
 }
 
-void Actor_PlaySfx_Surface(PlayState* play, Actor* actor) {
+void Actor_PlaySfx_BombOnSurface(PlayState* play, Actor* actor) {
     s32 surfaceSfxOffset;
 
     if (actor->bgCheckFlags & BGCHECKFLAG_WATER) {
@@ -1749,7 +1749,7 @@ void Actor_PlaySfx_Surface(PlayState* play, Actor* actor) {
 /**
  * Play a sfx at the actor's position using the shared audio actorFlag system
  */
-void Actor_PlaySfx_Flagged2(Actor* actor, u16 sfxId) {
+void Actor_PlaySfx_Shared2(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
     actor->flags |= ACTOR_FLAG_SFX_AT_POS;
     actor->flags &= ~(ACTOR_FLAG_SFX_CENTERED2 | ACTOR_FLAG_SFX_CENTERED | ACTOR_FLAG_SFX_TIMER);
@@ -1758,7 +1758,7 @@ void Actor_PlaySfx_Flagged2(Actor* actor, u16 sfxId) {
 /**
  * Play a sfx at the center of the screen using the shared audio actorFlag system
  */
-void Actor_PlaySfx_FlaggedCentered2(Actor* actor, u16 sfxId) {
+void Actor_PlaySfx_SharedCentered2(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
     actor->flags |= ACTOR_FLAG_SFX_CENTERED2;
     actor->flags &= ~(ACTOR_FLAG_SFX_AT_POS | ACTOR_FLAG_SFX_CENTERED | ACTOR_FLAG_SFX_TIMER);
@@ -1767,7 +1767,7 @@ void Actor_PlaySfx_FlaggedCentered2(Actor* actor, u16 sfxId) {
 /**
  * Play a sfx at the center of the screen using the shared audio actorFlag system
  */
-void Actor_PlaySfx_FlaggedCentered(Actor* actor, u16 sfxId) {
+void Actor_PlaySfx_SharedCentered(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
     actor->flags |= ACTOR_FLAG_SFX_CENTERED;
     actor->flags &= ~(ACTOR_FLAG_SFX_AT_POS | ACTOR_FLAG_SFX_CENTERED2 | ACTOR_FLAG_SFX_TIMER);
@@ -1776,13 +1776,13 @@ void Actor_PlaySfx_FlaggedCentered(Actor* actor, u16 sfxId) {
 /**
  * Play a sfx at the actor's position using the shared audio actorFlag system
  */
-void Actor_PlaySfx_Flagged(Actor* actor, u16 sfxId) {
+void Actor_PlaySfx_Shared(Actor* actor, u16 sfxId) {
     actor->flags &=
         ~(ACTOR_FLAG_SFX_AT_POS | ACTOR_FLAG_SFX_CENTERED2 | ACTOR_FLAG_SFX_CENTERED | ACTOR_FLAG_SFX_TIMER);
     actor->sfx = sfxId;
 }
 
-void Actor_PlaySfx_FlaggedTimer(Actor* actor, s32 timer) {
+void Actor_PlaySfx_SharedTimer(Actor* actor, s32 timer) {
     actor->flags |= ACTOR_FLAG_SFX_TIMER;
     actor->flags &= ~(ACTOR_FLAG_SFX_AT_POS | ACTOR_FLAG_SFX_CENTERED2 | ACTOR_FLAG_SFX_CENTERED);
 

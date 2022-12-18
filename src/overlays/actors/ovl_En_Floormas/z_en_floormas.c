@@ -581,7 +581,7 @@ void EnFloormas_Slide(EnFloormas* this, PlayState* play) {
 
     func_800286CC(play, &pos, &velocity, &accel, 450, 100);
 
-    Actor_PlaySfx_Flagged(&this->actor, NA_SE_EN_FLOORMASTER_SLIDING - SFX_FLAG);
+    Actor_PlaySfx_Shared(&this->actor, NA_SE_EN_FLOORMASTER_SLIDING - SFX_FLAG);
 }
 
 void EnFloormas_Charge(EnFloormas* this, PlayState* play) {
@@ -928,7 +928,7 @@ void EnFloormas_Merge(EnFloormas* this, PlayState* play) {
             }
         }
     }
-    Actor_PlaySfx_Flagged(&this->actor, NA_SE_EN_FLOORMASTER_RESTORE - SFX_FLAG);
+    Actor_PlaySfx_Shared(&this->actor, NA_SE_EN_FLOORMASTER_RESTORE - SFX_FLAG);
 }
 
 void EnFloormas_SmWait(EnFloormas* this, PlayState* play) {
