@@ -326,7 +326,7 @@ void func_80AA0EA0(EnMa1* this, PlayState* play) {
         this->actor.parent = NULL;
         this->actionFunc = func_80AA0EFC;
     } else {
-        func_8002F434(&this->actor, play, GI_WEIRD_EGG, 120.0f, 10.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_WEIRD_EGG, 120.0f, 10.0f);
     }
 }
 
@@ -457,7 +457,7 @@ void EnMa1_Draw(Actor* thisx, PlayState* play) {
 
     activeCam = GET_ACTIVE_CAM(play);
     distFromCamEye = Math_Vec3f_DistXZ(&this->actor.world.pos, &activeCam->eye);
-    Audio_UpdateMalonSinging(distFromCamEye, SEQ_ID_LONLON);
+    Audio_UpdateMalonSinging(distFromCamEye, NA_BGM_LONLON);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(sMouthTextures[this->mouthIndex]));

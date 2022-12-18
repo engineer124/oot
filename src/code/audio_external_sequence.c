@@ -79,7 +79,7 @@ void AudioSeq_StartSequence(u8 seqPlayerIndex, u8 seqId, u8 seqArgs, u16 fadeInD
 void AudioSeq_StopSequence(u8 seqPlayerIndex, u16 fadeOutDuration) {
     AUDIOCMD_GLOBAL_DISABLE_SEQPLAYER(seqPlayerIndex,
                                       (fadeOutDuration * (u16)gAudioCtx.audioBufParams.updatesPerFrame) / 4);
-    gSeqController[seqPlayerIndex].seqId = SEQ_ID_DISABLED;
+    gSeqController[seqPlayerIndex].seqId = NA_BGM_DISABLED;
 }
 
 void AudioSeq_ProcessSeqCmd(u32 cmd) {
@@ -410,7 +410,7 @@ void AudioSeq_ProcessSeqCmds(void) {
 
 u16 AudioSeq_GetActiveSeqId(u8 seqPlayerIndex) {
     if (!gAudioCtx.seqPlayers[seqPlayerIndex].enabled) {
-        return SEQ_ID_DISABLED;
+        return NA_BGM_DISABLED;
     }
     return gSeqController[seqPlayerIndex].seqId;
 }
@@ -796,8 +796,8 @@ void AudioSeq_ResetActiveSequences(void) {
     for (seqPlayerIndex = 0; seqPlayerIndex < SEQ_PLAYER_MAX; seqPlayerIndex++) {
         sNumSeqRequests[seqPlayerIndex] = 0;
 
-        gSeqController[seqPlayerIndex].seqId = SEQ_ID_DISABLED;
-        gSeqController[seqPlayerIndex].prevSeqId = SEQ_ID_DISABLED;
+        gSeqController[seqPlayerIndex].seqId = NA_BGM_DISABLED;
+        gSeqController[seqPlayerIndex].prevSeqId = NA_BGM_DISABLED;
         gSeqController[seqPlayerIndex].tempoTimer = 0;
         gSeqController[seqPlayerIndex].tempoOriginal = 0;
         gSeqController[seqPlayerIndex].tempoCmd = 0;

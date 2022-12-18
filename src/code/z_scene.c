@@ -269,7 +269,7 @@ void Scene_CommandObjectList(PlayState* play, SceneCmd* cmd) {
                 status2++;
             }
             play->objectCtx.num = i;
-            func_80031A28(play, &play->actorCtx);
+            Actor_KillAllWithMissingObject(play, &play->actorCtx);
 
             continue;
         }
@@ -395,7 +395,7 @@ void Scene_CommandSoundSettings(PlayState* play, SceneCmd* cmd) {
     play->sequenceCtx.seqId = cmd->soundSettings.seqId;
     play->sequenceCtx.ambienceId = cmd->soundSettings.ambienceId;
 
-    if (gSaveContext.seqId == (u8)SEQ_ID_DISABLED) {
+    if (gSaveContext.seqId == (u8)NA_BGM_DISABLED) {
         SEQCMD_RESET_AUDIO_HEAP(0, cmd->soundSettings.specId);
     }
 }

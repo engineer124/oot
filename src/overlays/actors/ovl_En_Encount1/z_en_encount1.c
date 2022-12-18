@@ -69,7 +69,7 @@ void EnEncount1_Init(Actor* thisx, PlayState* play) {
         case SPAWNER_LEEVER:
             this->timer = 30;
             this->maxCurSpawns = 5;
-            if (play->sceneId == SCENE_HAUNTED_WASTELAND) { // Haunted Wasteland
+            if (play->sceneId == SCENE_HAUNTED_WASTELAND) {
                 this->reduceLeevers = true;
                 this->maxCurSpawns = 3;
             }
@@ -81,7 +81,7 @@ void EnEncount1_Init(Actor* thisx, PlayState* play) {
             break;
         case SPAWNER_STALCHILDREN:
         case SPAWNER_WOLFOS:
-            if (play->sceneId == SCENE_HYRULE_FIELD) { // Hyrule Field
+            if (play->sceneId == SCENE_HYRULE_FIELD) {
                 this->maxTotalSpawns = 10000;
             }
             this->updateFunc = EnEncount1_SpawnStalchildOrWolfos;
@@ -241,7 +241,7 @@ void EnEncount1_SpawnStalchildOrWolfos(EnEncount1* this, PlayState* play) {
     if ((this->curNumSpawn < this->maxCurSpawns) && (this->totalNumSpawn < this->maxTotalSpawns)) {
         while ((this->curNumSpawn < this->maxCurSpawns) && (this->totalNumSpawn < this->maxTotalSpawns)) {
             if (play->sceneId == SCENE_HYRULE_FIELD) {
-                if ((player->unk_89E == SURFACE_SFX_TYPE_0) || (player->actor.floorBgId != BGCHECK_SCENE) ||
+                if ((player->floorSfxOffset == SURFACE_SFX_OFFSET_DIRT) || (player->actor.floorBgId != BGCHECK_SCENE) ||
                     !(player->actor.bgCheckFlags & BGCHECKFLAG_GROUND) || (player->stateFlags1 & PLAYER_STATE1_27)) {
 
                     this->fieldSpawnTimer = 60;

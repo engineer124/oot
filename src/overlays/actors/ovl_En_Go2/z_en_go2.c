@@ -278,8 +278,8 @@ s32 EnGo2_SpawnDust(EnGo2* this, u8 initialTimer, f32 scale, f32 scaleStep, s32 
 
 void EnGo2_GetItem(EnGo2* this, PlayState* play, s32 getItemId) {
     this->getItemId = getItemId;
-    func_8002F434(&this->actor, play, getItemId, this->actor.xzDistToPlayer + 1.0f,
-                  fabsf(this->actor.yDistToPlayer) + 1.0f);
+    Actor_OfferGetItem(&this->actor, play, getItemId, this->actor.xzDistToPlayer + 1.0f,
+                       fabsf(this->actor.yDistToPlayer) + 1.0f);
 }
 
 s32 EnGo2_GetDialogState(EnGo2* this, PlayState* play) {
@@ -1162,10 +1162,10 @@ s32 EnGo2_IsCameraModified(EnGo2* this, PlayState* play) {
     if ((this->actor.params & 0x1F) == GORON_DMT_BIGGORON) {
         if (EnGo2_IsWakingUp(this)) {
             Camera_ChangeSetting(mainCam, CAM_SET_DIRECTED_YAW);
-            func_8005AD1C(mainCam, 4);
+            Camera_UnsetStateFlag(mainCam, CAM_STATE_2);
         } else if (!EnGo2_IsWakingUp(this) && (mainCam->setting == CAM_SET_DIRECTED_YAW)) {
             Camera_ChangeSetting(mainCam, CAM_SET_DUNGEON1);
-            func_8005ACFC(mainCam, 4);
+            Camera_SetStateFlag(mainCam, CAM_STATE_2);
         }
     }
 
@@ -1491,7 +1491,7 @@ void EnGo2_GoronFireCamera(EnGo2* this, PlayState* play) {
     this->subCamAt.x = this->actor.world.pos.x;
     this->subCamAt.y = this->actor.world.pos.y + 40.0f;
     this->subCamAt.z = this->actor.world.pos.z;
-    Play_CameraSetAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
+    Play_SetCameraAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
 }
 
 void EnGo2_GoronFireClearCamera(EnGo2* this, PlayState* play) {
@@ -1790,8 +1790,8 @@ void EnGo2_SetupGetItem(EnGo2* this, PlayState* play) {
         this->actor.parent = NULL;
         this->actionFunc = EnGo2_SetGetItem;
     } else {
-        func_8002F434(&this->actor, play, this->getItemId, this->actor.xzDistToPlayer + 1.0f,
-                      fabsf(this->actor.yDistToPlayer) + 1.0f);
+        Actor_OfferGetItem(&this->actor, play, this->getItemId, this->actor.xzDistToPlayer + 1.0f,
+                           fabsf(this->actor.yDistToPlayer) + 1.0f);
     }
 }
 
@@ -1923,8 +1923,8 @@ void EnGo2_GoronFireGenericAction(EnGo2* this, PlayState* play) {
                     (f32)((Math_SinS(this->actor.world.rot.y) * -30.0f) + this->actor.world.pos.x);
                 player->actor.world.pos.z =
                     (f32)((Math_CosS(this->actor.world.rot.y) * -30.0f) + this->actor.world.pos.z);
-                func_8002DF54(play, &this->actor, 8);
-                Audio_PlayFanfare(SEQ_ID_APPEAR);
+                func_8002DF54(play, &this->actor, PLAYER_CSMODE_8);
+                Audio_PlayFanfare(NA_BGM_APPEAR);
             }
             break;
         case 2: // Walking away
@@ -1960,7 +1960,7 @@ void EnGo2_GoronFireGenericAction(EnGo2* this, PlayState* play) {
         case 4: // Finalize walking away
             Message_CloseTextbox(play);
             EnGo2_GoronFireClearCamera(this, play);
-            func_8002DF54(play, &this->actor, 7);
+            func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
             Actor_Kill(&this->actor);
             break;
         case 1:

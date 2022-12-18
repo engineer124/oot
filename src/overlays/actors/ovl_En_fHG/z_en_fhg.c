@@ -142,7 +142,7 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 }
                 if (this->timers[0] == 51) {
                     Actor_PlaySfx(this->actor.child, NA_SE_EV_SPEAR_FENCE);
-                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
+                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
                 }
                 if (this->timers[0] == 0) {
                     EnfHG_SetupApproach(this, play, Rand_ZeroOne() * 5.99f);
@@ -151,7 +151,7 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 break;
             }
             func_80064520(play, &play->csCtx);
-            func_8002DF54(play, &this->actor, 8);
+            func_8002DF54(play, &this->actor, PLAYER_CSMODE_8);
             this->subCamId = Play_CreateSubCamera(play);
             Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
             Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
@@ -192,10 +192,10 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 Actor_PlaySfx(&this->actor, NA_SE_EV_GANON_HORSE_GROAN);
             }
             if (this->timers[0] == 20) {
-                func_8002DF54(play, &this->actor, 9);
+                func_8002DF54(play, &this->actor, PLAYER_CSMODE_9);
             }
             if (this->timers[0] == 1) {
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_OPENING_GANON);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_OPENING_GANON);
             }
             Math_ApproachF(&this->subCamEye.x, GND_BOSSROOM_CENTER_X + 40.0f, 0.05f, this->subCamVelFactor * 20.0f);
             Math_ApproachF(&this->subCamEye.y, GND_BOSSROOM_CENTER_Y + 37.0f, 0.05f, this->subCamVelFactor * 20.0f);
@@ -297,7 +297,7 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 Lib_PlaySfx_AtPos(&audioVec, NA_SE_EN_FANTOM_ST_LAUGH);
             }
             if (this->timers[0] == 20) {
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
             }
             if (this->timers[0] == 2) {
                 this->subCamVelFactor = 0.0f;
@@ -354,7 +354,7 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 this->bossGndSignal = FHG_FINISH;
             }
             if (this->timers[0] == 170) {
-                func_8002DF54(play, &this->actor, 8);
+                func_8002DF54(play, &this->actor, PLAYER_CSMODE_8);
                 Actor_PlaySfx(&this->actor, NA_SE_EN_FANTOM_MASIC2);
             }
             Math_ApproachF(&this->subCamEye.z, this->subCamPanZ + (GND_BOSSROOM_CENTER_Z + 100.0f), 0.1f,
@@ -397,16 +397,16 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 mainCam->eye = this->subCamEye;
                 mainCam->eyeNext = this->subCamEye;
                 mainCam->at = this->subCamAt;
-                func_800C08AC(play, this->subCamId, 0);
+                Play_ReturnToMainCam(play, this->subCamId, 0);
                 this->subCamId = SUB_CAM_ID_DONE;
                 func_80064534(play, &play->csCtx);
-                func_8002DF54(play, &this->actor, 7);
+                func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
                 this->actionFunc = EnfHG_Retreat;
             }
             break;
     }
     if (this->subCamId != SUB_CAM_ID_DONE) {
-        Play_CameraSetAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
+        Play_SetCameraAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
     }
 }
 

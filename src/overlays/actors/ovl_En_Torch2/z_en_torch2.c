@@ -237,7 +237,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
                     if (stickY) {}
                     sInput.cur.stick_y = stickY;
                 }
-                Audio_PlayBgm_StorePrevBgm(SEQ_ID_MINI_BOSS);
+                Audio_PlayBgm_StorePrevBgm(NA_BGM_MINI_BOSS);
                 sActionState = ENTORCH2_ATTACK;
             }
             break;
@@ -562,7 +562,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
     // Handles Dark Link being damaged
 
     if ((this->actor.colChkInfo.health == 0) && sDeathFlag) {
-        this->csMode = 0x18;
+        this->csMode = PLAYER_CSMODE_24;
         this->unk_448 = &player->actor;
         this->doorBgCamIndex = 1;
         sDeathFlag = false;
@@ -585,12 +585,12 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
             Item_DropCollectibleRandom(play, &this->actor, &thisx->world.pos, 0xC0);
             this->stateFlags3 &= ~PLAYER_STATE3_2;
         } else {
-            Audio_PlayBgm_StorePrevBgm(SEQ_ID_MINI_BOSS);
+            Audio_PlayBgm_StorePrevBgm(NA_BGM_MINI_BOSS);
             if (this->actor.colChkInfo.damageEffect == 1) {
                 if (sAlpha == 255) {
-                    Actor_SetColorFilter(&this->actor, 0, 0xFF, 0, 0x50);
+                    Actor_SetColorFilter(&this->actor, COLORFILTER_COLORFLAG_BLUE, 255, COLORFILTER_BUFFLAG_OPA, 80);
                 } else {
-                    Actor_SetColorFilter(&this->actor, 0, 0xFF, 0x2000, 0x50);
+                    Actor_SetColorFilter(&this->actor, COLORFILTER_COLORFLAG_BLUE, 255, COLORFILTER_BUFFLAG_XLU, 80);
                 }
             } else {
                 this->actor.flags &= ~ACTOR_FLAG_0;
@@ -604,9 +604,9 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
                 this->stateFlags3 |= PLAYER_STATE3_0;
                 sActionState = ENTORCH2_DAMAGE;
                 if (sAlpha == 255) {
-                    Actor_SetColorFilter(&this->actor, 0x4000, 0xFF, 0, 0xC);
+                    Actor_SetColorFilter(&this->actor, COLORFILTER_COLORFLAG_RED, 255, COLORFILTER_BUFFLAG_OPA, 12);
                 } else {
-                    Actor_SetColorFilter(&this->actor, 0x4000, 0xFF, 0x2000, 0xC);
+                    Actor_SetColorFilter(&this->actor, COLORFILTER_COLORFLAG_RED, 255, COLORFILTER_BUFFLAG_XLU, 12);
                 }
             }
         }

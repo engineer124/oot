@@ -165,7 +165,7 @@ void BossFd_UpdateCamera(BossFd* this, PlayState* play) {
                        this->subCamAtVel.z * this->subCamVelFactor);
         Math_ApproachF(&this->subCamVelFactor, 1.0f, 1.0f, this->subCamAccel);
         this->subCamAt.y += this->subCamAtYOffset;
-        Play_CameraSetAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
+        Play_SetCameraAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
         Math_ApproachZeroF(&this->subCamAtYOffset, 1.0f, 0.1f);
     }
 }
@@ -185,7 +185,7 @@ void BossFd_Init(Actor* thisx, PlayState* play) {
     SkelAnime_Init(play, &this->skelAnimeLeftArm, &gVolvagiaLeftArmSkel, &gVolvagiaLeftArmEmergeAnim, NULL, NULL, 0);
     this->introState = BFD_CS_WAIT;
     if (this->introState == BFD_CS_NONE) {
-        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_FIRE_BOSS);
+        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_FIRE_BOSS);
     }
 
     this->actor.world.pos.x = this->actor.world.pos.z = 0.0f;
@@ -312,7 +312,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
 
                     this->introState = BFD_CS_START;
                     func_80064520(play, &play->csCtx);
-                    func_8002DF54(play, &this->actor, 8);
+                    func_8002DF54(play, &this->actor, PLAYER_CSMODE_8);
                     this->subCamId = Play_CreateSubCamera(play);
                     Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
                     Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
@@ -389,7 +389,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                     Math_ApproachF(&this->subCamShake, 2.0f, 1.0f, 0.8 * 0.01f);
                 }
                 if (this->timers[0] == 40) {
-                    func_8002DF54(play, &this->actor, 0x13);
+                    func_8002DF54(play, &this->actor, PLAYER_CSMODE_19);
                 }
                 if (this->timers[0] == 0) {
                     this->introState = BFD_CS_LOOK_GROUND;
@@ -418,7 +418,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                     this->timers[0] = 170;
                     this->subCamVelFactor = 0.0f;
                     this->subCamAccel = 0.0f;
-                    func_8002DF54(play, &this->actor, 0x14);
+                    func_8002DF54(play, &this->actor, PLAYER_CSMODE_20);
                 }
                 break;
             case BFD_CS_COLLAPSE:
@@ -468,7 +468,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                 if (this->timers[3] == 190) {
                     this->subCamAtMaxVelFrac.x = this->subCamAtMaxVelFrac.y = this->subCamAtMaxVelFrac.z = 0.05f;
                     this->platformSignal = VBSIMA_KILL;
-                    func_8002DF54(play, &this->actor, 1);
+                    func_8002DF54(play, &this->actor, PLAYER_CSMODE_1);
                 }
                 if (this->actor.world.pos.y > 120.0f) {
                     this->subCamAtNext = this->actor.world.pos;
@@ -486,7 +486,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                     this->subCamAtYOffset = Math_CosS(this->work[BFD_MOVE_TIMER] * 0x8000) * this->subCamShake;
                 }
                 if (this->timers[3] == 160) {
-                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_FIRE_BOSS);
+                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_FIRE_BOSS);
                 }
                 if ((this->timers[3] == 130) && !GET_EVENTCHKINF(EVENTCHKINF_73)) {
                     TitleCard_InitBossName(play, &play->actorCtx.titleCtx,
@@ -534,11 +534,11 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                     mainCam->eye = this->subCamEye;
                     mainCam->eyeNext = this->subCamEye;
                     mainCam->at = this->subCamAt;
-                    func_800C08AC(play, this->subCamId, 0);
+                    Play_ReturnToMainCam(play, this->subCamId, 0);
                     // BFD_CS_NONE / BOSSFD_FLY_MAIN / SUB_CAM_ID_DONE
                     this->introState = this->introFlyState = this->subCamId = 0;
                     func_80064534(play, &play->csCtx);
-                    func_8002DF54(play, &this->actor, 7);
+                    func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
                     this->actionFunc = BossFd_Wait;
                     this->handoffSignal = FD2_SIGNAL_GROUND;
                     SET_EVENTCHKINF(EVENTCHKINF_73);
@@ -743,7 +743,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                 if (this->skinSegments != 0) {
                     this->skinSegments--;
                     if (this->skinSegments == 0) {
-                        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS_CLEAR);
+                        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS_CLEAR);
                     }
                 } else {
                     this->work[BFD_ACTION_STATE] = BOSSFD_BONES_FALL;
@@ -846,7 +846,7 @@ void BossFd_Fly(BossFd* this, PlayState* play) {
                         this->work[BFD_CAM_SHAKE_TIMER] = 20;
                         AudioSfx_PlaySfx(NA_SE_EN_VALVAISA_LAND2, &this->actor.projectedPos, 4,
                                          &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-                        func_8002DF54(play, &this->actor, 5);
+                        func_8002DF54(play, &this->actor, PLAYER_CSMODE_5);
                         for (i1 = 0; i1 < 15; i1++) {
                             Vec3f sp144 = { 0.0f, 0.0f, 0.0f };
                             Vec3f sp138 = { 0.0f, 0.0f, 0.0f };

@@ -137,7 +137,7 @@ void ConsoleLogo_Main(GameState* thisx) {
     }
 
     if (this->exit) {
-        gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
+        gSaveContext.seqId = (u8)NA_BGM_DISABLED;
         gSaveContext.ambienceId = 0xFF;
         gSaveContext.gameMode = GAMEMODE_TITLE_SCREEN;
         this->state.running = false;

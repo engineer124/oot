@@ -833,7 +833,7 @@ void func_80AEC650(EnRu1* this) {
 
     if (this->unk_280 == 0) {
         if (Animation_OnFrame(&this->skelAnime, 2.0f) || Animation_OnFrame(&this->skelAnime, 7.0f)) {
-            Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_WALK_DIRT);
+            Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_JABU);
         }
     }
 }
@@ -1574,7 +1574,7 @@ void func_80AEE568(EnRu1* this, PlayState* play) {
         if ((this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) && (this->actor.speedXZ == 0.0f) &&
             (this->actor.minVelocityY == 0.0f)) {
             func_80AEE02C(this);
-            func_8002F580(&this->actor, play);
+            Actor_OfferCarry(&this->actor, play);
             this->action = 27;
             func_80AEADD8(this);
         } else if (this->actor.yDistToWater > 0.0f) {
@@ -1675,7 +1675,7 @@ void func_80AEE7C4(EnRu1* this, PlayState* play) {
 s32 func_80AEEAC8(EnRu1* this, PlayState* play) {
     if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
         func_80AEE02C(this);
-        func_8002F580(&this->actor, play);
+        Actor_OfferCarry(&this->actor, play);
         this->action = 27;
         func_80AEADD8(this);
         return true;
@@ -1693,7 +1693,7 @@ void func_80AEEB24(EnRu1* this, PlayState* play) {
 }
 
 void func_80AEEBB4(EnRu1* this, PlayState* play) {
-    func_8002F580(&this->actor, play);
+    Actor_OfferCarry(&this->actor, play);
 }
 
 void func_80AEEBD4(EnRu1* this, PlayState* play) {
@@ -1845,7 +1845,7 @@ void func_80AEF1F0(EnRu1* this, PlayState* play, UNK_TYPE arg2) {
         Message_CloseTextbox(play);
         SET_INFTABLE(INFTABLE_143);
         func_80AED6DC(this, play);
-        func_8002F580(&this->actor, play);
+        Actor_OfferCarry(&this->actor, play);
         this->action = 27;
         func_80AEADD8(this);
     }
@@ -1899,7 +1899,7 @@ void func_80AEF40C(EnRu1* this) {
     if (Animation_OnFrame(skelAnime, 2.0f) || Animation_OnFrame(skelAnime, 7.0f) ||
         Animation_OnFrame(skelAnime, 12.0f) || Animation_OnFrame(skelAnime, 18.0f) ||
         Animation_OnFrame(skelAnime, 25.0f) || Animation_OnFrame(skelAnime, 33.0f)) {
-        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_WALK_DIRT);
+        Lib_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_JABU);
     }
 }
 

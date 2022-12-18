@@ -198,7 +198,7 @@ void EnDh_SetupWait(EnDh* this) {
 
 void EnDh_Wait(EnDh* this, PlayState* play) {
     if ((s32)this->skelAnime.curFrame == 5) {
-        Audio_PlayBgm_StorePrevBgm(SEQ_ID_MINI_BOSS);
+        Audio_PlayBgm_StorePrevBgm(NA_BGM_MINI_BOSS);
     }
     if (Actor_GetCollidedExplosive(play, &this->collider1.base)) {
         this->actor.params = ENDH_START_ATTACK_BOMB;
@@ -482,7 +482,7 @@ void EnDh_CollisionCheck(EnDh* this, PlayState* play) {
             if (player->unk_844 != 0) {
                 this->unk_258 = player->unk_845;
             }
-            Actor_SetColorFilter(&this->actor, 0x4000, 0xFF, 0, 8);
+            Actor_SetColorFilter(&this->actor, COLORFILTER_COLORFLAG_RED, 255, COLORFILTER_BUFFLAG_OPA, 8);
             lastHealth = this->actor.colChkInfo.health;
             if (Actor_ApplyDamage(&this->actor) == 0) {
                 EnDh_SetupDeath(this);

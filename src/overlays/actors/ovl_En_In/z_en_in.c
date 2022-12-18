@@ -432,7 +432,7 @@ void func_80A79BAC(EnIn* this, PlayState* play, s32 index, u32 transitionType) {
     }
     play->transitionType = transitionType;
     play->transitionTrigger = TRANS_TRIGGER_START;
-    func_8002DF54(play, &this->actor, 8);
+    func_8002DF54(play, &this->actor, PLAYER_CSMODE_8);
     Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_NOTHING);
     if (index == 0) {
         AREG(6) = 0;
@@ -455,7 +455,7 @@ void func_80A79C78(EnIn* this, PlayState* play) {
     subCamEye.x = subCamAt.x;
     subCamEye.y = subCamAt.y - 22.0f;
     subCamEye.z = subCamAt.z + 40.0f;
-    Play_CameraSetAtEye(play, this->subCamId, &subCamAt, &subCamEye);
+    Play_SetCameraAtEye(play, this->subCamId, &subCamAt, &subCamEye);
     this->actor.shape.rot.y = Math_Vec3f_Yaw(&this->actor.world.pos, &subCamEye);
     this->interactInfo.headRot = zeroVec;
     this->interactInfo.torsoRot = zeroVec;
@@ -642,7 +642,7 @@ void func_80A7A4C8(EnIn* this, PlayState* play) {
         SET_EVENTINF_HORSES_STATE(EVENTINF_HORSES_STATE_1);
         SET_EVENTINF_HORSES_0F(1);
         CLEAR_INFTABLE(INFTABLE_A2);
-        Environment_ForcePlaySequence(SEQ_ID_HORSE);
+        Environment_ForcePlaySequence(NA_BGM_HORSE);
         play->msgCtx.stateTimer = 0;
         play->msgCtx.msgMode = MSGMODE_TEXT_CLOSING;
         this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
@@ -785,7 +785,7 @@ void func_80A7AA40(EnIn* this, PlayState* play) {
     subCamEye.y += this->subCamEyeOffset.y;
     subCamEye.z += this->subCamEyeOffset.z;
 
-    Play_CameraSetAtEye(play, this->subCamId, &subCamAt, &subCamEye);
+    Play_SetCameraAtEye(play, this->subCamId, &subCamAt, &subCamEye);
     this->actor.textId = 0x203B;
     Message_StartTextbox(play, this->actor.textId, NULL);
     this->interactInfo.talkState = NPC_TALK_STATE_TALKING;
@@ -849,14 +849,14 @@ void func_80A7ABD4(EnIn* this, PlayState* play) {
         subCamEye.x += this->subCamEyeOffset.x;
         subCamEye.y += this->subCamEyeOffset.y;
         subCamEye.z += this->subCamEyeOffset.z;
-        Play_CameraSetAtEye(play, this->subCamId, &subCamAt, &subCamEye);
+        Play_SetCameraAtEye(play, this->subCamId, &subCamAt, &subCamEye);
     }
 }
 
 void func_80A7AE84(EnIn* this, PlayState* play) {
     Play_ChangeCameraStatus(play, this->returnToCamId, CAM_STAT_ACTIVE);
     Play_ClearCamera(play, this->subCamId);
-    func_8002DF54(play, &this->actor, 7);
+    func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
     Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_ALL);
     this->actionFunc = func_80A7AEF0;
 }

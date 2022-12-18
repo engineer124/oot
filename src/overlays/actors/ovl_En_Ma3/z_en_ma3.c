@@ -371,7 +371,7 @@ void EnMa3_Draw(Actor* thisx, PlayState* play) {
 
     activeCam = GET_ACTIVE_CAM(play);
     distFromCamEye = Math_Vec3f_DistXZ(&this->actor.world.pos, &activeCam->eye);
-    Audio_UpdateMalonSinging(distFromCamEye, SEQ_ID_LONLON);
+    Audio_UpdateMalonSinging(distFromCamEye, NA_BGM_LONLON);
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
 
     gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(sMouthTextures[this->mouthIndex]));

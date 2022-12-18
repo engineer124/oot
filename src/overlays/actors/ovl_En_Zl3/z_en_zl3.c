@@ -72,7 +72,7 @@ void EnZl3_Destroy(Actor* thisx, PlayState* play) {
 }
 
 void func_80B53468(void) {
-    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_ESCAPE);
+    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_ESCAPE);
 }
 
 BossGanon2* func_80B53488(EnZl3* this, PlayState* play) {
@@ -1541,8 +1541,8 @@ void func_80B56E38(EnZl3* this, PlayState* play) {
 
     if ((Animation_OnFrame(sp20, 6.0f) || Animation_OnFrame(sp20, 0.0f)) &&
         (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
-        sfxId = 0x800;
-        sfxId += SurfaceType_GetSfxId(&play->colCtx, this->actor.floorPoly, this->actor.floorBgId);
+        sfxId = NA_SE_PL_WALK_GROUND;
+        sfxId += SurfaceType_GetSfxOffset(&play->colCtx, this->actor.floorPoly, this->actor.floorBgId);
         Lib_PlaySfx_AtPos(&this->actor.projectedPos, sfxId);
     }
 }

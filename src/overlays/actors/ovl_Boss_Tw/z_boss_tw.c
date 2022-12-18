@@ -519,7 +519,7 @@ void BossTw_Init(Actor* thisx, PlayState* play2) {
             this->actor.world.pos.x = -600.0f;
             this->actor.world.pos.y = 400.0f;
             this->actor.world.pos.z = 0.0f;
-            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
+            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
         } else {
             BossTw_SetupCSWait(this, play);
         }
@@ -1499,7 +1499,7 @@ void BossTw_TwinrovaMergeCS(BossTw* this, PlayState* play) {
         case 0:
             this->csState2 = 1;
             func_80064520(play, &play->csCtx);
-            func_8002DF54(play, &this->actor, 0x39);
+            func_8002DF54(play, &this->actor, PLAYER_CSMODE_57);
             this->subCamId = Play_CreateSubCamera(play);
             Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
             Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
@@ -1561,9 +1561,9 @@ void BossTw_TwinrovaMergeCS(BossTw* this, PlayState* play) {
 
     if (this->subCamId != SUB_CAM_ID_DONE) {
         if (this->unk_5F9 == 0) {
-            Play_CameraSetAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
+            Play_SetCameraAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
         } else {
-            Play_CameraSetAtEye(play, this->subCamId, &this->subCamAt2, &this->subCamEye2);
+            Play_SetCameraAtEye(play, this->subCamId, &this->subCamAt2, &this->subCamEye2);
         }
     }
 
@@ -1639,9 +1639,9 @@ void BossTw_TwinrovaMergeCS(BossTw* this, PlayState* play) {
                     Animation_MorphToPlayOnce(&this->skelAnime, &gTwinrovaIntroAnim, 0.0f);
                     this->workf[ANIM_SW_TGT] = Animation_GetLastFrame(&gTwinrovaIntroAnim);
                     this->timers[0] = 50;
-                    func_8002DF54(play, &this->actor, 2);
+                    func_8002DF54(play, &this->actor, PLAYER_CSMODE_2);
                     Actor_PlaySfx(&this->actor, NA_SE_EN_TWINROBA_TRANSFORM);
-                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
+                    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
                 }
             }
 
@@ -1682,7 +1682,7 @@ void BossTw_TwinrovaMergeCS(BossTw* this, PlayState* play) {
             }
 
             if (this->timers[3] == 19) {
-                func_8002DF54(play, &this->actor, 5);
+                func_8002DF54(play, &this->actor, PLAYER_CSMODE_5);
             }
 
             if (this->timers[3] == 16) {
@@ -1711,11 +1711,11 @@ void BossTw_TwinrovaMergeCS(BossTw* this, PlayState* play) {
                 mainCam->eye = this->subCamEye;
                 mainCam->eyeNext = this->subCamEye;
                 mainCam->at = this->subCamAt;
-                func_800C08AC(play, this->subCamId, 0);
+                Play_ReturnToMainCam(play, this->subCamId, 0);
                 this->subCamId = SUB_CAM_ID_DONE;
                 this->csState2 = this->subCamId;
                 func_80064534(play, &play->csCtx);
-                func_8002DF54(play, &this->actor, 7);
+                func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
                 this->work[TW_PLLR_IDX] = 0;
                 this->targetPos = sTwinrovaPillarPos[0];
                 BossTw_TwinrovaSetupFly(this, play);
@@ -1782,7 +1782,7 @@ void BossTw_TwinrovaIntroCS(BossTw* this, PlayState* play) {
     if (this->csSfxTimer == 180) {
         Lib_PlaySfx_AtPos(&D_8094A7D0, NA_SE_EN_TWINROBA_LAUGH);
         Lib_PlaySfx_AtPos(&D_8094A7D0, NA_SE_EN_TWINROBA_LAUGH2);
-        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_KOTAKE_KOUME);
+        SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_KOTAKE_KOUME);
     }
 
     this->csSfxTimer++;
@@ -1795,7 +1795,7 @@ void BossTw_TwinrovaIntroCS(BossTw* this, PlayState* play) {
                 player->actor.world.pos.x = player->actor.world.pos.z = .0f;
                 this->csState2 = 1;
                 func_80064520(play, &play->csCtx);
-                func_8002DF54(play, &this->actor, 0x39);
+                func_8002DF54(play, &this->actor, PLAYER_CSMODE_57);
                 this->subCamId = Play_CreateSubCamera(play);
                 Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
                 Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
@@ -2217,7 +2217,7 @@ void BossTw_TwinrovaIntroCS(BossTw* this, PlayState* play) {
                 TitleCard_InitBossName(play, &play->actorCtx.titleCtx, SEGMENTED_TO_VIRTUAL(gTwinrovaTitleCardTex),
                                        0xA0, 0xB4, 0x80, 0x28);
                 SET_EVENTCHKINF(EVENTCHKINF_75);
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS);
             }
 
             if (this->work[CS_TIMER_1] >= 160) {
@@ -2274,11 +2274,11 @@ void BossTw_TwinrovaIntroCS(BossTw* this, PlayState* play) {
                 mainCam->eye = this->subCamEye;
                 mainCam->eyeNext = this->subCamEye;
                 mainCam->at = this->subCamAt;
-                func_800C08AC(play, this->subCamId, 0);
+                Play_ReturnToMainCam(play, this->subCamId, 0);
                 this->subCamId = SUB_CAM_ID_DONE;
                 this->csState2 = this->subCamId;
                 func_80064534(play, &play->csCtx);
-                func_8002DF54(play, &this->actor, 7);
+                func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
                 BossTw_SetupWait(this, play);
             }
             break;
@@ -2300,7 +2300,7 @@ void BossTw_TwinrovaIntroCS(BossTw* this, PlayState* play) {
                            this->subCamAtVel.z * this->subCamUpdateRate);
         }
 
-        Play_CameraSetAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
+        Play_SetCameraAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
     }
 }
 
@@ -2682,7 +2682,7 @@ void BossTw_TwinrovaDeathCS(BossTw* this, PlayState* play) {
         case 0:
             this->csState2 = 1;
             func_80064520(play, &play->csCtx);
-            func_8002DF54(play, &this->actor, 8);
+            func_8002DF54(play, &this->actor, PLAYER_CSMODE_8);
             this->subCamId = Play_CreateSubCamera(play);
             Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
             Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
@@ -2721,7 +2721,7 @@ void BossTw_TwinrovaDeathCS(BossTw* this, PlayState* play) {
                 sKoumePtr->actor.world.pos.z = sKotakePtr->actor.world.pos.z;
                 sKoumePtr->work[YAW_TGT] = sKotakePtr->work[YAW_TGT] = sKoumePtr->actor.shape.rot.x =
                     sKotakePtr->actor.shape.rot.x = sKoumePtr->actor.shape.rot.y = sKotakePtr->actor.shape.rot.y = 0;
-                func_8002DF54(play, &sKoumePtr->actor, 1);
+                func_8002DF54(play, &sKoumePtr->actor, PLAYER_CSMODE_1);
                 sKoumePtr->actor.flags |= ACTOR_FLAG_0;
             }
             break;
@@ -2763,7 +2763,7 @@ void BossTw_TwinrovaDeathCS(BossTw* this, PlayState* play) {
                 sKoumePtr->visible = 1;
                 sKotakePtr->visible = 1;
                 Lib_PlaySfx(NA_SE_EN_TWINROBA_TRANSFORM);
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_KOTAKE_KOUME);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_KOTAKE_KOUME);
                 this->csState2 = 3;
                 this->work[CS_TIMER_2] = 0;
                 this->subCamYaw = this->subCamYawStep = this->actor.speedXZ = this->subCamDistStep = 0.0f;
@@ -2806,12 +2806,12 @@ void BossTw_TwinrovaDeathCS(BossTw* this, PlayState* play) {
                 mainCam->eye = this->subCamEye;
                 mainCam->eyeNext = this->subCamEye;
                 mainCam->at = this->subCamAt;
-                func_800C08AC(play, this->subCamId, 0);
+                Play_ReturnToMainCam(play, this->subCamId, 0);
                 this->csState2 = 4;
                 this->subCamId = SUB_CAM_ID_DONE;
                 func_80064534(play, &play->csCtx);
-                func_8002DF54(play, &this->actor, 7);
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_BOSS_CLEAR);
+                func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS_CLEAR);
                 Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_DOOR_WARP1, 600.0f, 230.0f, 0.0f, 0, 0, 0,
                                    WARP_DUNGEON_ADULT);
                 Actor_Spawn(&play->actorCtx, play, ACTOR_ITEM_B_HEART, -600.0f, 230.f, 0.0f, 0, 0, 0, 0);
@@ -2829,7 +2829,7 @@ void BossTw_TwinrovaDeathCS(BossTw* this, PlayState* play) {
 
     if (this->subCamId != SUB_CAM_ID_DONE) {
         if (1) {}
-        Play_CameraSetAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
+        Play_SetCameraAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
     }
 }
 

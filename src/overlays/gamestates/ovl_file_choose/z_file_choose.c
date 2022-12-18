@@ -1126,7 +1126,7 @@ void FileSelect_ConfigModeDraw(GameState* thisx) {
     eyeZ = 1000.0f * Math_SinS(ZREG(11)) + 1000.0f * Math_CosS(ZREG(11));
 
     FileSelect_SetView(this, eyeX, eyeY, eyeZ);
-    SkyboxDraw_Draw(&this->skyboxCtx, this->state.gfxCtx, 1, this->envCtx.skyboxBlend, eyeX, eyeY, eyeZ);
+    Skybox_Draw(&this->skyboxCtx, this->state.gfxCtx, 1, this->envCtx.skyboxBlend, eyeX, eyeY, eyeZ);
     gDPSetTextureLUT(POLY_OPA_DISP++, G_TT_NONE);
     ZREG(11) += ZREG(10);
     Environment_UpdateSkybox(SKYBOX_NORMAL_SKY, &this->envCtx, &this->skyboxCtx);
@@ -1459,7 +1459,7 @@ void FileSelect_LoadGame(GameState* thisx) {
 
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = ENTR_LOAD_OPENING;
     gSaveContext.respawnFlag = 0;
-    gSaveContext.seqId = (u8)SEQ_ID_DISABLED;
+    gSaveContext.seqId = (u8)NA_BGM_DISABLED;
     gSaveContext.ambienceId = 0xFF;
     gSaveContext.showTitleCard = true;
     gSaveContext.dogParams = 0;
@@ -1474,7 +1474,7 @@ void FileSelect_LoadGame(GameState* thisx) {
     gSaveContext.healthAccumulator = 0;
     gSaveContext.magicState = MAGIC_STATE_IDLE;
     gSaveContext.prevMagicState = MAGIC_STATE_IDLE;
-    gSaveContext.forcedSeqId = SEQ_ID_GENERAL_SFX;
+    gSaveContext.forcedSeqId = NA_BGM_GENERAL_SFX;
     gSaveContext.skyboxTime = CLOCK_TIME(0, 0);
     gSaveContext.nextTransitionType = TRANS_NEXT_TYPE_DEFAULT;
     gSaveContext.nextCutsceneIndex = 0xFFEF;
@@ -1539,7 +1539,7 @@ void FileSelect_SelectModeDraw(GameState* thisx) {
     eyeZ = 1000.0f * Math_SinS(ZREG(11)) + 1000.0f * Math_CosS(ZREG(11));
 
     FileSelect_SetView(this, eyeX, eyeY, eyeZ);
-    SkyboxDraw_Draw(&this->skyboxCtx, this->state.gfxCtx, 1, this->envCtx.skyboxBlend, eyeX, eyeY, eyeZ);
+    Skybox_Draw(&this->skyboxCtx, this->state.gfxCtx, 1, this->envCtx.skyboxBlend, eyeX, eyeY, eyeZ);
     gDPSetTextureLUT(POLY_OPA_DISP++, G_TT_NONE);
     ZREG(11) += ZREG(10);
     Environment_UpdateSkybox(SKYBOX_NORMAL_SKY, &this->envCtx, &this->skyboxCtx);
@@ -1896,5 +1896,5 @@ void FileSelect_Init(GameState* thisx) {
     Font_LoadOrderedFont(&this->font);
     SEQCMD_RESET_AUDIO_HEAP(0, 10);
     // Setting ioData to 1 and writing it to ioPort 7 will skip the harp intro
-    Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_MAIN, SEQ_ID_FILE_SELECT, 0, 7, 1);
+    Audio_PlaySequenceWithSeqPlayerIO(SEQ_PLAYER_BGM_MAIN, NA_BGM_FILE_SELECT, 0, 7, 1);
 }

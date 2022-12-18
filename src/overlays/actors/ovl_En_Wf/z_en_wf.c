@@ -387,7 +387,7 @@ void EnWf_WaitToAppear(EnWf* this, PlayState* play) {
             this->actor.flags |= ACTOR_FLAG_0;
 
             if ((this->actor.params != WOLFOS_NORMAL) && (this->switchFlag != 0xFF)) {
-                Audio_PlayBgm_StorePrevBgm(SEQ_ID_MINI_BOSS);
+                Audio_PlayBgm_StorePrevBgm(NA_BGM_MINI_BOSS);
             }
         }
     } else if (this->actionTimer != 0) {
@@ -1272,12 +1272,13 @@ void EnWf_UpdateDamage(EnWf* this, PlayState* play) {
                 if ((this->actor.colChkInfo.damageEffect == ENWF_DMGEFF_STUN) ||
                     (this->actor.colChkInfo.damageEffect == ENWF_DMGEFF_UNDEF)) {
                     if (this->action != WOLFOS_ACTION_STUNNED) {
-                        Actor_SetColorFilter(&this->actor, 0, 120, 0, 80);
+                        Actor_SetColorFilter(&this->actor, COLORFILTER_COLORFLAG_BLUE, 120, COLORFILTER_BUFFLAG_OPA,
+                                             80);
                         Actor_ApplyDamage(&this->actor);
                         EnWf_SetupStunned(this);
                     }
                 } else { // LIGHT_MAGIC, FIRE, NONE
-                    Actor_SetColorFilter(&this->actor, 0x4000, 255, 0, 8);
+                    Actor_SetColorFilter(&this->actor, COLORFILTER_COLORFLAG_RED, 255, COLORFILTER_BUFFLAG_OPA, 8);
 
                     if (this->damageEffect == ENWF_DMGEFF_FIRE) {
                         this->fireTimer = 40;

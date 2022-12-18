@@ -1700,7 +1700,8 @@ void Environment_DrawRain(PlayState* play, View* view, GraphicsContext* gfxCtx) 
     Vec3f windDirection = { 0.0f, 0.0f, 0.0f };
     Player* player = GET_PLAYER(play);
 
-    if (!(play->cameraPtrs[0]->unk_14C & 0x100) && (play->envCtx.precipitation[PRECIP_SNOW_CUR] == 0)) {
+    if (!(play->cameraPtrs[CAM_ID_MAIN]->stateFlags & CAM_STATE_8) &&
+        (play->envCtx.precipitation[PRECIP_SNOW_CUR] == 0)) {
         OPEN_DISPS(gfxCtx, "../z_kankyo.c", 2799);
 
         vec.x = view->at.x - view->eye.x;
@@ -2040,12 +2041,12 @@ void Environment_PlaySceneSequence(PlayState* play) {
     if (((void)0, gSaveContext.entranceIndex) == ENTR_LOST_WOODS_8 ||
         ((void)0, gSaveContext.entranceIndex) == ENTR_LOST_WOODS_9) {
         Audio_PlayAmbience(AMBIENCE_ID_KOKIRI_REGION);
-    } else if (((void)0, gSaveContext.forcedSeqId) != SEQ_ID_GENERAL_SFX) {
+    } else if (((void)0, gSaveContext.forcedSeqId) != NA_BGM_GENERAL_SFX) {
         if (!Environment_IsForcedSequenceDisabled()) {
             SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, ((void)0, gSaveContext.forcedSeqId));
         }
-        gSaveContext.forcedSeqId = SEQ_ID_GENERAL_SFX;
-    } else if (play->sequenceCtx.seqId == SEQ_ID_NO_MUSIC) {
+        gSaveContext.forcedSeqId = NA_BGM_GENERAL_SFX;
+    } else if (play->sequenceCtx.seqId == NA_BGM_NO_MUSIC) {
         if (play->sequenceCtx.ambienceId == AMBIENCE_ID_NONE) {
             return;
         }
@@ -2555,7 +2556,7 @@ void Environment_ForcePlaySequence(u16 seqId) {
 s32 Environment_IsForcedSequenceDisabled(void) {
     s32 isDisabled = false;
 
-    if (gSaveContext.forcedSeqId == SEQ_ID_DISABLED) {
+    if (gSaveContext.forcedSeqId == NA_BGM_DISABLED) {
         isDisabled = true;
     }
 
@@ -2577,8 +2578,8 @@ void Environment_StopStormNatureAmbience(PlayState* play) {
     Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_RAIN, CHANNEL_IO_PORT_1, 0);
     Audio_SetAmbienceChannelIO(AMBIENCE_CHANNEL_LIGHTNING, CHANNEL_IO_PORT_1, 0);
 
-    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == SEQ_ID_AMBIENCE) {
-        gSaveContext.seqId = SEQ_ID_NATURE_SFX_RAIN;
+    if (AudioSeq_GetActiveSeqId(SEQ_PLAYER_BGM_MAIN) == NA_BGM_AMBIENCE) {
+        gSaveContext.seqId = NA_BGM_NATURE_SFX_RAIN;
         Environment_PlaySceneSequence(play);
     }
 }

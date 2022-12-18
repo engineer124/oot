@@ -2,119 +2,119 @@
 #define SEQUENCE_H
 
 typedef enum {
-    /* 0x00 */ SEQ_ID_GENERAL_SFX,      // General Sound Effects
-    /* 0x01 */ SEQ_ID_AMBIENCE,         // Environmental nature background sounds
-    /* 0x02 */ SEQ_ID_FIELD_LOGIC,      // Hyrule Field
-    /* 0x03 */ SEQ_ID_FIELD_INIT,       // Hyrule Field	Initial Segment From Loading Area
-    /* 0x04 */ SEQ_ID_FIELD_DEFAULT_1,  // Hyrule Field	Moving Segment 1
-    /* 0x05 */ SEQ_ID_FIELD_DEFAULT_2,  // Hyrule Field	Moving Segment 2
-    /* 0x06 */ SEQ_ID_FIELD_DEFAULT_3,  // Hyrule Field	Moving Segment 3
-    /* 0x07 */ SEQ_ID_FIELD_DEFAULT_4,  // Hyrule Field	Moving Segment 4
-    /* 0x08 */ SEQ_ID_FIELD_DEFAULT_5,  // Hyrule Field	Moving Segment 5
-    /* 0x09 */ SEQ_ID_FIELD_DEFAULT_6,  // Hyrule Field	Moving Segment 6
-    /* 0x0A */ SEQ_ID_FIELD_DEFAULT_7,  // Hyrule Field	Moving Segment 7
-    /* 0x0B */ SEQ_ID_FIELD_DEFAULT_8,  // Hyrule Field	Moving Segment 8
-    /* 0x0C */ SEQ_ID_FIELD_DEFAULT_9,  // Hyrule Field	Moving Segment 9
-    /* 0x0D */ SEQ_ID_FIELD_DEFAULT_A,  // Hyrule Field	Moving Segment 10
-    /* 0x0E */ SEQ_ID_FIELD_DEFAULT_B,  // Hyrule Field	Moving Segment 11
-    /* 0x0F */ SEQ_ID_FIELD_ENEMY_INIT, // Hyrule Field	Enemy Approaches
-    /* 0x10 */ SEQ_ID_FIELD_ENEMY_1,    // Hyrule Field	Enemy Near Segment 1
-    /* 0x11 */ SEQ_ID_FIELD_ENEMY_2,    // Hyrule Field	Enemy Near Segment 2
-    /* 0x12 */ SEQ_ID_FIELD_ENEMY_3,    // Hyrule Field	Enemy Near Segment 3
-    /* 0x13 */ SEQ_ID_FIELD_ENEMY_4,    // Hyrule Field	Enemy Near Segment 4
-    /* 0x14 */ SEQ_ID_FIELD_STILL_1,    // Hyrule Field	Standing Still Segment 1
-    /* 0x15 */ SEQ_ID_FIELD_STILL_2,    // Hyrule Field	Standing Still Segment 2
-    /* 0x16 */ SEQ_ID_FIELD_STILL_3,    // Hyrule Field	Standing Still Segment 3
-    /* 0x17 */ SEQ_ID_FIELD_STILL_4,    // Hyrule Field	Standing Still Segment 4
-    /* 0x18 */ SEQ_ID_DUNGEON,          // Dodongo's Cavern
-    /* 0x19 */ SEQ_ID_KAKARIKO_ADULT,   // Kakariko Village (Adult)
-    /* 0x1A */ SEQ_ID_ENEMY,            // Battle
-    /* 0x1B */ SEQ_ID_BOSS,             // Boss Battle "SEQ_ID_BOSS00"
-    /* 0x1C */ SEQ_ID_INSIDE_DEKU_TREE, // Inside the Deku Tree "SEQ_ID_FAIRY_DUNGEON"
-    /* 0x1D */ SEQ_ID_MARKET,           // Market
-    /* 0x1E */ SEQ_ID_TITLE,            // Title Theme
-    /* 0x1F */ SEQ_ID_LINK_HOUSE,       // House
-    /* 0x20 */ SEQ_ID_GAME_OVER,        // Game Over
-    /* 0x21 */ SEQ_ID_BOSS_CLEAR,       // Boss Clear
-    /* 0x22 */ SEQ_ID_ITEM_GET,         // Obtain Item
-    /* 0x23 */ SEQ_ID_OPENING_GANON,    // Enter Ganondorf
-    /* 0x24 */ SEQ_ID_HEART_GET,        // Obtain Heart Container
-    /* 0x25 */ SEQ_ID_OCA_LIGHT,        // Prelude of Light
-    /* 0x26 */ SEQ_ID_JABU_JABU,        // Inside Jabu-Jabu's Belly "SEQ_ID_BUYO_DUNGEON"
-    /* 0x27 */ SEQ_ID_KAKARIKO_KID,     // Kakariko Village (Child)
-    /* 0x28 */ SEQ_ID_GREAT_FAIRY,      // Great Fairy's Fountain "SEQ_ID_GODESS"
-    /* 0x29 */ SEQ_ID_ZELDA_THEME,      // Zelda's Theme "SEQ_ID_HIME"
-    /* 0x2A */ SEQ_ID_FIRE_TEMPLE,      // Fire Temple "SEQ_ID_FIRE_DUNGEON"
-    /* 0x2B */ SEQ_ID_OPEN_TRE_BOX,     // Open Treasure Chest
-    /* 0x2C */ SEQ_ID_FOREST_TEMPLE,    // Forest Temple "SEQ_ID_FORST_DUNGEON"
-    /* 0x2D */ SEQ_ID_COURTYARD,        // Hyrule Castle Courtyard "SEQ_ID_HIRAL_GARDEN"
-    /* 0x2E */ SEQ_ID_GANON_TOWER,      // Ganondorf's Theme
-    /* 0x2F */ SEQ_ID_LONLON,           // Lon Lon Ranch "SEQ_ID_RONRON"
-    /* 0x30 */ SEQ_ID_GORON_CITY,       // Goron City "SEQ_ID_GORON"
-    /* 0x31 */ SEQ_ID_FIELD_MORNING,    // Hyrule Field Morning Theme
-    /* 0x32 */ SEQ_ID_SPIRITUAL_STONE,  // Spiritual Stone Get "SEQ_ID_SPIRIT_STONE"
-    /* 0x33 */ SEQ_ID_OCA_BOLERO,       // Bolero of Fire "SEQ_ID_OCA_FLAME"
-    /* 0x34 */ SEQ_ID_OCA_MINUET,       // Minuet of Forest "SEQ_ID_OCA_WIND"
-    /* 0x35 */ SEQ_ID_OCA_SERENADE,     // Serenade of Water "SEQ_ID_OCA_WATER"
-    /* 0x36 */ SEQ_ID_OCA_REQUIEM,      // Requiem of Spirit "SEQ_ID_OCA_SOUL"
-    /* 0x37 */ SEQ_ID_OCA_NOCTURNE,     // Nocturne of Shadow "SEQ_ID_OCA_DARKNESS"
-    /* 0x38 */ SEQ_ID_MINI_BOSS,        // Mini-Boss Battle "SEQ_ID_MIDDLE_BOSS"
-    /* 0x39 */ SEQ_ID_SMALL_ITEM_GET,   // Obtain Small Item "SEQ_ID_S_ITEM_GET"
-    /* 0x3A */ SEQ_ID_TEMPLE_OF_TIME,   // Temple of Time "SEQ_ID_SHRINE_OF_TIME"
-    /* 0x3B */ SEQ_ID_EVENT_CLEAR,      // Escape from Lon Lon Ranch
-    /* 0x3C */ SEQ_ID_KOKIRI,           // Kokiri Forest
-    /* 0x3D */ SEQ_ID_OCA_FAIRY_GET,    // Obtain Fairy Ocarina "SEQ_ID_OCA_YOUSEI"
-    /* 0x3E */ SEQ_ID_SARIA_THEME,      // Lost Woods "SEQ_ID_MAYOIMORI"
-    /* 0x3F */ SEQ_ID_SPIRIT_TEMPLE,    // Spirit Temple "SEQ_ID_SOUL_DUNGEON"
-    /* 0x40 */ SEQ_ID_HORSE,            // Horse Race
-    /* 0x41 */ SEQ_ID_HORSE_GOAL,       // Horse Race Goal
-    /* 0x42 */ SEQ_ID_INGO,             // Ingo's Theme
-    /* 0x43 */ SEQ_ID_MEDALLION_GET,    // Obtain Medallion "SEQ_ID_MEDAL_GET"
-    /* 0x44 */ SEQ_ID_OCA_SARIA,        // Ocarina Saria's Song
-    /* 0x45 */ SEQ_ID_OCA_EPONA,        // Ocarina Epona's Song
-    /* 0x46 */ SEQ_ID_OCA_ZELDA,        // Ocarina Zelda's Lullaby
-    /* 0x47 */ SEQ_ID_OCA_SUNS,         // Ocarina Sun's Song "SEQ_ID_OCA_SUNMOON"
-    /* 0x48 */ SEQ_ID_OCA_TIME,         // Ocarina Song of Time
-    /* 0x49 */ SEQ_ID_OCA_STORM,        // Ocarina Song of Storms
-    /* 0x4A */ SEQ_ID_NAVI_OPENING,     // Fairy Flying "SEQ_ID_NAVI"
-    /* 0x4B */ SEQ_ID_DEKU_TREE_CS,     // Deku Tree "SEQ_ID_DEKUNOKI"
-    /* 0x4C */ SEQ_ID_WINDMILL,         // Windmill Hut "SEQ_ID_FUSHA"
-    /* 0x4D */ SEQ_ID_HYRULE_CS,        // Legend of Hyrule "SEQ_ID_HIRAL_DEMO"
-    /* 0x4E */ SEQ_ID_MINI_GAME,        // Shooting Gallery
-    /* 0x4F */ SEQ_ID_SHEIK,            // Sheik's Theme "SEQ_ID_SEAK"
-    /* 0x50 */ SEQ_ID_ZORA_DOMAIN,      // Zora's Domain "SEQ_ID_ZORA"
-    /* 0x51 */ SEQ_ID_APPEAR,           // Enter Zelda
-    /* 0x52 */ SEQ_ID_ADULT_LINK,       // Goodbye to Zelda
-    /* 0x53 */ SEQ_ID_MASTER_SWORD,     // Master Sword
-    /* 0x54 */ SEQ_ID_INTRO_GANON,
-    /* 0x55 */ SEQ_ID_SHOP,             // Shop
-    /* 0x56 */ SEQ_ID_CHAMBER_OF_SAGES, // Chamber of the Sages "SEQ_ID_KENJA"
-    /* 0x57 */ SEQ_ID_FILE_SELECT,      // File Select
-    /* 0x58 */ SEQ_ID_ICE_CAVERN,       // Ice Cavern "SEQ_ID_ICE_DUNGEON"
-    /* 0x59 */ SEQ_ID_DOOR_OF_TIME,     // Open Door of Temple of Time "SEQ_ID_GATE_OPEN"
-    /* 0x5A */ SEQ_ID_OWL,              // Kaepora Gaebora's Theme
-    /* 0x5B */ SEQ_ID_SHADOW_TEMPLE,    // Shadow Temple "SEQ_ID_DARKNESS_DUNGEON"
-    /* 0x5C */ SEQ_ID_WATER_TEMPLE,     // Water Temple "SEQ_ID_AQUA_DUNGEON"
-    /* 0x5D */ SEQ_ID_BRIDGE_TO_GANONS, // Ganon's Castle Bridge "SEQ_ID_BRIDGE"
-    /* 0x5E */ SEQ_ID_OCARINA_OF_TIME,  // Ocarina of Time "SEQ_ID_SARIA"
-    /* 0x5F */ SEQ_ID_GERUDO_VALLEY,    // Gerudo Valley "SEQ_ID_GERUDO"
-    /* 0x60 */ SEQ_ID_POTION_SHOP,      // Potion Shop "SEQ_ID_DRUGSTORE"
-    /* 0x61 */ SEQ_ID_KOTAKE_KOUME,     // Kotake & Koume's Theme
-    /* 0x62 */ SEQ_ID_ESCAPE,           // Escape from Ganon's Castle
-    /* 0x63 */ SEQ_ID_UNDERGROUND,      // Ganon's Castle Under Ground
-    /* 0x64 */ SEQ_ID_GANONDORF_BOSS,   // Ganondorf Battle
-    /* 0x65 */ SEQ_ID_GANON_BOSS,       // Ganon Battle
-    /* 0x66 */ SEQ_ID_END_DEMO,         // Seal of Six Sages
-    /* 0x67 */ SEQ_ID_STAFF_1,          // End Credits I
-    /* 0x68 */ SEQ_ID_STAFF_2,          // End Credits II
-    /* 0x69 */ SEQ_ID_STAFF_3,          // End Credits III
-    /* 0x6A */ SEQ_ID_STAFF_4,          // End Credits IV
-    /* 0x6B */ SEQ_ID_FIRE_BOSS,        // King Dodongo & Volvagia Boss Battle "SEQ_ID_BOSS01"
-    /* 0x6C */ SEQ_ID_TIMED_MINI_GAME,  // Mini-Game
-    /* 0x6D */ SEQ_ID_CUTSCENE_EFFECTS, // A small collection of various cutscene sounds
-    /* 0x7F */ SEQ_ID_NO_MUSIC = 0x7F,  // No bgm music is played
-    /* 0x80 */ SEQ_ID_NATURE_SFX_RAIN = 0x80,  // Related to rain
-    /* 0xFFFF */ SEQ_ID_DISABLED = 0xFFFF
+    /* 0x00 */ NA_BGM_GENERAL_SFX,      // General Sound Effects
+    /* 0x01 */ NA_BGM_AMBIENCE,         // Environmental nature background sounds
+    /* 0x02 */ NA_BGM_FIELD_LOGIC,      // Hyrule Field
+    /* 0x03 */ NA_BGM_FIELD_INIT,       // Hyrule Field	Initial Segment From Loading Area
+    /* 0x04 */ NA_BGM_FIELD_DEFAULT_1,  // Hyrule Field	Moving Segment 1
+    /* 0x05 */ NA_BGM_FIELD_DEFAULT_2,  // Hyrule Field	Moving Segment 2
+    /* 0x06 */ NA_BGM_FIELD_DEFAULT_3,  // Hyrule Field	Moving Segment 3
+    /* 0x07 */ NA_BGM_FIELD_DEFAULT_4,  // Hyrule Field	Moving Segment 4
+    /* 0x08 */ NA_BGM_FIELD_DEFAULT_5,  // Hyrule Field	Moving Segment 5
+    /* 0x09 */ NA_BGM_FIELD_DEFAULT_6,  // Hyrule Field	Moving Segment 6
+    /* 0x0A */ NA_BGM_FIELD_DEFAULT_7,  // Hyrule Field	Moving Segment 7
+    /* 0x0B */ NA_BGM_FIELD_DEFAULT_8,  // Hyrule Field	Moving Segment 8
+    /* 0x0C */ NA_BGM_FIELD_DEFAULT_9,  // Hyrule Field	Moving Segment 9
+    /* 0x0D */ NA_BGM_FIELD_DEFAULT_A,  // Hyrule Field	Moving Segment 10
+    /* 0x0E */ NA_BGM_FIELD_DEFAULT_B,  // Hyrule Field	Moving Segment 11
+    /* 0x0F */ NA_BGM_FIELD_ENEMY_INIT, // Hyrule Field	Enemy Approaches
+    /* 0x10 */ NA_BGM_FIELD_ENEMY_1,    // Hyrule Field	Enemy Near Segment 1
+    /* 0x11 */ NA_BGM_FIELD_ENEMY_2,    // Hyrule Field	Enemy Near Segment 2
+    /* 0x12 */ NA_BGM_FIELD_ENEMY_3,    // Hyrule Field	Enemy Near Segment 3
+    /* 0x13 */ NA_BGM_FIELD_ENEMY_4,    // Hyrule Field	Enemy Near Segment 4
+    /* 0x14 */ NA_BGM_FIELD_STILL_1,    // Hyrule Field	Standing Still Segment 1
+    /* 0x15 */ NA_BGM_FIELD_STILL_2,    // Hyrule Field	Standing Still Segment 2
+    /* 0x16 */ NA_BGM_FIELD_STILL_3,    // Hyrule Field	Standing Still Segment 3
+    /* 0x17 */ NA_BGM_FIELD_STILL_4,    // Hyrule Field	Standing Still Segment 4
+    /* 0x18 */ NA_BGM_DUNGEON,          // Dodongo's Cavern
+    /* 0x19 */ NA_BGM_KAKARIKO_ADULT,   // Kakariko Village (Adult)
+    /* 0x1A */ NA_BGM_ENEMY,            // Battle
+    /* 0x1B */ NA_BGM_BOSS,             // Boss Battle "NA_BGM_BOSS00"
+    /* 0x1C */ NA_BGM_INSIDE_DEKU_TREE, // Inside the Deku Tree "NA_BGM_FAIRY_DUNGEON"
+    /* 0x1D */ NA_BGM_MARKET,           // Market
+    /* 0x1E */ NA_BGM_TITLE,            // Title Theme
+    /* 0x1F */ NA_BGM_LINK_HOUSE,       // House
+    /* 0x20 */ NA_BGM_GAME_OVER,        // Game Over
+    /* 0x21 */ NA_BGM_BOSS_CLEAR,       // Boss Clear
+    /* 0x22 */ NA_BGM_ITEM_GET,         // Obtain Item
+    /* 0x23 */ NA_BGM_OPENING_GANON,    // Enter Ganondorf
+    /* 0x24 */ NA_BGM_HEART_GET,        // Obtain Heart Container
+    /* 0x25 */ NA_BGM_OCA_LIGHT,        // Prelude of Light
+    /* 0x26 */ NA_BGM_JABU_JABU,        // Inside Jabu-Jabu's Belly "NA_BGM_BUYO_DUNGEON"
+    /* 0x27 */ NA_BGM_KAKARIKO_KID,     // Kakariko Village (Child)
+    /* 0x28 */ NA_BGM_GREAT_FAIRY,      // Great Fairy's Fountain "NA_BGM_GODESS"
+    /* 0x29 */ NA_BGM_ZELDA_THEME,      // Zelda's Theme "NA_BGM_HIME"
+    /* 0x2A */ NA_BGM_FIRE_TEMPLE,      // Fire Temple "NA_BGM_FIRE_DUNGEON"
+    /* 0x2B */ NA_BGM_OPEN_TRE_BOX,     // Open Treasure Chest
+    /* 0x2C */ NA_BGM_FOREST_TEMPLE,    // Forest Temple "NA_BGM_FORST_DUNGEON"
+    /* 0x2D */ NA_BGM_COURTYARD,        // Hyrule Castle Courtyard "NA_BGM_HIRAL_GARDEN"
+    /* 0x2E */ NA_BGM_GANON_TOWER,      // Ganondorf's Theme
+    /* 0x2F */ NA_BGM_LONLON,           // Lon Lon Ranch "NA_BGM_RONRON"
+    /* 0x30 */ NA_BGM_GORON_CITY,       // Goron City "NA_BGM_GORON"
+    /* 0x31 */ NA_BGM_FIELD_MORNING,    // Hyrule Field Morning Theme
+    /* 0x32 */ NA_BGM_SPIRITUAL_STONE,  // Spiritual Stone Get "NA_BGM_SPIRIT_STONE"
+    /* 0x33 */ NA_BGM_OCA_BOLERO,       // Bolero of Fire "NA_BGM_OCA_FLAME"
+    /* 0x34 */ NA_BGM_OCA_MINUET,       // Minuet of Forest "NA_BGM_OCA_WIND"
+    /* 0x35 */ NA_BGM_OCA_SERENADE,     // Serenade of Water "NA_BGM_OCA_WATER"
+    /* 0x36 */ NA_BGM_OCA_REQUIEM,      // Requiem of Spirit "NA_BGM_OCA_SOUL"
+    /* 0x37 */ NA_BGM_OCA_NOCTURNE,     // Nocturne of Shadow "NA_BGM_OCA_DARKNESS"
+    /* 0x38 */ NA_BGM_MINI_BOSS,        // Mini-Boss Battle "NA_BGM_MIDDLE_BOSS"
+    /* 0x39 */ NA_BGM_SMALL_ITEM_GET,   // Obtain Small Item "NA_BGM_S_ITEM_GET"
+    /* 0x3A */ NA_BGM_TEMPLE_OF_TIME,   // Temple of Time "NA_BGM_SHRINE_OF_TIME"
+    /* 0x3B */ NA_BGM_EVENT_CLEAR,      // Escape from Lon Lon Ranch
+    /* 0x3C */ NA_BGM_KOKIRI,           // Kokiri Forest
+    /* 0x3D */ NA_BGM_OCA_FAIRY_GET,    // Obtain Fairy Ocarina "NA_BGM_OCA_YOUSEI"
+    /* 0x3E */ NA_BGM_SARIA_THEME,      // Lost Woods "NA_BGM_MAYOIMORI"
+    /* 0x3F */ NA_BGM_SPIRIT_TEMPLE,    // Spirit Temple "NA_BGM_SOUL_DUNGEON"
+    /* 0x40 */ NA_BGM_HORSE,            // Horse Race
+    /* 0x41 */ NA_BGM_HORSE_GOAL,       // Horse Race Goal
+    /* 0x42 */ NA_BGM_INGO,             // Ingo's Theme
+    /* 0x43 */ NA_BGM_MEDALLION_GET,    // Obtain Medallion "NA_BGM_MEDAL_GET"
+    /* 0x44 */ NA_BGM_OCA_SARIA,        // Ocarina Saria's Song
+    /* 0x45 */ NA_BGM_OCA_EPONA,        // Ocarina Epona's Song
+    /* 0x46 */ NA_BGM_OCA_ZELDA,        // Ocarina Zelda's Lullaby
+    /* 0x47 */ NA_BGM_OCA_SUNS,         // Ocarina Sun's Song "NA_BGM_OCA_SUNMOON"
+    /* 0x48 */ NA_BGM_OCA_TIME,         // Ocarina Song of Time
+    /* 0x49 */ NA_BGM_OCA_STORM,        // Ocarina Song of Storms
+    /* 0x4A */ NA_BGM_NAVI_OPENING,     // Fairy Flying "NA_BGM_NAVI"
+    /* 0x4B */ NA_BGM_DEKU_TREE_CS,     // Deku Tree "NA_BGM_DEKUNOKI"
+    /* 0x4C */ NA_BGM_WINDMILL,         // Windmill Hut "NA_BGM_FUSHA"
+    /* 0x4D */ NA_BGM_HYRULE_CS,        // Legend of Hyrule "NA_BGM_HIRAL_DEMO"
+    /* 0x4E */ NA_BGM_MINI_GAME,        // Shooting Gallery
+    /* 0x4F */ NA_BGM_SHEIK,            // Sheik's Theme "NA_BGM_SEAK"
+    /* 0x50 */ NA_BGM_ZORA_DOMAIN,      // Zora's Domain "NA_BGM_ZORA"
+    /* 0x51 */ NA_BGM_APPEAR,           // Enter Zelda
+    /* 0x52 */ NA_BGM_ADULT_LINK,       // Goodbye to Zelda
+    /* 0x53 */ NA_BGM_MASTER_SWORD,     // Master Sword
+    /* 0x54 */ NA_BGM_INTRO_GANON,
+    /* 0x55 */ NA_BGM_SHOP,             // Shop
+    /* 0x56 */ NA_BGM_CHAMBER_OF_SAGES, // Chamber of the Sages "NA_BGM_KENJA"
+    /* 0x57 */ NA_BGM_FILE_SELECT,      // File Select
+    /* 0x58 */ NA_BGM_ICE_CAVERN,       // Ice Cavern "NA_BGM_ICE_DUNGEON"
+    /* 0x59 */ NA_BGM_DOOR_OF_TIME,     // Open Door of Temple of Time "NA_BGM_GATE_OPEN"
+    /* 0x5A */ NA_BGM_OWL,              // Kaepora Gaebora's Theme
+    /* 0x5B */ NA_BGM_SHADOW_TEMPLE,    // Shadow Temple "NA_BGM_DARKNESS_DUNGEON"
+    /* 0x5C */ NA_BGM_WATER_TEMPLE,     // Water Temple "NA_BGM_AQUA_DUNGEON"
+    /* 0x5D */ NA_BGM_BRIDGE_TO_GANONS, // Ganon's Castle Bridge "NA_BGM_BRIDGE"
+    /* 0x5E */ NA_BGM_OCARINA_OF_TIME,  // Ocarina of Time "NA_BGM_SARIA"
+    /* 0x5F */ NA_BGM_GERUDO_VALLEY,    // Gerudo Valley "NA_BGM_GERUDO"
+    /* 0x60 */ NA_BGM_POTION_SHOP,      // Potion Shop "NA_BGM_DRUGSTORE"
+    /* 0x61 */ NA_BGM_KOTAKE_KOUME,     // Kotake & Koume's Theme
+    /* 0x62 */ NA_BGM_ESCAPE,           // Escape from Ganon's Castle
+    /* 0x63 */ NA_BGM_UNDERGROUND,      // Ganon's Castle Under Ground
+    /* 0x64 */ NA_BGM_GANONDORF_BOSS,   // Ganondorf Battle
+    /* 0x65 */ NA_BGM_GANON_BOSS,       // Ganon Battle
+    /* 0x66 */ NA_BGM_END_DEMO,         // Seal of Six Sages
+    /* 0x67 */ NA_BGM_STAFF_1,          // End Credits I
+    /* 0x68 */ NA_BGM_STAFF_2,          // End Credits II
+    /* 0x69 */ NA_BGM_STAFF_3,          // End Credits III
+    /* 0x6A */ NA_BGM_STAFF_4,          // End Credits IV
+    /* 0x6B */ NA_BGM_FIRE_BOSS,        // King Dodongo & Volvagia Boss Battle "NA_BGM_BOSS01"
+    /* 0x6C */ NA_BGM_TIMED_MINI_GAME,  // Mini-Game
+    /* 0x6D */ NA_BGM_CUTSCENE_EFFECTS, // A small collection of various cutscene sounds
+    /* 0x7F */ NA_BGM_NO_MUSIC = 0x7F,  // No bgm music is played
+    /* 0x80 */ NA_BGM_NATURE_SFX_RAIN = 0x80,  // Related to rain
+    /* 0xFFFF */ NA_BGM_DISABLED = 0xFFFF
 } SeqId;
 
 typedef enum {

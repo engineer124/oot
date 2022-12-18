@@ -172,7 +172,7 @@ void func_80B42F74(EnYabusameMark* this, PlayState* play) {
         osSyncPrintf("\n\n");
 
         if (scoreIndex == 2) {
-            Audio_PlayFanfare(SEQ_ID_ITEM_GET | 0x900);
+            Audio_PlayFanfare(NA_BGM_ITEM_GET | 0x900);
         }
         if (scoreIndex == 1) {
             AudioSfx_StopById(NA_SE_SY_TRE_BOX_APPEAR);

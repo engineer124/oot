@@ -410,8 +410,8 @@ s32 EnHy_IsOsAnimeObjectLoaded(EnHy* this, PlayState* play) {
 
 void func_80A6F7CC(EnHy* this, PlayState* play, s32 getItemId) {
     this->unkGetItemId = getItemId;
-    func_8002F434(&this->actor, play, getItemId, this->actor.xzDistToPlayer + 1.0f,
-                  fabsf(this->actor.yDistToPlayer) + 1.0f);
+    Actor_OfferGetItem(&this->actor, play, getItemId, this->actor.xzDistToPlayer + 1.0f,
+                       fabsf(this->actor.yDistToPlayer) + 1.0f);
 }
 
 u16 func_80A6F810(PlayState* play, Actor* thisx) {
@@ -583,7 +583,7 @@ s16 func_80A70058(PlayState* play, Actor* thisx) {
                 case 0x70F3:
                     if (this->skelAnime.animation != &gObjOsAnim_33B4) {
                         Animation_ChangeByInfo(&this->skelAnime, sAnimationInfo, ENHY_ANIM_23);
-                        Audio_PlayFanfare(SEQ_ID_ITEM_GET | 0x900);
+                        Audio_PlayFanfare(NA_BGM_ITEM_GET | 0x900);
                     }
                     break;
             }
@@ -1054,8 +1054,8 @@ void func_80A714C4(EnHy* this, PlayState* play) {
     if (Actor_HasParent(&this->actor, play)) {
         this->actionFunc = func_80A71530;
     } else {
-        func_8002F434(&this->actor, play, this->unkGetItemId, this->actor.xzDistToPlayer + 1.0f,
-                      fabsf(this->actor.yDistToPlayer) + 1.0f);
+        Actor_OfferGetItem(&this->actor, play, this->unkGetItemId, this->actor.xzDistToPlayer + 1.0f,
+                           fabsf(this->actor.yDistToPlayer) + 1.0f);
     }
 }
 

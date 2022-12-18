@@ -241,7 +241,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
             }
         }
         if (play->csCtx.frames == 1020) {
-            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_FANFARE, 0, 0, SEQ_ID_OPENING_GANON);
+            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_FANFARE, 0, 0, NA_BGM_OPENING_GANON);
         }
         if (play->csCtx.frames == 960) {
             AudioSfx_PlaySfx(NA_SE_EV_HORSE_GROAN, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
@@ -387,7 +387,7 @@ void EnViewer_UpdateImpl(EnViewer* this, PlayState* play) {
                 break;
         }
     } else if (type == ENVIEWER_TYPE_2_ZELDA) {
-        if (play->sceneId == SCENE_HYRULE_FIELD) { // Hyrule Field
+        if (play->sceneId == SCENE_HYRULE_FIELD) {
             switch (this->state) {
                 case 0:
                     if (play->csCtx.state != CS_STATE_IDLE) {
@@ -587,7 +587,7 @@ void EnViewer_DrawHorse(EnViewer* this, PlayState* play) {
 }
 
 s32 EnViewer_ZeldaOverrideLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec3f* pos, Vec3s* rot, void* thisx) {
-    if (play->sceneId == SCENE_HYRULE_FIELD) { // Hyrule Field
+    if (play->sceneId == SCENE_HYRULE_FIELD) {
         if (limbIndex == 2) {
             *dList = gChildZeldaCutsceneDressDL;
         }
@@ -624,7 +624,7 @@ void EnViewer_ZeldaPostLimbDraw(PlayState* play, s32 limbIndex, Gfx** dList, Vec
 
 void EnViewer_DrawZelda(EnViewer* this, PlayState* play) {
     OPEN_DISPS(play->state.gfxCtx, "../z_en_viewer.c", 1583);
-    if (play->sceneId == SCENE_HYRULE_FIELD) { // Hyrule Field
+    if (play->sceneId == SCENE_HYRULE_FIELD) {
         if (play->csCtx.frames < 771) {
             gSPSegment(POLY_OPA_DISP++, 0x08, SEGMENTED_TO_VIRTUAL(gChildZeldaEyeInTex));
             gSPSegment(POLY_OPA_DISP++, 0x09, SEGMENTED_TO_VIRTUAL(gChildZeldaEyeOutTex));

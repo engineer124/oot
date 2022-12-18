@@ -651,7 +651,7 @@ void EnFd_Update(Actor* thisx, PlayState* play) {
     s32 pad;
 
     if (this->firstUpdateFlag) {
-        Audio_PlayBgm_StorePrevBgm(SEQ_ID_MINI_BOSS);
+        Audio_PlayBgm_StorePrevBgm(NA_BGM_MINI_BOSS);
         this->firstUpdateFlag = false;
     }
 

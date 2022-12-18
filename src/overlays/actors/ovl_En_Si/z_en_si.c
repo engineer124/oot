@@ -95,7 +95,7 @@ void func_80AFB768(EnSi* this, PlayState* play) {
                 Item_Give(play, ITEM_SKULL_TOKEN);
                 player->actor.freezeTimer = 10;
                 Message_StartTextbox(play, 0xB4, NULL);
-                Audio_PlayFanfare(SEQ_ID_SMALL_ITEM_GET);
+                Audio_PlayFanfare(NA_BGM_SMALL_ITEM_GET);
                 this->actionFunc = func_80AFB950;
             } else {
                 Collider_UpdateCylinder(&this->actor, &this->collider);
@@ -117,7 +117,7 @@ void func_80AFB89C(EnSi* this, PlayState* play) {
         Item_Give(play, ITEM_SKULL_TOKEN);
         player->actor.freezeTimer = 10;
         Message_StartTextbox(play, 0xB4, NULL);
-        Audio_PlayFanfare(SEQ_ID_SMALL_ITEM_GET);
+        Audio_PlayFanfare(NA_BGM_SMALL_ITEM_GET);
         this->actionFunc = func_80AFB950;
     }
 }

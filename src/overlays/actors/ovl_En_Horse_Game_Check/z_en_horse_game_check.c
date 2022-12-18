@@ -113,11 +113,11 @@ void EnHorseGameCheck_FinishIngoRace(EnHorseGameCheckIngoRace* this, PlayState* 
             SET_EVENTINF_HORSES_STATE(EVENTINF_HORSES_STATE_6);
             SET_EVENTINF_HORSES_0F(1);
             play->transitionType = TRANS_TYPE_FADE_WHITE;
-            Environment_ForcePlaySequence(SEQ_ID_INGO);
+            Environment_ForcePlaySequence(NA_BGM_INGO);
         } else {
             SET_EVENTINF_HORSES_STATE(EVENTINF_HORSES_STATE_4);
             SET_EVENTINF_HORSES_0F(1);
-            Environment_ForcePlaySequence(SEQ_ID_INGO);
+            Environment_ForcePlaySequence(NA_BGM_INGO);
             play->transitionType = TRANS_TYPE_CIRCLE(TCA_STARBURST, TCC_WHITE, TCS_FAST);
         }
     } else {
@@ -182,7 +182,7 @@ s32 EnHorseGameCheck_UpdateIngoRace(EnHorseGameCheckBase* base, PlayState* play)
             if (this->playerFinish > 0) {
                 this->result = INGORACE_PLAYER_WIN;
                 this->finishTimer = 55;
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_HORSE_GOAL);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_HORSE_GOAL);
                 AudioSfx_PlaySfx(NA_SE_SY_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
@@ -198,7 +198,7 @@ s32 EnHorseGameCheck_UpdateIngoRace(EnHorseGameCheckBase* base, PlayState* play)
                 this->result = INGORACE_INGO_WIN;
                 this->finishTimer = 70;
                 ingoHorse->stateFlags |= ENHORSE_INGO_WON;
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_HORSE_GOAL);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_HORSE_GOAL);
                 AudioSfx_PlaySfx(NA_SE_SY_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
@@ -207,12 +207,12 @@ s32 EnHorseGameCheck_UpdateIngoRace(EnHorseGameCheckBase* base, PlayState* play)
             }
         }
         if (((player2->rideActor != NULL) && AT_RANCH_EXIT(player2->rideActor)) || AT_RANCH_EXIT(&player2->actor)) {
-            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_HORSE_GOAL);
+            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_HORSE_GOAL);
             this->result = INGORACE_INGO_WIN;
             this->finishTimer = 20;
         }
         if ((gSaveContext.timerSeconds >= 180) && (this->startFlags & 2)) {
-            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_HORSE_GOAL);
+            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_HORSE_GOAL);
             this->result = INGORACE_TIME_UP;
             this->finishTimer = 20;
         }
@@ -378,7 +378,7 @@ s32 EnHorseGameCheck_UpdateMalonRace(EnHorseGameCheckBase* base, PlayState* play
                 this->finishTimer = 30;
             } else if (this->fenceCheck[15] == 1) {
                 this->lapCount = 2;
-                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, SEQ_ID_HORSE_GOAL);
+                SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_HORSE_GOAL);
                 AudioSfx_PlaySfx(NA_SE_SY_START_SHOT, &gSfxDefaultPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
                 this->result = MALONRACE_SUCCESS;
