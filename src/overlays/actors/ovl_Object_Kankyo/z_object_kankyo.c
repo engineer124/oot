@@ -112,22 +112,22 @@ void ObjectKankyo_Init(Actor* thisx, PlayState* play) {
             }
 
             // Check which beams are disabled
-            if (Flags_GetEventChkInf(EVENTCHKINF_BB)) {
+            if (Flags_GetEventChkInf(EVENTCHKINF_DISPELLED_FOREST_BARRIER)) {
                 this->effects[0].size = 0.0f;
             }
-            if (Flags_GetEventChkInf(EVENTCHKINF_BC)) {
+            if (Flags_GetEventChkInf(EVENTCHKINF_DISPELLED_WATER_BARRIER)) {
                 this->effects[1].size = 0.0f;
             }
-            if (Flags_GetEventChkInf(EVENTCHKINF_BD)) {
+            if (Flags_GetEventChkInf(EVENTCHKINF_DISPELLED_SHADOW_BARRIER)) {
                 this->effects[2].size = 0.0f;
             }
-            if (Flags_GetEventChkInf(EVENTCHKINF_BE)) {
+            if (Flags_GetEventChkInf(EVENTCHKINF_DISPELLED_FIRE_BARRIER)) {
                 this->effects[3].size = 0.0f;
             }
-            if (Flags_GetEventChkInf(EVENTCHKINF_BF)) {
+            if (Flags_GetEventChkInf(EVENTCHKINF_DISPELLED_LIGHT_BARRIER)) {
                 this->effects[4].size = 0.0f;
             }
-            if (Flags_GetEventChkInf(EVENTCHKINF_AD)) {
+            if (Flags_GetEventChkInf(EVENTCHKINF_DISPELLED_SPIRIT_BARRIER)) {
                 this->effects[5].size = 0.0f;
             }
 

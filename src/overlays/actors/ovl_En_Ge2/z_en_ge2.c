@@ -241,7 +241,7 @@ void EnGe2_CaptureClose(EnGe2* this, PlayState* play) {
 
         if ((INV_CONTENT(ITEM_HOOKSHOT) == ITEM_NONE) || (INV_CONTENT(ITEM_LONGSHOT) == ITEM_NONE)) {
             play->nextEntranceIndex = ENTR_GERUDO_VALLEY_1;
-        } else if (GET_EVENTCHKINF(EVENTCHKINF_C7)) {
+        } else if (GET_EVENTCHKINF(EVENTCHKINF_GERUDO_FORTRESS_BEEN_CAPTURED)) {
             play->nextEntranceIndex = ENTR_GERUDOS_FORTRESS_18;
         } else {
             play->nextEntranceIndex = ENTR_GERUDOS_FORTRESS_17;
@@ -267,7 +267,7 @@ void EnGe2_CaptureCharge(EnGe2* this, PlayState* play) {
 
         if ((INV_CONTENT(ITEM_HOOKSHOT) == ITEM_NONE) || (INV_CONTENT(ITEM_LONGSHOT) == ITEM_NONE)) {
             play->nextEntranceIndex = ENTR_GERUDO_VALLEY_1;
-        } else if (GET_EVENTCHKINF(EVENTCHKINF_C7)) {
+        } else if (GET_EVENTCHKINF(EVENTCHKINF_GERUDO_FORTRESS_BEEN_CAPTURED)) {
             play->nextEntranceIndex = ENTR_GERUDOS_FORTRESS_18;
         } else {
             play->nextEntranceIndex = ENTR_GERUDOS_FORTRESS_17;

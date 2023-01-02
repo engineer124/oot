@@ -74,40 +74,40 @@ typedef struct {
 } EntranceCutscene;               // size = 0x8
 
 EntranceCutscene sEntranceCutsceneTable[] = {
-    { ENTR_HYRULE_FIELD_3, 2, EVENTCHKINF_A0, gHyruleFieldIntroCs },
-    { ENTR_DEATH_MOUNTAIN_TRAIL_0, 2, EVENTCHKINF_A1, gDMTIntroCs },
-    { ENTR_KAKARIKO_VILLAGE_0, 2, EVENTCHKINF_A3, gKakarikoVillageIntroCs },
-    { ENTR_ZORAS_DOMAIN_0, 2, EVENTCHKINF_A4, gZorasDomainIntroCs },
-    { ENTR_HYRULE_CASTLE_0, 1, EVENTCHKINF_A5, gHyruleCastleIntroCs },
-    { ENTR_GORON_CITY_0, 2, EVENTCHKINF_A6, gGoronCityIntroCs },
-    { ENTR_TEMPLE_OF_TIME_0, 2, EVENTCHKINF_A7, gTempleOfTimeIntroCs },
-    { ENTR_DEKU_TREE_0, 2, EVENTCHKINF_A8, gDekuTreeIntroCs },
+    { ENTR_HYRULE_FIELD_3, 2, EVENTCHKINF_ENTERED_HYRULE_FIELD, gHyruleFieldIntroCs },
+    { ENTR_DEATH_MOUNTAIN_TRAIL_0, 2, EVENTCHKINF_ENTERED_DEATH_MOUNTAIN_TRAIL, gDMTIntroCs },
+    { ENTR_KAKARIKO_VILLAGE_0, 2, EVENTCHKINF_ENTERED_KAKARIKO_VILLAGE, gKakarikoVillageIntroCs },
+    { ENTR_ZORAS_DOMAIN_0, 2, EVENTCHKINF_ENTERED_ZORAS_DOMAIN, gZorasDomainIntroCs },
+    { ENTR_HYRULE_CASTLE_0, 1, EVENTCHKINF_ENTERED_HYRULE_CASTLE, gHyruleCastleIntroCs },
+    { ENTR_GORON_CITY_0, 2, EVENTCHKINF_ENTERED_GORON_CITY, gGoronCityIntroCs },
+    { ENTR_TEMPLE_OF_TIME_0, 2, EVENTCHKINF_ENTERED_TEMPLE_OF_TIME, gTempleOfTimeIntroCs },
+    { ENTR_DEKU_TREE_0, 2, EVENTCHKINF_ENTERED_DEKU_TREE, gDekuTreeIntroCs },
     { ENTR_HYRULE_FIELD_11, 0, EVENTCHKINF_EPONA_OBTAINED, gHyruleFieldSouthEponaJumpCs },
     { ENTR_HYRULE_FIELD_13, 0, EVENTCHKINF_EPONA_OBTAINED, gHyruleFieldEastEponaJumpCs },
     { ENTR_HYRULE_FIELD_12, 0, EVENTCHKINF_EPONA_OBTAINED, gHyruleFieldWestEponaJumpCs },
     { ENTR_HYRULE_FIELD_15, 0, EVENTCHKINF_EPONA_OBTAINED, gHyruleFieldGateEponaJumpCs },
-    { ENTR_HYRULE_FIELD_16, 1, EVENTCHKINF_A9, gHyruleFieldGetOoTCs },
-    { ENTR_LAKE_HYLIA_0, 2, EVENTCHKINF_B1, gLakeHyliaIntroCs },
-    { ENTR_GERUDO_VALLEY_0, 2, EVENTCHKINF_B2, gGerudoValleyIntroCs },
-    { ENTR_GERUDOS_FORTRESS_0, 2, EVENTCHKINF_B3, gGerudoFortressIntroCs },
-    { ENTR_LON_LON_RANCH_0, 2, EVENTCHKINF_B4, gLonLonRanchIntroCs },
-    { ENTR_JABU_JABU_0, 2, EVENTCHKINF_B5, gJabuJabuIntroCs },
-    { ENTR_GRAVEYARD_0, 2, EVENTCHKINF_B6, gGraveyardIntroCs },
-    { ENTR_ZORAS_FOUNTAIN_2, 2, EVENTCHKINF_B7, gZorasFountainIntroCs },
-    { ENTR_DESERT_COLOSSUS_0, 2, EVENTCHKINF_B8, gDesertColossusIntroCs },
-    { ENTR_DEATH_MOUNTAIN_CRATER_0, 2, EVENTCHKINF_B9, gDeathMountainCraterIntroCs },
-    { ENTR_HYRULE_CASTLE_0, 0, EVENTCHKINF_BA, gGanonsCastleIntroCs },
-    { ENTR_ROYAL_FAMILYS_TOMB_1, 2, EVENTCHKINF_5A, gSunSongGraveSunSongTeachPart2Cs },
-    { ENTR_INSIDE_GANONS_CASTLE_2, 2, EVENTCHKINF_BB, gForestBarrierCs },
-    { ENTR_INSIDE_GANONS_CASTLE_3, 2, EVENTCHKINF_BC, gWaterBarrierCs },
-    { ENTR_INSIDE_GANONS_CASTLE_4, 2, EVENTCHKINF_BD, gShadowBarrierCs },
-    { ENTR_INSIDE_GANONS_CASTLE_5, 2, EVENTCHKINF_BE, gFireBarrierCs },
-    { ENTR_INSIDE_GANONS_CASTLE_6, 2, EVENTCHKINF_BF, gLightBarrierCs },
-    { ENTR_INSIDE_GANONS_CASTLE_7, 2, EVENTCHKINF_AD, gSpiritBarrierCs },
-    { ENTR_SPIRIT_TEMPLE_BOSS_0, 0, EVENTCHKINF_C0, gSpiritBossNabooruKnuckleIntroCs },
-    { ENTR_GERUDOS_FORTRESS_17, 0, EVENTCHKINF_C7, gGerudoFortressFirstCaptureCs },
-    { ENTR_DEATH_MOUNTAIN_CRATER_1, 2, EVENTCHKINF_B9, gDeathMountainCraterIntroCs },
-    { ENTR_KOKIRI_FOREST_12, 2, EVENTCHKINF_C6, gKokiriForestDekuSproutCs },
+    { ENTR_HYRULE_FIELD_16, 1, EVENTCHKINF_WATCHED_HYRULE_FIELD_GET_OOT_CS, gHyruleFieldGetOoTCs },
+    { ENTR_LAKE_HYLIA_0, 2, EVENTCHKINF_ENTERED_LAKE_HYLIA, gLakeHyliaIntroCs },
+    { ENTR_GERUDO_VALLEY_0, 2, EVENTCHKINF_ENTERED_GERUDO_VALLEY, gGerudoValleyIntroCs },
+    { ENTR_GERUDOS_FORTRESS_0, 2, EVENTCHKINF_ENTERED_GERUDOS_FORTRESS, gGerudoFortressIntroCs },
+    { ENTR_LON_LON_RANCH_0, 2, EVENTCHKINF_ENTERED_LON_LON_RANCH, gLonLonRanchIntroCs },
+    { ENTR_JABU_JABU_0, 2, EVENTCHKINF_ENTERED_JABU_JABU, gJabuJabuIntroCs },
+    { ENTR_GRAVEYARD_0, 2, EVENTCHKINF_ENTERED_GRAVEYARD, gGraveyardIntroCs },
+    { ENTR_ZORAS_FOUNTAIN_2, 2, EVENTCHKINF_ENTERED_ZORAS_FOUNTAIN, gZorasFountainIntroCs },
+    { ENTR_DESERT_COLOSSUS_0, 2, EVENTCHKINF_ENTERED_DESERT_COLOSSUS, gDesertColossusIntroCs },
+    { ENTR_DEATH_MOUNTAIN_CRATER_0, 2, EVENTCHKINF_ENTERED_DEATH_MOUNTAIN_CRATER, gDeathMountainCraterIntroCs },
+    { ENTR_HYRULE_CASTLE_0, 0, EVENTCHKINF_ENTERED_OUTSIDE_GANONS_CASTLE, gGanonsCastleIntroCs },
+    { ENTR_ROYAL_FAMILYS_TOMB_1, 2, EVENTCHKINF_ENTERED_ROYAL_FAMILYS_TOMB, gSunSongGraveSunSongTeachPart2Cs },
+    { ENTR_INSIDE_GANONS_CASTLE_2, 2, EVENTCHKINF_DISPELLED_FOREST_BARRIER, gForestBarrierCs },
+    { ENTR_INSIDE_GANONS_CASTLE_3, 2, EVENTCHKINF_DISPELLED_WATER_BARRIER, gWaterBarrierCs },
+    { ENTR_INSIDE_GANONS_CASTLE_4, 2, EVENTCHKINF_DISPELLED_SHADOW_BARRIER, gShadowBarrierCs },
+    { ENTR_INSIDE_GANONS_CASTLE_5, 2, EVENTCHKINF_DISPELLED_FIRE_BARRIER, gFireBarrierCs },
+    { ENTR_INSIDE_GANONS_CASTLE_6, 2, EVENTCHKINF_DISPELLED_LIGHT_BARRIER, gLightBarrierCs },
+    { ENTR_INSIDE_GANONS_CASTLE_7, 2, EVENTCHKINF_DISPELLED_SPIRIT_BARRIER, gSpiritBarrierCs },
+    { ENTR_SPIRIT_TEMPLE_BOSS_0, 0, EVENTCHKINF_WATCHED_NABOORU_KNUCKLE_INTRO_CS, gSpiritBossNabooruKnuckleIntroCs },
+    { ENTR_GERUDOS_FORTRESS_17, 0, EVENTCHKINF_GERUDO_FORTRESS_BEEN_CAPTURED, gGerudoFortressFirstCaptureCs },
+    { ENTR_DEATH_MOUNTAIN_CRATER_1, 2, EVENTCHKINF_ENTERED_DEATH_MOUNTAIN_CRATER, gDeathMountainCraterIntroCs },
+    { ENTR_KOKIRI_FOREST_12, 2, EVENTCHKINF_KOKIRI_FOREST_DEKU_SPROUT_CS, gKokiriForestDekuSproutCs },
 };
 
 void* sUnusedEntranceCsList[] = {
@@ -1338,9 +1338,12 @@ void CutsceneCmd_Destination(PlayState* play, CutsceneContext* csCtx, CsCmdDesti
                 break;
 
             case CS_DEST_GANONS_CASTLE_DISPEL_BARRIER_CONDITONAL:
-                if (Flags_GetEventChkInf(EVENTCHKINF_BB) && Flags_GetEventChkInf(EVENTCHKINF_BC) &&
-                    Flags_GetEventChkInf(EVENTCHKINF_BD) && Flags_GetEventChkInf(EVENTCHKINF_BE) &&
-                    Flags_GetEventChkInf(EVENTCHKINF_BF) && Flags_GetEventChkInf(EVENTCHKINF_AD)) {
+                if (Flags_GetEventChkInf(EVENTCHKINF_DISPELLED_FOREST_BARRIER) &&
+                    Flags_GetEventChkInf(EVENTCHKINF_DISPELLED_WATER_BARRIER) &&
+                    Flags_GetEventChkInf(EVENTCHKINF_DISPELLED_SHADOW_BARRIER) &&
+                    Flags_GetEventChkInf(EVENTCHKINF_DISPELLED_FIRE_BARRIER) &&
+                    Flags_GetEventChkInf(EVENTCHKINF_DISPELLED_LIGHT_BARRIER) &&
+                    Flags_GetEventChkInf(EVENTCHKINF_DISPELLED_SPIRIT_BARRIER)) {
                     play->csCtx.script = SEGMENTED_TO_VIRTUAL(gTowerBarrierCs);
                     play->csCtx.curFrame = 0;
                     gSaveContext.cutsceneTrigger = 1;
@@ -2386,9 +2389,9 @@ void Cutscene_HandleConditionalTriggers(PlayState* play) {
             Flags_SetEventChkInf(EVENTCHKINF_C4);
             gSaveContext.entranceIndex = ENTR_TEMPLE_OF_TIME_0;
             gSaveContext.cutsceneIndex = 0xFFF8;
-        } else if (!Flags_GetEventChkInf(EVENTCHKINF_C7) &&
+        } else if (!Flags_GetEventChkInf(EVENTCHKINF_GERUDO_FORTRESS_BEEN_CAPTURED) &&
                    (gEntranceTable[((void)0, gSaveContext.entranceIndex)].sceneId == SCENE_GANON_BOSS)) {
-            Flags_SetEventChkInf(EVENTCHKINF_C7);
+            Flags_SetEventChkInf(EVENTCHKINF_GERUDO_FORTRESS_BEEN_CAPTURED);
             gSaveContext.entranceIndex = ENTR_GANON_BOSS_0;
             gSaveContext.cutsceneIndex = 0xFFF0;
         }

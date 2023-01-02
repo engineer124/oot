@@ -2687,7 +2687,7 @@ void KaleidoScope_Update(PlayState* play) {
                 pauseCtx->worldMapPoints[1] = 1;
             }
 
-            if (GET_EVENTCHKINF(EVENTCHKINF_B2)) {
+            if (GET_EVENTCHKINF(EVENTCHKINF_ENTERED_GERUDO_VALLEY)) {
                 pauseCtx->worldMapPoints[2] = 1;
             }
 
