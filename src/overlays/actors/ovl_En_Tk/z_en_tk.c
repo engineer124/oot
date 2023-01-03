@@ -167,7 +167,7 @@ void EnTk_RestAnim(EnTk* this, PlayState* play) {
                      -10.0f);
 
     this->actionCountdown = Rand_S16Offset(60, 60);
-    this->actor.speedXZ = 0.0f;
+    this->actor.speed = 0.0f;
 }
 
 void EnTk_WalkAnim(EnTk* this, PlayState* play) {
@@ -330,12 +330,12 @@ s32 EnTk_Orient(EnTk* this, PlayState* play) {
     }
 }
 
-u16 func_80B1C54C(PlayState* play, Actor* thisx) {
-    u16 ret;
+u16 EnTk_GetTextId(PlayState* play, Actor* thisx) {
+    u16 faceReaction;
 
-    ret = Text_GetFaceReaction(play, 14);
-    if (ret != 0) {
-        return ret;
+    faceReaction = Text_GetFaceReaction(play, 14);
+    if (faceReaction != 0) {
+        return faceReaction;
     }
 
     if (GET_INFTABLE(INFTABLE_D9)) {
@@ -347,8 +347,8 @@ u16 func_80B1C54C(PlayState* play, Actor* thisx) {
     }
 }
 
-s16 func_80B1C5A0(PlayState* play, Actor* thisx) {
-    s32 ret = NPC_TALK_STATE_TALKING;
+s16 EnTk_UpdateTalkState(PlayState* play, Actor* thisx) {
+    s32 talkState = NPC_TALK_STATE_TALKING;
 
     switch (Message_GetState(&play->msgCtx)) {
         case TEXT_STATE_NONE:
@@ -359,7 +359,7 @@ s16 func_80B1C5A0(PlayState* play, Actor* thisx) {
             if (thisx->textId == 0x5028) {
                 SET_INFTABLE(INFTABLE_D8);
             }
-            ret = NPC_TALK_STATE_IDLE;
+            talkState = NPC_TALK_STATE_IDLE;
             break;
         case TEXT_STATE_DONE_FADING:
             break;
@@ -384,7 +384,7 @@ s16 func_80B1C5A0(PlayState* play, Actor* thisx) {
         case TEXT_STATE_EVENT:
             if (Message_ShouldAdvance(play) && (thisx->textId == 0x0084 || thisx->textId == 0x0085)) {
                 Message_CloseTextbox(play);
-                ret = NPC_TALK_STATE_IDLE;
+                talkState = NPC_TALK_STATE_IDLE;
             }
             break;
         case TEXT_STATE_DONE:
@@ -394,7 +394,7 @@ s16 func_80B1C5A0(PlayState* play, Actor* thisx) {
             break;
     }
 
-    return ret;
+    return talkState;
 }
 
 s32 EnTk_ChooseReward(EnTk* this) {
@@ -529,7 +529,7 @@ void EnTk_Rest(EnTk* this, PlayState* play) {
         }
 
         Npc_UpdateTalking(play, &this->actor, &this->interactInfo.talkState, this->collider.dim.radius + 30.0f,
-                          func_80B1C54C, func_80B1C5A0);
+                          EnTk_GetTextId, EnTk_UpdateTalkState);
     } else if (EnTk_CheckFacingPlayer(this)) {
         v1 = this->actor.shape.rot.y;
         v1 -= this->h_21E;
@@ -537,7 +537,7 @@ void EnTk_Rest(EnTk* this, PlayState* play) {
 
         this->actionCountdown = 0;
         Npc_UpdateTalking(play, &this->actor, &this->interactInfo.talkState, this->collider.dim.radius + 30.0f,
-                          func_80B1C54C, func_80B1C5A0);
+                          EnTk_GetTextId, EnTk_UpdateTalkState);
     } else if (Actor_ProcessTalkRequest(&this->actor, play)) {
         v1 = this->actor.shape.rot.y;
         v1 -= this->h_21E;
@@ -564,7 +564,7 @@ void EnTk_Walk(EnTk* this, PlayState* play) {
         this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
         this->actionFunc = EnTk_Dig;
     } else {
-        this->actor.speedXZ = EnTk_Step(this, play);
+        this->actor.speed = EnTk_Step(this, play);
         EnTk_Orient(this, play);
         Math_SmoothStepToS(&this->headRot, 0, 6, 1000, 1);
         EnTk_CheckCurrentSpot(this);
@@ -661,7 +661,7 @@ void EnTk_Update(Actor* thisx, PlayState* play) {
 
     SkelAnime_Update(&this->skelAnime);
 
-    Actor_MoveForward(&this->actor);
+    Actor_MoveXZGravity(&this->actor);
 
     Actor_UpdateBgCheckInfo(play, &this->actor, 40.0f, 10.0f, 0.0f, UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2);
 

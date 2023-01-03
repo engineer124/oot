@@ -77,7 +77,7 @@ void EnfHG_Init(Actor* thisx, PlayState* play2) {
     Actor_SetScale(&this->actor, 0.011499999f);
     this->actor.gravity = -3.5f;
     ActorShape_Init(&this->actor.shape, -2600.0f, NULL, 20.0f);
-    this->actor.speedXZ = 0.0f;
+    this->actor.speed = 0.0f;
     this->actor.focus.pos = this->actor.world.pos;
     this->actor.focus.pos.y += 70.0f;
     Skin_Init(play, &this->skin, &gPhantomHorseSkel, &gPhantomHorseRunningAnim);
@@ -138,7 +138,7 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 if (this->timers[0] == 55) {
                     Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_DOOR_SHUTTER,
                                        GND_BOSSROOM_CENTER_X + 0.0f, GND_BOSSROOM_CENTER_Y - 97.0f,
-                                       GND_BOSSROOM_CENTER_Z + 308.0f, 0, 0, 0, (SHUTTER_PG_BARS << 6));
+                                       GND_BOSSROOM_CENTER_Z + 308.0f, 0, 0, 0, DOORSHUTTER_PARAMS(SHUTTER_PG_BARS, 0));
                 }
                 if (this->timers[0] == 51) {
                     Actor_PlaySfx(this->actor.child, NA_SE_EV_SPEAR_FENCE);
@@ -150,7 +150,7 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 }
                 break;
             }
-            func_80064520(play, &play->csCtx);
+            Cutscene_StartManual(play, &play->csCtx);
             func_8002DF54(play, &this->actor, PLAYER_CSMODE_8);
             this->subCamId = Play_CreateSubCamera(play);
             Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
@@ -167,7 +167,7 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
             player->actor.world.pos.y = GND_BOSSROOM_CENTER_Y + 7.0f;
             player->actor.world.pos.z = GND_BOSSROOM_CENTER_Z + 155.0f;
             player->actor.world.rot.y = player->actor.shape.rot.y = 0;
-            player->actor.speedXZ = 0.0f;
+            player->actor.speed = 0.0f;
             this->subCamEye.x = GND_BOSSROOM_CENTER_X + 0.0f;
             this->subCamEye.y = GND_BOSSROOM_CENTER_Y + 37.0f;
             this->subCamEye.z = GND_BOSSROOM_CENTER_Z + 170.0f;
@@ -177,7 +177,7 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
             if (this->timers[0] == 25) {
                 Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_DOOR_SHUTTER,
                                    GND_BOSSROOM_CENTER_X + 0.0f, GND_BOSSROOM_CENTER_Y - 97.0f,
-                                   GND_BOSSROOM_CENTER_Z + 308.0f, 0, 0, 0, (SHUTTER_PG_BARS << 6));
+                                   GND_BOSSROOM_CENTER_Z + 308.0f, 0, 0, 0, DOORSHUTTER_PARAMS(SHUTTER_PG_BARS, 0));
             }
             if (this->timers[0] == 21) {
                 Actor_PlaySfx(this->actor.child, NA_SE_EV_SPEAR_FENCE);
@@ -399,7 +399,7 @@ void EnfHG_Intro(EnfHG* this, PlayState* play) {
                 mainCam->at = this->subCamAt;
                 Play_ReturnToMainCam(play, this->subCamId, 0);
                 this->subCamId = SUB_CAM_ID_DONE;
-                func_80064534(play, &play->csCtx);
+                Cutscene_StopManual(play, &play->csCtx);
                 func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
                 this->actionFunc = EnfHG_Retreat;
             }
