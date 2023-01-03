@@ -105,7 +105,7 @@ EntranceCutscene sEntranceCutsceneTable[] = {
     { ENTR_INSIDE_GANONS_CASTLE_6, 2, EVENTCHKINF_DISPELLED_LIGHT_BARRIER, gLightBarrierCs },
     { ENTR_INSIDE_GANONS_CASTLE_7, 2, EVENTCHKINF_DISPELLED_SPIRIT_BARRIER, gSpiritBarrierCs },
     { ENTR_SPIRIT_TEMPLE_BOSS_0, 0, EVENTCHKINF_WATCHED_NABOORU_KNUCKLE_INTRO_CS, gSpiritBossNabooruKnuckleIntroCs },
-    { ENTR_GERUDOS_FORTRESS_17, 0, EVENTCHKINF_GERUDO_FORTRESS_BEEN_CAPTURED, gGerudoFortressFirstCaptureCs },
+    { ENTR_GERUDOS_FORTRESS_17, 0, EVENTCHKINF_GERUDO_FORTRESS_CAUGHT_PREVIOUSLY, gGerudoFortressFirstCaptureCs },
     { ENTR_DEATH_MOUNTAIN_CRATER_1, 2, EVENTCHKINF_ENTERED_DEATH_MOUNTAIN_CRATER, gDeathMountainCraterIntroCs },
     { ENTR_KOKIRI_FOREST_12, 2, EVENTCHKINF_KOKIRI_FOREST_DEKU_SPROUT_CS, gKokiriForestDekuSproutCs },
 };
@@ -2389,9 +2389,9 @@ void Cutscene_HandleConditionalTriggers(PlayState* play) {
             Flags_SetEventChkInf(EVENTCHKINF_C4);
             gSaveContext.entranceIndex = ENTR_TEMPLE_OF_TIME_0;
             gSaveContext.cutsceneIndex = 0xFFF8;
-        } else if (!Flags_GetEventChkInf(EVENTCHKINF_GERUDO_FORTRESS_BEEN_CAPTURED) &&
+        } else if (!Flags_GetEventChkInf(EVENTCHKINF_GERUDO_FORTRESS_CAUGHT_PREVIOUSLY) &&
                    (gEntranceTable[((void)0, gSaveContext.entranceIndex)].sceneId == SCENE_GANON_BOSS)) {
-            Flags_SetEventChkInf(EVENTCHKINF_GERUDO_FORTRESS_BEEN_CAPTURED);
+            Flags_SetEventChkInf(EVENTCHKINF_GERUDO_FORTRESS_CAUGHT_PREVIOUSLY);
             gSaveContext.entranceIndex = ENTR_GANON_BOSS_0;
             gSaveContext.cutsceneIndex = 0xFFF0;
         }
