@@ -1717,8 +1717,8 @@ void func_8002F7A0(PlayState* play, Actor* actor, f32 arg2, s16 arg3, f32 arg4) 
 /**
  * Plays the sound effect at the players's position
  */
-void Player_PlaySfx(Actor* actor, u16 sfxId) {
-    AudioSfx_PlaySfx(sfxId, &actor->projectedPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
+void Player_PlaySfx(Player* player, u16 sfxId) {
+    AudioSfx_PlaySfx(sfxId, &player->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                      &gSfxDefaultReverb);
 }
 

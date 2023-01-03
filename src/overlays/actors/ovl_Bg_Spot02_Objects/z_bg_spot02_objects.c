@@ -158,9 +158,9 @@ void func_808ACA08(BgSpot02Objects* this, PlayState* play) {
 
     if (play->csCtx.frames == 402) {
         if (!LINK_IS_ADULT) {
-            Player_PlaySfx(&player->actor, NA_SE_VO_LI_DEMO_DAMAGE_KID);
+            Player_PlaySfx(player, NA_SE_VO_LI_DEMO_DAMAGE_KID);
         } else {
-            Player_PlaySfx(&player->actor, NA_SE_VO_LI_DEMO_DAMAGE);
+            Player_PlaySfx(player, NA_SE_VO_LI_DEMO_DAMAGE);
         }
     }
 }

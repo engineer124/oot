@@ -219,7 +219,7 @@ void ObjKibako_Idle(ObjKibako* this, PlayState* play) {
 void ObjKibako_SetupHeld(ObjKibako* this) {
     this->actionFunc = ObjKibako_Held;
     this->actor.room = -1;
-    Player_PlaySfx(&this->actor, NA_SE_PL_PULL_UP_WOODBOX);
+    Player_PlaySfx((Player*)&this->actor, NA_SE_PL_PULL_UP_WOODBOX);
 }
 
 void ObjKibako_Held(ObjKibako* this, PlayState* play) {

@@ -423,9 +423,9 @@ void EnWallmas_TakePlayer(EnWallmas* this, PlayState* play) {
 
     if (Animation_OnFrame(&this->skelAnime, 1.0f) != 0) {
         if (!LINK_IS_ADULT) {
-            Player_PlaySfx(&this->actor, NA_SE_VO_LI_DAMAGE_S_KID);
+            Player_PlaySfx((Player*)&this->actor, NA_SE_VO_LI_DAMAGE_S_KID);
         } else {
-            Player_PlaySfx(&this->actor, NA_SE_VO_LI_DAMAGE_S);
+            Player_PlaySfx((Player*)&this->actor, NA_SE_VO_LI_DAMAGE_S);
         }
 
         Actor_PlaySfx(&this->actor, NA_SE_EN_FALL_CATCH);
@@ -448,9 +448,9 @@ void EnWallmas_TakePlayer(EnWallmas* this, PlayState* play) {
 
         if (this->timer == -0x1E) {
             if (!LINK_IS_ADULT) {
-                Player_PlaySfx(&this->actor, NA_SE_VO_LI_TAKEN_AWAY_KID);
+                Player_PlaySfx((Player*)&this->actor, NA_SE_VO_LI_TAKEN_AWAY_KID);
             } else {
-                Player_PlaySfx(&this->actor, NA_SE_VO_LI_TAKEN_AWAY);
+                Player_PlaySfx((Player*)&this->actor, NA_SE_VO_LI_TAKEN_AWAY);
             }
         }
         if (this->timer == 0) {
