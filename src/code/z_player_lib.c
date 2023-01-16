@@ -870,6 +870,12 @@ void Player_DrawImpl(PlayState* play, void** skeleton, Vec3s* jointTable, s32 dL
     Color_RGB8* color;
     s32 eyeIndex = (jointTable[22].x & 0xF) - 1;
     s32 mouthIndex = (jointTable[22].x >> 4) - 1;
+    static s16 sTunicTrapOffsetR = 0;
+    static s16 sTunicTrapOffsetG = 0;
+    static s16 sTunicTrapOffsetB = 0;
+    static u8 sTunicTrapDirR = true;
+    static u8 sTunicTrapDirG = true;
+    static u8 sTunicTrapDirB = true;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_player_lib.c", 1721);
 
@@ -894,7 +900,45 @@ void Player_DrawImpl(PlayState* play, void** skeleton, Vec3s* jointTable, s32 dL
 #endif
 
     color = &sTunicColors[tunic];
-    gDPSetEnvColor(POLY_OPA_DISP++, color->r, color->g, color->b, 0);
+
+    if (sTunicTrapDirR) {
+        sTunicTrapOffsetR += 2;
+        if (color->r + sTunicTrapOffsetR >= 253) {
+            sTunicTrapDirR = false;
+        }
+    } else {
+        sTunicTrapOffsetR -= 2;
+        if (color->r + sTunicTrapOffsetR <= 3) {
+            sTunicTrapDirR = true;
+        }
+    }
+
+    if (sTunicTrapDirG) {
+        sTunicTrapOffsetG += 4;
+        if (color->g + sTunicTrapOffsetG >= 251) {
+            sTunicTrapDirG = false;
+        }
+    } else {
+        sTunicTrapOffsetG -= 4;
+        if (color->g + sTunicTrapOffsetG <= 3) {
+            sTunicTrapDirG = true;
+        }
+    }
+
+    if (sTunicTrapDirB) {
+        sTunicTrapOffsetB += 6;
+        if (color->b + sTunicTrapOffsetB >= 249) {
+            sTunicTrapDirB = false;
+        }
+    } else {
+        sTunicTrapOffsetB -= 6;
+        if (color->b + sTunicTrapOffsetB <= 5) {
+            sTunicTrapDirB = true;
+        }
+    }
+
+    gDPSetEnvColor(POLY_OPA_DISP++, color->r + sTunicTrapOffsetR, color->g + sTunicTrapOffsetG,
+                   color->b + sTunicTrapOffsetB, 0);
 
     sDListsLodOffset = lod * 2;
 
