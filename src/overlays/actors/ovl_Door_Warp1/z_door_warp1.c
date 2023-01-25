@@ -646,6 +646,8 @@ void DoorWarp1_AdultWarpIdle(DoorWarp1* this, PlayState* play) {
 
     Actor_PlaySfx(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
 
+    // Actor_OfferGetItem(&this->actor, play, GI_HEART_CONTAINER, 30.0f, 80.0f);
+
     if (DoorWarp1_PlayerInRange(this, play)) {
         player = GET_PLAYER(play);
 
@@ -738,12 +740,14 @@ void DoorWarp1_AdultWarpOut(DoorWarp1* this, PlayState* play) {
                 SET_EVENTCHKINF(EVENTCHKINF_4A);
                 SET_EVENTCHKINF(EVENTCHKINF_69);
                 Item_Give(play, ITEM_MEDALLION_WATER);
-                gSaveContext.dayTime = CLOCK_TIME(6, 30);
-            }
-            if (!LINK_IS_ADULT) {
-                play->nextEntranceIndex = ENTR_LAKE_HYLIA_8;
+                gSaveContext.skyboxTime = gSaveContext.dayTime = CLOCK_TIME(6, 45);
+                play->nextEntranceIndex = ENTR_LAKE_HYLIA_5;
             } else {
-                play->nextEntranceIndex = ENTR_LAKE_HYLIA_9;
+                if (!LINK_IS_ADULT) {
+                    play->nextEntranceIndex = ENTR_LAKE_HYLIA_8;
+                } else {
+                    play->nextEntranceIndex = ENTR_LAKE_HYLIA_9;
+                }
             }
             gSaveContext.nextCutsceneIndex = 0;
         } else if (play->sceneId == SCENE_SPIRIT_TEMPLE_BOSS) {
