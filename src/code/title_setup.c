@@ -15,9 +15,11 @@ void Setup_InitImpl(SetupState* this) {
     gSaveContext.linkAge = LINK_AGE_ADULT;
     Sram_InitDebugSave();
     gSaveContext.dayTime = CLOCK_TIME(12, 0);
-    gSaveContext.entranceIndex = ENTR_HYRULE_FIELD_0;
+    gSaveContext.entranceIndex = ENTR_WATER_TEMPLE_BOSS_0;
     gSaveContext.respawnFlag = 0;
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = ENTR_LOAD_OPENING;
+    gSaveContext.zTargetSetting = 1;
+    SET_EVENTCHKINF(EVENTCHKINF_74);
     SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
 }
 

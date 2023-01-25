@@ -1495,6 +1495,17 @@ void BossMo_IntroCs(BossMo* this, PlayState* play) {
     }
 }
 
+void BossMo_ShortDeathCs(BossMo* this, PlayState* play) {
+    Actor_Kill(&this->actor);
+    Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_DOOR_WARP1, 0.0f, -280.0f, 0.0f, 0, 0, 0,
+                        WARP_DUNGEON_ADULT);
+    Actor_Spawn(&play->actorCtx, play, ACTOR_ITEM_B_HEART, -200.0f, -280.0f, 0.0f, 0, 0, 0, 0);
+    play->roomCtx.unk_74[0] = 0xFF;
+    MO_WATER_LEVEL(play) = -500;
+    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS_CLEAR);
+    Flags_SetClear(play, play->roomCtx.curRoom.num);
+}
+
 void BossMo_DeathCs(BossMo* this, PlayState* play) {
     s16 i;
     s16 one;
@@ -1879,7 +1890,7 @@ void BossMo_Core(BossMo* this, PlayState* play) {
             return;
         }
     } else if (this->csState >= MO_DEATH_START) {
-        BossMo_DeathCs(this, play);
+        BossMo_ShortDeathCs(this, play);
         return;
     }
     if ((this->work[MO_TENT_ACTION_STATE] < MO_CORE_ATTACK) && (this->work[MO_TENT_ACTION_STATE] >= MO_CORE_MOVE) &&

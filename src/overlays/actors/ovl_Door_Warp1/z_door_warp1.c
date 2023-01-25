@@ -736,18 +736,16 @@ void DoorWarp1_AdultWarpOut(DoorWarp1* this, PlayState* play) {
         } else if (play->sceneId == SCENE_WATER_TEMPLE_BOSS) {
             if (!GET_EVENTCHKINF(EVENTCHKINF_4A)) {
                 SET_EVENTCHKINF(EVENTCHKINF_4A);
+                SET_EVENTCHKINF(EVENTCHKINF_69);
                 Item_Give(play, ITEM_MEDALLION_WATER);
-                play->nextEntranceIndex = ENTR_CHAMBER_OF_THE_SAGES_0;
-                gSaveContext.nextCutsceneIndex = 0;
-                gSaveContext.chamberCutsceneNum = CHAMBER_CS_WATER;
-            } else {
-                if (!LINK_IS_ADULT) {
-                    play->nextEntranceIndex = ENTR_LAKE_HYLIA_8;
-                } else {
-                    play->nextEntranceIndex = ENTR_LAKE_HYLIA_9;
-                }
-                gSaveContext.nextCutsceneIndex = 0;
+                gSaveContext.dayTime = CLOCK_TIME(6, 30);
             }
+            if (!LINK_IS_ADULT) {
+                play->nextEntranceIndex = ENTR_LAKE_HYLIA_8;
+            } else {
+                play->nextEntranceIndex = ENTR_LAKE_HYLIA_9;
+            }
+            gSaveContext.nextCutsceneIndex = 0;
         } else if (play->sceneId == SCENE_SPIRIT_TEMPLE_BOSS) {
             if (!CHECK_QUEST_ITEM(QUEST_MEDALLION_SPIRIT)) {
                 Item_Give(play, ITEM_MEDALLION_SPIRIT);
