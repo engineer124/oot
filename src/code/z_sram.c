@@ -272,7 +272,7 @@ static Inventory sDebugSaveInventory = {
         ITEM_DEKU_NUT,            // SLOT_DEKU_NUT
         ITEM_BOMB,                // SLOT_BOMB
         ITEM_BOW,                 // SLOT_BOW
-        ITEM_ARROW_FIRE,          // SLOT_ARROW_FIRE
+        ITEM_NONE,                // SLOT_ARROW_FIRE
         ITEM_DINS_FIRE,           // SLOT_DINS_FIRE
         ITEM_SLINGSHOT,           // SLOT_SLINGSHOT
         ITEM_OCARINA_FAIRY,       // SLOT_OCARINA

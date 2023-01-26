@@ -32,6 +32,11 @@ void DoorWarp1_DoNothing(DoorWarp1* this, PlayState* play);
 void DoorWarp1_ChooseInitialAction(DoorWarp1* this, PlayState* play);
 void DoorWarp1_FloatPlayer(DoorWarp1* this, PlayState* play);
 
+void DoorWarp1_SpawnItem(DoorWarp1* this, PlayState* play);
+void DoorWarp1_SetupGetItem(DoorWarp1* this, PlayState* play);
+void DoorWarp1_GetItem(DoorWarp1* this, PlayState* play);
+void DoorWarp1_BossWarp_Message(DoorWarp1* this, PlayState* play);
+
 ActorInit Door_Warp1_InitVars = {
     ACTOR_DOOR_WARP1,
     ACTORCAT_ITEMACTION,
@@ -207,6 +212,12 @@ void DoorWarp1_SetupAdultDungeonWarp(DoorWarp1* this, PlayState* play) {
     Lights_PointNoGlowSetInfo(&this->lowerLightInfo, this->actor.world.pos.x, this->actor.world.pos.y,
                               this->actor.world.pos.z, 200, 255, 255, 255);
 
+    DoorWarp1_SetupAction(this, DoorWarp1_SpawnItem);
+}
+
+void DoorWarp1_SpawnItem(DoorWarp1* this, PlayState* play) {
+    Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_ITEM_B_HEART, this->actor.world.pos.x,
+                       this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 1);
     DoorWarp1_SetupAction(this, func_8099A3A4);
 }
 
@@ -637,6 +648,29 @@ void func_8099A3A4(DoorWarp1* this, PlayState* play) {
     if (this->unk_1B0 < 230) {
         this->unk_1B0 += 4;
     } else {
+        DoorWarp1_SetupAction(this, DoorWarp1_SetupGetItem);
+    }
+}
+
+void DoorWarp1_SetupGetItem(DoorWarp1* this, PlayState* play) {
+    Actor_PlaySfx(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
+    this->actor.parent = NULL;
+    DoorWarp1_SetupAction(this, DoorWarp1_GetItem);
+}
+
+void DoorWarp1_GetItem(DoorWarp1* this, PlayState* play) {
+    Actor_PlaySfx(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
+    if (!Actor_HasParent(&this->actor, play)) {
+        Actor_OfferGetItem(&this->actor, play, GI_HEART_CONTAINER, 30.0f, 80.0f);
+    } else {
+        Actor_Kill(this->actor.child);
+        DoorWarp1_SetupAction(this, DoorWarp1_BossWarp_Message);
+    }
+}
+
+void DoorWarp1_BossWarp_Message(DoorWarp1* this, PlayState* play) {
+    Actor_PlaySfx(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
+    if (Message_GetState(&play->msgCtx) == TEXT_STATE_CLOSING) {
         DoorWarp1_SetupAction(this, DoorWarp1_AdultWarpIdle);
     }
 }
@@ -645,9 +679,6 @@ void DoorWarp1_AdultWarpIdle(DoorWarp1* this, PlayState* play) {
     Player* player;
 
     Actor_PlaySfx(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
-
-    // Actor_OfferGetItem(&this->actor, play, GI_HEART_CONTAINER, 30.0f, 80.0f);
-
     if (DoorWarp1_PlayerInRange(this, play)) {
         player = GET_PLAYER(play);
 

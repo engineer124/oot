@@ -44,6 +44,11 @@ void ItemBHeart_Init(Actor* thisx, PlayState* play) {
         Actor_ProcessInitChain(&this->actor, sInitChain);
         ActorShape_Init(&this->actor.shape, 0.0f, NULL, 0.8f);
     }
+
+    if (this->actor.params == 1) {
+        this->actor.objBankIndex = Object_GetIndex(&play->objectCtx, OBJECT_GI_MEDAL);
+        Actor_SetObjectDependency(play, &this->actor);
+    }
 }
 
 void ItemBHeart_Destroy(Actor* thisx, PlayState* play) {
@@ -54,11 +59,14 @@ void ItemBHeart_Update(Actor* thisx, PlayState* play) {
 
     func_80B85264(this, play);
     Actor_UpdateBgCheckInfo(play, &this->actor, 0.0f, 0.0f, 0.0f, UPDBGCHECKINFO_FLAG_2);
-    if (Actor_HasParent(&this->actor, play)) {
-        Flags_SetCollectible(play, 0x1F);
-        Actor_Kill(&this->actor);
-    } else {
-        Actor_OfferGetItem(&this->actor, play, GI_HEART_CONTAINER_2, 30.0f, 40.0f);
+
+    if (this->actor.params == 0) {
+        if (Actor_HasParent(&this->actor, play)) {
+            Flags_SetCollectible(play, 0x1F);
+            Actor_Kill(&this->actor);
+        } else {
+            Actor_OfferGetItem(&this->actor, play, GI_HEART_CONTAINER_2, 30.0f, 40.0f);
+        }
     }
 }
 
@@ -79,6 +87,11 @@ void ItemBHeart_Draw(Actor* thisx, PlayState* play) {
     ItemBHeart* this = (ItemBHeart*)thisx;
     Actor* actorIt;
     u8 flag = false;
+
+    if (this->actor.params == 1) {
+        GetItem_Draw(play, GID_MEDALLION_WATER);
+        return;
+    }
 
     OPEN_DISPS(play->state.gfxCtx, "../z_item_b_heart.c", 506);
 
