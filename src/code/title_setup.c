@@ -18,8 +18,8 @@ void Setup_InitImpl(SetupState* this) {
     gSaveContext.entranceIndex = ENTR_WATER_TEMPLE_BOSS_0;
     gSaveContext.respawnFlag = 0;
     gSaveContext.respawn[RESPAWN_MODE_DOWN].entranceIndex = ENTR_LOAD_OPENING;
-    gSaveContext.zTargetSetting = 1;
-    SET_EVENTCHKINF(EVENTCHKINF_74);
+    gSaveContext.zTargetSetting = 1; // Hold
+    SET_EVENTCHKINF(EVENTCHKINF_74); // Morpha Intro CS Watched
     SET_NEXT_GAMESTATE(&this->state, Play_Init, PlayState);
 }
 
