@@ -240,7 +240,7 @@ static SavePlayerData sDebugSavePlayerData = {
     0,                                                  // unk_1F
     false,                                              // isDoubleMagicAcquired
     false,                                              // isDoubleDefenseAcquired
-    0,                                                  // bgsFlag
+    true,                                               // bgsFlag
     0,                                                  // ocarinaGameRoundNum
     {
         { ITEM_NONE, ITEM_NONE, ITEM_NONE, ITEM_NONE }, // buttonItems
