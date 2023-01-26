@@ -217,7 +217,7 @@ void DoorWarp1_SetupAdultDungeonWarp(DoorWarp1* this, PlayState* play) {
 
 void DoorWarp1_SpawnItem(DoorWarp1* this, PlayState* play) {
     Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_ITEM_B_HEART, this->actor.world.pos.x,
-                       this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 1);
+                       this->actor.world.pos.y, this->actor.world.pos.z, 0, 0, 0, 3);
     DoorWarp1_SetupAction(this, func_8099A3A4);
 }
 
@@ -661,7 +661,7 @@ void DoorWarp1_SetupGetItem(DoorWarp1* this, PlayState* play) {
 void DoorWarp1_GetItem(DoorWarp1* this, PlayState* play) {
     Actor_PlaySfx(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
     if (!Actor_HasParent(&this->actor, play)) {
-        Actor_OfferGetItem(&this->actor, play, GI_HEART_CONTAINER, 30.0f, 80.0f);
+        Actor_OfferGetItem(&this->actor, play, GI_MEDALLION_WATER, 30.0f, 80.0f);
     } else {
         Actor_Kill(this->actor.child);
         DoorWarp1_SetupAction(this, DoorWarp1_BossWarp_Message);
@@ -679,6 +679,7 @@ void DoorWarp1_AdultWarpIdle(DoorWarp1* this, PlayState* play) {
     Player* player;
 
     Actor_PlaySfx(&this->actor, NA_SE_EV_WARP_HOLE - SFX_FLAG);
+
     if (DoorWarp1_PlayerInRange(this, play)) {
         player = GET_PLAYER(play);
 
@@ -771,16 +772,17 @@ void DoorWarp1_AdultWarpOut(DoorWarp1* this, PlayState* play) {
                 SET_EVENTCHKINF(EVENTCHKINF_4A);
                 SET_EVENTCHKINF(EVENTCHKINF_69);
                 Item_Give(play, ITEM_MEDALLION_WATER);
-                gSaveContext.skyboxTime = gSaveContext.dayTime = CLOCK_TIME(6, 45);
                 play->nextEntranceIndex = ENTR_LAKE_HYLIA_5;
+                gSaveContext.nextCutsceneIndex = 0;
+                gSaveContext.skyboxTime = gSaveContext.dayTime = CLOCK_TIME(6, 45);
             } else {
                 if (!LINK_IS_ADULT) {
                     play->nextEntranceIndex = ENTR_LAKE_HYLIA_8;
                 } else {
                     play->nextEntranceIndex = ENTR_LAKE_HYLIA_9;
                 }
+                gSaveContext.nextCutsceneIndex = 0;
             }
-            gSaveContext.nextCutsceneIndex = 0;
         } else if (play->sceneId == SCENE_SPIRIT_TEMPLE_BOSS) {
             if (!CHECK_QUEST_ITEM(QUEST_MEDALLION_SPIRIT)) {
                 Item_Give(play, ITEM_MEDALLION_SPIRIT);
