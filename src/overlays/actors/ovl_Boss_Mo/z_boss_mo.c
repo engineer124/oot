@@ -1496,14 +1496,110 @@ void BossMo_IntroCs(BossMo* this, PlayState* play) {
 }
 
 void BossMo_ShortDeathCs(BossMo* this, PlayState* play) {
-    Actor_Kill(&this->actor);
-    Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_DOOR_WARP1, 0.0f, -280.0f, 0.0f, 0, 0, 0,
-                        WARP_DUNGEON_ADULT);
-    Actor_Spawn(&play->actorCtx, play, ACTOR_ITEM_B_HEART, -200.0f, -280.0f, 0.0f, 0, 0, 0, 0);
-    play->roomCtx.unk_74[0] = 0xFF;
-    MO_WATER_LEVEL(play) = -500;
-    SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS_CLEAR);
-    Flags_SetClear(play, play->roomCtx.curRoom.num);
+    s16 i;
+    f32 dx;
+    f32 dz;
+    f32 sp80;
+    f32 sp7C;
+    Vec3f sp70;
+    Vec3f sp64;
+    Camera* mainCam = Play_GetCamera(play, CAM_ID_MAIN);
+    Vec3f velocity;
+    Vec3f pos;
+
+    switch (this->csState) {
+        case MO_DEATH_START:
+            Cutscene_StartManual(play, &play->csCtx);
+            func_8002DF54(play, &this->actor, PLAYER_CSMODE_8);
+            this->subCamId = Play_CreateSubCamera(play);
+            Play_ChangeCameraStatus(play, CAM_ID_MAIN, CAM_STAT_WAIT);
+            Play_ChangeCameraStatus(play, this->subCamId, CAM_STAT_ACTIVE);
+            this->csState = MO_DEATH_MO_CORE_BURST;
+            this->subCamEye = mainCam->eye;
+            this->timers[0] = 90;
+            dx = this->actor.world.pos.x - this->subCamEye.x;
+            dz = this->actor.world.pos.z - this->subCamEye.z;
+            this->subCamYaw = Math_FAtan2F(dx, dz);
+            this->subCamDist = sqrtf(SQ(dx) + SQ(dz));
+            this->subCamYawRate = 0.0f;
+            FALLTHROUGH;
+        case MO_DEATH_MO_CORE_BURST:
+            this->baseAlpha = 0.0f;
+            if (this->timers[0] & 4) {
+                sp80 = 0.005f;
+                sp7C = 0.015f;
+            } else {
+                sp80 = 0.015f;
+                sp7C = 0.005f;
+            }
+            Math_ApproachF(&this->actor.scale.x, sp80, 0.5f, 0.002f);
+            this->actor.scale.z = this->actor.scale.x;
+            Math_ApproachF(&this->actor.scale.y, sp7C, 0.5f, 0.002f);
+            this->subCamYaw += this->subCamYawRate;
+            if (this->timers[0] >= 30) {
+                Math_ApproachF(&this->subCamYawRate, 0.05f, 1.0f, 0.002f);
+            } else {
+                Math_ApproachF(&this->subCamYawRate, 0.0f, 1.0f, 0.002f);
+            }
+            Math_ApproachF(&this->actor.world.pos.y, 150.0f, 0.05f, 5.0f);
+            Math_ApproachF(&this->subCamEye.y, 100.0f, 0.05f, 2.0f);
+            this->subCamAt = this->subCamAtNext = this->actor.world.pos;
+            if (this->timers[0] > 20) {
+                Actor_PlaySfx(&this->actor, NA_SE_EN_MOFER_DEAD - SFX_FLAG);
+            }
+            if (this->timers[0] == 20) {
+                for (i = 0; i < 300; i++) {
+                    velocity.x = Rand_CenteredFloat(10.0f);
+                    velocity.y = Rand_CenteredFloat(10.0f);
+                    velocity.z = Rand_CenteredFloat(10.0f);
+                    pos = this->actor.world.pos;
+                    pos.x += 2.0f * velocity.x;
+                    pos.y += 2.0f * velocity.y;
+                    pos.z += 2.0f * velocity.z;
+                    BossMo_SpawnDroplet(MO_FX_DROPLET, (BossMoEffect*)play->specialEffects, &pos, &velocity,
+                                        Rand_ZeroFloat(0.08f) + 0.13f);
+                }
+                this->drawActor = false;
+                this->actor.flags &= ~ACTOR_FLAG_0;
+                Actor_PlaySfx(&this->actor, NA_SE_EN_MOFER_CORE_JUMP);
+                SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 70, NA_SE_EN_MOFER_LASTVOICE);
+            }
+            if (this->timers[0] == 0) {
+                this->csState = MO_DEATH_DRAIN_WATER_1;
+            }
+            break;
+        case MO_DEATH_DRAIN_WATER_1:
+            Actor_Kill(&this->actor);
+            Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_DOOR_WARP1, 0.0f, -280.0f, 0.0f, 0, 0, 0,
+                                WARP_DUNGEON_ADULT);
+            Actor_Spawn(&play->actorCtx, play, ACTOR_ITEM_B_HEART, -200.0f, -280.0f, 0.0f, 0, 0, 0, 0);
+            play->roomCtx.unk_74[0] = 0xFF;
+            MO_WATER_LEVEL(play) = -500;
+            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS_CLEAR);
+            Flags_SetClear(play, play->roomCtx.curRoom.num);
+            mainCam->eye = this->subCamEye;
+            mainCam->eyeNext = this->subCamEye;
+            mainCam->at = this->subCamAt;
+            Play_ReturnToMainCam(play, this->subCamId, 0);
+            this->subCamId = SUB_CAM_ID_DONE;
+            Cutscene_StopManual(play, &play->csCtx);
+            func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
+            break;
+    }
+
+    sp70.x = this->subCamDist;
+    sp70.y = 0.0f;
+    sp70.z = 0.0f;
+    Matrix_RotateY(this->subCamYaw, MTXMODE_NEW);
+    Matrix_MultVec3f(&sp70, &sp64);
+    this->subCamEye.x = sp64.x + this->subCamAt.x;
+    this->subCamEye.z = sp64.z + this->subCamAt.z;
+    if (this->subCamId != SUB_CAM_ID_DONE) {
+        Math_ApproachF(&this->subCamAt.y, this->subCamAtNext.y, this->subCamAtMaxVelFrac.y,
+                        this->subCamAtVel.y * this->subCamVelFactor);
+        Math_ApproachF(&this->subCamVelFactor, 1.0f, 1.0f, this->subCamAccel);
+        Play_SetCameraAtEye(play, this->subCamId, &this->subCamAt, &this->subCamEye);
+    }
 }
 
 void BossMo_DeathCs(BossMo* this, PlayState* play) {
@@ -1625,6 +1721,24 @@ void BossMo_DeathCs(BossMo* this, PlayState* play) {
             }
             break;
         case MO_DEATH_DRAIN_WATER_1:
+            Actor_Kill(&this->actor);
+            Actor_SpawnAsChild(&play->actorCtx, &this->actor, play, ACTOR_DOOR_WARP1, 0.0f, -280.0f, 0.0f, 0, 0, 0,
+                                WARP_DUNGEON_ADULT);
+            Actor_Spawn(&play->actorCtx, play, ACTOR_ITEM_B_HEART, -200.0f, -280.0f, 0.0f, 0, 0, 0, 0);
+            play->roomCtx.unk_74[0] = 0xFF;
+            MO_WATER_LEVEL(play) = -500;
+            SEQCMD_PLAY_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0, 0, NA_BGM_BOSS_CLEAR);
+            Flags_SetClear(play, play->roomCtx.curRoom.num);
+            mainCam->eye = this->subCamEye;
+            mainCam->eyeNext = this->subCamEye;
+            mainCam->at = this->subCamAt;
+            Play_ReturnToMainCam(play, this->subCamId, 0);
+            this->subCamId = SUB_CAM_ID_DONE;
+            Cutscene_StopManual(play, &play->csCtx);
+            func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
+            return;
+
+
             if (this->timers[0] == 0) {
                 this->csState = MO_DEATH_DRAIN_WATER_2;
                 this->subCamAt.y = -200.0f;
