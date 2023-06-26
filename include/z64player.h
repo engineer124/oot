@@ -466,8 +466,100 @@ typedef enum {
     /* 0x67 */ PLAYER_CSMODE_MAX
 } PlayerCutsceneMode;
 
+typedef enum PlayerCueId {
+    /* 0x00 */ PLAYER_CUEID_NONE,
+    /* 0x01 */ PLAYER_CUEID_1,
+    /* 0x02 */ PLAYER_CUEID_2,
+    /* 0x03 */ PLAYER_CUEID_3,
+    /* 0x04 */ PLAYER_CUEID_4,
+    /* 0x05 */ PLAYER_CUEID_5,
+    /* 0x06 */ PLAYER_CUEID_6,
+    /* 0x07 */ PLAYER_CUEID_7,
+    /* 0x08 */ PLAYER_CUEID_8,
+    /* 0x09 */ PLAYER_CUEID_9,
+    /* 0x0A */ PLAYER_CUEID_10,
+    /* 0x0B */ PLAYER_CUEID_11,
+    /* 0x0C */ PLAYER_CUEID_12,
+    /* 0x0D */ PLAYER_CUEID_13,
+    /* 0x0E */ PLAYER_CUEID_14,
+    /* 0x0F */ PLAYER_CUEID_15,
+    /* 0x10 */ PLAYER_CUEID_16,
+    /* 0x11 */ PLAYER_CUEID_17,
+    /* 0x12 */ PLAYER_CUEID_18,
+    /* 0x13 */ PLAYER_CUEID_19,
+    /* 0x14 */ PLAYER_CUEID_20,
+    /* 0x15 */ PLAYER_CUEID_21,
+    /* 0x16 */ PLAYER_CUEID_22,
+    /* 0x17 */ PLAYER_CUEID_23,
+    /* 0x18 */ PLAYER_CUEID_24,
+    /* 0x19 */ PLAYER_CUEID_25,
+    /* 0x1A */ PLAYER_CUEID_26,
+    /* 0x1B */ PLAYER_CUEID_27,
+    /* 0x1C */ PLAYER_CUEID_28,
+    /* 0x1D */ PLAYER_CUEID_29,
+    /* 0x1E */ PLAYER_CUEID_30,
+    /* 0x1F */ PLAYER_CUEID_31,
+    /* 0x20 */ PLAYER_CUEID_32,
+    /* 0x21 */ PLAYER_CUEID_33,
+    /* 0x22 */ PLAYER_CUEID_34,
+    /* 0x23 */ PLAYER_CUEID_35,
+    /* 0x24 */ PLAYER_CUEID_36,
+    /* 0x25 */ PLAYER_CUEID_37,
+    /* 0x26 */ PLAYER_CUEID_38,
+    /* 0x27 */ PLAYER_CUEID_39,
+    /* 0x28 */ PLAYER_CUEID_40,
+    /* 0x29 */ PLAYER_CUEID_41,
+    /* 0x2A */ PLAYER_CUEID_42,
+    /* 0x2B */ PLAYER_CUEID_43,
+    /* 0x2C */ PLAYER_CUEID_44,
+    /* 0x2D */ PLAYER_CUEID_45,
+    /* 0x2E */ PLAYER_CUEID_46,
+    /* 0x2F */ PLAYER_CUEID_47,
+    /* 0x30 */ PLAYER_CUEID_48,
+    /* 0x31 */ PLAYER_CUEID_49,
+    /* 0x32 */ PLAYER_CUEID_50,
+    /* 0x33 */ PLAYER_CUEID_51,
+    /* 0x34 */ PLAYER_CUEID_52,
+    /* 0x35 */ PLAYER_CUEID_53,
+    /* 0x36 */ PLAYER_CUEID_54,
+    /* 0x37 */ PLAYER_CUEID_55,
+    /* 0x38 */ PLAYER_CUEID_56,
+    /* 0x39 */ PLAYER_CUEID_57,
+    /* 0x3A */ PLAYER_CUEID_58,
+    /* 0x3B */ PLAYER_CUEID_59,
+    /* 0x3C */ PLAYER_CUEID_60,
+    /* 0x3D */ PLAYER_CUEID_61,
+    /* 0x3E */ PLAYER_CUEID_62,
+    /* 0x3F */ PLAYER_CUEID_63,
+    /* 0x40 */ PLAYER_CUEID_64,
+    /* 0x41 */ PLAYER_CUEID_65,
+    /* 0x42 */ PLAYER_CUEID_66,
+    /* 0x43 */ PLAYER_CUEID_67,
+    /* 0x44 */ PLAYER_CUEID_68,
+    /* 0x45 */ PLAYER_CUEID_69,
+    /* 0x46 */ PLAYER_CUEID_70,
+    /* 0x47 */ PLAYER_CUEID_71,
+    /* 0x48 */ PLAYER_CUEID_72,
+    /* 0x49 */ PLAYER_CUEID_73,
+    /* 0x4A */ PLAYER_CUEID_74,
+    /* 0x4B */ PLAYER_CUEID_75,
+    /* 0x4C */ PLAYER_CUEID_76,
+    /* 0x4D */ PLAYER_CUEID_77,
+    /* 0x4E */ PLAYER_CUEID_MAX
+} PlayerCueId;
+
+typedef enum {
+    /* 0 */ PLAYER_LEDGE_CLIMB_NONE,
+    /* 1 */ PLAYER_LEDGE_CLIMB_1,
+    /* 2 */ PLAYER_LEDGE_CLIMB_2,
+    /* 3 */ PLAYER_LEDGE_CLIMB_3,
+    /* 4 */ PLAYER_LEDGE_CLIMB_4
+} PlayerLedgeClimbType;
+
+#define LEDGE_DIST_MAX 399.96002f
+
 typedef struct {
-    /* 0x00 */ f32 unk_00;
+    /* 0x00 */ f32 ceilingCheckHeight;
     /* 0x04 */ f32 unk_04;
     /* 0x08 */ f32 unk_08;
     /* 0x0C */ f32 unk_0C;
@@ -481,7 +573,7 @@ typedef struct {
     /* 0x2C */ f32 unk_2C;
     /* 0x30 */ f32 unk_30;
     /* 0x34 */ f32 unk_34;
-    /* 0x38 */ f32 unk_38;
+    /* 0x38 */ f32 wallCheckRadius;
     /* 0x3C */ f32 unk_3C;
     /* 0x40 */ f32 unk_40;
     /* 0x44 */ Vec3s unk_44;
@@ -550,7 +642,7 @@ typedef struct {
 #define PLAYER_STATE2_6 (1 << 6)
 #define PLAYER_STATE2_7 (1 << 7)
 #define PLAYER_STATE2_8 (1 << 8)
-#define PLAYER_STATE2_9 (1 << 9)
+#define PLAYER_STATE2_FORCE_SAND_FLOOR_SOUND (1 << 9)
 #define PLAYER_STATE2_10 (1 << 10)
 #define PLAYER_STATE2_11 (1 << 11)
 #define PLAYER_STATE2_12 (1 << 12)
@@ -671,7 +763,7 @@ typedef struct Player {
     /* 0x069C */ char       unk_69C[0x004];
     /* 0x06A0 */ f32        unk_6A0;
     /* 0x06A4 */ f32        closestSecretDistSq;
-    /* 0x06A8 */ Actor*     unk_6A8;
+    /* 0x06A8 */ Actor*     ocarinaActor;
     /* 0x06AC */ s8         unk_6AC;
     /* 0x06AD */ u8         unk_6AD;
     /* 0x06AE */ u16        unk_6AE;
@@ -720,10 +812,10 @@ typedef struct Player {
     /* 0x087C */ s16        unk_87C;
     /* 0x087E */ s16        unk_87E;
     /* 0x0880 */ f32        unk_880;
-    /* 0x0884 */ f32        wallHeight; // height used to determine whether link can climb or grab a ledge at the top
-    /* 0x0888 */ f32        wallDistance; // distance to the colliding wall plane
-    /* 0x088C */ u8         unk_88C;
-    /* 0x088D */ u8         unk_88D;
+    /* 0x0884 */ f32        yDistToLedge; // y distance to ground above an interact wall. LEDGE_DIST_MAX if no ground if found
+    /* 0x0888 */ f32        distToInteractWall; // xyz distance to the interact wall
+    /* 0x088C */ u8         ledgeClimbType;
+    /* 0x088D */ u8         ledgeClimbDelayTimer;
     /* 0x088E */ u8         unk_88E;
     /* 0x088F */ u8         unk_88F;
     /* 0x0890 */ u8         unk_890;
@@ -732,8 +824,8 @@ typedef struct Player {
     /* 0x0893 */ u8         hoverBootsTimer;
     /* 0x0894 */ s16        fallStartHeight; // last truncated Y position before falling
     /* 0x0896 */ s16        fallDistance; // truncated Y distance the player has fallen so far (positive is down)
-    /* 0x0898 */ s16        unk_898;
-    /* 0x089A */ s16        unk_89A;
+    /* 0x0898 */ s16        floorPitch; // angle of the floor slope in the direction of current world yaw (positive for ascending slope)
+    /* 0x089A */ s16        floorPitchAlt; // the calculation for this value is bugged and doesn't represent anything meaningful
     /* 0x089C */ s16        unk_89C;
     /* 0x089E */ u16        floorSfxOffset;
     /* 0x08A0 */ u8         unk_8A0;
@@ -752,9 +844,9 @@ typedef struct Player {
     /* 0x0A73 */ u8         unk_A73;
     /* 0x0A74 */ PlayerFuncA74 func_A74;
     /* 0x0A78 */ s8         invincibilityTimer; // prevents damage when nonzero (positive = visible, counts towards zero each frame)
-    /* 0x0A79 */ u8         unk_A79;
-    /* 0x0A7A */ u8         unk_A7A;
-    /* 0x0A7B */ u8         unk_A7B;
+    /* 0x0A79 */ u8         floorTypeTimer;
+    /* 0x0A7A */ u8         floorProperty;
+    /* 0x0A7B */ u8         prevFloorType;
     /* 0x0A7C */ f32        unk_A7C;
     /* 0x0A80 */ s16        unk_A80;
     /* 0x0A82 */ u16        prevFloorSfxOffset;

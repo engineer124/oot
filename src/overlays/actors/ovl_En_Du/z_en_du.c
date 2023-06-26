@@ -323,7 +323,7 @@ void func_809FE3C0(EnDu* this, PlayState* play) {
     if (player->stateFlags2 & PLAYER_STATE2_24) {
         Message_StartOcarinaSunsSongDisabled(play, OCARINA_ACTION_CHECK_SARIA);
         player->stateFlags2 |= PLAYER_STATE2_25;
-        player->unk_6A8 = &this->actor;
+        player->ocarinaActor = &this->actor;
         EnDu_SetupAction(this, func_809FE4A4);
         return;
     }

@@ -764,7 +764,7 @@ void func_80AAB948(EnMd* this, PlayState* play) {
     if ((this->interactInfo.talkState == NPC_TALK_STATE_IDLE) && (play->sceneId == SCENE_LOST_WOODS)) {
         if (player->stateFlags2 & PLAYER_STATE2_24) {
             player->stateFlags2 |= PLAYER_STATE2_25;
-            player->unk_6A8 = &this->actor;
+            player->ocarinaActor = &this->actor;
             Message_StartOcarina(play, OCARINA_ACTION_CHECK_SARIA);
             this->actionFunc = func_80AABC10;
             return;
