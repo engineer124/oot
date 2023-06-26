@@ -9,7 +9,7 @@
 #include "assets/objects/object_ik/object_ik.h"
 #include "terminal.h"
 
-#define FLAGS ACTOR_FLAG_4
+#define FLAGS ACTOR_FLAG_NO_UPDATE_CULLING
 
 typedef void (*EnIkDrawFunc)(struct EnIk*, PlayState*);
 
@@ -201,7 +201,7 @@ void EnIk_InitImpl(Actor* thisx, PlayState* play) {
 
     thisx->update = EnIk_UpdateEnemy;
     thisx->draw = EnIk_DrawEnemy;
-    thisx->flags |= ACTOR_FLAG_10;
+    thisx->flags |= ACTOR_FLAG_HOOK_BRING_PLAYER;
 
     Collider_InitCylinder(play, &this->bodyCollider);
     Collider_SetCylinder(play, &this->bodyCollider, thisx, &sCylinderInit);
@@ -313,7 +313,7 @@ void EnIk_StandUp(EnIk* this, PlayState* play) {
     }
 
     if (SkelAnime_Update(&this->skelAnime)) {
-        this->actor.flags |= ACTOR_FLAG_0 | ACTOR_FLAG_2;
+        this->actor.flags |= ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY;
         EnIk_SetupWalkOrRun(this);
     }
 }
@@ -321,7 +321,7 @@ void EnIk_StandUp(EnIk* this, PlayState* play) {
 void EnIk_SetupIdle(EnIk* this) {
     f32 endFrame = Animation_GetLastFrame(&object_ik_Anim_00DD50);
 
-    this->actor.flags |= ACTOR_FLAG_0 | ACTOR_FLAG_2;
+    this->actor.flags |= ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY;
     this->unk_2F8 = 4;
     this->actor.speed = 0.0f;
     Animation_Change(&this->skelAnime, &object_ik_Anim_00DD50, 0.0f, 0.0f, endFrame, ANIMMODE_LOOP, 4.0f);
@@ -1520,7 +1520,7 @@ void EnIk_CsInit(EnIk* this, PlayState* play) {
 void EnIk_ChangeToEnemy(EnIk* this, PlayState* play) {
     this->actor.update = EnIk_UpdateEnemy;
     this->actor.draw = EnIk_DrawEnemy;
-    this->actor.flags |= ACTOR_FLAG_0 | ACTOR_FLAG_2;
+    this->actor.flags |= ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY;
     SET_EVENTCHKINF(EVENTCHKINF_3B);
     Actor_SetScale(&this->actor, 0.012f);
     EnIk_SetupIdle(this);

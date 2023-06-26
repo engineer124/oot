@@ -7,7 +7,7 @@
 #include "z_en_ds.h"
 #include "assets/objects/object_ds/object_ds.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY)
 
 void EnDs_Init(Actor* thisx, PlayState* play);
 void EnDs_Destroy(Actor* thisx, PlayState* play);
@@ -43,7 +43,7 @@ void EnDs_Init(Actor* thisx, PlayState* play) {
     this->actionFunc = EnDs_Wait;
     this->actor.targetMode = 1;
     this->unk_1E8 = 0;
-    this->actor.flags &= ~ACTOR_FLAG_0;
+    this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
     this->unk_1E4 = 0.0f;
 }
 
@@ -53,7 +53,7 @@ void EnDs_Destroy(Actor* thisx, PlayState* play) {
 void EnDs_Talk(EnDs* this, PlayState* play) {
     if (Actor_TextboxIsClosing(&this->actor, play)) {
         this->actionFunc = EnDs_Wait;
-        this->actor.flags &= ~ACTOR_FLAG_16;
+        this->actor.flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
     }
     this->unk_1E8 |= 1;
 }
@@ -70,7 +70,7 @@ void EnDs_TalkAfterGiveOddPotion(EnDs* this, PlayState* play) {
     if (Actor_ProcessTalkRequest(&this->actor, play)) {
         this->actionFunc = EnDs_Talk;
     } else {
-        this->actor.flags |= ACTOR_FLAG_16;
+        this->actor.flags |= ACTOR_FLAG_IMMEDIATE_TALK;
         func_8002F2CC(&this->actor, play, 1000.0f);
     }
 }
@@ -79,7 +79,7 @@ void EnDs_DisplayOddPotionText(EnDs* this, PlayState* play) {
     if (Actor_TextboxIsClosing(&this->actor, play)) {
         this->actor.textId = 0x504F;
         this->actionFunc = EnDs_TalkAfterGiveOddPotion;
-        this->actor.flags &= ~ACTOR_FLAG_8;
+        this->actor.flags &= ~ACTOR_FLAG_TALK_REQUESTED;
         SET_ITEMGETINF(ITEMGETINF_30);
     }
 }
@@ -188,7 +188,7 @@ void EnDs_OfferBluePotion(EnDs* this, PlayState* play) {
                         return;
                     case 2: // have 100 rupees and empty bottle
                         Rupees_ChangeBy(-100);
-                        this->actor.flags &= ~ACTOR_FLAG_16;
+                        this->actor.flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
                         Actor_OfferGetItem(&this->actor, play, GI_BOTTLE_POTION_BLUE, 10000.0f, 50.0f);
                         this->actionFunc = EnDs_GiveBluePotion;
                         return;

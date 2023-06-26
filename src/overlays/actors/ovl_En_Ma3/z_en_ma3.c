@@ -7,7 +7,7 @@
 #include "z_en_ma3.h"
 #include "assets/objects/object_ma2/object_ma2.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4 | ACTOR_FLAG_5)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_NO_DRAW_CULLING)
 
 void EnMa3_Init(Actor* thisx, PlayState* play);
 void EnMa3_Destroy(Actor* thisx, PlayState* play);
@@ -77,7 +77,7 @@ u16 EnMa3_GetTextId(PlayState* play, Actor* thisx) {
 
     if (GET_EVENTINF(EVENTINF_HORSES_0A)) {
         gSaveContext.timerSeconds = gSaveContext.timerSeconds;
-        thisx->flags |= ACTOR_FLAG_16;
+        thisx->flags |= ACTOR_FLAG_IMMEDIATE_TALK;
 
         if (((void)0, gSaveContext.timerSeconds) > 210) {
             return 0x208E;
@@ -155,7 +155,7 @@ s16 EnMa3_UpdateTalkState(PlayState* play, Actor* thisx) {
                     FALLTHROUGH;
                 case 0x208E:
                     CLEAR_EVENTINF(EVENTINF_HORSES_0A);
-                    thisx->flags &= ~ACTOR_FLAG_16;
+                    thisx->flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
                     talkState = NPC_TALK_STATE_IDLE;
                     gSaveContext.timerState = TIMER_STATE_STOP;
                     break;
@@ -282,7 +282,7 @@ void EnMa3_Destroy(Actor* thisx, PlayState* play) {
 
 void func_80AA3200(EnMa3* this, PlayState* play) {
     if (this->interactInfo.talkState == NPC_TALK_STATE_ACTION) {
-        this->actor.flags &= ~ACTOR_FLAG_16;
+        this->actor.flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
         this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
     }
 }

@@ -1801,13 +1801,13 @@ void SkelAnime_UpdateTranslation(SkelAnime* skelAnime, Vec3f* diff, s16 angle) {
         diff->z = z * cos - x * sin;
         x = skelAnime->prevTransl.x;
         z = skelAnime->prevTransl.z;
-        sin = Math_SinS(skelAnime->prevRot);
-        cos = Math_CosS(skelAnime->prevRot);
+        sin = Math_SinS(skelAnime->prevYaw);
+        cos = Math_CosS(skelAnime->prevYaw);
         diff->x -= x * cos + z * sin;
         diff->z -= z * cos - x * sin;
     }
 
-    skelAnime->prevRot = angle;
+    skelAnime->prevYaw = angle;
     skelAnime->prevTransl.x = skelAnime->jointTable[0].x;
     skelAnime->jointTable[0].x = skelAnime->baseTransl.x;
     skelAnime->prevTransl.z = skelAnime->jointTable[0].z;

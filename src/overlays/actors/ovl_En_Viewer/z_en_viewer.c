@@ -16,7 +16,7 @@
 #include "assets/objects/object_ganon/object_ganon.h"
 #include "assets/objects/object_opening_demo1/object_opening_demo1.h"
 
-#define FLAGS ACTOR_FLAG_4
+#define FLAGS ACTOR_FLAG_NO_UPDATE_CULLING
 
 void EnViewer_Init(Actor* thisx, PlayState* play);
 void EnViewer_Destroy(Actor* thisx, PlayState* play);
@@ -176,7 +176,7 @@ void EnViewer_InitImpl(EnViewer* this, PlayState* play) {
 
     if (!Object_IsLoaded(&play->objectCtx, skelObjBankIndex) ||
         !Object_IsLoaded(&play->objectCtx, this->animObjBankIndex)) {
-        this->actor.flags &= ~ACTOR_FLAG_6;
+        this->actor.flags &= ~ACTOR_FLAG_IN_UNCULL_ZONE;
         return;
     }
 

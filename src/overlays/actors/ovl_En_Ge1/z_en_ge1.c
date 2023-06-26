@@ -8,7 +8,7 @@
 #include "terminal.h"
 #include "assets/objects/object_ge1/object_ge1.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY)
 
 #define GE1_STATE_TALKING (1 << 0)
 #define GE1_STATE_GIVE_QUIVER (1 << 1)
@@ -520,7 +520,7 @@ void EnGe1_BeginGiveItem_Archery(EnGe1* this, PlayState* play) {
     s32 getItemId;
 
     if (Actor_TextboxIsClosing(&this->actor, play)) {
-        this->actor.flags &= ~ACTOR_FLAG_16;
+        this->actor.flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
         this->actionFunc = EnGe1_WaitTillItemGiven_Archery;
     }
 
@@ -547,7 +547,7 @@ void EnGe1_BeginGiveItem_Archery(EnGe1* this, PlayState* play) {
 void EnGe1_TalkWinPrize_Archery(EnGe1* this, PlayState* play) {
     if (Actor_ProcessTalkRequest(&this->actor, play)) {
         this->actionFunc = EnGe1_BeginGiveItem_Archery;
-        this->actor.flags &= ~ACTOR_FLAG_16;
+        this->actor.flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
     } else {
         func_8002F2CC(&this->actor, play, 200.0f);
     }
@@ -569,7 +569,7 @@ void EnGe1_BeginGame_Archery(EnGe1* this, PlayState* play) {
     Actor* horse;
 
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_CHOICE) && Message_ShouldAdvance(play)) {
-        this->actor.flags &= ~ACTOR_FLAG_16;
+        this->actor.flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
 
         switch (play->msgCtx.choiceIndex) {
             case 0:
@@ -629,7 +629,7 @@ void EnGe1_TalkAfterGame_Archery(EnGe1* this, PlayState* play) {
     // With the current `SaveContext` struct definition, the expression in the debug string is an out-of-bounds read,
     // see the other occurrence of this for more details.
     LOG_NUM("z_common_data.memory.information.room_inf[127][ 0 ]", HIGH_SCORE(HS_HBA), "../z_en_ge1.c", 1111);
-    this->actor.flags |= ACTOR_FLAG_16;
+    this->actor.flags |= ACTOR_FLAG_IMMEDIATE_TALK;
 
     if (HIGH_SCORE(HS_HBA) < gSaveContext.minigameScore) {
         HIGH_SCORE(HS_HBA) = gSaveContext.minigameScore;

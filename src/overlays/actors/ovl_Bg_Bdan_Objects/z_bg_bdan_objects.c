@@ -8,7 +8,7 @@
 #include "quake.h"
 #include "assets/objects/object_bdan_objects/object_bdan_objects.h"
 
-#define FLAGS ACTOR_FLAG_4
+#define FLAGS ACTOR_FLAG_NO_UPDATE_CULLING
 
 void BgBdanObjects_Init(Actor* thisx, PlayState* play);
 void BgBdanObjects_Destroy(Actor* thisx, PlayState* play);
@@ -115,7 +115,7 @@ void BgBdanObjects_Init(Actor* thisx, PlayState* play) {
     this->switchFlag = (thisx->params >> 8) & 0x3F;
     thisx->params &= 0xFF;
     if (thisx->params == 2) {
-        thisx->flags |= ACTOR_FLAG_4 | ACTOR_FLAG_5;
+        thisx->flags |= ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_NO_DRAW_CULLING;
         play->colCtx.colHeader->waterBoxes[7].ySurface = thisx->world.pos.y;
         this->actionFunc = func_8086C9A8;
         return;

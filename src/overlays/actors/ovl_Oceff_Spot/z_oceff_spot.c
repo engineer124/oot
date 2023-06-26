@@ -7,7 +7,7 @@
 #include "z_oceff_spot.h"
 #include "terminal.h"
 
-#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_25)
+#define FLAGS (ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void OceffSpot_Init(Actor* thisx, PlayState* play);
 void OceffSpot_Destroy(Actor* thisx, PlayState* play);

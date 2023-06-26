@@ -8,7 +8,7 @@
 #include "assets/objects/object_spot00_objects/object_spot00_objects.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
-#define FLAGS ACTOR_FLAG_4
+#define FLAGS ACTOR_FLAG_NO_UPDATE_CULLING
 
 typedef enum {
     /* -1 */ DT_DRAWBRIDGE = -1,

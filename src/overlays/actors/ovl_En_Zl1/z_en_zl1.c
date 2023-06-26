@@ -7,7 +7,7 @@
 #include "z_en_zl1.h"
 #include "assets/objects/object_zl1/object_zl1.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3 | ACTOR_FLAG_4)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING)
 
 void EnZl1_Init(Actor* thisx, PlayState* play);
 void EnZl1_Destroy(Actor* thisx, PlayState* play);
@@ -572,7 +572,7 @@ void func_80B4BF2C(EnZl1* this, PlayState* play) {
             if (Actor_TextboxIsClosing(&this->actor, play)) {
                 func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
                 Interface_ChangeHudVisibilityMode(HUD_VISIBILITY_ALL);
-                this->actor.flags &= ~ACTOR_FLAG_8;
+                this->actor.flags &= ~ACTOR_FLAG_TALK_REQUESTED;
                 this->unk_1E2 = 4;
             }
             break;

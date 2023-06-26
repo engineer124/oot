@@ -8,7 +8,7 @@
 #include "assets/objects/object_spot01_matoya/object_spot01_matoya.h"
 #include "assets/objects/object_spot01_matoyab/object_spot01_matoyab.h"
 
-#define FLAGS ACTOR_FLAG_4
+#define FLAGS ACTOR_FLAG_NO_UPDATE_CULLING
 
 void BgSpot01Objects2_Init(Actor* thisx, PlayState* play);
 void BgSpot01Objects2_Destroy(Actor* thisx, PlayState* play);

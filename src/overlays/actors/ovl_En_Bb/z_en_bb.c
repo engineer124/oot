@@ -8,7 +8,8 @@
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_Bb/object_Bb.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4 | ACTOR_FLAG_24)
+#define FLAGS \
+    (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_PLAY_BODYHIT_SFX)
 
 #define vBombHopPhase actionVar1
 #define vTrailIdx actionVar1
@@ -344,7 +345,7 @@ void EnBb_Init(Actor* thisx, PlayState* play) {
                 this->flamePrimBlue = this->flameEnvColor.b = 255;
                 thisx->world.pos.y += 50.0f;
                 EnBb_SetupBlue(this);
-                thisx->flags |= ACTOR_FLAG_14;
+                thisx->flags |= ACTOR_FLAG_ARROW_CAN_CARRY;
                 break;
             case ENBB_RED:
                 thisx->naviEnemyId = NAVI_ENEMY_RED_BUBBLE;
@@ -373,7 +374,7 @@ void EnBb_Init(Actor* thisx, PlayState* play) {
                 EnBb_SetupWhite(play, this);
                 EnBb_SetWaypoint(this, play);
                 EnBb_FaceWaypoint(this);
-                thisx->flags |= ACTOR_FLAG_14;
+                thisx->flags |= ACTOR_FLAG_ARROW_CAN_CARRY;
                 break;
             case ENBB_GREEN_BIG:
                 this->path = this->actionState >> 4;
@@ -408,7 +409,7 @@ void EnBb_Destroy(Actor* thisx, PlayState* play) {
 void EnBb_SetupFlameTrail(EnBb* this) {
     this->action = BB_FLAME_TRAIL;
     this->moveMode = BBMOVE_NOCLIP;
-    this->actor.flags &= ~ACTOR_FLAG_0;
+    this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
     this->actor.velocity.y = 0.0f;
     this->actor.gravity = 0.0f;
     this->actor.speed = 0.0f;
@@ -699,7 +700,7 @@ void EnBb_Down(EnBb* this, PlayState* play) {
                 this->moveMode = BBMOVE_HIDDEN;
                 this->timer = 10;
                 this->actionState++;
-                this->actor.flags &= ~ACTOR_FLAG_0;
+                this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
                 this->action = BB_RED;
                 EnBb_SetupAction(this, EnBb_Red);
                 return;
@@ -764,7 +765,7 @@ void EnBb_SetupRed(PlayState* play, EnBb* this) {
         this->actor.home.pos = this->actor.world.pos;
         this->actor.velocity.y = this->actor.gravity = this->actor.speed = 0.0f;
         this->actor.bgCheckFlags &= ~BGCHECKFLAG_GROUND;
-        this->actor.flags &= ~ACTOR_FLAG_0;
+        this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
     }
     this->action = BB_RED;
     EnBb_SetupAction(this, EnBb_Red);
@@ -798,7 +799,7 @@ void EnBb_Red(EnBb* this, PlayState* play) {
         case BBRED_ATTACK:
             if (this->timer == 0) {
                 this->moveMode = BBMOVE_NORMAL;
-                this->actor.flags |= ACTOR_FLAG_0;
+                this->actor.flags |= ACTOR_FLAG_TARGETABLE;
             }
             this->bobPhase += Rand_ZeroOne();
             Math_SmoothStepToF(&this->flameScaleY, 80.0f, 1.0f, 10.0f, 0.0f);
@@ -817,7 +818,7 @@ void EnBb_Red(EnBb* this, PlayState* play) {
                     this->moveMode = BBMOVE_HIDDEN;
                     this->timer = 10;
                     this->actionState++;
-                    this->actor.flags &= ~ACTOR_FLAG_0;
+                    this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
                 } else {
                     this->actor.velocity.y *= -1.06f;
                     if (this->actor.velocity.y > 13.0f) {
@@ -1127,7 +1128,7 @@ void EnBb_Stunned(EnBb* this, PlayState* play) {
                 EnBb_SetupDown(this);
             }
         } else {
-            this->actor.flags &= ~ACTOR_FLAG_0;
+            this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
             EnBb_SetupDeath(this, play);
         }
     }
@@ -1193,7 +1194,7 @@ void EnBb_CollisionCheck(EnBb* this, PlayState* play) {
                     }
                 }
                 if (this->actor.colChkInfo.health == 0) {
-                    this->actor.flags &= ~ACTOR_FLAG_0;
+                    this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
                     if (this->actor.params == ENBB_RED) {
                         EnBb_KillFlameTrail(this);
                     }
@@ -1236,7 +1237,7 @@ void EnBb_Update(Actor* thisx, PlayState* play2) {
     if (this->actor.colChkInfo.damageEffect != 0xD) {
         this->actionFunc(this, play);
         if ((this->actor.params <= ENBB_BLUE) && (this->actor.speed >= -6.0f) &&
-            ((this->actor.flags & ACTOR_FLAG_15) == 0)) {
+            ((this->actor.flags & ACTOR_FLAG_ARROW_IS_CARRYING) == 0)) {
             Actor_MoveXZGravity(&this->actor);
         }
         if (this->moveMode == BBMOVE_NORMAL) {

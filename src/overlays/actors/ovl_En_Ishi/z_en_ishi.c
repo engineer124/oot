@@ -11,7 +11,7 @@
 #include "quake.h"
 #include "terminal.h"
 
-#define FLAGS ACTOR_FLAG_23
+#define FLAGS ACTOR_FLAG_ALWAYS_THROW
 
 void EnIshi_Init(Actor* thisx, PlayState* play);
 void EnIshi_Destroy(Actor* thisx, PlayState* play2);
@@ -383,7 +383,7 @@ void EnIshi_Wait(EnIshi* this, PlayState* play) {
 void EnIshi_SetupLiftedUp(EnIshi* this) {
     this->actionFunc = EnIshi_LiftedUp;
     this->actor.room = -1;
-    this->actor.flags |= ACTOR_FLAG_4;
+    this->actor.flags |= ACTOR_FLAG_NO_UPDATE_CULLING;
 }
 
 void EnIshi_LiftedUp(EnIshi* this, PlayState* play) {

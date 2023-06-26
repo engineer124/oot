@@ -14,6 +14,10 @@ struct SkelAnime;
  * Skeletons and limbs
  */
 
+// for indexing `jointTable[]` and `morphTable[]`
+#define LIMB_INDEX_MODEL_TRANSLATION 0
+#define LIMB_INDEX_MODEL_ROT 1
+
 #define LIMB_DONE 0xFF
 
 typedef struct {
@@ -113,7 +117,7 @@ typedef struct SkelAnime {
     } update;
     /* 0x34 */ s8 initFlags; // Flags used when initializing Link's skeleton
     /* 0x35 */ u8 moveFlags; // Flags used for animations that move the actor in worldspace.
-    /* 0x36 */ s16 prevRot; // Previous rotation in worldspace.
+    /* 0x36 */ s16 prevYaw; // Previous rotation in worldspace.
     /* 0x38 */ Vec3s prevTransl; // Previous modelspace translation.
     /* 0x3E */ Vec3s baseTransl; // Base modelspace translation.
 } SkelAnime; // size = 0x44

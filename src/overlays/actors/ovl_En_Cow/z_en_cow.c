@@ -7,7 +7,7 @@
 #include "z_en_cow.h"
 #include "assets/objects/object_cow/object_cow.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY)
 
 void EnCow_Init(Actor* thisx, PlayState* play);
 void EnCow_Destroy(Actor* thisx, PlayState* play);
@@ -140,7 +140,7 @@ void EnCow_Init(Actor* thisx, PlayState* play) {
             this->actor.draw = func_809E0070;
             this->actionFunc = func_809DFA84;
             func_809DEF94(this);
-            this->actor.flags &= ~ACTOR_FLAG_0;
+            this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
             this->unk_278 = ((u32)(Rand_ZeroFloat(1000.0f)) & 0xFFFF) + 40.0f;
             break;
     }
@@ -195,7 +195,7 @@ void func_809DF494(EnCow* this, PlayState* play) {
 
 void func_809DF6BC(EnCow* this, PlayState* play) {
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_EVENT) && Message_ShouldAdvance(play)) {
-        this->actor.flags &= ~ACTOR_FLAG_16;
+        this->actor.flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
         Message_CloseTextbox(play);
         this->actionFunc = func_809DF96C;
     }
@@ -203,7 +203,7 @@ void func_809DF6BC(EnCow* this, PlayState* play) {
 
 void func_809DF730(EnCow* this, PlayState* play) {
     if (Actor_TextboxIsClosing(&this->actor, play)) {
-        this->actor.flags &= ~ACTOR_FLAG_16;
+        this->actor.flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
         this->actionFunc = func_809DF96C;
     }
 }
@@ -219,7 +219,7 @@ void func_809DF778(EnCow* this, PlayState* play) {
 
 void func_809DF7D8(EnCow* this, PlayState* play) {
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_EVENT) && Message_ShouldAdvance(play)) {
-        this->actor.flags &= ~ACTOR_FLAG_16;
+        this->actor.flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
         Message_CloseTextbox(play);
         this->actionFunc = func_809DF778;
         Actor_OfferGetItem(&this->actor, play, GI_MILK, 10000.0f, 100.0f);
@@ -242,7 +242,7 @@ void func_809DF8FC(EnCow* this, PlayState* play) {
     if (Actor_ProcessTalkRequest(&this->actor, play)) {
         this->actionFunc = func_809DF870;
     } else {
-        this->actor.flags |= ACTOR_FLAG_16;
+        this->actor.flags |= ACTOR_FLAG_IMMEDIATE_TALK;
         func_8002F2CC(&this->actor, play, 170.0f);
         this->actor.textId = 0x2006;
     }
@@ -260,7 +260,7 @@ void func_809DF96C(EnCow* this, PlayState* play) {
                     (ABS((s16)(this->actor.yawTowardsPlayer - this->actor.shape.rot.y)) < 0x61A8)) {
                     DREG(53) = 0;
                     this->actionFunc = func_809DF8FC;
-                    this->actor.flags |= ACTOR_FLAG_16;
+                    this->actor.flags |= ACTOR_FLAG_IMMEDIATE_TALK;
                     func_8002F2CC(&this->actor, play, 170.0f);
                     this->actor.textId = 0x2006;
                 } else {

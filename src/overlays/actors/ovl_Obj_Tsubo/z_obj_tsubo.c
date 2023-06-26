@@ -9,7 +9,7 @@
 #include "assets/objects/gameplay_dangeon_keep/gameplay_dangeon_keep.h"
 #include "assets/objects/object_tsubo/object_tsubo.h"
 
-#define FLAGS (ACTOR_FLAG_4 | ACTOR_FLAG_23)
+#define FLAGS (ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_ALWAYS_THROW)
 
 void ObjTsubo_Init(Actor* thisx, PlayState* play);
 void ObjTsubo_Destroy(Actor* thisx, PlayState* play2);
@@ -225,7 +225,7 @@ void ObjTsubo_WaitForObject(ObjTsubo* this, PlayState* play) {
         this->actor.draw = ObjTsubo_Draw;
         this->actor.objBankIndex = this->objTsuboBankIndex;
         ObjTsubo_SetupIdle(this);
-        this->actor.flags &= ~ACTOR_FLAG_4;
+        this->actor.flags &= ~ACTOR_FLAG_NO_UPDATE_CULLING;
     }
 }
 
@@ -277,7 +277,7 @@ void ObjTsubo_SetupLiftedUp(ObjTsubo* this) {
     this->actor.room = -1;
     //! @bug: This is an unsafe cast, although the sound effect will still play
     Player_PlaySfx((Player*)&this->actor, NA_SE_PL_PULL_UP_POT);
-    this->actor.flags |= ACTOR_FLAG_4;
+    this->actor.flags |= ACTOR_FLAG_NO_UPDATE_CULLING;
 }
 
 void ObjTsubo_LiftedUp(ObjTsubo* this, PlayState* play) {

@@ -8,7 +8,7 @@
 #include "assets/objects/object_sd/object_sd.h"
 #include "terminal.h"
 
-#define FLAGS ACTOR_FLAG_4
+#define FLAGS ACTOR_FLAG_NO_UPDATE_CULLING
 
 void EnHeishi1_Init(Actor* thisx, PlayState* play);
 void EnHeishi1_Destroy(Actor* thisx, PlayState* play);

@@ -287,6 +287,13 @@ typedef enum {
     /* 0xFF */ PLAYER_MODELTYPE_RH_FF = 0xFF // disable shield collider, cutscene-specific
 } PlayerModelType;
 
+// Some player animations are played at this reduced speed, for reasons yet unclear.
+// Perhaps to compress animation data? Or to adjust from 30fps to 20fps?
+// This is called "adjusted" for now.
+// z_en_horse also has many instances of this adjusted speed
+#define PLAYER_ANIM_ADJUSTED_SPEED (2.0f / 3.0f)
+#define PLAYER_ANIM_NORMAL_SPEED   (3.0f / 3.0f)
+
 typedef enum {
     /* 0x00 */ PLAYER_ANIMTYPE_0,
     /* 0x01 */ PLAYER_ANIMTYPE_1,
@@ -482,8 +489,8 @@ typedef struct {
     /* 0x62 */ Vec3s unk_62[4];
     /* 0x7A */ Vec3s unk_7A[2];
     /* 0x86 */ Vec3s unk_86[2];
-    /* 0x92 */ u16 unk_92;
-    /* 0x94 */ u16 unk_94;
+    /* 0x92 */ u16 voiceSfxIdOffset;
+    /* 0x94 */ u16 surfaceSfxIdOffset;
     /* 0x98 */ LinkAnimationHeader* unk_98;
     /* 0x9C */ LinkAnimationHeader* unk_9C;
     /* 0xA0 */ LinkAnimationHeader* unk_A0;
@@ -576,8 +583,8 @@ typedef struct {
 #define PLAYER_STATE3_RESTORE_NAYRUS_LOVE (1 << 6) // Set by ocarina effects actors when destroyed to signal Nayru's Love may be restored (see `ACTOROVL_ALLOC_ABSOLUTE`)
 #define PLAYER_STATE3_7 (1 << 7)
 
-typedef void (*PlayerFunc674)(struct Player*, struct PlayState*);
-typedef s32 (*PlayerFunc82C)(struct Player*, struct PlayState*);
+typedef void (*PlayerActionFunc)(struct Player*, struct PlayState*);
+typedef s32 (*PlayerUpperActionFunc)(struct Player*, struct PlayState*);
 typedef void (*PlayerFuncA74)(struct PlayState*, struct Player*);
 
 typedef struct Player {
@@ -649,7 +656,7 @@ typedef struct Player {
     /* 0x0668 */ char       unk_668[0x004];
     /* 0x066C */ s32        unk_66C;
     /* 0x0670 */ s32        meleeWeaponEffectIndex;
-    /* 0x0674 */ PlayerFunc674 func_674;
+    /* 0x0674 */ PlayerActionFunc actionFunc;
     /* 0x0678 */ PlayerAgeProperties* ageProperties;
     /* 0x067C */ u32        stateFlags1;
     /* 0x0680 */ u32        stateFlags2;
@@ -681,7 +688,7 @@ typedef struct Player {
     /* 0x06C8 */ SkelAnime  skelAnime2;
     /* 0x070C */ Vec3s      jointTable2[PLAYER_LIMB_BUF_COUNT];
     /* 0x079C */ Vec3s      morphTable2[PLAYER_LIMB_BUF_COUNT];
-    /* 0x082C */ PlayerFunc82C func_82C;
+    /* 0x082C */ PlayerUpperActionFunc upperActionFunc;
     /* 0x0830 */ f32        unk_830;
     /* 0x0834 */ s16        unk_834;
     /* 0x0836 */ s8         unk_836;

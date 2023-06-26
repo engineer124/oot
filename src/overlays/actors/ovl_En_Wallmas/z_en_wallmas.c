@@ -8,7 +8,7 @@
 #include "assets/objects/object_wallmaster/object_wallmaster.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_2 | ACTOR_FLAG_4)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING)
 
 #define TIMER_SCALE ((f32)OS_CLOCK_RATE / 10000000000)
 
@@ -150,8 +150,8 @@ void EnWallmas_Destroy(Actor* thisx, PlayState* play) {
 void EnWallmas_TimerInit(EnWallmas* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    this->actor.flags &= ~ACTOR_FLAG_0;
-    this->actor.flags |= ACTOR_FLAG_5;
+    this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
+    this->actor.flags |= ACTOR_FLAG_NO_DRAW_CULLING;
     this->timer = 0x82;
     this->actor.velocity.y = 0.0f;
     this->actor.world.pos.y = player->actor.world.pos.y;
@@ -171,8 +171,8 @@ void EnWallmas_SetupDrop(EnWallmas* this, PlayState* play) {
     this->actor.world.pos.y = player->actor.world.pos.y + 300.0f;
     this->actor.world.rot.y = player->actor.shape.rot.y + 0x8000;
     this->actor.floorHeight = player->actor.floorHeight;
-    this->actor.flags |= ACTOR_FLAG_0;
-    this->actor.flags &= ~ACTOR_FLAG_5;
+    this->actor.flags |= ACTOR_FLAG_TARGETABLE;
+    this->actor.flags &= ~ACTOR_FLAG_NO_DRAW_CULLING;
     this->actionFunc = EnWallmas_Drop;
 }
 
@@ -266,7 +266,7 @@ void EnWallmas_SetupTakePlayer(EnWallmas* this, PlayState* play) {
 void EnWallmas_ProximityOrSwitchInit(EnWallmas* this) {
     this->timer = 0;
     this->actor.draw = NULL;
-    this->actor.flags &= ~ACTOR_FLAG_0;
+    this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
     if (this->actor.params == WMT_PROXIMITY) {
         this->actionFunc = EnWallmas_WaitForProximity;
     } else {
@@ -512,7 +512,7 @@ void EnWallmas_ColUpdate(EnWallmas* this, PlayState* play) {
             if (Actor_ApplyDamage(&this->actor) == 0) {
                 Enemy_StartFinishingBlow(play, &this->actor);
                 Actor_PlaySfx(&this->actor, NA_SE_EN_FALL_DEAD);
-                this->actor.flags &= ~ACTOR_FLAG_0;
+                this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
             } else {
                 if (this->actor.colChkInfo.damage != 0) {
                     Actor_PlaySfx(&this->actor, NA_SE_EN_FALL_DAMAGE);
