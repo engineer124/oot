@@ -254,7 +254,7 @@ void EnMk_Wait(EnMk* this, PlayState* play) {
                                          Animation_GetLastFrame(&object_mk_Anim_000368), ANIMMODE_ONCE, -4.0f);
                         this->flags &= ~2;
                         gSaveContext.subTimerState = SUBTIMER_STATE_OFF;
-                        func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+                        Audio_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR);
                         break;
                     default:
                         player->actor.textId = 0x4018;
@@ -307,13 +307,13 @@ void EnMk_Update(Actor* thisx, PlayState* play) {
     player = GET_PLAYER(play);
 
     if (this->flags & 8) {
-        if (!(player->stateFlags2 & PLAYER_STATE2_10)) {
+        if (!(player->stateFlags2 & PLAYER_STATE2_DIVING)) {
             this->flags &= ~8;
         }
     } else {
         if (player->currentBoots == PLAYER_BOOTS_IRON) {
             this->flags |= 8;
-        } else if (player->stateFlags2 & PLAYER_STATE2_10) {
+        } else if (player->stateFlags2 & PLAYER_STATE2_DIVING) {
             swimFlag = player->actor.yDistToWater;
 
             if (swimFlag > 0) {
@@ -334,7 +334,7 @@ void EnMk_Update(Actor* thisx, PlayState* play) {
 
                     if (!(this->flags & 4) && (this->swimFlag >= 8)) {
                         this->flags |= 4;
-                        func_80078884(NA_SE_SY_CORRECT_CHIME);
+                        Audio_PlaySfx(NA_SE_SY_CORRECT_CHIME);
                     }
                 }
             }

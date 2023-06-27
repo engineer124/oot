@@ -611,7 +611,7 @@ s32 EnFr_SetupJumpingUp(EnFr* this, s32 frogIndex) {
 void EnFr_Idle(EnFr* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (player->stateFlags2 & PLAYER_STATE2_25) {
+    if (player->stateFlags2 & PLAYER_STATE2_OCARINA_ON_FOR_ACTOR) {
         if (play->msgCtx.ocarinaMode == OCARINA_MODE_04) {
             play->msgCtx.ocarinaMode = OCARINA_MODE_00;
         }
@@ -738,7 +738,7 @@ void EnFr_ChildSong(EnFr* this, PlayState* play) {
             EnFr_SetupReward(this, play, false);
         } else if (!FROG_HAS_SONG_BEEN_PLAYED(songIndex)) {
             frog = sEnFrPointers.frogs[sSongToFrog[songIndex]];
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Audio_PlaySfx(NA_SE_SY_CORRECT_CHIME);
             if (frog->actionFunc == EnFr_ChooseJumpFromLogSpot) {
                 frog->isJumpingUp = true;
                 frog->isActive = true;
@@ -856,7 +856,7 @@ s32 EnFr_IsFrogSongComplete(EnFr* this, PlayState* play) {
 void EnFr_OcarinaMistake(EnFr* this, PlayState* play) {
     Message_CloseTextbox(play);
     this->reward = GI_NONE;
-    func_80078884(NA_SE_SY_OCARINA_ERROR);
+    Audio_PlaySfx(NA_SE_SY_OCARINA_ERROR);
     AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);
     sEnFrPointers.flags = 12;
     EnFr_DeactivateButterfly();
@@ -917,9 +917,9 @@ void EnFr_ContinueFrogSong(EnFr* this, PlayState* play) {
 void EnFr_SetupReward(EnFr* this, PlayState* play, u8 unkCondition) {
     EnFr_DeactivateButterfly();
     if (unkCondition) {
-        func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+        Audio_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR);
     } else {
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Audio_PlaySfx(NA_SE_SY_CORRECT_CHIME);
     }
 
     AudioOcarina_SetInstrument(OCARINA_INSTRUMENT_OFF);

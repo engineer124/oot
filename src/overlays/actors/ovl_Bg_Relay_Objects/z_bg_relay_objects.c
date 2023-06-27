@@ -171,7 +171,7 @@ void func_808A932C(BgRelayObjects* this, PlayState* play) {
     }
     if (this->timer == 0) {
         if (!Player_InCsMode(play)) {
-            func_80078884(NA_SE_OC_ABYSS);
+            Audio_PlaySfx(NA_SE_OC_ABYSS);
             Play_TriggerRespawn(play);
             this->actionFunc = BgRelayObjects_DoNothing;
         }

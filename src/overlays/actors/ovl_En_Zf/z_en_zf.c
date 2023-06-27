@@ -535,8 +535,9 @@ s32 EnZf_CanAttack(PlayState* play, EnZf* this) {
     Actor* targetedActor;
     Player* player = GET_PLAYER(play);
 
-    if (this->actor.params >= ENZF_TYPE_LIZALFOS_MINIBOSS_A) {             // miniboss
-        if (player->stateFlags1 & (PLAYER_STATE1_13 | PLAYER_STATE1_14)) { // Hanging or climbing
+    if (this->actor.params >= ENZF_TYPE_LIZALFOS_MINIBOSS_A) { // miniboss
+        if (player->stateFlags1 &
+            (PLAYER_STATE1_HANGING_FROM_LEDGE_SLIP | PLAYER_STATE1_CLIMBING_ONTO_LEDGE)) { // Hanging or climbing
             return false;
         } else {
             return true;
@@ -546,7 +547,7 @@ s32 EnZf_CanAttack(PlayState* play, EnZf* this) {
             return true;
         }
         if (this->actor.params == ENZF_TYPE_DINOLFOS) {
-            targetedActor = player->unk_664;
+            targetedActor = player->targetedActor;
             if (targetedActor == NULL) {
                 return false;
             } else {
@@ -1216,7 +1217,9 @@ void EnZf_Slash(EnZf* this, PlayState* play) {
                     if (yawDiff > 16000) {
                         this->actor.world.rot.y = this->actor.yawTowardsPlayer;
                         func_80B483E4(this, play);
-                    } else if (player->stateFlags1 & (PLAYER_STATE1_4 | PLAYER_STATE1_13 | PLAYER_STATE1_14)) {
+                    } else if (player->stateFlags1 &
+                               (PLAYER_STATE1_Z_TARGETING_UNFRIENDLY | PLAYER_STATE1_HANGING_FROM_LEDGE_SLIP |
+                                PLAYER_STATE1_CLIMBING_ONTO_LEDGE)) {
                         if (this->actor.isTargeted) {
                             EnZf_SetupSlash(this);
                         } else {

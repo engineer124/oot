@@ -489,7 +489,7 @@ s32 OnePointCutscene_SetInfo(PlayState* play, s16 subCamId, s16 csId, Actor* act
             Play_ChangeCameraSetting(play, subCamId, CAM_SET_CS_3);
             func_8002DF54(play, &player->actor, PLAYER_CSMODE_5);
             OnePointCutscene_SetCsCamPoints(subCam, D_80120304 | 0x2000, D_80120300, D_8012013C, D_8012021C);
-            func_80078884(NA_SE_SY_CORRECT_CHIME);
+            Audio_PlaySfx(NA_SE_SY_CORRECT_CHIME);
             OnePointCutscene_Vec3sToVec3f(&mainCam->at, &D_8012013C[D_801202FC - 2].pos);
             OnePointCutscene_Vec3sToVec3f(&mainCam->eye, &D_8012021C[D_801202FC - 2].pos);
             D_8012013C[D_801202FC - 3].pos.x +=
@@ -831,7 +831,7 @@ s32 OnePointCutscene_SetInfo(PlayState* play, s16 subCamId, s16 csId, Actor* act
 
             func_8002DF54(play, NULL, PLAYER_CSMODE_8);
             Play_InitCameraDataUsingPlayer(play, subCamId, player, CAM_SET_CS_C);
-            player->stateFlags1 |= PLAYER_STATE1_29;
+            player->stateFlags1 |= PLAYER_STATE1_IN_CUTSCENE;
             player->actor.freezeTimer = 90;
 
             i = Quake_Request(subCam, QUAKE_TYPE_1);
@@ -1049,7 +1049,7 @@ s32 OnePointCutscene_SetInfo(PlayState* play, s16 subCamId, s16 csId, Actor* act
             if (Play_CamIsNotFixed(play)) {
                 D_801231B4[0].eyeTargetInit.z = D_801231B4[1].eyeTargetInit.z = !LINK_IS_ADULT ? 100.0f : 120.0f;
 
-                if (player->stateFlags1 & PLAYER_STATE1_27) {
+                if (player->stateFlags1 & PLAYER_STATE1_SWIMMING) {
                     D_801231B4[2].atTargetInit.z = 0.0f;
                 }
                 Actor_GetWorldPosShapeRot(&spA0, &player->actor);

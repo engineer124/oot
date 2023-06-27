@@ -158,11 +158,11 @@ s32 func_80BA2218(ObjWarp2block* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
     if (func_80BA1ECC(this, play)) {
-        if (player->stateFlags2 & PLAYER_STATE2_24) {
+        if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
             Message_StartOcarina(play, OCARINA_ACTION_FREE_PLAY);
             this->func_168 = func_80BA228C;
         } else {
-            player->stateFlags2 |= PLAYER_STATE2_23;
+            player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
         }
     }
 
@@ -289,7 +289,7 @@ void func_80BA2610(ObjWarp2block* this, PlayState* play) {
         }
     }
     if (this->unk_16C == 0x32) {
-        func_80078884(NA_SE_SY_TRE_BOX_APPEAR);
+        Audio_PlaySfx(NA_SE_SY_TRE_BOX_APPEAR);
     }
 }
 

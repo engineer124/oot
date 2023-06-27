@@ -558,6 +558,15 @@ typedef enum {
 
 #define LEDGE_DIST_MAX 399.96002f
 
+typedef enum {
+    /* -1 */ PLAYER_ANALOG_NONE = -1,
+    /*  0 */ PLAYER_ANALOG_UP,
+    /*  1 */ PLAYER_ANALOG_RIGHT,
+    /*  2 */ PLAYER_ANALOG_DOWN,
+    /*  3 */ PLAYER_ANALOG_LEFT,
+    /*  4 */ PLAYER_ANALOG_MAX
+} PlayerAnalog;
+
 typedef struct {
     /* 0x00 */ f32 ceilingCheckHeight;
     /* 0x04 */ f32 unk_04;
@@ -600,80 +609,80 @@ typedef struct {
     /* 0x10 */ Vec3f base;
 } WeaponInfo; // size = 0x1C
 
-#define PLAYER_STATE1_0 (1 << 0)
+#define PLAYER_STATE1_EXITING_SCENE (1 << 0)
 #define PLAYER_STATE1_SWINGING_BOTTLE (1 << 1)
-#define PLAYER_STATE1_2 (1 << 2)
-#define PLAYER_STATE1_3 (1 << 3)
-#define PLAYER_STATE1_4 (1 << 4)
-#define PLAYER_STATE1_5 (1 << 5)
-#define PLAYER_STATE1_6 (1 << 6)
-#define PLAYER_STATE1_7 (1 << 7)
-#define PLAYER_STATE1_8 (1 << 8)
-#define PLAYER_STATE1_9 (1 << 9)
-#define PLAYER_STATE1_10 (1 << 10)
-#define PLAYER_STATE1_11 (1 << 11)
-#define PLAYER_STATE1_12 (1 << 12)
-#define PLAYER_STATE1_13 (1 << 13)
-#define PLAYER_STATE1_14 (1 << 14)
-#define PLAYER_STATE1_15 (1 << 15)
-#define PLAYER_STATE1_16 (1 << 16)
-#define PLAYER_STATE1_17 (1 << 17)
-#define PLAYER_STATE1_18 (1 << 18)
-#define PLAYER_STATE1_19 (1 << 19)
-#define PLAYER_STATE1_20 (1 << 20)
+#define PLAYER_STATE1_END_HOOKSHOT_MOVE (1 << 2)
+#define PLAYER_STATE1_AIMING_FPS_ITEM (1 << 3)
+#define PLAYER_STATE1_Z_TARGETING_UNFRIENDLY (1 << 4)
+#define PLAYER_STATE1_INPUT_DISABLED (1 << 5)
+#define PLAYER_STATE1_TALKING (1 << 6)
+#define PLAYER_STATE1_IN_DEATH_CUTSCENE (1 << 7)
+#define PLAYER_STATE1_START_CHANGE_ITEM (1 << 8)
+#define PLAYER_STATE1_READY_TO_SHOOT (1 << 9)
+#define PLAYER_STATE1_GETTING_ITEM (1 << 10)
+#define PLAYER_STATE1_HOLDING_ACTOR (1 << 11)
+#define PLAYER_STATE1_CHARGING_SPIN_ATTACK (1 << 12)
+#define PLAYER_STATE1_HANGING_FROM_LEDGE_SLIP (1 << 13)
+#define PLAYER_STATE1_CLIMBING_ONTO_LEDGE (1 << 14)
+#define PLAYER_STATE1_UNUSED_Z_TARGETING_FLAG (1 << 15)
+#define PLAYER_STATE1_FORCE_STRAFING (1 << 16)
+#define PLAYER_STATE1_Z_TARGETING_FRIENDLY (1 << 17)
+#define PLAYER_STATE1_JUMPING (1 << 18)
+#define PLAYER_STATE1_FREEFALLING (1 << 19)
+#define PLAYER_STATE1_IN_FIRST_PERSON_MODE (1 << 20)
 #define PLAYER_STATE1_CLIMBING (1 << 21)
 #define PLAYER_STATE1_22 (1 << 22)
-#define PLAYER_STATE1_23 (1 << 23)
-#define PLAYER_STATE1_24 (1 << 24)
-#define PLAYER_STATE1_25 (1 << 25)
-#define PLAYER_STATE1_26 (1 << 26)
-#define PLAYER_STATE1_27 (1 << 27)
-#define PLAYER_STATE1_28 (1 << 28)
-#define PLAYER_STATE1_29 (1 << 29)
+#define PLAYER_STATE1_RIDING_HORSE (1 << 23)
+#define PLAYER_STATE1_AIMING_BOOMERANG (1 << 24)
+#define PLAYER_STATE1_AWAITING_THROWN_BOOMERANG (1 << 25)
+#define PLAYER_STATE1_TAKING_DAMAGE (1 << 26)
+#define PLAYER_STATE1_SWIMMING (1 << 27)
+#define PLAYER_STATE1_SKIP_OTHER_ACTORS_UPDATE (1 << 28)
+#define PLAYER_STATE1_IN_CUTSCENE (1 << 29)
 #define PLAYER_STATE1_30 (1 << 30)
-#define PLAYER_STATE1_31 (1 << 31)
+#define PLAYER_STATE1_FALLING_INTO_GROTTO_OR_VOID (1 << 31)
 
-#define PLAYER_STATE2_0 (1 << 0)
-#define PLAYER_STATE2_1 (1 << 1)
-#define PLAYER_STATE2_2 (1 << 2)
-#define PLAYER_STATE2_3 (1 << 3)
-#define PLAYER_STATE2_4 (1 << 4)
-#define PLAYER_STATE2_5 (1 << 5)
-#define PLAYER_STATE2_6 (1 << 6)
-#define PLAYER_STATE2_7 (1 << 7)
-#define PLAYER_STATE2_8 (1 << 8)
+#define PLAYER_STATE2_CAN_GRAB_PUSH_PULL_WALL (1 << 0)
+#define PLAYER_STATE2_CAN_SPEAK_OR_CHECK (1 << 1)
+#define PLAYER_STATE2_CAN_CLIMB_PUSH_PULL_WALL (1 << 2)
+#define PLAYER_STATE2_MAKING_REACTABLE_NOISE (1 << 3)
+#define PLAYER_STATE2_MOVING_PUSH_PULL_WALL (1 << 4)
+#define PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING (1 << 5)
+#define PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION (1 << 6)
+#define PLAYER_STATE2_RESTRAINED_BY_ENEMY (1 << 7)
+#define PLAYER_STATE2_ENABLE_PUSH_PULL_CAM (1 << 8)
 #define PLAYER_STATE2_FORCE_SAND_FLOOR_SOUND (1 << 9)
-#define PLAYER_STATE2_10 (1 << 10)
-#define PLAYER_STATE2_11 (1 << 11)
-#define PLAYER_STATE2_12 (1 << 12)
-#define PLAYER_STATE2_13 (1 << 13)
-#define PLAYER_STATE2_14 (1 << 14)
-#define PLAYER_STATE2_15 (1 << 15)
+#define PLAYER_STATE2_DIVING (1 << 10)
+#define PLAYER_STATE2_ENABLE_DIVE_CAMERA_AND_TIMER (1 << 11)
+#define PLAYER_STATE2_IDLE_WHILE_CLIMBING (1 << 12)
+#define PLAYER_STATE2_USING_SWITCH_Z_TARGET (1 << 13)
+#define PLAYER_STATE2_FROZEN_IN_ICE (1 << 14)
+#define PLAYER_STATE2_PAUSE_MOST_UPDATING (1 << 15)
 #define PLAYER_STATE2_DO_ACTION_ENTER (1 << 16) // Turns on the "Enter On A" DoAction
-#define PLAYER_STATE2_17 (1 << 17)
+#define PLAYER_STATE2_RELEASING_SPIN_ATTACK (1 << 17)
 #define PLAYER_STATE2_CRAWLING (1 << 18) // Crawling through a crawlspace
-#define PLAYER_STATE2_19 (1 << 19)
-#define PLAYER_STATE2_20 (1 << 20)
-#define PLAYER_STATE2_21 (1 << 21)
-#define PLAYER_STATE2_22 (1 << 22)
-#define PLAYER_STATE2_23 (1 << 23)
-#define PLAYER_STATE2_24 (1 << 24)
-#define PLAYER_STATE2_25 (1 << 25)
-#define PLAYER_STATE2_26 (1 << 26)
-#define PLAYER_STATE2_27 (1 << 27)
-#define PLAYER_STATE2_28 (1 << 28)
-#define PLAYER_STATE2_29 (1 << 29)
-#define PLAYER_STATE2_30 (1 << 30)
-#define PLAYER_STATE2_31 (1 << 31)
+#define PLAYER_STATE2_BACKFLIPPING_OR_SIDEHOPPING (1 << 19)
+#define PLAYER_STATE2_NAVI_IS_ACTIVE (1 << 20)
+#define PLAYER_STATE2_NAVI_REQUESTING_TALK (1 << 21)
+#define PLAYER_STATE2_CAN_DISMOUNT_HORSE (1 << 22)
+#define PLAYER_STATE2_OCARINA_START_OVERRIDE (1 << 23) // Indicate that the ocarina textbox will be started externally to player. If not set, default to free play ocarina textbox
+#define PLAYER_STATE2_OCARINA_START_READY (1 << 24) // If ocarina-start is overridden or the ocarina is attached to an actor, then indicate that Player is ready to start playing ocarina
+#define PLAYER_STATE2_OCARINA_ON_FOR_ACTOR (1 << 25) // Ocarina is being played to an actor
+#define PLAYER_STATE2_DRAW_REFLECTION (1 << 26)
+#define PLAYER_STATE2_OCARINA_ON (1 << 27) // The Action: `PlayOcarina` is being used
+#define PLAYER_STATE2_IDLING (1 << 28)
+#define PLAYER_STATE2_DISABLE_DRAW (1 << 29)
+#define PLAYER_STATE2_ENABLE_FORWARD_SLIDE_FROM_ATTACK (1 << 30)
+#define PLAYER_STATE2_FORCE_VOID_OUT (1 << 31)
 
-#define PLAYER_STATE3_0 (1 << 0)
-#define PLAYER_STATE3_1 (1 << 1)
-#define PLAYER_STATE3_2 (1 << 2)
-#define PLAYER_STATE3_3 (1 << 3)
-#define PLAYER_STATE3_4 (1 << 4)
-#define PLAYER_STATE3_5 (1 << 5)
+#define PLAYER_STATE3_IGNORE_CEILING_FLOOR_AND_WATER (1 << 0)
+#define PLAYER_STATE3_MIDAIR (1 << 1)
+#define PLAYER_STATE3_PAUSE_ACTION (1 << 2)
+#define PLAYER_STATE3_ENDING_MELEE_ATTACK (1 << 3)
+#define PLAYER_STATE3_CHECKING_FLOOR_AND_WATER_COLLISION (1 << 4)
+#define PLAYER_STATE3_OCARINA_AFTER_TEXTBOX (1 << 5) // Makes player take out the ocarina after closing a textbox from either 1) talking to an actor 2) getItem textbox
 #define PLAYER_STATE3_RESTORE_NAYRUS_LOVE (1 << 6) // Set by ocarina effects actors when destroyed to signal Nayru's Love may be restored (see `ACTOROVL_ALLOC_ABSOLUTE`)
-#define PLAYER_STATE3_7 (1 << 7)
+#define PLAYER_STATE3_FLYING_ALONG_HOOKSHOT_PATH (1 << 7)
 
 typedef void (*PlayerActionFunc)(struct Player*, struct PlayState*);
 typedef s32 (*PlayerUpperActionFunc)(struct Player*, struct PlayState*);
@@ -744,15 +753,15 @@ typedef struct Player {
     /* 0x0498 */ ColliderCylinder cylinder;
     /* 0x04E4 */ ColliderQuad meleeWeaponQuads[2];
     /* 0x05E4 */ ColliderQuad shieldQuad;
-    /* 0x0664 */ Actor*     unk_664;
+    /* 0x0664 */ Actor*     targetedActor;
     /* 0x0668 */ char       unk_668[0x004];
-    /* 0x066C */ s32        unk_66C;
+    /* 0x066C */ s32        zTargetSwitchTimer;
     /* 0x0670 */ s32        meleeWeaponEffectIndex;
     /* 0x0674 */ PlayerActionFunc actionFunc;
     /* 0x0678 */ PlayerAgeProperties* ageProperties;
     /* 0x067C */ u32        stateFlags1;
     /* 0x0680 */ u32        stateFlags2;
-    /* 0x0684 */ Actor*     unk_684;
+    /* 0x0684 */ Actor*     forcedTargetedActor;
     /* 0x0688 */ Actor*     boomerangActor;
     /* 0x068C */ Actor*     naviActor;
     /* 0x0690 */ s16        naviTextId;
@@ -793,9 +802,9 @@ typedef struct Player {
     /* 0x0843 */ s8         meleeWeaponState;
     /* 0x0844 */ s8         unk_844;
     /* 0x0845 */ u8         unk_845;
-    /* 0x0846 */ u8         unk_846;
-    /* 0x0847 */ s8         unk_847[4];
-    /* 0x084B */ s8         unk_84B[4];
+    /* 0x0846 */ u8         inputFrameCounter;
+    /* 0x0847 */ s8         analogStickDirection128Parts[4];
+    /* 0x084B */ s8         analogStickDirection4Parts[4];
     /* 0x084F */ s8         unk_84F;
     /* 0x0850 */ s16        unk_850; // multipurpose timer
     /* 0x0854 */ f32        unk_854;
@@ -847,8 +856,8 @@ typedef struct Player {
     /* 0x0A79 */ u8         floorTypeTimer;
     /* 0x0A7A */ u8         floorProperty;
     /* 0x0A7B */ u8         prevFloorType;
-    /* 0x0A7C */ f32        unk_A7C;
-    /* 0x0A80 */ s16        unk_A80;
+    /* 0x0A7C */ f32        analogStickDistance;
+    /* 0x0A80 */ s16        analogStickAngle;
     /* 0x0A82 */ u16        prevFloorSfxOffset;
     /* 0x0A84 */ s16        unk_A84;
     /* 0x0A86 */ s8         unk_A86;

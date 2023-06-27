@@ -134,8 +134,8 @@ void ShotSun_UpdateFairySpawner(ShotSun* this, PlayState* play) {
         this->fairySpawnerState = SPAWNER_OUT_OF_RANGE;
     } else {
         if (this->fairySpawnerState == SPAWNER_OUT_OF_RANGE) {
-            if (!(player->stateFlags2 & PLAYER_STATE2_24)) {
-                player->stateFlags2 |= PLAYER_STATE2_23;
+            if (!(player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY)) {
+                player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
                 return;
             } else {
                 this->fairySpawnerState = SPAWNER_OCARINA_START;
@@ -166,7 +166,7 @@ void ShotSun_UpdateHyliaSun(ShotSun* this, PlayState* play) {
     Vec3f spawnPos;
 
     if (this->collider.base.acFlags & AC_HIT) {
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Audio_PlaySfx(NA_SE_SY_CORRECT_CHIME);
         osSyncPrintf(VT_FGCOL(CYAN) "SHOT_SUN HIT!!!!!!!\n" VT_RST);
         if (INV_CONTENT(ITEM_ARROW_FIRE) == ITEM_NONE) {
             Actor_Spawn(&play->actorCtx, play, ACTOR_ITEM_ETCETERA, 700.0f, -800.0f, 7261.0f, 0, 0, 0, 7);

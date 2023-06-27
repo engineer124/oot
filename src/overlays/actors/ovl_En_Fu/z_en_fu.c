@@ -170,7 +170,7 @@ void func_80A1DBD4(EnFu* this, PlayState* play) {
         play->msgCtx.ocarinaMode = OCARINA_MODE_04;
         this->actor.flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
     } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_03) {
-        func_80078884(NA_SE_SY_CORRECT_CHIME);
+        Audio_PlaySfx(NA_SE_SY_CORRECT_CHIME);
         this->actionFunc = func_80A1DB60;
         this->actor.flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
         play->csCtx.script = SEGMENTED_TO_VIRTUAL(gSongOfStormsCs);
@@ -179,17 +179,17 @@ void func_80A1DBD4(EnFu* this, PlayState* play) {
         play->msgCtx.ocarinaMode = OCARINA_MODE_00;
         SET_EVENTCHKINF(EVENTCHKINF_65);
     } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_02) {
-        player->stateFlags2 &= ~PLAYER_STATE2_24;
+        player->stateFlags2 &= ~PLAYER_STATE2_OCARINA_START_READY;
         this->actionFunc = EnFu_WaitAdult;
     } else if (play->msgCtx.ocarinaMode == OCARINA_MODE_01) {
-        player->stateFlags2 |= PLAYER_STATE2_23;
+        player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     }
 }
 
 void EnFu_WaitForPlayback(EnFu* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    player->stateFlags2 |= PLAYER_STATE2_23;
+    player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     // if dialog state is 7, player has played back the song
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_SONG_DEMO_DONE) {
         Message_StartOcarina(play, OCARINA_ACTION_PLAYBACK_STORMS);
@@ -200,7 +200,7 @@ void EnFu_WaitForPlayback(EnFu* this, PlayState* play) {
 void EnFu_TeachSong(EnFu* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    player->stateFlags2 |= PLAYER_STATE2_23;
+    player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     // if dialog state is 2, start song demonstration
     if (Message_GetState(&play->msgCtx) == TEXT_STATE_CLOSING) {
         this->behaviorFlags &= ~FU_WAIT;
@@ -218,7 +218,7 @@ void EnFu_WaitAdult(EnFu* this, PlayState* play) {
     yawDiff = this->actor.yawTowardsPlayer - this->actor.shape.rot.y;
     if (GET_EVENTCHKINF(EVENTCHKINF_5B)) {
         func_80A1D94C(this, play, 0x508E, func_80A1DBA0);
-    } else if (player->stateFlags2 & PLAYER_STATE2_24) {
+    } else if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
         this->actor.textId = 0x5035;
         Message_StartTextbox(play, this->actor.textId, NULL);
         this->actionFunc = EnFu_TeachSong;
@@ -229,7 +229,7 @@ void EnFu_WaitAdult(EnFu* this, PlayState* play) {
         if (this->actor.xzDistToPlayer < 100.0f) {
             this->actor.textId = 0x5034;
             func_8002F2CC(&this->actor, play, 100.0f);
-            player->stateFlags2 |= PLAYER_STATE2_23;
+            player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
         }
     }
 }

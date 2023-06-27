@@ -105,7 +105,7 @@ void EnBomBowlPit_DetectHit(EnBomBowlPit* this, PlayState* play) {
                 this->actor.textId = 0xF;
                 Message_StartTextbox(play, this->actor.textId, NULL);
                 this->unk_154 = TEXT_STATE_EVENT;
-                func_80078884(NA_SE_EV_HIT_SOUND);
+                Audio_PlaySfx(NA_SE_EV_HIT_SOUND);
                 func_8002DF54(play, NULL, PLAYER_CSMODE_8);
                 this->status = 1;
                 this->actionFunc = EnBomBowlPit_CameraDollyIn;
@@ -184,10 +184,10 @@ void EnBomBowlPit_GivePrize(EnBomBowlPit* this, PlayState* play) {
         this->getItemId = GI_BOMB_BAG_40;
     }
 
-    player->stateFlags1 &= ~PLAYER_STATE1_29;
+    player->stateFlags1 &= ~PLAYER_STATE1_IN_CUTSCENE;
     this->actor.parent = NULL;
     Actor_OfferGetItem(&this->actor, play, this->getItemId, 2000.0f, 1000.0f);
-    player->stateFlags1 |= PLAYER_STATE1_29;
+    player->stateFlags1 |= PLAYER_STATE1_IN_CUTSCENE;
     this->actionFunc = EnBomBowlPit_WaitTillPrizeGiven;
 }
 

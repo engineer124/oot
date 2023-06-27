@@ -320,9 +320,9 @@ void func_809FE3B4(EnDu* this, PlayState* play) {
 void func_809FE3C0(EnDu* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (player->stateFlags2 & PLAYER_STATE2_24) {
+    if (player->stateFlags2 & PLAYER_STATE2_OCARINA_START_READY) {
         Message_StartOcarinaSunsSongDisabled(play, OCARINA_ACTION_CHECK_SARIA);
-        player->stateFlags2 |= PLAYER_STATE2_25;
+        player->stateFlags2 |= PLAYER_STATE2_OCARINA_ON_FOR_ACTOR;
         player->ocarinaActor = &this->actor;
         EnDu_SetupAction(this, func_809FE4A4);
         return;
@@ -332,7 +332,7 @@ void func_809FE3C0(EnDu* this, PlayState* play) {
         this->interactInfo.talkState = NPC_TALK_STATE_IDLE;
     }
     if (this->actor.xzDistToPlayer < 116.0f + this->collider.dim.radius) {
-        player->stateFlags2 |= PLAYER_STATE2_23;
+        player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     }
 }
 
@@ -357,14 +357,14 @@ void func_809FE4A4(EnDu* this, PlayState* play) {
         EnDu_SetupAction(this, func_809FE890);
         play->msgCtx.ocarinaMode = OCARINA_MODE_04;
     } else {
-        player->stateFlags2 |= PLAYER_STATE2_23;
+        player->stateFlags2 |= PLAYER_STATE2_OCARINA_START_OVERRIDE;
     }
 }
 
 void func_809FE638(EnDu* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (!(player->stateFlags1 & PLAYER_STATE1_29)) {
+    if (!(player->stateFlags1 & PLAYER_STATE1_IN_CUTSCENE)) {
         OnePointCutscene_Init(play, 3330, -99, &this->actor, CAM_ID_MAIN);
         player->actor.shape.rot.y = player->actor.world.rot.y = this->actor.world.rot.y + 0x7FFF;
         Audio_PlayFanfare(NA_BGM_APPEAR);

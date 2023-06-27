@@ -522,7 +522,7 @@ s32 Camera_GetWaterBoxBgCamIndex(Camera* camera, f32* waterY) {
         return -1;
     }
 
-    if (!(camera->player->stateFlags1 & PLAYER_STATE1_27)) {
+    if (!(camera->player->stateFlags1 & PLAYER_STATE1_SWIMMING)) {
         // player is not swimming
         *waterY = BGCHECK_Y_MIN;
         return -1;
@@ -2817,7 +2817,7 @@ s32 Camera_Battle1(Camera* camera) {
     sp78 = roData->swingPitchFinal;
     fov = roData->fov;
 
-    if (camera->player->stateFlags1 & PLAYER_STATE1_12) {
+    if (camera->player->stateFlags1 & PLAYER_STATE1_CHARGING_SPIN_ATTACK) {
         // charging sword.
         rwData->unk_10 = Camera_LERPCeilF(CAM_DATA_SCALED(OREG(12)) * 0.5f, rwData->unk_10,
                                           CAM_DATA_SCALED(R_CAM_UPDATE_RATE_STEP_SCALE_XZ), 0.1f);
@@ -3664,7 +3664,7 @@ s32 Camera_KeepOn4(Camera* camera) {
                 roData->unk_04 = playerHeight * 1.6f * yNormal;
                 roData->unk_08 = -2.0f;
                 roData->unk_0C = 120.0f;
-                roData->unk_10 = player->stateFlags1 & PLAYER_STATE1_27 ? 0.0f : 20.0f;
+                roData->unk_10 = player->stateFlags1 & PLAYER_STATE1_SWIMMING ? 0.0f : 20.0f;
                 roData->interfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_LARGE, CAM_HUD_VISIBILITY_NOTHING_ALT,
                                                              KEEPON4_FLAG_4 | KEEPON4_FLAG_1);
                 roData->unk_1E = 0x1E;
@@ -5008,7 +5008,7 @@ s32 Camera_Unique0(Camera* camera) {
         camera->animState++;
     }
 
-    if (player->stateFlags1 & PLAYER_STATE1_29) {
+    if (player->stateFlags1 & PLAYER_STATE1_IN_CUTSCENE) {
         rwData->initalPos = playerPosRot->pos;
     }
 
@@ -5016,7 +5016,7 @@ s32 Camera_Unique0(Camera* camera) {
         if (rwData->animTimer > 0) {
             rwData->animTimer--;
             rwData->initalPos = playerPosRot->pos;
-        } else if (!(player->stateFlags1 & PLAYER_STATE1_29) &&
+        } else if (!(player->stateFlags1 & PLAYER_STATE1_IN_CUTSCENE) &&
                    ((OLib_Vec3fDistXZ(&playerPosRot->pos, &rwData->initalPos) >= 10.0f) ||
                     CHECK_BTN_ALL(D_8015BD7C->state.input[0].press.button, BTN_A) ||
                     CHECK_BTN_ALL(D_8015BD7C->state.input[0].press.button, BTN_B) ||
@@ -5044,7 +5044,7 @@ s32 Camera_Unique0(Camera* camera) {
             rwData->initalPos = playerPosRot->pos;
         }
 
-        if (!(player->stateFlags1 & PLAYER_STATE1_29) &&
+        if (!(player->stateFlags1 & PLAYER_STATE1_IN_CUTSCENE) &&
             ((0.001f < camera->xzSpeed) || CHECK_BTN_ALL(D_8015BD7C->state.input[0].press.button, BTN_A) ||
              CHECK_BTN_ALL(D_8015BD7C->state.input[0].press.button, BTN_B) ||
              CHECK_BTN_ALL(D_8015BD7C->state.input[0].press.button, BTN_CLEFT) ||
@@ -5264,7 +5264,7 @@ s32 Camera_Unique9(Camera* camera) {
                     Camera_UpdateInterface(
                         CAM_INTERFACE_FIELD(CAM_LETTERBOX_IGNORE, rwData->curKeyFrame->initField, 0));
                 } else { // initField is of type PlayerCsMode
-                    if ((camera->player->stateFlags1 & PLAYER_STATE1_27) &&
+                    if ((camera->player->stateFlags1 & PLAYER_STATE1_SWIMMING) &&
                         (player->currentBoots != PLAYER_BOOTS_IRON)) {
                         func_8002DF38(camera->play, camera->target, PLAYER_CSMODE_8);
                         osSyncPrintf("camera: demo: player demo set WAIT\n");
@@ -5655,7 +5655,7 @@ s32 Camera_Unique9(Camera* camera) {
         // Set the player's position
         camera->player->actor.world.pos.x = rwData->playerPos.x;
         camera->player->actor.world.pos.z = rwData->playerPos.z;
-        if (camera->player->stateFlags1 & PLAYER_STATE1_27 && player->currentBoots != PLAYER_BOOTS_IRON) {
+        if (camera->player->stateFlags1 & PLAYER_STATE1_SWIMMING && player->currentBoots != PLAYER_BOOTS_IRON) {
             camera->player->actor.world.pos.y = rwData->playerPos.y;
         }
     } else {
@@ -6220,21 +6220,21 @@ s32 Camera_Demo5(Camera* camera) {
 
     framesDiff = sDemo5PrevSfxFrame - camera->play->state.frames;
     if ((framesDiff > 50) || (framesDiff < -50)) {
-        func_80078884((u32)camera->data1);
+        Audio_PlaySfx((u32)camera->data1);
     }
 
     sDemo5PrevSfxFrame = camera->play->state.frames;
 
-    if (camera->player->stateFlags1 & PLAYER_STATE1_27 && (player->currentBoots != PLAYER_BOOTS_IRON)) {
+    if (camera->player->stateFlags1 & PLAYER_STATE1_SWIMMING && (player->currentBoots != PLAYER_BOOTS_IRON)) {
         // swimming, and not iron boots
-        player->stateFlags1 |= PLAYER_STATE1_29;
+        player->stateFlags1 |= PLAYER_STATE1_IN_CUTSCENE;
         // env frozen
         player->actor.freezeTimer = camera->timer;
     } else {
         sp4A = playerhead.rot.y - playerTargetGeo.yaw;
         if (camera->target->category == ACTORCAT_PLAYER) {
             framesDiff = camera->play->state.frames - sDemo5PrevAction12Frame;
-            if (player->stateFlags1 & PLAYER_STATE1_11) {
+            if (player->stateFlags1 & PLAYER_STATE1_HOLDING_ACTOR) {
                 // holding object over head.
                 func_8002DF54(camera->play, camera->target, PLAYER_CSMODE_8);
             } else if (ABS(framesDiff) > 3000) {
@@ -7333,7 +7333,7 @@ s32 Camera_UpdateWater(Camera* camera) {
     }
 
     if (camera->stateFlags & CAM_STATE_9) {
-        if (player->stateFlags2 & PLAYER_STATE2_11) {
+        if (player->stateFlags2 & PLAYER_STATE2_ENABLE_DIVE_CAMERA_AND_TIMER) {
             Camera_ChangeSettingFlags(camera, CAM_SET_PIVOT_WATER_SURFACE, 6);
             camera->stateFlags |= CAM_STATE_15;
         } else if (camera->stateFlags & CAM_STATE_15) {
@@ -7456,11 +7456,11 @@ s32 Camera_DbgChangeMode(Camera* camera) {
     if (!gDebugCamEnabled && camera->play->activeCamId == CAM_ID_MAIN) {
         if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CUP)) {
             osSyncPrintf("attention sound URGENCY\n");
-            func_80078884(NA_SE_SY_ATTENTION_URGENCY);
+            Audio_PlaySfx(NA_SE_SY_ATTENTION_URGENCY);
         }
         if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CDOWN)) {
             osSyncPrintf("attention sound NORMAL\n");
-            func_80078884(NA_SE_SY_ATTENTION_ON);
+            Audio_PlaySfx(NA_SE_SY_ATTENTION_ON);
         }
 
         if (CHECK_BTN_ALL(D_8015BD7C->state.input[2].press.button, BTN_CRIGHT)) {
@@ -7833,7 +7833,7 @@ void Camera_Finish(Camera* camera) {
 
         if ((camera->parentCamId == CAM_ID_MAIN) && (camera->csId != 0)) {
             player->actor.freezeTimer = 0;
-            player->stateFlags1 &= ~PLAYER_STATE1_29;
+            player->stateFlags1 &= ~PLAYER_STATE1_IN_CUTSCENE;
 
             if (player->csMode != PLAYER_CSMODE_NONE) {
                 func_8002DF54(camera->play, &player->actor, PLAYER_CSMODE_7);
@@ -7884,7 +7884,7 @@ s32 Camera_ChangeModeFlags(Camera* camera, s16 mode, u8 flags) {
     if (!((sCameraSettings[camera->setting].unk_00 & 0x3FFFFFFF) & (1 << mode))) {
         if (mode == CAM_MODE_FIRST_PERSON) {
             osSyncPrintf("camera: error sound\n");
-            func_80078884(NA_SE_SY_ERROR);
+            Audio_PlaySfx(NA_SE_SY_ERROR);
         }
 
         if (camera->mode != CAM_MODE_NORMAL) {
@@ -7972,20 +7972,20 @@ s32 Camera_ChangeModeFlags(Camera* camera, s16 mode, u8 flags) {
         if (camera->status == CAM_STAT_ACTIVE) {
             switch (modeChangeFlags) {
                 case 1:
-                    func_80078884(0);
+                    Audio_PlaySfx(0);
                     break;
                 case 2:
                     if (camera->play->roomCtx.curRoom.behaviorType1 == ROOM_BEHAVIOR_TYPE1_1) {
-                        func_80078884(NA_SE_SY_ATTENTION_URGENCY);
+                        Audio_PlaySfx(NA_SE_SY_ATTENTION_URGENCY);
                     } else {
-                        func_80078884(NA_SE_SY_ATTENTION_ON);
+                        Audio_PlaySfx(NA_SE_SY_ATTENTION_ON);
                     }
                     break;
                 case 4:
-                    func_80078884(NA_SE_SY_ATTENTION_URGENCY);
+                    Audio_PlaySfx(NA_SE_SY_ATTENTION_URGENCY);
                     break;
                 case 8:
-                    func_80078884(NA_SE_SY_ATTENTION_ON);
+                    Audio_PlaySfx(NA_SE_SY_ATTENTION_ON);
                     break;
             }
         }

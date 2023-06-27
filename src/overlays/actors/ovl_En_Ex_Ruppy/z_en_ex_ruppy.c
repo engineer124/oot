@@ -210,7 +210,7 @@ void EnExRuppy_DropIntoWater(EnExRuppy* this, PlayState* play) {
     this->actor.shape.rot.y += 0x7A8;
     Math_ApproachF(&this->actor.gravity, -2.0f, 0.3f, 1.0f);
     EnExRuppy_SpawnSparkles(this, play, 2, 0);
-    func_80078884(NA_SE_EV_RAINBOW_SHOWER - SFX_FLAG);
+    Audio_PlaySfx(NA_SE_EV_RAINBOW_SHOWER - SFX_FLAG);
     divingGame = (EnDivingGame*)this->actor.parent;
     if ((divingGame != NULL) && (divingGame->actor.update != NULL) &&
         ((divingGame->unk_296 == 0) || (this->actor.bgCheckFlags & BGCHECKFLAG_WATER) || (this->timer == 0))) {
@@ -284,7 +284,7 @@ void EnExRuppy_WaitInGame(EnExRuppy* this, PlayState* play) {
                 if (1) {}
             } else if (this->actor.xyzDistToPlayerSq < SQ(localConst)) {
                 Rupees_ChangeBy(this->rupeeValue);
-                func_80078884(NA_SE_SY_GET_RUPY);
+                Audio_PlaySfx(NA_SE_SY_GET_RUPY);
                 divingGame->grabbedRupeesCounter++;
                 Actor_Kill(&this->actor);
             }
@@ -347,7 +347,7 @@ void EnExRuppy_WaitAsCollectible(EnExRuppy* this, PlayState* play) {
     f32 localConst = 30.0f;
 
     if (this->actor.xyzDistToPlayerSq < SQ(localConst)) {
-        func_80078884(NA_SE_SY_GET_RUPY);
+        Audio_PlaySfx(NA_SE_SY_GET_RUPY);
         Item_DropCollectible(play, &this->actor.world.pos, (sEnExRuppyCollectibleTypes[this->colorIdx] | 0x8000));
         Actor_Kill(&this->actor);
     }

@@ -317,7 +317,7 @@ void CutsceneCmd_Misc(PlayState* play, CutsceneContext* csCtx, CsCmdMisc* cmd) {
             }
 
             if (csCtx->curFrame == 783) {
-                func_80078884(NA_SE_EV_DEKU_DEATH);
+                Audio_PlaySfx(NA_SE_EV_DEKU_DEATH);
             } else if (csCtx->curFrame == 717) {
                 play->roomCtx.unk_74[0] = 0;
             }
@@ -333,7 +333,7 @@ void CutsceneCmd_Misc(PlayState* play, CutsceneContext* csCtx, CsCmdMisc* cmd) {
 
         case CS_MISC_TRIFORCE_FLASH:
             if (play->roomCtx.unk_74[1] == 0) {
-                func_80078884(NA_SE_EV_TRIFORCE_FLASH);
+                Audio_PlaySfx(NA_SE_EV_TRIFORCE_FLASH);
             }
 
             if (play->roomCtx.unk_74[1] < 255) {

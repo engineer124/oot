@@ -624,7 +624,7 @@ s32 EnTa_IsPlayerHoldingSuperCucco(EnTa* this, PlayState* play, s32 cuccoIdx) {
     Player* player = GET_PLAYER(play);
     Actor* interactRangeActor;
 
-    if (player->stateFlags1 & PLAYER_STATE1_11) {
+    if (player->stateFlags1 & PLAYER_STATE1_HOLDING_ACTOR) {
         interactRangeActor = player->interactRangeActor;
         if (interactRangeActor != NULL && interactRangeActor->id == ACTOR_EN_NIW &&
             interactRangeActor == &this->superCuccos[cuccoIdx]->actor) {
@@ -660,7 +660,7 @@ void EnTa_TalkFoundSuperCucco(EnTa* this, PlayState* play) {
         if (player->heldActor == &this->superCuccos[lastFoundSuperCuccoIdx]->actor) {
             player->heldActor = NULL;
         }
-        player->stateFlags1 &= ~PLAYER_STATE1_11;
+        player->stateFlags1 &= ~PLAYER_STATE1_HOLDING_ACTOR;
         this->superCuccos[lastFoundSuperCuccoIdx] = NULL;
     }
     this->stateFlags |= TALON_STATE_FLAG_TRACKING_PLAYER;
@@ -803,7 +803,7 @@ void EnTa_RunCuccoGame(EnTa* this, PlayState* play) {
     if ((gSaveContext.timerSeconds == 0) && !Play_InCsMode(play)) {
         SEQCMD_STOP_SEQUENCE(SEQ_PLAYER_BGM_MAIN, 0);
         this->stateFlags &= ~TALON_STATE_FLAG_RESTORE_BGM_ON_DESTROY;
-        func_80078884(NA_SE_SY_FOUND);
+        Audio_PlaySfx(NA_SE_SY_FOUND);
         gSaveContext.timerState = TIMER_STATE_OFF;
         func_8002DF54(play, &this->actor, PLAYER_CSMODE_1);
 
