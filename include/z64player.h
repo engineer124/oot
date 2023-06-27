@@ -583,15 +583,15 @@ typedef struct {
     /* 0x86 */ Vec3s unk_86[2];
     /* 0x92 */ u16 voiceSfxIdOffset;
     /* 0x94 */ u16 surfaceSfxIdOffset;
-    /* 0x98 */ LinkAnimationHeader* unk_98;
-    /* 0x9C */ LinkAnimationHeader* unk_9C;
-    /* 0xA0 */ LinkAnimationHeader* unk_A0;
-    /* 0xA4 */ LinkAnimationHeader* unk_A4;
-    /* 0xA8 */ LinkAnimationHeader* unk_A8;
-    /* 0xAC */ LinkAnimationHeader* unk_AC[4];
-    /* 0xBC */ LinkAnimationHeader* unk_BC[2];
-    /* 0xC4 */ LinkAnimationHeader* unk_C4[2];
-    /* 0xCC */ LinkAnimationHeader* unk_CC[2];
+    /* 0x98 */ PlayerAnimationHeader* unk_98;
+    /* 0x9C */ PlayerAnimationHeader* unk_9C;
+    /* 0xA0 */ PlayerAnimationHeader* unk_A0;
+    /* 0xA4 */ PlayerAnimationHeader* unk_A4;
+    /* 0xA8 */ PlayerAnimationHeader* unk_A8;
+    /* 0xAC */ PlayerAnimationHeader* unk_AC[4];
+    /* 0xBC */ PlayerAnimationHeader* unk_BC[2];
+    /* 0xC4 */ PlayerAnimationHeader* unk_C4[2];
+    /* 0xCC */ PlayerAnimationHeader* unk_CC[2];
 } PlayerAgeProperties; // size = 0xD4
 
 typedef struct {
@@ -621,7 +621,7 @@ typedef struct {
 #define PLAYER_STATE1_18 (1 << 18)
 #define PLAYER_STATE1_19 (1 << 19)
 #define PLAYER_STATE1_20 (1 << 20)
-#define PLAYER_STATE1_21 (1 << 21)
+#define PLAYER_STATE1_CLIMBING (1 << 21)
 #define PLAYER_STATE1_22 (1 << 22)
 #define PLAYER_STATE1_23 (1 << 23)
 #define PLAYER_STATE1_24 (1 << 24)
@@ -777,9 +777,9 @@ typedef struct Player {
     /* 0x06C0 */ s16        unk_6C0;
     /* 0x06C2 */ s16        unk_6C2;
     /* 0x06C4 */ f32        unk_6C4;
-    /* 0x06C8 */ SkelAnime  skelAnime2;
-    /* 0x070C */ Vec3s      jointTable2[PLAYER_LIMB_BUF_COUNT];
-    /* 0x079C */ Vec3s      morphTable2[PLAYER_LIMB_BUF_COUNT];
+    /* 0x06C8 */ SkelAnime  upperSkelAnime;
+    /* 0x070C */ Vec3s      upperJointTable[PLAYER_LIMB_BUF_COUNT];
+    /* 0x079C */ Vec3s      upperMorphTable[PLAYER_LIMB_BUF_COUNT];
     /* 0x082C */ PlayerUpperActionFunc upperActionFunc;
     /* 0x0830 */ f32        unk_830;
     /* 0x0834 */ s16        unk_834;

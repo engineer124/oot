@@ -64,7 +64,9 @@ typedef struct {
 typedef struct {
     /* 0x00 */ AnimationHeaderCommon common;
     /* 0x04 */ void* segment;
-} LinkAnimationHeader; // size = 0x8
+} PlayerAnimationHeader; // size = 0x8
+
+typedef PlayerAnimationHeader LinkAnimationHeader;
 
 typedef struct {
     /* 0x00 */ AnimationHeaderCommon common;
@@ -101,7 +103,7 @@ typedef struct SkelAnime {
     /* 0x02 */ u8 dListCount; // Number of display lists in a flexible skeleton
     /* 0x03 */ s8 taper; // Tapering to use when morphing between animations. Only used by Door_Warp1.
     /* 0x04 */ void** skeleton; // An array of pointers to limbs. Can be StandardLimb, LodLimb, or SkinLimb.
-    /* 0x08 */ void* animation; // Can be an AnimationHeader or LinkAnimationHeader.
+    /* 0x08 */ void* animation; // Can be an AnimationHeader or PlayerAnimationHeader.
     /* 0x0C */ f32 startFrame; // In mode ANIMMODE_LOOP_PARTIAL*, start of partial loop.
     /* 0x10 */ f32 endFrame; // In mode ANIMMODE_ONCE*, Update returns true when curFrame is equal to this. In mode ANIMMODE_LOOP_PARTIAL*, end of partial loop.
     /* 0x14 */ f32 animLength; // Total number of frames in the current animation.
@@ -132,7 +134,7 @@ BAD_RETURN(s32) SkelAnime_InitSkin(struct PlayState* play, SkelAnime* skelAnime,
                                    AnimationHeader* animation);
 
 void SkelAnime_InitLink(struct PlayState* play, SkelAnime* skelAnime, FlexSkeletonHeader* skeletonHeaderSeg,
-                        LinkAnimationHeader* animation, s32 flags, Vec3s* jointTable, Vec3s* morphTable,
+                        PlayerAnimationHeader* animation, s32 flags, Vec3s* jointTable, Vec3s* morphTable,
                         s32 limbBufCount);
 
 // Free
@@ -315,7 +317,7 @@ typedef struct AnimationContext {
     AnimationEntry entries[ANIMATION_ENTRY_MAX];
 } AnimationContext; // size = 0xC84
 
-void AnimationContext_SetLoadFrame(struct PlayState* play, LinkAnimationHeader* animation, s32 frame, s32 limbCount,
+void AnimationContext_SetLoadFrame(struct PlayState* play, PlayerAnimationHeader* animation, s32 frame, s32 limbCount,
                                    Vec3s* frameTable);
 void AnimationContext_SetCopyAll(struct PlayState* play, s32 vecCount, Vec3s* dst, Vec3s* src);
 void AnimationContext_SetCopyTrue(struct PlayState* play, s32 vecCount, Vec3s* dst, Vec3s* src, u8* copyFlag);
@@ -342,15 +344,15 @@ void PlayerAnimation_AnimateFrame(struct PlayState* play, SkelAnime* skelAnime);
 
 // Play animations
 
-void PlayerAnimation_Change(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 playSpeed,
+void PlayerAnimation_Change(struct PlayState* play, SkelAnime* skelAnime, PlayerAnimationHeader* animation, f32 playSpeed,
                           f32 startFrame, f32 endFrame, u8 mode, f32 morphFrames);
 
-void PlayerAnimation_PlayOnce(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation);
-void PlayerAnimation_PlayOnceSetSpeed(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation,
+void PlayerAnimation_PlayOnce(struct PlayState* play, SkelAnime* skelAnime, PlayerAnimationHeader* animation);
+void PlayerAnimation_PlayOnceSetSpeed(struct PlayState* play, SkelAnime* skelAnime, PlayerAnimationHeader* animation,
                                     f32 playSpeed);
 
-void PlayerAnimation_PlayLoop(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation);
-void PlayerAnimation_PlayLoopSetSpeed(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation,
+void PlayerAnimation_PlayLoop(struct PlayState* play, SkelAnime* skelAnime, PlayerAnimationHeader* animation);
+void PlayerAnimation_PlayLoopSetSpeed(struct PlayState* play, SkelAnime* skelAnime, PlayerAnimationHeader* animation,
                                     f32 playSpeed);
 
 void PlayerAnimation_EndLoop(SkelAnime* skelAnime);
@@ -359,14 +361,14 @@ void PlayerAnimation_EndLoop(SkelAnime* skelAnime);
 
 void PlayerAnimation_CopyJointToMorph(struct PlayState* play, SkelAnime* skelAnime);
 void PlayerAnimation_CopyMorphToJoint(struct PlayState* play, SkelAnime* skelAnime);
-void PlayerAnimation_LoadToMorph(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 frame);
-void PlayerAnimation_LoadToJoint(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 frame);
+void PlayerAnimation_LoadToMorph(struct PlayState* play, SkelAnime* skelAnime, PlayerAnimationHeader* animation, f32 frame);
+void PlayerAnimation_LoadToJoint(struct PlayState* play, SkelAnime* skelAnime, PlayerAnimationHeader* animation, f32 frame);
 void PlayerAnimation_InterpJointMorph(struct PlayState* play, SkelAnime* skelAnime, f32 weight);
-void PlayerAnimation_BlendToJoint(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation1,
-                                f32 frame1, LinkAnimationHeader* animation2, f32 frame2, f32 blendWeight,
+void PlayerAnimation_BlendToJoint(struct PlayState* play, SkelAnime* skelAnime, PlayerAnimationHeader* animation1,
+                                f32 frame1, PlayerAnimationHeader* animation2, f32 frame2, f32 blendWeight,
                                 Vec3s* blendTable);
-void PlayerAnimation_BlendToMorph(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation1,
-                                f32 frame1, LinkAnimationHeader* animation2, f32 frame2, f32 blendWeight,
+void PlayerAnimation_BlendToMorph(struct PlayState* play, SkelAnime* skelAnime, PlayerAnimationHeader* animation1,
+                                f32 frame1, PlayerAnimationHeader* animation2, f32 frame2, f32 blendWeight,
                                 Vec3s* blendTable);
 
 s32 PlayerAnimation_OnFrame(SkelAnime* skelAnime, f32 frame);
