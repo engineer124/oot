@@ -3,8 +3,8 @@
 
 #define ANIM_INTERP 1
 
-s32 LinkAnimation_Loop(PlayState* play, SkelAnime* skelAnime);
-s32 LinkAnimation_Once(PlayState* play, SkelAnime* skelAnime);
+s32 PlayerAnimation_Loop(PlayState* play, SkelAnime* skelAnime);
+s32 PlayerAnimation_Once(PlayState* play, SkelAnime* skelAnime);
 s32 SkelAnime_LoopFull(SkelAnime* skelAnime);
 s32 SkelAnime_Once(SkelAnime* skelAnime);
 s32 SkelAnime_LoopPartial(SkelAnime* skelAnime);
@@ -1084,17 +1084,17 @@ void SkelAnime_InitLink(PlayState* play, SkelAnime* skelAnime, FlexSkeletonHeade
         osSyncPrintf(VT_RST);
     }
 
-    LinkAnimation_Change(play, skelAnime, animation, 1.0f, 0.0f, 0.0f, ANIMMODE_LOOP, 0.0f);
+    PlayerAnimation_Change(play, skelAnime, animation, 1.0f, 0.0f, 0.0f, ANIMMODE_LOOP, 0.0f);
 }
 
 /**
  * Sets the update function of a SkelAnime that uses Link animations based on its mode
  */
-void LinkAnimation_SetUpdateFunction(SkelAnime* skelAnime) {
+void PlayerAnimation_SetUpdateFunction(SkelAnime* skelAnime) {
     if (skelAnime->mode <= ANIMMODE_LOOP_INTERP) {
-        skelAnime->update.link = LinkAnimation_Loop;
+        skelAnime->update.link = PlayerAnimation_Loop;
     } else {
-        skelAnime->update.link = LinkAnimation_Once;
+        skelAnime->update.link = PlayerAnimation_Once;
     }
     skelAnime->morphWeight = 0.0f;
 }
@@ -1103,7 +1103,7 @@ void LinkAnimation_SetUpdateFunction(SkelAnime* skelAnime) {
  * Advances the current Link animation and updates all frame tables. If the animation plays once, returns true when it
  * finishes.
  */
-s32 LinkAnimation_Update(PlayState* play, SkelAnime* skelAnime) {
+s32 PlayerAnimation_Update(PlayState* play, SkelAnime* skelAnime) {
     return skelAnime->update.link(play, skelAnime);
 }
 
@@ -1111,14 +1111,14 @@ s32 LinkAnimation_Update(PlayState* play, SkelAnime* skelAnime) {
  * Requests an interpolation between the pose in jointTable to the one in morphTable, advancing the morph but not the
  * animation frame
  */
-s32 LinkAnimation_Morph(PlayState* play, SkelAnime* skelAnime) {
+s32 PlayerAnimation_Morph(PlayState* play, SkelAnime* skelAnime) {
     f32 prevMorphWeight = skelAnime->morphWeight;
     f32 updateRate = R_UPDATE_RATE * 0.5f;
 
     skelAnime->morphWeight -= skelAnime->morphRate * updateRate;
 
     if (skelAnime->morphWeight <= 0.0f) {
-        LinkAnimation_SetUpdateFunction(skelAnime);
+        PlayerAnimation_SetUpdateFunction(skelAnime);
     }
 
     AnimationContext_SetInterp(play, skelAnime->limbCount, skelAnime->jointTable, skelAnime->morphTable,
@@ -1130,7 +1130,7 @@ s32 LinkAnimation_Morph(PlayState* play, SkelAnime* skelAnime) {
  * Requests a load of the next frame of a Link animation, advances the morph, and requests an interpolation between
  * jointTable and morphTable
  */
-void LinkAnimation_AnimateFrame(PlayState* play, SkelAnime* skelAnime) {
+void PlayerAnimation_AnimateFrame(PlayState* play, SkelAnime* skelAnime) {
     AnimationContext_SetLoadFrame(play, skelAnime->animation, skelAnime->curFrame, skelAnime->limbCount,
                                   skelAnime->jointTable);
     if (skelAnime->morphWeight != 0) {
@@ -1149,7 +1149,7 @@ void LinkAnimation_AnimateFrame(PlayState* play, SkelAnime* skelAnime) {
 /**
  * Advances a Link animation that loops over its full length
  */
-s32 LinkAnimation_Loop(PlayState* play, SkelAnime* skelAnime) {
+s32 PlayerAnimation_Loop(PlayState* play, SkelAnime* skelAnime) {
     f32 updateRate = R_UPDATE_RATE * 0.5f;
 
     skelAnime->curFrame += skelAnime->playSpeed * updateRate;
@@ -1158,18 +1158,18 @@ s32 LinkAnimation_Loop(PlayState* play, SkelAnime* skelAnime) {
     } else if (skelAnime->animLength <= skelAnime->curFrame) {
         skelAnime->curFrame -= skelAnime->animLength;
     }
-    LinkAnimation_AnimateFrame(play, skelAnime);
+    PlayerAnimation_AnimateFrame(play, skelAnime);
     return 0;
 }
 
 /**
  * Advances a Link animation that stops at endFrame and returns true when it is reached.
  */
-s32 LinkAnimation_Once(PlayState* play, SkelAnime* skelAnime) {
+s32 PlayerAnimation_Once(PlayState* play, SkelAnime* skelAnime) {
     f32 updateRate = R_UPDATE_RATE * 0.5f;
 
     if (skelAnime->curFrame == skelAnime->endFrame) {
-        LinkAnimation_AnimateFrame(play, skelAnime);
+        PlayerAnimation_AnimateFrame(play, skelAnime);
         return 1;
     }
     skelAnime->curFrame += skelAnime->playSpeed * updateRate;
@@ -1180,7 +1180,7 @@ s32 LinkAnimation_Once(PlayState* play, SkelAnime* skelAnime) {
     } else if (skelAnime->animLength <= skelAnime->curFrame) {
         skelAnime->curFrame -= skelAnime->animLength;
     }
-    LinkAnimation_AnimateFrame(play, skelAnime);
+    PlayerAnimation_AnimateFrame(play, skelAnime);
     return 0;
 }
 
@@ -1198,23 +1198,23 @@ void Animation_SetMorph(PlayState* play, SkelAnime* skelAnime, f32 morphFrames) 
  * animation, then start the new animation. Negative morph frames start the new animation immediately, modified by the
  * pose immediately before the animation change.
  */
-void LinkAnimation_Change(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 playSpeed,
-                          f32 startFrame, f32 endFrame, u8 mode, f32 morphFrames) {
+void PlayerAnimation_Change(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 playSpeed,
+                            f32 startFrame, f32 endFrame, u8 mode, f32 morphFrames) {
     skelAnime->mode = mode;
     if ((morphFrames != 0.0f) && ((animation != skelAnime->animation) || (startFrame != skelAnime->curFrame))) {
         if (morphFrames < 0) {
-            LinkAnimation_SetUpdateFunction(skelAnime);
+            PlayerAnimation_SetUpdateFunction(skelAnime);
             SkelAnime_CopyFrameTable(skelAnime, skelAnime->morphTable, skelAnime->jointTable);
             morphFrames = -morphFrames;
         } else {
-            skelAnime->update.link = LinkAnimation_Morph;
+            skelAnime->update.link = PlayerAnimation_Morph;
             AnimationContext_SetLoadFrame(play, animation, (s32)startFrame, skelAnime->limbCount,
                                           skelAnime->morphTable);
         }
         skelAnime->morphWeight = 1.0f;
         skelAnime->morphRate = 1.0f / morphFrames;
     } else {
-        LinkAnimation_SetUpdateFunction(skelAnime);
+        PlayerAnimation_SetUpdateFunction(skelAnime);
         AnimationContext_SetLoadFrame(play, animation, (s32)startFrame, skelAnime->limbCount, skelAnime->jointTable);
         skelAnime->morphWeight = 0.0f;
     }
@@ -1231,41 +1231,41 @@ void LinkAnimation_Change(PlayState* play, SkelAnime* skelAnime, LinkAnimationHe
 /**
  * Immediately changes to a Link animation that plays once at the default speed.
  */
-void LinkAnimation_PlayOnce(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation) {
-    LinkAnimation_Change(play, skelAnime, animation, 1.0f, 0.0f, Animation_GetLastFrame(animation), ANIMMODE_ONCE,
-                         0.0f);
+void PlayerAnimation_PlayOnce(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation) {
+    PlayerAnimation_Change(play, skelAnime, animation, 1.0f, 0.0f, Animation_GetLastFrame(animation), ANIMMODE_ONCE,
+                           0.0f);
 }
 
 /**
  * Immediately changes to a Link animation that plays once at the specified speed.
  */
-void LinkAnimation_PlayOnceSetSpeed(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation,
-                                    f32 playSpeed) {
-    LinkAnimation_Change(play, skelAnime, animation, playSpeed, 0.0f, Animation_GetLastFrame(animation), ANIMMODE_ONCE,
-                         0.0f);
+void PlayerAnimation_PlayOnceSetSpeed(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation,
+                                      f32 playSpeed) {
+    PlayerAnimation_Change(play, skelAnime, animation, playSpeed, 0.0f, Animation_GetLastFrame(animation),
+                           ANIMMODE_ONCE, 0.0f);
 }
 
 /**
  * Immediately changes to a Link animation that loops at the default speed.
  */
-void LinkAnimation_PlayLoop(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation) {
-    LinkAnimation_Change(play, skelAnime, animation, 1.0f, 0.0f, Animation_GetLastFrame(animation), ANIMMODE_LOOP,
-                         0.0f);
+void PlayerAnimation_PlayLoop(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation) {
+    PlayerAnimation_Change(play, skelAnime, animation, 1.0f, 0.0f, Animation_GetLastFrame(animation), ANIMMODE_LOOP,
+                           0.0f);
 }
 
 /**
  * Immediately changes to a Link animation that loops at the specified speed.
  */
-void LinkAnimation_PlayLoopSetSpeed(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation,
-                                    f32 playSpeed) {
-    LinkAnimation_Change(play, skelAnime, animation, playSpeed, 0.0f, Animation_GetLastFrame(animation), ANIMMODE_LOOP,
-                         0.0f);
+void PlayerAnimation_PlayLoopSetSpeed(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation,
+                                      f32 playSpeed) {
+    PlayerAnimation_Change(play, skelAnime, animation, playSpeed, 0.0f, Animation_GetLastFrame(animation),
+                           ANIMMODE_LOOP, 0.0f);
 }
 
 /**
  * Requests copying jointTable to morphTable
  */
-void LinkAnimation_CopyJointToMorph(PlayState* play, SkelAnime* skelAnime) {
+void PlayerAnimation_CopyJointToMorph(PlayState* play, SkelAnime* skelAnime) {
     AnimationContext_SetCopyAll(play, skelAnime->limbCount, skelAnime->morphTable, skelAnime->jointTable);
 }
 
@@ -1273,36 +1273,36 @@ void LinkAnimation_CopyJointToMorph(PlayState* play, SkelAnime* skelAnime) {
  * Requests copying morphTable to jointTable
  * unused
  */
-void LinkAnimation_CopyMorphToJoint(PlayState* play, SkelAnime* skelAnime) {
+void PlayerAnimation_CopyMorphToJoint(PlayState* play, SkelAnime* skelAnime) {
     AnimationContext_SetCopyAll(play, skelAnime->limbCount, skelAnime->jointTable, skelAnime->morphTable);
 }
 
 /**
  * Requests loading frame data from the Link animation into morphTable
  */
-void LinkAnimation_LoadToMorph(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 frame) {
+void PlayerAnimation_LoadToMorph(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 frame) {
     AnimationContext_SetLoadFrame(play, animation, (s32)frame, skelAnime->limbCount, skelAnime->morphTable);
 }
 
 /**
  * Requests loading frame data from the Link animation into jointTable
  */
-void LinkAnimation_LoadToJoint(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 frame) {
+void PlayerAnimation_LoadToJoint(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 frame) {
     AnimationContext_SetLoadFrame(play, animation, (s32)frame, skelAnime->limbCount, skelAnime->jointTable);
 }
 
 /**
  * Requests interpolating between jointTable and morphTable, placing the result in jointTable
  */
-void LinkAnimation_InterpJointMorph(PlayState* play, SkelAnime* skelAnime, f32 weight) {
+void PlayerAnimation_InterpJointMorph(PlayState* play, SkelAnime* skelAnime, f32 weight) {
     AnimationContext_SetInterp(play, skelAnime->limbCount, skelAnime->jointTable, skelAnime->morphTable, weight);
 }
 
 /**
  * Requests loading frame data from the Link animations and blending them, placing the result in jointTable
  */
-void LinkAnimation_BlendToJoint(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation1, f32 frame1,
-                                LinkAnimationHeader* animation2, f32 frame2, f32 blendWeight, Vec3s* blendTable) {
+void PlayerAnimation_BlendToJoint(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation1, f32 frame1,
+                                  LinkAnimationHeader* animation2, f32 frame2, f32 blendWeight, Vec3s* blendTable) {
     Vec3s* alignedBlendTable;
 
     AnimationContext_SetLoadFrame(play, animation1, (s32)frame1, skelAnime->limbCount, skelAnime->jointTable);
@@ -1316,8 +1316,8 @@ void LinkAnimation_BlendToJoint(PlayState* play, SkelAnime* skelAnime, LinkAnima
 /**
  * Requests loading frame data from the Link animations and blending them, placing the result in morphTable
  */
-void LinkAnimation_BlendToMorph(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation1, f32 frame1,
-                                LinkAnimationHeader* animation2, f32 frame2, f32 blendWeight, Vec3s* blendTable) {
+void PlayerAnimation_BlendToMorph(PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation1, f32 frame1,
+                                  LinkAnimationHeader* animation2, f32 frame2, f32 blendWeight, Vec3s* blendTable) {
     Vec3s* alignedBlendTable;
 
     AnimationContext_SetLoadFrame(play, animation1, (s32)frame1, skelAnime->limbCount, skelAnime->morphTable);
@@ -1331,9 +1331,9 @@ void LinkAnimation_BlendToMorph(PlayState* play, SkelAnime* skelAnime, LinkAnima
 /**
  * Changes a looping animation to one that stops at the end. Unused
  */
-void LinkAnimation_EndLoop(SkelAnime* skelAnime) {
+void PlayerAnimation_EndLoop(SkelAnime* skelAnime) {
     skelAnime->mode = ANIMMODE_ONCE;
-    LinkAnimation_SetUpdateFunction(skelAnime);
+    PlayerAnimation_SetUpdateFunction(skelAnime);
 }
 
 /**
@@ -1366,7 +1366,7 @@ s32 Animation_OnFrameImpl(SkelAnime* skelAnime, f32 frame, f32 updateRate) {
 /**
  * Checks if the current Link animation has reached the specified frame
  */
-s32 LinkAnimation_OnFrame(SkelAnime* skelAnime, f32 frame) {
+s32 PlayerAnimation_OnFrame(SkelAnime* skelAnime, f32 frame) {
     f32 updateRate = R_UPDATE_RATE * 0.5f;
 
     return Animation_OnFrameImpl(skelAnime, frame, updateRate);

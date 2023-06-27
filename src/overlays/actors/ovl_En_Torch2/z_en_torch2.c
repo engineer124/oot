@@ -373,7 +373,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
                                 this->invincibilityTimer = -7;
                                 this->speedXZ = 0.0f;
                                 player->skelAnime.curFrame = 2.0f;
-                                LinkAnimation_Update(play, &player->skelAnime);
+                                PlayerAnimation_Update(play, &player->skelAnime);
                                 sHoldShieldTimer = 0;
                                 input->cur.button = BTN_A;
                             } else {
@@ -679,7 +679,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
             this->meleeWeaponState = 1;
             this->skelAnime.curFrame = player->skelAnime.curFrame - player->skelAnime.playSpeed;
             this->skelAnime.playSpeed = player->skelAnime.playSpeed;
-            LinkAnimation_Update(play, &this->skelAnime);
+            PlayerAnimation_Update(play, &this->skelAnime);
             Collider_ResetQuadAT(play, &this->meleeWeaponQuads[0].base);
             Collider_ResetQuadAT(play, &this->meleeWeaponQuads[1].base);
         }

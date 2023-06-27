@@ -335,40 +335,40 @@ void AnimationContext_Update(struct PlayState* play, AnimationContext* animation
 
 // Update
 
-s32 LinkAnimation_Update(struct PlayState* play, SkelAnime* skelAnime);
+s32 PlayerAnimation_Update(struct PlayState* play, SkelAnime* skelAnime);
 
-void LinkAnimation_SetUpdateFunction(SkelAnime* skelAnime);
-void LinkAnimation_AnimateFrame(struct PlayState* play, SkelAnime* skelAnime);
+void PlayerAnimation_SetUpdateFunction(SkelAnime* skelAnime);
+void PlayerAnimation_AnimateFrame(struct PlayState* play, SkelAnime* skelAnime);
 
 // Play animations
 
-void LinkAnimation_Change(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 playSpeed,
+void PlayerAnimation_Change(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 playSpeed,
                           f32 startFrame, f32 endFrame, u8 mode, f32 morphFrames);
 
-void LinkAnimation_PlayOnce(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation);
-void LinkAnimation_PlayOnceSetSpeed(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation,
+void PlayerAnimation_PlayOnce(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation);
+void PlayerAnimation_PlayOnceSetSpeed(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation,
                                     f32 playSpeed);
 
-void LinkAnimation_PlayLoop(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation);
-void LinkAnimation_PlayLoopSetSpeed(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation,
+void PlayerAnimation_PlayLoop(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation);
+void PlayerAnimation_PlayLoopSetSpeed(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation,
                                     f32 playSpeed);
 
-void LinkAnimation_EndLoop(SkelAnime* skelAnime);
+void PlayerAnimation_EndLoop(SkelAnime* skelAnime);
 
 // Misc. operations
 
-void LinkAnimation_CopyJointToMorph(struct PlayState* play, SkelAnime* skelAnime);
-void LinkAnimation_CopyMorphToJoint(struct PlayState* play, SkelAnime* skelAnime);
-void LinkAnimation_LoadToMorph(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 frame);
-void LinkAnimation_LoadToJoint(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 frame);
-void LinkAnimation_InterpJointMorph(struct PlayState* play, SkelAnime* skelAnime, f32 weight);
-void LinkAnimation_BlendToJoint(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation1,
+void PlayerAnimation_CopyJointToMorph(struct PlayState* play, SkelAnime* skelAnime);
+void PlayerAnimation_CopyMorphToJoint(struct PlayState* play, SkelAnime* skelAnime);
+void PlayerAnimation_LoadToMorph(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 frame);
+void PlayerAnimation_LoadToJoint(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation, f32 frame);
+void PlayerAnimation_InterpJointMorph(struct PlayState* play, SkelAnime* skelAnime, f32 weight);
+void PlayerAnimation_BlendToJoint(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation1,
                                 f32 frame1, LinkAnimationHeader* animation2, f32 frame2, f32 blendWeight,
                                 Vec3s* blendTable);
-void LinkAnimation_BlendToMorph(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation1,
+void PlayerAnimation_BlendToMorph(struct PlayState* play, SkelAnime* skelAnime, LinkAnimationHeader* animation1,
                                 f32 frame1, LinkAnimationHeader* animation2, f32 frame2, f32 blendWeight,
                                 Vec3s* blendTable);
 
-s32 LinkAnimation_OnFrame(SkelAnime* skelAnime, f32 frame);
+s32 PlayerAnimation_OnFrame(SkelAnime* skelAnime, f32 frame);
 
 #endif

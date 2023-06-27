@@ -677,7 +677,7 @@ typedef struct {
 
 typedef void (*PlayerActionFunc)(struct Player*, struct PlayState*);
 typedef s32 (*PlayerUpperActionFunc)(struct Player*, struct PlayState*);
-typedef void (*PlayerFuncA74)(struct PlayState*, struct Player*);
+typedef void (*PlayerMiniCsFunc)(struct PlayState*, struct Player*);
 
 typedef struct Player {
     /* 0x0000 */ Actor      actor;
@@ -842,7 +842,7 @@ typedef struct Player {
     /* 0x0A60 */ u8         isBurning;
     /* 0x0A61 */ u8         flameTimers[PLAYER_BODYPART_MAX]; // one flame per body part
     /* 0x0A73 */ u8         unk_A73;
-    /* 0x0A74 */ PlayerFuncA74 func_A74;
+    /* 0x0A74 */ PlayerMiniCsFunc miniCsFunc;
     /* 0x0A78 */ s8         invincibilityTimer; // prevents damage when nonzero (positive = visible, counts towards zero each frame)
     /* 0x0A79 */ u8         floorTypeTimer;
     /* 0x0A7A */ u8         floorProperty;
