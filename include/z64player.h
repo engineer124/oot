@@ -359,6 +359,15 @@ typedef enum {
 #define LIMB_BUF_COUNT(limbCount) ((ALIGN16((limbCount) * sizeof(Vec3s)) + sizeof(Vec3s) - 1) / sizeof(Vec3s))
 #define PLAYER_LIMB_BUF_COUNT LIMB_BUF_COUNT(PLAYER_LIMB_MAX)
 
+typedef enum PlayerAttentionMode {
+    /* 0 */ PLAYER_ATTENTIONMODE_NONE,
+    /* 1 */ PLAYER_ATTENTIONMODE_C_UP,
+    /* 2 */ PLAYER_ATTENTIONMODE_AIMING,
+    /* 3 */ PLAYER_ATTENTIONMODE_CUTSCENE,
+    /* 4 */ PLAYER_ATTENTIONMODE_ITEM_CUTSCENE,
+    /* 5 */ PLAYER_ATTENTIONMODE_MAX
+} PlayerAttentionMode;
+
 typedef enum {
     /* 0x00 */ PLAYER_CSMODE_NONE,
     /* 0x01 */ PLAYER_CSMODE_1,
@@ -631,7 +640,7 @@ typedef struct {
 #define PLAYER_STATE1_FREEFALLING (1 << 19)
 #define PLAYER_STATE1_IN_FIRST_PERSON_MODE (1 << 20)
 #define PLAYER_STATE1_CLIMBING (1 << 21)
-#define PLAYER_STATE1_22 (1 << 22)
+#define PLAYER_STATE1_HOLDING_SHIELD (1 << 22)
 #define PLAYER_STATE1_RIDING_HORSE (1 << 23)
 #define PLAYER_STATE1_AIMING_BOOMERANG (1 << 24)
 #define PLAYER_STATE1_AWAITING_THROWN_BOOMERANG (1 << 25)
@@ -686,7 +695,7 @@ typedef struct {
 
 typedef void (*PlayerActionFunc)(struct Player*, struct PlayState*);
 typedef s32 (*PlayerUpperActionFunc)(struct Player*, struct PlayState*);
-typedef void (*PlayerMiniCsFunc)(struct PlayState*, struct Player*);
+typedef void (*PlayerCsIntoActionFunc)(struct PlayState*, struct Player*);
 
 typedef struct Player {
     /* 0x0000 */ Actor      actor;
@@ -770,30 +779,26 @@ typedef struct Player {
     /* 0x0694 */ Actor*     targetActor;
     /* 0x0698 */ f32        targetActorDistance;
     /* 0x069C */ char       unk_69C[0x004];
-    /* 0x06A0 */ f32        unk_6A0;
+    /* 0x06A0 */ f32        secretRumbleCharge;
     /* 0x06A4 */ f32        closestSecretDistSq;
     /* 0x06A8 */ Actor*     ocarinaActor;
     /* 0x06AC */ s8         unk_6AC;
-    /* 0x06AD */ u8         unk_6AD;
-    /* 0x06AE */ u16        unk_6AE;
+    /* 0x06AD */ u8         attentionMode;
+    /* 0x06AE */ u16        rotOverrideFlags;
     /* 0x06B0 */ s16        unk_6B0;
     /* 0x06B2 */ char       unk_6B4[0x004];
-    /* 0x06B6 */ s16        unk_6B6;
-    /* 0x06B8 */ s16        unk_6B8;
-    /* 0x06BA */ s16        unk_6BA;
-    /* 0x06BC */ s16        unk_6BC;
-    /* 0x06BE */ s16        unk_6BE;
-    /* 0x06C0 */ s16        unk_6C0;
+    /* 0x06B6 */ Vec3s      headLimbRot;
+    /* 0x06BC */ Vec3s      upperLimbRot;
     /* 0x06C2 */ s16        unk_6C2;
-    /* 0x06C4 */ f32        unk_6C4;
+    /* 0x06C4 */ f32        shapeOffsetY;
     /* 0x06C8 */ SkelAnime  upperSkelAnime;
     /* 0x070C */ Vec3s      upperJointTable[PLAYER_LIMB_BUF_COUNT];
     /* 0x079C */ Vec3s      upperMorphTable[PLAYER_LIMB_BUF_COUNT];
     /* 0x082C */ PlayerUpperActionFunc upperActionFunc;
-    /* 0x0830 */ f32        unk_830;
-    /* 0x0834 */ s16        unk_834;
+    /* 0x0830 */ f32        upperInterpWeight;
+    /* 0x0834 */ s16        firstPersonItemTimer;
     /* 0x0836 */ s8         unk_836;
-    /* 0x0837 */ u8         unk_837;
+    /* 0x0837 */ u8         putAwayTimer;
     /* 0x0838 */ f32        speedXZ; // Controls horizontal speed, used for `actor.speed`. Current or target value depending on context.
     /* 0x083C */ s16        yaw; // General yaw value, used both for world and shape rotation. Current or target value depending on context.
     /* 0x083E */ s16        zTargetYaw; // yaw relating to Z targeting/"parallel" mode
@@ -801,16 +806,48 @@ typedef struct Player {
     /* 0x0842 */ s8         meleeWeaponAnimation;
     /* 0x0843 */ s8         meleeWeaponState;
     /* 0x0844 */ s8         unk_844;
-    /* 0x0845 */ u8         unk_845;
+    /* 0x0845 */ u8         slashCounter;
     /* 0x0846 */ u8         inputFrameCounter;
     /* 0x0847 */ s8         analogStickDirection128Parts[4];
     /* 0x084B */ s8         analogStickDirection4Parts[4];
-    /* 0x084F */ s8         unk_84F;
-    /* 0x0850 */ s16        unk_850; // multipurpose timer
+    /* 0x084F */ union {
+                    s8 actionVar8;
+                    s8 miniCutsceneMoveVar8;
+                    s8 spawnFromBlueWarpVar8;
+                    s8 frozenInIceVar8;
+                    s8 shieldAimCrouchedVar8;
+                    s8 shieldDeflectAttackVar8;
+                    s8 midairVar8;
+                    s8 plantMagicBeansVar8; // Action: PlantMagicBeans
+                };
+    /* 0x0850 */ union {
+                    s16 actionVar16;
+                    s16 miniCutsceneMoveVar16; // Action: MiniCutsceneMove
+                    s16 spawnFromBlueWarpVar16; // Action: SpawnFromBlueWarp
+                    s16 startCutsceneDelayedVar16; // Action: StartCutscene
+                    s16 midairVar16; // Action: Midair
+                    s16 rollVar16; // Action: Roll
+                    s16 chargeSpinAttackVar16; // Action: ChargeSpinAttack
+                    s16 jumpToLedgeVar16; // Action: JumpToLedge
+                    s16 IdleZTargetEnemyVar16; // Action: IdleZTargetEnemy
+                    s16 knockbackFlyVar16; // Action: KnockbackFly
+                    s16 knockbackDownVar16; // Action: KnockbackDown
+                    s16 dieVar16; // Action: Die & SwimDrown
+                    s16 playOcarinaVar16; // Action: PlayOcarina
+                    s16 getItemVar16; // Action: GetItem
+                    s16 spawnFromAgeSwapVar16; // Action: SpawnFromAgeSwap
+                    s16 rideHorseVar16; // Action: RideHorse
+                    s16 swimSpawnVar16; // Action: SwimSpawn
+                    s16 idleVar16; // Action: Idle
+                    s16 plantMagicBeansVar16; // Action: PlantMagicBeans
+                    s16 aimFirstPersonVar16; // Action: AimFirstPerson
+                    s16 pushVar16; // Action: Push
+                    s16 shieldAimCrouchedVar16; // Action: ShieldAimCrouched
+                };
     /* 0x0854 */ f32        unk_854;
-    /* 0x0858 */ f32        unk_858;
-    /* 0x085C */ f32        unk_85C; // stick length among other things
-    /* 0x0860 */ s16        unk_860; // stick flame timer among other things
+    /* 0x0858 */ f32        spinAttackTimer;
+    /* 0x085C */ f32        dekuStickLength; // stick length among other things
+    /* 0x0860 */ s16        stickFlameTimer; // stick flame timer among other things
     /* 0x0862 */ s8         unk_862; // get item draw ID + 1
     /* 0x0864 */ f32        unk_864;
     /* 0x0868 */ f32        unk_868;
@@ -820,13 +857,13 @@ typedef struct Player {
     /* 0x0878 */ f32        unk_878;
     /* 0x087C */ s16        unk_87C;
     /* 0x087E */ s16        unk_87E;
-    /* 0x0880 */ f32        unk_880;
+    /* 0x0880 */ f32        speedLimit;
     /* 0x0884 */ f32        yDistToLedge; // y distance to ground above an interact wall. LEDGE_DIST_MAX if no ground if found
     /* 0x0888 */ f32        distToInteractWall; // xyz distance to the interact wall
     /* 0x088C */ u8         ledgeClimbType;
     /* 0x088D */ u8         ledgeClimbDelayTimer;
     /* 0x088E */ u8         unk_88E;
-    /* 0x088F */ u8         unk_88F;
+    /* 0x088F */ u8         damageFlashTimer;
     /* 0x0890 */ u8         unk_890;
     /* 0x0891 */ u8         shockTimer;
     /* 0x0892 */ u8         unk_892;
@@ -851,7 +888,7 @@ typedef struct Player {
     /* 0x0A60 */ u8         isBurning;
     /* 0x0A61 */ u8         flameTimers[PLAYER_BODYPART_MAX]; // one flame per body part
     /* 0x0A73 */ u8         unk_A73;
-    /* 0x0A74 */ PlayerMiniCsFunc miniCsFunc;
+    /* 0x0A74 */ PlayerCsIntoActionFunc csIntoActionFunc;
     /* 0x0A78 */ s8         invincibilityTimer; // prevents damage when nonzero (positive = visible, counts towards zero each frame)
     /* 0x0A79 */ u8         floorTypeTimer;
     /* 0x0A7A */ u8         floorProperty;
@@ -859,7 +896,7 @@ typedef struct Player {
     /* 0x0A7C */ f32        analogStickDistance;
     /* 0x0A80 */ s16        analogStickAngle;
     /* 0x0A82 */ u16        prevFloorSfxOffset;
-    /* 0x0A84 */ s16        unk_A84;
+    /* 0x0A84 */ s16        sceneExitPosY;
     /* 0x0A86 */ s8         unk_A86;
     /* 0x0A87 */ u8         unk_A87;
     /* 0x0A88 */ Vec3f      unk_A88; // previous body part 0 position

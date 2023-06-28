@@ -1668,7 +1668,7 @@ void EnTest_UpdateDamage(EnTest* this, PlayState* play) {
             if (this->swordState >= 1) {
                 this->swordState = 0;
             }
-            this->unk_7DC = player->unk_845;
+            this->unk_7DC = player->slashCounter;
             this->actor.world.rot.y = this->actor.yawTowardsPlayer;
             Actor_SetDropFlag(&this->actor, &this->bodyCollider.info, false);
             Audio_StopSfxByPosAndId(&this->actor.projectedPos, NA_SE_EN_STAL_WARAU);

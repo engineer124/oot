@@ -498,7 +498,7 @@ s32 Player_InBlockingCsMode(PlayState* play, Player* this) {
 s32 Player_InCsMode(PlayState* play) {
     Player* this = GET_PLAYER(play);
 
-    return Player_InBlockingCsMode(play, this) || (this->unk_6AD == 4);
+    return Player_InBlockingCsMode(play, this) || (this->attentionMode == PLAYER_ATTENTIONMODE_ITEM_CUTSCENE);
 }
 
 s32 Player_IsZTargeting_3(Player* this) {
@@ -521,7 +521,7 @@ s32 Player_ActionToModelGroup(Player* this, s32 itemAction) {
 }
 
 void Player_SetModelsForHoldingShield(Player* this) {
-    if ((this->stateFlags1 & PLAYER_STATE1_22) &&
+    if ((this->stateFlags1 & PLAYER_STATE1_HOLDING_SHIELD) &&
         ((this->itemAction < 0) || (this->itemAction == this->heldItemAction))) {
         if (!Player_HoldsTwoHandedWeapon(this) && !Player_IsChildWithHylianShield(this)) {
             this->rightHandType = PLAYER_MODELTYPE_RH_SHIELD;
@@ -574,7 +574,7 @@ void Player_SetModelGroup(Player* this, s32 modelGroup) {
 void func_8008EC70(Player* this) {
     this->itemAction = this->heldItemAction;
     Player_SetModelGroup(this, Player_ActionToModelGroup(this, this->heldItemAction));
-    this->unk_6AD = 0;
+    this->attentionMode = PLAYER_ATTENTIONMODE_NONE;
 }
 
 void Player_SetEquipmentData(PlayState* play, Player* this) {
@@ -651,7 +651,7 @@ s32 Player_IsBurningStickInRange(PlayState* play, Vec3f* pos, f32 xzRange, f32 y
     Vec3f diff;
     s32 pad;
 
-    if ((this->heldItemAction == PLAYER_IA_DEKU_STICK) && (this->unk_860 != 0)) {
+    if ((this->heldItemAction == PLAYER_IA_DEKU_STICK) && (this->stickFlameTimer != 0)) {
         Math_Vec3f_Diff(&this->meleeWeaponInfo[0].tip, pos, &diff);
         return ((SQ(diff.x) + SQ(diff.z)) <= SQ(xzRange)) && (0.0f <= diff.y) && (diff.y <= yRange);
     } else {
@@ -989,7 +989,7 @@ void func_8008F87C(PlayState* play, Player* this, SkelAnime* skelAnime, Vec3f* p
 
         sp7C = D_80126058[(void)0, gSaveContext.linkAge];
         sp78 = D_80126060[(void)0, gSaveContext.linkAge];
-        sp74 = D_80126068[(void)0, gSaveContext.linkAge] - this->unk_6C4;
+        sp74 = D_80126068[(void)0, gSaveContext.linkAge] - this->shapeOffsetY;
 
         Matrix_Push();
         Matrix_TranslateRotateZYX(pos, rot);
@@ -1078,7 +1078,7 @@ s32 Player_OverrideLimbDrawGameplayCommon(PlayState* play, s32 limbIndex, Gfx** 
             }
         }
 
-        pos->y -= this->unk_6C4;
+        pos->y -= this->shapeOffsetY;
 
         if (this->unk_6C2 != 0) {
             Matrix_Translate(pos->x, ((Math_CosS(this->unk_6C2) - 1.0f) * 200.0f) + pos->y, pos->z, MTXMODE_APPLY);
@@ -1093,22 +1093,22 @@ s32 Player_OverrideLimbDrawGameplayCommon(PlayState* play, s32 limbIndex, Gfx** 
         }
 
         if (limbIndex == PLAYER_LIMB_HEAD) {
-            rot->x += this->unk_6BA;
-            rot->y -= this->unk_6B8;
-            rot->z += this->unk_6B6;
+            rot->x += this->headLimbRot.z;
+            rot->y -= this->headLimbRot.y;
+            rot->z += this->headLimbRot.x;
         } else if (limbIndex == PLAYER_LIMB_UPPER) {
             if (this->unk_6B0 != 0) {
                 Matrix_RotateZ(BINANG_TO_RAD(0x44C), MTXMODE_APPLY);
                 Matrix_RotateY(BINANG_TO_RAD(this->unk_6B0), MTXMODE_APPLY);
             }
-            if (this->unk_6BE != 0) {
-                Matrix_RotateY(BINANG_TO_RAD(this->unk_6BE), MTXMODE_APPLY);
+            if (this->upperLimbRot.y != 0) {
+                Matrix_RotateY(BINANG_TO_RAD(this->upperLimbRot.y), MTXMODE_APPLY);
             }
-            if (this->unk_6BC != 0) {
-                Matrix_RotateX(BINANG_TO_RAD(this->unk_6BC), MTXMODE_APPLY);
+            if (this->upperLimbRot.x != 0) {
+                Matrix_RotateX(BINANG_TO_RAD(this->upperLimbRot.x), MTXMODE_APPLY);
             }
-            if (this->unk_6C0 != 0) {
-                Matrix_RotateZ(BINANG_TO_RAD(this->unk_6C0), MTXMODE_APPLY);
+            if (this->upperLimbRot.z != 0) {
+                Matrix_RotateZ(BINANG_TO_RAD(this->upperLimbRot.z), MTXMODE_APPLY);
             }
         } else if (limbIndex == PLAYER_LIMB_L_THIGH) {
             func_8008F87C(play, this, &this->skelAnime, pos, rot, PLAYER_LIMB_L_THIGH, PLAYER_LIMB_L_SHIN,
@@ -1187,7 +1187,7 @@ s32 Player_OverrideLimbDrawGameplayFirstPerson(PlayState* play, s32 limbIndex, G
     Player* this = (Player*)thisx;
 
     if (!Player_OverrideLimbDrawGameplayCommon(play, limbIndex, dList, pos, rot, thisx)) {
-        if (this->unk_6AD != 2) {
+        if (this->attentionMode != PLAYER_ATTENTIONMODE_AIMING) {
             *dList = NULL;
         } else if (limbIndex == PLAYER_LIMB_L_FOREARM) {
             *dList = sFirstPersonLeftForearmDLs[(void)0, gSaveContext.linkAge];
@@ -1253,7 +1253,7 @@ void Player_UpdateShieldCollider(PlayState* play, Player* this, ColliderQuad* co
         COLTYPE_METAL,
     };
 
-    if (this->stateFlags1 & PLAYER_STATE1_22) {
+    if (this->stateFlags1 & PLAYER_STATE1_HOLDING_SHIELD) {
         Vec3f quadDest[4];
 
         this->shieldQuad.base.colType = shieldColTypes[this->currentShield];
@@ -1287,7 +1287,7 @@ void func_800906D4(PlayState* play, Player* this, Vec3f* newTipPos) {
     Matrix_MultVec3f(&D_801260A4[2], &newBasePos[2]);
 
     if (func_80090480(play, NULL, &this->meleeWeaponInfo[0], &newTipPos[0], &newBasePos[0]) &&
-        !(this->stateFlags1 & PLAYER_STATE1_22)) {
+        !(this->stateFlags1 & PLAYER_STATE1_HOLDING_SHIELD)) {
         EffectBlure_AddVertex(Effect_GetByIndex(this->meleeWeaponEffectIndex), &this->meleeWeaponInfo[0].tip,
                               &this->meleeWeaponInfo[0].base);
     }
@@ -1329,9 +1329,9 @@ void Player_DrawGetItem(PlayState* play, Player* this) {
 void func_80090A28(Player* this, Vec3f* vecs) {
     D_8012608C.x = D_80126080.x;
 
-    if (this->unk_845 >= 3) {
-        this->unk_845++;
-        D_8012608C.x *= 1.0f + ((9 - this->unk_845) * 0.1f);
+    if (this->slashCounter >= 3) {
+        this->slashCounter++;
+        D_8012608C.x *= 1.0f + ((9 - this->slashCounter) * 0.1f);
     }
 
     D_8012608C.x += 1200.0f;
@@ -1466,7 +1466,7 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
             OPEN_DISPS(play->state.gfxCtx, "../z_player_lib.c", 2633);
 
             if (this->actor.scale.y >= 0.0f) {
-                D_80126080.x = this->unk_85C * 5000.0f;
+                D_80126080.x = this->dekuStickLength * 5000.0f;
                 func_80090A28(this, sp124);
                 if (this->meleeWeaponState != 0) {
                     func_800906D4(play, this, sp124);
@@ -1477,7 +1477,7 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
 
             Matrix_Translate(-428.26f, 267.2f, -33.82f, MTXMODE_APPLY);
             Matrix_RotateZYX(-0x8000, 0, 0x4000, MTXMODE_APPLY);
-            Matrix_Scale(1.0f, this->unk_85C, 1.0f, MTXMODE_APPLY);
+            Matrix_Scale(1.0f, this->dekuStickLength, 1.0f, MTXMODE_APPLY);
 
             gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_player_lib.c", 2653),
                       G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
@@ -1547,30 +1547,31 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
             Matrix_Push();
             Matrix_Translate(stringData->pos.x, stringData->pos.y, stringData->pos.z, MTXMODE_APPLY);
 
-            if ((this->stateFlags1 & PLAYER_STATE1_READY_TO_SHOOT) && (this->unk_860 >= 0) && (this->unk_834 <= 10)) {
+            if ((this->stateFlags1 & PLAYER_STATE1_READY_TO_SHOOT) && (this->stickFlameTimer >= 0) &&
+                (this->firstPersonItemTimer <= 10)) {
                 Vec3f sp90;
                 f32 distXYZ;
 
                 Matrix_MultVec3f(&sZeroVec, &sp90);
                 distXYZ = Math_Vec3f_DistXYZ(sCurBodyPartPos, &sp90);
 
-                this->unk_858 = distXYZ - 3.0f;
+                this->spinAttackTimer = distXYZ - 3.0f;
                 if (distXYZ < 3.0f) {
-                    this->unk_858 = 0.0f;
+                    this->spinAttackTimer = 0.0f;
                 } else {
-                    this->unk_858 *= 1.6f;
-                    if (this->unk_858 > 1.0f) {
-                        this->unk_858 = 1.0f;
+                    this->spinAttackTimer *= 1.6f;
+                    if (this->spinAttackTimer > 1.0f) {
+                        this->spinAttackTimer = 1.0f;
                     }
                 }
 
-                this->unk_85C = -0.5f;
+                this->dekuStickLength = -0.5f;
             }
 
-            Matrix_Scale(1.0f, this->unk_858, 1.0f, MTXMODE_APPLY);
+            Matrix_Scale(1.0f, this->spinAttackTimer, 1.0f, MTXMODE_APPLY);
 
             if (!LINK_IS_ADULT) {
-                Matrix_RotateZ(this->unk_858 * -0.2f, MTXMODE_APPLY);
+                Matrix_RotateZ(this->spinAttackTimer * -0.2f, MTXMODE_APPLY);
             }
 
             gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_player_lib.c", 2804),
@@ -1607,7 +1608,7 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
                 }
             }
 
-            if ((this->unk_862 != 0) || ((func_8002DD6C(this) == 0) && (heldActor != NULL))) {
+            if ((this->unk_862 != 0) || ((Actor_PlayerIsAimingFpsItem(this) == 0) && (heldActor != NULL))) {
                 if (!(this->stateFlags1 & PLAYER_STATE1_GETTING_ITEM) && (this->unk_862 != 0) &&
                     (this->exchangeItemId != EXCH_ITEM_NONE)) {
                     Math_Vec3f_Copy(&sGetItemRefPos, &this->leftHandPos);

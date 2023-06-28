@@ -99,13 +99,13 @@ void func_80A693D0(EnHorseLinkChild* this) {
 }
 
 void func_80A6948C(EnHorseLinkChild* this) {
-    if (this->animationIdx == 2) {
+    if (this->animIndex == 2) {
         func_80A693D0(this);
     } else if (this->skin.skelAnime.curFrame == 0.0f) {
-        if ((this->animationIdx == 3) || (this->animationIdx == 4)) {
+        if ((this->animIndex == 3) || (this->animIndex == 4)) {
             Audio_PlaySfxGeneral(NA_SE_EV_KID_HORSE_RUN, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
-        } else if (this->animationIdx == 1) {
+        } else if (this->animIndex == 1) {
             if (Rand_ZeroOne() > 0.5f) {
                 Audio_PlaySfxGeneral(NA_SE_EV_KID_HORSE_GROAN, &this->actor.projectedPos, 4,
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
@@ -122,14 +122,14 @@ static f32 D_80A6AF64[] = { 1.0f, 1.0f, 1.5f, 1.5f, 1.5f };
 f32 func_80A695A4(EnHorseLinkChild* this) {
     f32 result;
 
-    if (this->animationIdx == 2) {
-        result = D_80A6AF64[this->animationIdx] * this->actor.speed * (1.0f / 2.0f);
-    } else if (this->animationIdx == 3) {
-        result = D_80A6AF64[this->animationIdx] * this->actor.speed * (1.0f / 3.0f);
-    } else if (this->animationIdx == 4) {
-        result = D_80A6AF64[this->animationIdx] * this->actor.speed * (1.0f / 5.0f);
+    if (this->animIndex == 2) {
+        result = D_80A6AF64[this->animIndex] * this->actor.speed * (1.0f / 2.0f);
+    } else if (this->animIndex == 3) {
+        result = D_80A6AF64[this->animIndex] * this->actor.speed * (1.0f / 3.0f);
+    } else if (this->animIndex == 4) {
+        result = D_80A6AF64[this->animIndex] * this->actor.speed * (1.0f / 5.0f);
     } else {
-        result = D_80A6AF64[this->animationIdx];
+        result = D_80A6AF64[this->animIndex];
     }
 
     return result;
@@ -152,7 +152,7 @@ void EnHorseLinkChild_Init(Actor* thisx, PlayState* play) {
     this->actor.focus.pos = this->actor.world.pos;
     this->actor.focus.pos.y += 70.0f;
     Skin_Init(play, &this->skin, &gChildEponaSkel, &gChildEponaGallopingAnim);
-    this->animationIdx = 0;
+    this->animIndex = 0;
     Animation_PlayOnce(&this->skin.skelAnime, sAnimations[0]);
     Collider_InitCylinder(play, &this->bodyCollider);
     Collider_SetCylinderType1(play, &this->bodyCollider, &this->actor, &sCylinderInit);
@@ -188,12 +188,12 @@ void EnHorseLinkChild_Destroy(Actor* thisx, PlayState* play) {
 
 void func_80A6988C(EnHorseLinkChild* this) {
     this->action = 0;
-    this->animationIdx++;
-    if (this->animationIdx >= ARRAY_COUNT(sAnimations)) {
-        this->animationIdx = 0;
+    this->animIndex++;
+    if (this->animIndex >= ARRAY_COUNT(sAnimations)) {
+        this->animIndex = 0;
     }
 
-    Animation_PlayOnce(&this->skin.skelAnime, sAnimations[this->animationIdx]);
+    Animation_PlayOnce(&this->skin.skelAnime, sAnimations[this->animIndex]);
     this->skin.skelAnime.playSpeed = func_80A695A4(this);
 }
 
@@ -212,10 +212,10 @@ void func_80A6993C(EnHorseLinkChild* this, s32 newAnimationIdx) {
         newAnimationIdx = 0;
     }
 
-    if (this->animationIdx != newAnimationIdx) {
-        this->animationIdx = newAnimationIdx;
-        Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
-                         Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, -5.0f);
+    if (this->animIndex != newAnimationIdx) {
+        this->animIndex = newAnimationIdx;
+        Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this), 0.0f,
+                         Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, -5.0f);
     }
 }
 
@@ -229,14 +229,14 @@ void func_80A699FC(EnHorseLinkChild* this, PlayState* play) {
         if ((distFromLink < 1000.0f) && (distFromLink > 70.0f)) {
             func_80A69B7C(this);
         } else {
-            newAnimationIdx = this->animationIdx == 1 ? 0 : 1;
-            if (this->animationIdx != newAnimationIdx) {
-                this->animationIdx = newAnimationIdx;
-                Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
-                                 Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, -5.0f);
+            newAnimationIdx = this->animIndex == 1 ? 0 : 1;
+            if (this->animIndex != newAnimationIdx) {
+                this->animIndex = newAnimationIdx;
+                Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this), 0.0f,
+                                 Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, -5.0f);
             } else {
-                Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
-                                 Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, 0.0);
+                Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this), 0.0f,
+                                 Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, 0.0);
             }
         }
     }
@@ -244,10 +244,10 @@ void func_80A699FC(EnHorseLinkChild* this, PlayState* play) {
 
 void func_80A69B7C(EnHorseLinkChild* this) {
     this->action = 1;
-    this->animationIdx = 0;
+    this->animIndex = 0;
     this->actor.speed = 0.0f;
-    Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
-                     Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, -5.0f);
+    Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this), 0.0f,
+                     Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, -5.0f);
 }
 
 void func_80A69C18(EnHorseLinkChild* this, PlayState* play) {
@@ -255,7 +255,7 @@ void func_80A69C18(EnHorseLinkChild* this, PlayState* play) {
     f32 distFromLink;
     s32 newAnimationIdx;
 
-    if ((this->animationIdx == 4) || (this->animationIdx == 3) || (this->animationIdx == 2)) {
+    if ((this->animIndex == 4) || (this->animIndex == 3) || (this->animIndex == 2)) {
         yawDiff = Actor_WorldYawTowardActor(&this->actor, &GET_PLAYER(play)->actor) - this->actor.world.rot.y;
 
         if (yawDiff > 0x12C) {
@@ -290,23 +290,23 @@ void func_80A69C18(EnHorseLinkChild* this, PlayState* play) {
             return;
         }
 
-        if (this->animationIdx != newAnimationIdx) {
-            this->animationIdx = newAnimationIdx;
-            Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
-                             Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, -5.0f);
+        if (this->animIndex != newAnimationIdx) {
+            this->animIndex = newAnimationIdx;
+            Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this), 0.0f,
+                             Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, -5.0f);
         } else {
-            Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
-                             Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, 0.0f);
+            Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this), 0.0f,
+                             Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, 0.0f);
         }
     }
 }
 
 void func_80A69EC0(EnHorseLinkChild* this) {
     this->action = 3;
-    this->animationIdx = 0;
+    this->animIndex = 0;
     this->actor.speed = 0.0f;
-    Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
-                     Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, -5.0f);
+    Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this), 0.0f,
+                     Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, -5.0f);
 }
 
 void func_80A69F5C(EnHorseLinkChild* this, PlayState* play) {
@@ -315,7 +315,7 @@ void func_80A69F5C(EnHorseLinkChild* this, PlayState* play) {
     s32 yawSign;
     s32 yawOffset;
 
-    if ((this->animationIdx == 4) || (this->animationIdx == 3) || (this->animationIdx == 2)) {
+    if ((this->animIndex == 4) || (this->animIndex == 3) || (this->animIndex == 2)) {
         player = GET_PLAYER(play);
 
         if (Math3D_Vec3f_DistXYZ(&player->actor.world.pos, &this->actor.home.pos) < 250.0f) {
@@ -365,9 +365,9 @@ void func_80A6A068(EnHorseLinkChild* this, PlayState* play) {
         this->unk_2A0 = GET_EVENTCHKINF(EVENTCHKINF_16);
     }
 
-    newAnimationIdx = this->animationIdx;
+    newAnimationIdx = this->animIndex;
     animationEnded = SkelAnime_Update(&this->skin.skelAnime);
-    if (animationEnded || (this->animationIdx == 1) || (this->animationIdx == 0)) {
+    if (animationEnded || (this->animIndex == 1) || (this->animIndex == 0)) {
         if (GET_EVENTCHKINF(EVENTCHKINF_15)) {
             distFromHome = Math3D_Vec3f_DistXYZ(&this->actor.world.pos, &this->actor.home.pos);
             distLinkFromHome = Math3D_Vec3f_DistXYZ(&player->actor.world.pos, &this->actor.home.pos);
@@ -384,7 +384,7 @@ void func_80A6A068(EnHorseLinkChild* this, PlayState* play) {
                     this->unk_1F0 = 0;
                 } else {
                     this->actor.speed = 0.0f;
-                    if (this->animationIdx == 0) {
+                    if (this->animIndex == 0) {
                         newAnimationIdx = animationEnded == true ? 1 : 0;
                     } else {
                         newAnimationIdx = animationEnded == true ? 0 : 1;
@@ -403,7 +403,7 @@ void func_80A6A068(EnHorseLinkChild* this, PlayState* play) {
                     this->unk_1F0 = 0;
                 } else {
                     this->actor.speed = 0.0f;
-                    if (this->animationIdx == 0) {
+                    if (this->animIndex == 0) {
                         newAnimationIdx = animationEnded == true ? 1 : 0;
                     } else {
                         newAnimationIdx = animationEnded == true ? 0 : 1;
@@ -412,7 +412,7 @@ void func_80A6A068(EnHorseLinkChild* this, PlayState* play) {
             }
         } else {
             this->actor.speed = 0.0f;
-            if (this->animationIdx == 0) {
+            if (this->animIndex == 0) {
                 newAnimationIdx = animationEnded == true ? 1 : 0;
             } else {
                 newAnimationIdx = animationEnded == true ? 0 : 1;
@@ -420,23 +420,22 @@ void func_80A6A068(EnHorseLinkChild* this, PlayState* play) {
         }
     }
 
-    if ((this->animationIdx != newAnimationIdx) || (animationEnded == true)) {
-        this->animationIdx = newAnimationIdx;
-        Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
-                         Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, -5.0f);
+    if ((this->animIndex != newAnimationIdx) || (animationEnded == true)) {
+        this->animIndex = newAnimationIdx;
+        Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this), 0.0f,
+                         Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, -5.0f);
     } else {
-        Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this),
-                         this->skin.skelAnime.curFrame, Animation_GetLastFrame(sAnimations[this->animationIdx]), 2,
-                         0.0f);
+        Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this),
+                         this->skin.skelAnime.curFrame, Animation_GetLastFrame(sAnimations[this->animIndex]), 2, 0.0f);
     }
 }
 
 void func_80A6A4DC(EnHorseLinkChild* this) {
     this->action = 5;
-    this->animationIdx = Rand_ZeroOne() > 0.5f ? 0 : 1;
+    this->animIndex = Rand_ZeroOne() > 0.5f ? 0 : 1;
     DREG(53) = 0;
-    Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
-                     Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, 0.0f);
+    Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this), 0.0f,
+                     Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, 0.0f);
 }
 
 void func_80A6A5A4(EnHorseLinkChild* this, PlayState* play) {
@@ -451,15 +450,15 @@ void func_80A6A5A4(EnHorseLinkChild* this, PlayState* play) {
         this->actor.speed = 0.0f;
         yawDiff = Actor_WorldYawTowardActor(&this->actor, &GET_PLAYER(play)->actor) - this->actor.world.rot.y;
         // 0.7071 = cos(pi/4)
-        if ((Math_CosS(yawDiff) < 0.7071f) && (this->animationIdx == 2)) {
+        if ((Math_CosS(yawDiff) < 0.7071f) && (this->animIndex == 2)) {
             func_8006DD9C(&this->actor, &GET_PLAYER(play)->actor.world.pos, 300);
         }
 
         if (SkelAnime_Update(&this->skin.skelAnime)) {
             if (Math_CosS(yawDiff) < 0.0f) {
-                this->animationIdx = 2;
-                Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], D_80A6AF64[this->animationIdx],
-                                 0.0f, Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, -5.0f);
+                this->animIndex = 2;
+                Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], D_80A6AF64[this->animIndex], 0.0f,
+                                 Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, -5.0f);
             } else {
                 func_80A6A4DC(this);
             }
@@ -470,11 +469,11 @@ void func_80A6A5A4(EnHorseLinkChild* this, PlayState* play) {
 void func_80A6A724(EnHorseLinkChild* this) {
     this->timer = 0;
     this->action = 4;
-    this->animationIdx = 2;
+    this->animIndex = 2;
     this->unk_1E8 = false;
     this->actor.speed = 2.0f;
-    Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
-                     Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, -5.0f);
+    Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this), 0.0f,
+                     Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, -5.0f);
 }
 
 void func_80A6A7D0(EnHorseLinkChild* this, PlayState* play) {
@@ -487,7 +486,7 @@ void func_80A6A7D0(EnHorseLinkChild* this, PlayState* play) {
         this->unk_1E8 = true;
     }
 
-    if ((this->animationIdx == 4) || (this->animationIdx == 3) || (this->animationIdx == 2)) {
+    if ((this->animIndex == 4) || (this->animIndex == 3) || (this->animIndex == 2)) {
         if (!this->unk_1E8) {
             func_8006DD9C(&this->actor, &player->actor.world.pos, 300);
         } else {
@@ -531,13 +530,13 @@ void func_80A6A7D0(EnHorseLinkChild* this, PlayState* play) {
             }
         }
 
-        if (this->animationIdx != newAnimationIdx) {
-            this->animationIdx = newAnimationIdx;
-            Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
-                             Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, -5.0f);
+        if (this->animIndex != newAnimationIdx) {
+            this->animIndex = newAnimationIdx;
+            Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this), 0.0f,
+                             Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, -5.0f);
         } else {
-            Animation_Change(&this->skin.skelAnime, sAnimations[this->animationIdx], func_80A695A4(this), 0.0f,
-                             Animation_GetLastFrame(sAnimations[this->animationIdx]), ANIMMODE_ONCE, 0.0f);
+            Animation_Change(&this->skin.skelAnime, sAnimations[this->animIndex], func_80A695A4(this), 0.0f,
+                             Animation_GetLastFrame(sAnimations[this->animIndex]), ANIMMODE_ONCE, 0.0f);
         }
     }
 }

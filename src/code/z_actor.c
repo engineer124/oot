@@ -1014,12 +1014,12 @@ f32 func_8002DCE4(Player* player) {
     }
 }
 
-s32 func_8002DD6C(Player* player) {
+s32 Actor_PlayerIsAimingFpsItem(Player* player) {
     return player->stateFlags1 & PLAYER_STATE1_AIMING_FPS_ITEM;
 }
 
 s32 func_8002DD78(Player* player) {
-    return func_8002DD6C(player) && player->unk_834;
+    return Actor_PlayerIsAimingFpsItem(player) && player->firstPersonItemTimer;
 }
 
 s32 func_8002DDA8(PlayState* play) {
@@ -1657,12 +1657,12 @@ s32 Actor_OfferGetItem(Actor* actor, PlayState* play, s32 getItemId, f32 xzRange
             (!(player->stateFlags1 & (PLAYER_STATE1_HOLDING_ACTOR | PLAYER_STATE1_IN_CUTSCENE)))) {
             if ((actor->xzDistToPlayer < xzRange) && (fabsf(actor->yDistToPlayer) < yRange)) {
                 s16 yawDiff = actor->yawTowardsPlayer - player->actor.shape.rot.y;
-                s32 absYawDiff = ABS(yawDiff);
+                s32 getItemDirection = ABS(yawDiff);
 
-                if ((getItemId != GI_NONE) || (player->getItemDirection < absYawDiff)) {
+                if ((getItemId != GI_NONE) || (player->getItemDirection < getItemDirection)) {
                     player->getItemId = getItemId;
                     player->interactRangeActor = actor;
-                    player->getItemDirection = absYawDiff;
+                    player->getItemDirection = getItemDirection;
                     return true;
                 }
             }
@@ -4182,7 +4182,7 @@ s32 func_80035124(Actor* actor, PlayState* play) {
 u8 func_800353E8(PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    return player->unk_845;
+    return player->slashCounter;
 }
 
 /**

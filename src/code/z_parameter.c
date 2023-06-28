@@ -2135,23 +2135,23 @@ void Interface_SetDoAction(PlayState* play, u16 action) {
 void Interface_SetNaviCall(PlayState* play, u16 naviCallState) {
     InterfaceContext* interfaceCtx = &play->interfaceCtx;
 
-    if (((naviCallState == 0x1D) || (naviCallState == 0x1E)) && !interfaceCtx->naviCalling &&
+    if (((naviCallState == DO_ACTION_NAVI_0) || (naviCallState == DO_ACTION_NAVI_1)) && !interfaceCtx->naviCalling &&
         (play->csCtx.state == CS_STATE_IDLE)) {
         // clang-format off
-        if (naviCallState == 0x1E) { Audio_PlaySfxGeneral(NA_SE_VO_NAVY_CALL, &gSfxDefaultPos, 4,
+        if (naviCallState == DO_ACTION_NAVI_1) { Audio_PlaySfxGeneral(NA_SE_VO_NAVY_CALL, &gSfxDefaultPos, 4,
                                                             &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale,
                                                             &gSfxDefaultReverb);
         }
         // clang-format on
 
-        if (naviCallState == 0x1D) {
+        if (naviCallState == DO_ACTION_NAVI_0) {
             func_800F4524(&gSfxDefaultPos, NA_SE_VO_NA_HELLO_2, 32);
         }
 
         interfaceCtx->naviCalling = true;
         sCUpInvisible = 0;
         sCUpTimer = 10;
-    } else if ((naviCallState == 0x1F) && interfaceCtx->naviCalling) {
+    } else if ((naviCallState == DO_ACTION_NAVI_2) && interfaceCtx->naviCalling) {
         interfaceCtx->naviCalling = false;
     }
 }

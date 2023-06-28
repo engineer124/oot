@@ -354,10 +354,10 @@ s32 func_80A7975C(EnIn* this, PlayState* play) {
     if (this->actor.params != 1 || this->actor.shape.rot.z != 1 || !LINK_IS_ADULT) {
         return 0;
     }
-    this->animationIdx = 1;
+    this->animIndex = 1;
     this->collider.base.ocFlags1 &= ~OC1_ON;
-    Animation_Change(&this->skelAnime, D_80A7B918[this->animationIdx], 1.0f, 0.0f,
-                     Animation_GetLastFrame(D_80A7B918[this->animationIdx]), 2, 0.0f);
+    Animation_Change(&this->skelAnime, D_80A7B918[this->animIndex], 1.0f, 0.0f,
+                     Animation_GetLastFrame(D_80A7B918[this->animIndex]), 2, 0.0f);
     this->actionFunc = func_80A7A304;
     return 1;
 }
@@ -618,9 +618,9 @@ void func_80A7A304(EnIn* this, PlayState* play) {
         Actor_PlaySfx(&this->actor, NA_SE_VO_IN_CRY_0);
     }
     if (SkelAnime_Update(&this->skelAnime)) {
-        this->animationIdx %= 8;
-        this->unk_1E8 = this->animationIdx;
-        if (this->animationIdx == 3 || this->animationIdx == 4) {
+        this->animIndex %= 8;
+        this->unk_1E8 = this->animIndex;
+        if (this->animIndex == 3 || this->animIndex == 4) {
             Audio_PlaySfxGeneral(NA_SE_IT_LASH, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
                                  &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             if (Rand_ZeroOne() < 0.3f) {
@@ -628,8 +628,8 @@ void func_80A7A304(EnIn* this, PlayState* play) {
                                      &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
             }
         }
-        Animation_Change(&this->skelAnime, D_80A7B918[this->animationIdx], 1.0f, 0.0f,
-                         Animation_GetLastFrame(D_80A7B918[this->animationIdx]), 2, -10.0f);
+        Animation_Change(&this->skelAnime, D_80A7B918[this->animIndex], 1.0f, 0.0f,
+                         Animation_GetLastFrame(D_80A7B918[this->animIndex]), 2, -10.0f);
     }
 }
 

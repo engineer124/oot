@@ -1983,25 +1983,25 @@ void Fishing_DrawRod(PlayState* play) {
             D_80B7A6B4 = 0.0f;
         }
 
-        spC8 = player->unk_85C;
-        Math_SmoothStepToF(&player->unk_85C, input->rel.stick_y * 0.02f, 0.3f, 5.0f, 0.0f);
-        spC8 = player->unk_85C - spC8;
+        spC8 = player->dekuStickLength;
+        Math_SmoothStepToF(&player->dekuStickLength, input->rel.stick_y * 0.02f, 0.3f, 5.0f, 0.0f);
+        spC8 = player->dekuStickLength - spC8;
 
-        spC4 = player->unk_858;
-        Math_SmoothStepToF(&player->unk_858, input->rel.stick_x * 0.02f, 0.3f, 5.0f, 0.0f);
-        spC4 = player->unk_858 - spC4;
+        spC4 = player->spinAttackTimer;
+        Math_SmoothStepToF(&player->spinAttackTimer, input->rel.stick_x * 0.02f, 0.3f, 5.0f, 0.0f);
+        spC4 = player->spinAttackTimer - spC4;
 
-        if (player->unk_858 > 1.0f) {
-            player->unk_858 = 1.0f;
+        if (player->spinAttackTimer > 1.0f) {
+            player->spinAttackTimer = 1.0f;
         }
-        if (player->unk_85C > 1.0f) {
-            player->unk_85C = 1.0f;
+        if (player->dekuStickLength > 1.0f) {
+            player->dekuStickLength = 1.0f;
         }
-        if (player->unk_858 < -1.0f) {
-            player->unk_858 = -1.0f;
+        if (player->spinAttackTimer < -1.0f) {
+            player->spinAttackTimer = -1.0f;
         }
-        if (player->unk_85C < -1.0f) {
-            player->unk_85C = -1.0f;
+        if (player->dekuStickLength < -1.0f) {
+            player->dekuStickLength = -1.0f;
         }
 
         Math_ApproachF(&D_80B7A6A8, spC4 * 70.0f * -0.01f, 1.0f, D_80B7A6B0);
@@ -2010,8 +2010,8 @@ void Fishing_DrawRod(PlayState* play) {
         Math_ApproachF(&D_80B7A6B4, 1.0f, 1.0f, 0.1f);
         Math_ApproachZeroF(&D_80B7A6B8, 1.0f, 0.05f);
     } else {
-        Math_ApproachZeroF(&player->unk_85C, 1.0f, 0.1f);
-        Math_ApproachZeroF(&player->unk_858, 1.0f, 0.1f);
+        Math_ApproachZeroF(&player->dekuStickLength, 1.0f, 0.1f);
+        Math_ApproachZeroF(&player->spinAttackTimer, 1.0f, 0.1f);
         Math_ApproachF(&D_80B7A6AC, (Math_SinS(D_80B7E0AE * 3000) * 0.025f) + -0.03f, 1.0f, 0.05f);
         Math_ApproachZeroF(&D_80B7A6A8, 1.0f, 0.05f);
 
@@ -2043,11 +2043,11 @@ void Fishing_DrawRod(PlayState* play) {
     }
 
     Matrix_RotateX(-M_PI / 5.0000003f, MTXMODE_APPLY);
-    Matrix_RotateZ((player->unk_858 * 0.5f) + 3.0f * M_PI / 20.0f, MTXMODE_APPLY);
+    Matrix_RotateZ((player->spinAttackTimer * 0.5f) + 3.0f * M_PI / 20.0f, MTXMODE_APPLY);
     Matrix_RotateX((D_80B7A6C0 + 20.0f) * 0.01f * M_PI, MTXMODE_APPLY);
     Matrix_Scale(0.70000005f, 0.70000005f, 0.70000005f, MTXMODE_APPLY);
 
-    spC0 = (D_80B7A6BC * (((player->unk_85C - 1.0f) * -0.25f) + 0.5f)) + (D_80B7A6AC + D_80B7A6B8);
+    spC0 = (D_80B7A6BC * (((player->dekuStickLength - 1.0f) * -0.25f) + 0.5f)) + (D_80B7A6AC + D_80B7A6B8);
 
     Matrix_Translate(0.0f, 0.0f, -1300.0f, MTXMODE_APPLY);
 
@@ -2198,11 +2198,11 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
 
             if (player->stateFlags1 & PLAYER_STATE1_SWIMMING) {
                 D_80B7E0B4 = 0;
-                player->unk_860 = 0;
+                player->stickFlameTimer = 0;
             }
 
             if (D_80B7E0B4 == 0) {
-                if ((D_80B7E0B0 == 0) && (player->unk_860 == 1)) {
+                if ((D_80B7E0B0 == 0) && (player->stickFlameTimer == 1)) {
                     D_80B7E0B4 = 37;
                     Message_CloseTextbox(play);
                 }
@@ -2385,7 +2385,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
                 D_80B7A690 = 1;
             }
 
-            player->unk_860 = 2;
+            player->stickFlameTimer = 2;
 
             if (D_80B7E138 < 3.0f) {
                 spD0 = D_80B7E10C * Math_SinS(D_80B7E0AE * 0x1060);
@@ -3811,7 +3811,7 @@ void Fishing_UpdateFish(Actor* thisx, PlayState* play2) {
             } else if (this->actor.xzDistToPlayer < (KREG(59) + 50.0f)) {
                 this->unk_158 = 6;
                 this->unk_17A[0] = 100;
-                player->unk_860 = 3;
+                player->stickFlameTimer = 3;
                 Rumble_Override(0.0f, 1, 3, 1);
                 D_80B7E084++;
                 Cutscene_StartManual(play, &play->csCtx);
@@ -5349,7 +5349,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
             sSubCamId = SUB_CAM_ID_DONE;
             Environment_EnableUnderwaterLights(play, 0);
             play->envCtx.adjFogNear = 0;
-            player->unk_860 = -5;
+            player->stickFlameTimer = -5;
             D_80B7E0B0 = 5;
             break;
         }
@@ -5494,7 +5494,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
                         func_8002DF54(play, &this->actor, PLAYER_CSMODE_7);
                         D_80B7A6CC = 0;
                         sSubCamId = SUB_CAM_ID_DONE;
-                        player->unk_860 = -5;
+                        player->stickFlameTimer = -5;
                         D_80B7E0B0 = 5;
                         D_80B7A6D4 = 0;
                         D_80B7E0A6 = 20;

@@ -51,7 +51,7 @@ void EnGe2_WaitLookAtPlayer(EnGe2* this, PlayState* play);
 void EnGe2_ForceTalk(EnGe2* this, PlayState* play);
 
 // Update functions
-void EnGe2_UpdateFriendly(Actor* thisx, PlayState* play);
+void EnGe2_UpdateFriend(Actor* thisx, PlayState* play);
 void EnGe2_UpdateAfterTalk(Actor* thisx, PlayState* play);
 void EnGe2_UpdateStunned(Actor* thisx, PlayState* play2);
 
@@ -137,14 +137,14 @@ void EnGe2_Init(Actor* thisx, PlayState* play) {
         case GE2_TYPE_PATROLLING:
             EnGe2_ChangeAction(this, GE2_ACTION_WALK);
             if (EnGe2_CheckCarpentersFreed()) {
-                this->actor.update = EnGe2_UpdateFriendly;
+                this->actor.update = EnGe2_UpdateFriend;
                 this->actor.targetMode = 6;
             }
             break;
         case GE2_TYPE_STATIONARY:
             EnGe2_ChangeAction(this, GE2_ACTION_STAND);
             if (EnGe2_CheckCarpentersFreed()) {
-                this->actor.update = EnGe2_UpdateFriendly;
+                this->actor.update = EnGe2_UpdateFriend;
                 this->actor.targetMode = 6;
             }
             break;
@@ -436,7 +436,7 @@ void EnGe2_SetActionAfterTalk(EnGe2* this, PlayState* play) {
                 this->actionFunc = EnGe2_WaitLookAtPlayer;
                 break;
         }
-        this->actor.update = EnGe2_UpdateFriendly;
+        this->actor.update = EnGe2_UpdateFriend;
         this->actor.flags &= ~ACTOR_FLAG_IMMEDIATE_TALK;
     }
     EnGe2_TurnToFacePlayer(this, play);
@@ -513,7 +513,7 @@ void EnGe2_MoveAndBlink(EnGe2* this, PlayState* play) {
 
 // Update functions
 
-void EnGe2_UpdateFriendly(Actor* thisx, PlayState* play) {
+void EnGe2_UpdateFriend(Actor* thisx, PlayState* play) {
     EnGe2* this = (EnGe2*)thisx;
 
     EnGe2_MaintainColliderAndSetAnimState(this, play);
@@ -593,7 +593,7 @@ void EnGe2_Update(Actor* thisx, PlayState* play) {
     EnGe2_MoveAndBlink(this, play);
 
     if (EnGe2_CheckCarpentersFreed() && !(this->stateFlags & GE2_STATE_KO)) {
-        this->actor.update = EnGe2_UpdateFriendly;
+        this->actor.update = EnGe2_UpdateFriend;
         this->actor.targetMode = 6;
     }
 }
@@ -618,7 +618,7 @@ void EnGe2_UpdateStunned(Actor* thisx, PlayState* play2) {
     CollisionCheck_SetAC(play, &play->colChkCtx, &this->collider.base);
 
     if (EnGe2_CheckCarpentersFreed()) {
-        this->actor.update = EnGe2_UpdateFriendly;
+        this->actor.update = EnGe2_UpdateFriend;
         this->actor.targetMode = 6;
         this->actor.colorFilterTimer = 0;
     } else if (this->actor.colorFilterTimer == 0) {
