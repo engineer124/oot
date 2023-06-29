@@ -100,8 +100,8 @@
 #define CAM_STATE_0 (1 << 0) // Must be set for the camera to change settings based on the bg surface
 #define CAM_STATE_1 (1 << 1) // Must be set for Camera_UpdateWater to run
 #define CAM_STATE_2 (1 << 2)
-#define CAM_STATE_3 (1 << 3) // Customizable flag for different functions
-#define CAM_STATE_4 (1 << 4)
+#define CAM_STATE_EXTERNAL_FINISHED (1 << 3) // Customizable flag for different functions
+#define CAM_STATE_CAM_FUNC_FINISH (1 << 4)
 #define CAM_STATE_5 (1 << 5)
 #define CAM_STATE_6 (1 << 6)
 #define CAM_STATE_7 (1 << 7) // Set in play, unused

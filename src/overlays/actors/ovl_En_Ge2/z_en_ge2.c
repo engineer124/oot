@@ -8,7 +8,7 @@
 #include "terminal.h"
 #include "assets/objects/object_gla/object_gla.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIEND | ACTOR_FLAG_NO_UPDATE_CULLING)
 
 #define GE2_STATE_ANIMCOMPLETE (1 << 1)
 #define GE2_STATE_KO (1 << 2)
@@ -189,7 +189,7 @@ s32 Ge2_DetectPlayerInAction(PlayState* play, EnGe2* this) {
         return 2;
     }
 
-    if (func_8002DDE4(play)) {
+    if (Player_IsMakingNoticableSfx(play)) {
         return 1;
     }
     return 0;

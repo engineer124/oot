@@ -2,7 +2,7 @@
 #include "assets/objects/object_du/object_du.h"
 #include "assets/scenes/overworld/spot18/spot18_scene.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_OCARINA_NO_FREEZE)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIEND | ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void EnDu_Init(Actor* thisx, PlayState* play);
 void EnDu_Destroy(Actor* thisx, PlayState* play);
@@ -384,7 +384,7 @@ void func_809FE6CC(EnDu* this, PlayState* play) {
 
 void func_809FE740(EnDu* this, PlayState* play) {
     if (this->interactInfo.talkState == NPC_TALK_STATE_IDLE) {
-        func_8005B1A4(GET_ACTIVE_CAM(play));
+        Camera_SetFinishedFlag(GET_ACTIVE_CAM(play));
         this->unk_1E2 = 0x5A;
         EnDu_SetupAction(this, func_809FE798);
     }

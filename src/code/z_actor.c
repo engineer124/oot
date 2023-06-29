@@ -293,7 +293,7 @@ void Target_SetNaviToActor(TargetContext* targetCtx, Actor* actor, s32 actorCate
 }
 
 void Target_Init(TargetContext* targetCtx, Actor* actor, PlayState* play) {
-    targetCtx->targetableOption = NULL;
+    targetCtx->nextLockOnActor = NULL;
     targetCtx->targetedActor = NULL;
     targetCtx->fairyMoveProgressFactor = 0.0f;
     targetCtx->nextTargetableOption = NULL;
@@ -362,7 +362,7 @@ void Target_Draw(TargetContext* targetCtx, PlayState* play) {
 
         Target_SetLockOnPos(targetCtx, targetCtx->lockOnIndex, projectedPos.x, projectedPos.y, projectedPos.z);
 
-        if (!(player->stateFlags1 & PLAYER_STATE1_TALKING) || (actor != player->targetedActor)) {
+        if (!(player->stateFlags1 & PLAYER_STATE1_TALKING) || (actor != player->lockOnActor)) {
             OVERLAY_DISP = Gfx_SetupDL(OVERLAY_DISP, SETUPDL_57);
 
             for (i = 0, index = targetCtx->lockOnIndex; i < totalEntries; i++, index = (index + 1) % 3) {
@@ -430,7 +430,7 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* targetedActo
 
     actor = NULL;
 
-    if ((player->targetedActor != NULL) && (player->analogStickDirection4Parts[player->inputFrameCounter] == 2)) {
+    if ((player->lockOnActor != NULL) && (player->analogStickDirection4Parts[player->inputFrameCounter] == 2)) {
         targetCtx->arrowPointedActor = NULL;
     } else {
         func_80032AF0(play, &play->actorCtx, &actor, player);
@@ -450,8 +450,8 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* targetedActo
         actorCategory = player->actor.category;
     }
 
-    if ((actor != targetCtx->targetableOption) || (actorCategory != targetCtx->targetableOptionCategory)) {
-        targetCtx->targetableOption = actor;
+    if ((actor != targetCtx->nextLockOnActor) || (actorCategory != targetCtx->targetableOptionCategory)) {
+        targetCtx->nextLockOnActor = actor;
         targetCtx->targetableOptionCategory = actorCategory;
         targetCtx->fairyMoveProgressFactor = 1.0f;
     }
@@ -495,7 +495,7 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* targetedActo
                 targetCtx->lockOnAlpha = 0;
             }
 
-            sfxId = CHECK_FLAG_ALL(targetedActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY)
+            sfxId = CHECK_FLAG_ALL(targetedActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY)
                         ? NA_SE_SY_LOCK_ON
                         : NA_SE_SY_LOCK_ON_HUMAN;
             Audio_PlaySfx(sfxId);
@@ -1014,24 +1014,24 @@ f32 func_8002DCE4(Player* player) {
     }
 }
 
-s32 Actor_PlayerIsAimingFpsItem(Player* player) {
-    return player->stateFlags1 & PLAYER_STATE1_AIMING_FPS_ITEM;
+s32 Player_IsUsingFpsItem(Player* player) {
+    return player->stateFlags1 & PLAYER_STATE1_USING_FPS_ITEM;
 }
 
-s32 func_8002DD78(Player* player) {
-    return Actor_PlayerIsAimingFpsItem(player) && player->firstPersonItemTimer;
+s32 Player_IsAimingFpsItem(Player* player) {
+    return Player_IsUsingFpsItem(player) && (player->firstPersonItemTimer != 0);
 }
 
 s32 func_8002DDA8(PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    return (player->stateFlags1 & PLAYER_STATE1_HOLDING_ACTOR) || func_8002DD78(player);
+    return (player->stateFlags1 & PLAYER_STATE1_HOLDING_ACTOR) || Player_IsAimingFpsItem(player);
 }
 
-s32 func_8002DDE4(PlayState* play) {
+s32 Player_IsMakingNoticableSfx(PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    return player->stateFlags2 & PLAYER_STATE2_MAKING_REACTABLE_NOISE;
+    return player->stateFlags2 & PLAYER_STATE2_MAKING_NOTICABLE_SFX;
 }
 
 s32 func_8002DDF4(PlayState* play) {
@@ -1481,7 +1481,7 @@ f32 func_8002EFC0(Actor* actor, Player* player, s16 arg2) {
     s16 yawTemp = (s16)(actor->yawTowardsPlayer - 0x8000) - arg2;
     s16 yawTempAbs = ABS(yawTemp);
 
-    if (player->targetedActor != NULL) {
+    if (player->lockOnActor != NULL) {
         if ((yawTempAbs > 0x4000) || (actor->flags & ACTOR_FLAG_CANT_LOCK_ON)) {
             return FLT_MAX;
         } else {
@@ -1537,7 +1537,7 @@ s32 Target_OutsideLeashRange(Actor* actor, Player* player, s32 ignoreLeash) {
         // The yaw, with player as the origin, from where player is facing to where the actor is positioned
         yawDiff = ABS((s16)((s16)(actor->yawTowardsPlayer - 0x8000) - player->actor.shape.rot.y));
 
-        if ((player->targetedActor == NULL) && (yawDiff > 0x2AAA)) {
+        if ((player->lockOnActor == NULL) && (yawDiff > 0x2AAA)) {
             distSq = FLT_MAX;
         } else {
             distSq = actor->xyzDistToPlayerSq;
@@ -1746,7 +1746,7 @@ void func_8002F698(PlayState* play, Actor* actor, f32 arg2, s16 arg3, f32 arg4, 
     Player* player = GET_PLAYER(play);
 
     player->unk_8A0 = arg6;
-    player->unk_8A1 = arg5;
+    player->specialDamageEffect = arg5;
     player->unk_8A2 = arg3;
     player->unk_8A4 = arg2;
     player->unk_8A8 = arg4;
@@ -1780,7 +1780,7 @@ void Player_PlaySfx(Player* player, u16 sfxId) {
  * Play a sound effect at the actor's position
  */
 void Actor_PlaySfx(Actor* actor, u16 sfxId) {
-    func_80078914(&actor->projectedPos, sfxId);
+    Audio_PlaySfx_AtPos(&actor->projectedPos, sfxId);
 }
 
 void func_8002F850(PlayState* play, Actor* actor) {
@@ -1796,11 +1796,11 @@ void func_8002F850(PlayState* play, Actor* actor) {
         surfaceSfxOffset = SurfaceType_GetSfxOffset(&play->colCtx, actor->floorPoly, actor->floorBgId);
     }
 
-    func_80078914(&actor->projectedPos, NA_SE_EV_BOMB_BOUND);
-    func_80078914(&actor->projectedPos, NA_SE_PL_WALK_GROUND + surfaceSfxOffset);
+    Audio_PlaySfx_AtPos(&actor->projectedPos, NA_SE_EV_BOMB_BOUND);
+    Audio_PlaySfx_AtPos(&actor->projectedPos, NA_SE_PL_WALK_GROUND + surfaceSfxOffset);
 }
 
-void func_8002F8F0(Actor* actor, u16 sfxId) {
+void Actor_PlaySfx_Flagged(Actor* actor, u16 sfxId) {
     actor->sfx = sfxId;
     actor->flags |= ACTOR_FLAG_SFX_AT_POS;
     actor->flags &= ~(ACTOR_FLAG_SFX_CENTERED2 | ACTOR_FLAG_SFX_CENTERED | ACTOR_FLAG_SFX_TIMER);
@@ -2204,13 +2204,13 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
 
                 if ((DECR(actor->freezeTimer) == 0) &&
                     (actor->flags & (ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_IN_UNCULL_ZONE))) {
-                    if (actor == player->targetedActor) {
+                    if (actor == player->lockOnActor) {
                         actor->isTargeted = true;
                     } else {
                         actor->isTargeted = false;
                     }
 
-                    if ((actor->targetPriority != 0) && (player->targetedActor == NULL)) {
+                    if ((actor->targetPriority != 0) && (player->lockOnActor == NULL)) {
                         actor->targetPriority = 0;
                     }
 
@@ -2233,11 +2233,11 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
         }
     }
 
-    actor = player->targetedActor;
+    actor = player->lockOnActor;
 
     if ((actor != NULL) && (actor->update == NULL)) {
         actor = NULL;
-        func_8008EDF0(player);
+        Player_Untarget(player);
     }
 
     if ((actor == NULL) || (player->zTargetSwitchTimer < 5)) {
@@ -2353,7 +2353,7 @@ void func_80030ED8(Actor* actor) {
     } else if (actor->flags & ACTOR_FLAG_SFX_TIMER) {
         func_800F4C58(&gSfxDefaultPos, NA_SE_SY_TIMER - SFX_FLAG, (s8)(actor->sfx - 1));
     } else {
-        func_80078914(&actor->projectedPos, actor->sfx);
+        Audio_PlaySfx_AtPos(&actor->projectedPos, actor->sfx);
     }
 }
 
@@ -2987,13 +2987,13 @@ Actor* Actor_Delete(ActorContext* actorCtx, Actor* actor, PlayState* play) {
         osSyncPrintf("アクタークラス削除 [%s]\n", name); // "Actor class deleted [%s]"
     }
 
-    if ((player != NULL) && (actor == player->targetedActor)) {
-        func_8008EDF0(player);
+    if ((player != NULL) && (actor == player->lockOnActor)) {
+        Player_Untarget(player);
         Camera_ChangeMode(Play_GetCamera(play, Play_GetActiveCamId(play)), 0);
     }
 
-    if (actorCtx->targetCtx.targetableOption == actor) {
-        actorCtx->targetCtx.targetableOption = NULL;
+    if (actorCtx->targetCtx.nextLockOnActor == actor) {
+        actorCtx->targetCtx.nextLockOnActor = NULL;
     }
 
     if (actorCtx->targetCtx.nextTargetableOption == actor) {
@@ -3050,7 +3050,7 @@ void func_800328D4(PlayState* play, ActorContext* actorCtx, Player* player, u32 
     Vec3f sp70;
 
     actor = actorCtx->actorLists[actorCategory].head;
-    sp84 = player->targetedActor;
+    sp84 = player->lockOnActor;
 
     while (actor != NULL) {
         if ((actor->update != NULL) && ((Player*)actor != player) &&
@@ -3059,7 +3059,7 @@ void func_800328D4(PlayState* play, ActorContext* actorCtx, Player* player, u32 
             // This block below is for determining the closest actor to player in determining the volume
             // used while playing enemy background music
             if ((actorCategory == ACTORCAT_ENEMY) &&
-                CHECK_FLAG_ALL(actor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY) &&
+                CHECK_FLAG_ALL(actor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY) &&
                 (actor->xyzDistToPlayerSq < SQ(500.0f)) && (actor->xyzDistToPlayerSq < sbgmEnemyDistSq)) {
                 actorCtx->targetCtx.bgmEnemy = actor;
                 sbgmEnemyDistSq = actor->xyzDistToPlayerSq;
@@ -3553,7 +3553,7 @@ s16 Actor_TestFloorInDirection(Actor* actor, PlayState* play, f32 distance, s16 
 s32 Actor_IsTargeted(PlayState* play, Actor* actor) {
     Player* player = GET_PLAYER(play);
 
-    if ((player->stateFlags1 & PLAYER_STATE1_Z_TARGETING_UNFRIENDLY) && actor->isTargeted) {
+    if ((player->stateFlags1 & PLAYER_STATE1_LOCK_ON_ENEMY) && actor->isTargeted) {
         return true;
     } else {
         return false;
@@ -3566,7 +3566,7 @@ s32 Actor_IsTargeted(PlayState* play, Actor* actor) {
 s32 Actor_OtherIsTargeted(PlayState* play, Actor* actor) {
     Player* player = GET_PLAYER(play);
 
-    if ((player->stateFlags1 & PLAYER_STATE1_Z_TARGETING_UNFRIENDLY) && !actor->isTargeted) {
+    if ((player->stateFlags1 & PLAYER_STATE1_LOCK_ON_ENEMY) && !actor->isTargeted) {
         return true;
     } else {
         return false;

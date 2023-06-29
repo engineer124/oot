@@ -849,7 +849,7 @@ void Fishing_Init(Actor* thisx, PlayState* play2) {
 
         thisx->focus.pos = thisx->world.pos;
         thisx->focus.pos.y += 75.0f;
-        thisx->flags |= ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY;
+        thisx->flags |= ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIEND;
 
         if (sLinkAge != LINK_AGE_CHILD) {
             if (HIGH_SCORE(HS_FISHING) & 0x1000) {
@@ -980,7 +980,7 @@ void Fishing_Init(Actor* thisx, PlayState* play2) {
             this->unk_158 = 100;
             Actor_ChangeCategory(play, &play->actorCtx, thisx, ACTORCAT_PROP);
             thisx->targetMode = 0;
-            thisx->flags |= ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY;
+            thisx->flags |= ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIEND;
             this->lightNode = LightContext_InsertLight(play, &play->lightCtx, &this->lightInfo);
         } else {
             this->unk_158 = 10;
@@ -2226,7 +2226,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
                     D_80B7E11C = 0.5f;
                     D_80B7E118 = Rand_ZeroFloat(1.9f);
                     sFishMouthOffset.y = 500.0f;
-                    func_80078914(&D_80B7AF94, NA_SE_IT_SWORD_SWING_HARD);
+                    Audio_PlaySfx_AtPos(&D_80B7AF94, NA_SE_IT_SWORD_SWING_HARD);
                 }
             }
             break;
@@ -2302,7 +2302,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
                     D_80B7E154 = 0.0;
                 } else {
                     Math_ApproachF(&D_80B7E148, 0.0f, 1.0f, 0.05f);
-                    func_80078914(&D_80B7AF94, NA_SE_EN_FANTOM_FLOAT - SFX_FLAG);
+                    Audio_PlaySfx_AtPos(&D_80B7AF94, NA_SE_EN_FANTOM_FLOAT - SFX_FLAG);
                 }
             } else {
                 spE4 = WATER_SURFACE_Y(play);
@@ -2320,7 +2320,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
 
                     if ((sLurePos.y <= spE4) && (spE4 < spE0) && (spE4 == WATER_SURFACE_Y(play))) {
                         D_80B7E114 = 10;
-                        func_80078914(&D_80B7AF94, NA_SE_EV_BOMB_DROP_WATER);
+                        Audio_PlaySfx_AtPos(&D_80B7AF94, NA_SE_EV_BOMB_DROP_WATER);
                         D_80B7E0F8.y = 0.0f;
                         D_80B7E0E8.y *= 0.2f;
 
@@ -2346,7 +2346,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
                     }
                 } else {
                     Math_ApproachZeroF(&D_80B7E148, 1.0f, 0.05f);
-                    func_80078914(&D_80B7AF94, NA_SE_EN_FANTOM_FLOAT - SFX_FLAG);
+                    Audio_PlaySfx_AtPos(&D_80B7AF94, NA_SE_EN_FANTOM_FLOAT - SFX_FLAG);
                 }
             }
 
@@ -2479,7 +2479,7 @@ void Fishing_UpdateLure(Fishing* this, PlayState* play) {
                     sLureRot.x = 0.0f;
                     if (CHECK_BTN_ALL(input->press.button, BTN_B)) {
                         D_80B7E144 += 6.0f;
-                        func_80078914(&D_80B7AF94, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_SAND);
+                        Audio_PlaySfx_AtPos(&D_80B7AF94, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_SAND);
                     }
                 } else {
                     if (D_80B7E144 > 150.0f) {
@@ -5667,7 +5667,7 @@ void Fishing_UpdateOwner(Actor* thisx, PlayState* play2) {
 
     SkinMatrix_Vec3fMtxFMultXYZW(&play->viewProjectionMtxF, &sStreamSfxPos, &sStreamSfxProjectedPos, &sProjectedW);
 
-    func_80078914(&sStreamSfxProjectedPos, NA_SE_EV_WATER_WALL - SFX_FLAG);
+    Audio_PlaySfx_AtPos(&sStreamSfxProjectedPos, NA_SE_EV_WATER_WALL - SFX_FLAG);
 
     gSaveContext.minigameScore = (SQ((f32)D_80B7A678) * 0.0036f) + 0.5f;
 

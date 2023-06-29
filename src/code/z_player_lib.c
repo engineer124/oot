@@ -464,26 +464,26 @@ void Player_SetBootData(PlayState* play, Player* this) {
     }
 
     bootRegs = sBootData[currentBoots];
-    REG(19) = bootRegs[0];
-    REG(30) = bootRegs[1];
-    REG(32) = bootRegs[2];
-    REG(34) = bootRegs[3];
-    REG(35) = bootRegs[4];
-    REG(36) = bootRegs[5];
-    REG(37) = bootRegs[6];
-    REG(38) = bootRegs[7];
-    REG(43) = bootRegs[8];
-    REG(45) = bootRegs[9];
-    REG(68) = bootRegs[10];
-    REG(69) = bootRegs[11];
-    IREG(66) = bootRegs[12];
-    IREG(67) = bootRegs[13];
-    IREG(68) = bootRegs[14];
-    IREG(69) = bootRegs[15];
-    MREG(95) = bootRegs[16];
+    R_PLAYER_BOOT_0 = bootRegs[0];
+    R_PLAYER_BOOT_1 = bootRegs[1];
+    R_PLAYER_BOOT_2 = bootRegs[2];
+    R_PLAYER_BOOT_UNUSED = bootRegs[3];
+    R_PLAYER_BOOT_4 = bootRegs[4];
+    R_PLAYER_BOOT_5 = bootRegs[5];
+    R_PLAYER_BOOT_6 = bootRegs[6];
+    R_PLAYER_BOOT_7 = bootRegs[7];
+    R_PLAYER_BOOT_8 = bootRegs[8];
+    R_RUN_SPEED_LIMIT = bootRegs[9];
+    R_PLAYER_BOOT_10 = bootRegs[10];
+    R_PLAYER_BOOT_11 = bootRegs[11];
+    R_PLAYER_BOOX_12 = bootRegs[12];
+    R_PLAYER_BOOX_13 = bootRegs[13];
+    R_PLAYER_BOOX_14 = bootRegs[14];
+    R_PLAYER_BOOX_15 = bootRegs[15];
+    R_PLAYER_BOOT_16 = bootRegs[16];
 
     if (play->roomCtx.curRoom.behaviorType1 == ROOM_BEHAVIOR_TYPE1_2) {
-        REG(45) = 500;
+        R_RUN_SPEED_LIMIT = 500;
     }
 }
 
@@ -501,8 +501,8 @@ s32 Player_InCsMode(PlayState* play) {
     return Player_InBlockingCsMode(play, this) || (this->attentionMode == PLAYER_ATTENTIONMODE_ITEM_CUTSCENE);
 }
 
-s32 Player_IsZTargeting_3(Player* this) {
-    return (this->stateFlags1 & PLAYER_STATE1_Z_TARGETING_UNFRIENDLY);
+s32 Player_IsEnemyLockOn(Player* this) {
+    return (this->stateFlags1 & PLAYER_STATE1_LOCK_ON_ENEMY);
 }
 
 s32 Player_IsChildWithHylianShield(Player* this) {
@@ -599,8 +599,8 @@ void Player_UpdateBottleHeld(PlayState* play, Player* this, s32 item, s32 itemAc
     this->itemAction = itemAction;
 }
 
-void func_8008EDF0(Player* this) {
-    this->targetedActor = NULL;
+void Player_Untarget(Player* this) {
+    this->lockOnActor = NULL;
     this->stateFlags2 &= ~PLAYER_STATE2_USING_SWITCH_Z_TARGET;
 }
 
@@ -614,23 +614,23 @@ void func_8008EE08(Player* this) {
         (!(this->stateFlags1 & (PLAYER_STATE1_JUMPING | PLAYER_STATE1_FREEFALLING)) &&
          ((this->actor.world.pos.y - this->actor.floorHeight) < 100.0f))) {
 
-        this->stateFlags1 &= ~(PLAYER_STATE1_UNUSED_Z_TARGETING_FLAG | PLAYER_STATE1_FORCE_STRAFING |
-                               PLAYER_STATE1_Z_TARGETING_FRIENDLY | PLAYER_STATE1_JUMPING | PLAYER_STATE1_FREEFALLING |
-                               PLAYER_STATE1_30);
+        this->stateFlags1 &=
+            ~(PLAYER_STATE1_UNUSED_Z_TARGETING_FLAG | PLAYER_STATE1_STRAFE | PLAYER_STATE1_Z_PARALLEL |
+              PLAYER_STATE1_JUMPING | PLAYER_STATE1_FREEFALLING | PLAYER_STATE1_Z_PARALLEL_FROM_UNTARGET);
     } else if (!(this->stateFlags1 & (PLAYER_STATE1_JUMPING | PLAYER_STATE1_FREEFALLING | PLAYER_STATE1_CLIMBING))) {
         this->stateFlags1 |= PLAYER_STATE1_FREEFALLING;
     }
 
-    func_8008EDF0(this);
+    Player_Untarget(this);
 }
 
-void func_8008EEAC(PlayState* play, Actor* actor) {
+void Player_ForceLockOn(PlayState* play, Actor* actor) {
     Player* this = GET_PLAYER(play);
 
     func_8008EE08(this);
-    this->targetedActor = actor;
-    this->forcedTargetedActor = actor;
-    this->stateFlags1 |= PLAYER_STATE1_FORCE_STRAFING;
+    this->lockOnActor = actor;
+    this->forcedLockOn = actor;
+    this->stateFlags1 |= PLAYER_STATE1_STRAFE;
     Camera_SetViewParam(Play_GetCamera(play, CAM_ID_MAIN), CAM_VIEW_TARGET, actor);
     Camera_ChangeMode(Play_GetCamera(play, CAM_ID_MAIN), CAM_MODE_Z_TARGET_FRIENDLY);
 }
@@ -1600,7 +1600,7 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
                     Matrix_MtxFToYXZRotS(&sp44, &heldActor->world.rot, 0);
                     heldActor->shape.rot = heldActor->world.rot;
 
-                    if (func_8002DD78(this) != 0) {
+                    if (Player_IsAimingFpsItem(this) != 0) {
                         Matrix_Translate(500.0f, 300.0f, 0.0f, MTXMODE_APPLY);
                         Player_DrawHookshotReticle(play, this,
                                                    (this->heldItemAction == PLAYER_IA_HOOKSHOT) ? 38600.0f : 77600.0f);
@@ -1608,7 +1608,7 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
                 }
             }
 
-            if ((this->unk_862 != 0) || ((Actor_PlayerIsAimingFpsItem(this) == 0) && (heldActor != NULL))) {
+            if ((this->unk_862 != 0) || ((Player_IsUsingFpsItem(this) == 0) && (heldActor != NULL))) {
                 if (!(this->stateFlags1 & PLAYER_STATE1_GETTING_ITEM) && (this->unk_862 != 0) &&
                     (this->exchangeItemId != EXCH_ITEM_NONE)) {
                     Math_Vec3f_Copy(&sGetItemRefPos, &this->leftHandPos);

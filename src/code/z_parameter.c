@@ -1282,7 +1282,7 @@ void Interface_InitHorsebackArchery(PlayState* play) {
     interfaceCtx->hbaAmmo = 20;
 }
 
-void func_800849EC(PlayState* play) {
+void Inventory_BreakGiantsKnife(PlayState* play) {
     gSaveContext.inventory.equipment |= OWNED_EQUIP_FLAG(EQUIP_TYPE_SWORD, EQUIP_INV_SWORD_BIGGORON);
     gSaveContext.inventory.equipment ^= OWNED_EQUIP_FLAG_ALT(EQUIP_TYPE_SWORD, EQUIP_INV_SWORD_BROKENGIANTKNIFE);
 

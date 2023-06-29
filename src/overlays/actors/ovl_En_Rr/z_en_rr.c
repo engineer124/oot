@@ -8,8 +8,8 @@
 #include "assets/objects/object_rr/object_rr.h"
 #include "terminal.h"
 
-#define FLAGS                                                                                                    \
-    (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_NO_DRAW_CULLING | \
+#define FLAGS                                                                                               \
+    (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_NO_DRAW_CULLING | \
      ACTOR_FLAG_HOOK_BRING_PLAYER)
 
 #define RR_MESSAGE_SHIELD (1 << 0)

@@ -837,7 +837,7 @@ void func_80A03CF8(EnElf* this, PlayState* play) {
     Vec3f nextPos;
     Vec3f prevPos;
     Player* player = GET_PLAYER(play);
-    Actor* targetableOption;
+    Actor* nextLockOnActor;
     f32 xScale;
     f32 distFromPlayerHat;
 
@@ -936,9 +936,9 @@ void func_80A03CF8(EnElf* this, PlayState* play) {
                 func_80A029A8(this, 1);
                 nextPos = play->actorCtx.targetCtx.naviHintPos;
                 nextPos.y += (1500.0f * this->actor.scale.y);
-                targetableOption = play->actorCtx.targetCtx.targetableOption;
+                nextLockOnActor = play->actorCtx.targetCtx.nextLockOnActor;
 
-                if (targetableOption != NULL) {
+                if (nextLockOnActor != NULL) {
                     func_80A03148(this, &nextPos, 0.0f, 20.0f, 0.2f);
 
                     if (this->actor.speed >= 5.0f) {
@@ -999,7 +999,7 @@ void EnElf_ChangeColor(Color_RGBAf* dest, Color_RGBAf* newColor, Color_RGBAf* cu
 }
 
 void func_80A04414(EnElf* this, PlayState* play) {
-    Actor* targetableOption = play->actorCtx.targetCtx.targetableOption;
+    Actor* nextLockOnActor = play->actorCtx.targetCtx.nextLockOnActor;
     Player* player = GET_PLAYER(play);
     f32 transitionRate;
     u16 sfxId;
@@ -1014,7 +1014,7 @@ void func_80A04414(EnElf* this, PlayState* play) {
 
     } else {
         if (this->unk_2C6 == 0) {
-            if ((targetableOption == NULL) ||
+            if ((nextLockOnActor == NULL) ||
                 (Math_Vec3f_DistXYZ(&this->actor.world.pos, &play->actorCtx.targetCtx.naviHintPos) < 50.0f)) {
                 this->unk_2C6 = 1;
             }
@@ -1033,15 +1033,15 @@ void func_80A04414(EnElf* this, PlayState* play) {
     }
 
     if (this->fairyFlags & 1) {
-        if ((targetableOption == NULL) || (player->targetedActor == NULL)) {
+        if ((nextLockOnActor == NULL) || (player->lockOnActor == NULL)) {
             this->fairyFlags ^= 1;
         }
     } else {
-        if ((targetableOption != NULL) && (player->targetedActor != NULL)) {
-            if (targetableOption->category == ACTORCAT_NPC) {
+        if ((nextLockOnActor != NULL) && (player->lockOnActor != NULL)) {
+            if (nextLockOnActor->category == ACTORCAT_NPC) {
                 sfxId = NA_SE_VO_NAVY_HELLO;
             } else {
-                sfxId = (targetableOption->category == ACTORCAT_ENEMY) ? NA_SE_VO_NAVY_ENEMY : NA_SE_VO_NAVY_HEAR;
+                sfxId = (nextLockOnActor->category == ACTORCAT_ENEMY) ? NA_SE_VO_NAVY_ENEMY : NA_SE_VO_NAVY_HEAR;
             }
 
             if (this->unk_2C7 == 0) {
@@ -1055,7 +1055,7 @@ void func_80A04414(EnElf* this, PlayState* play) {
 
 void func_80A0461C(EnElf* this, PlayState* play) {
     s32 temp;
-    Actor* targetableOption;
+    Actor* nextLockOnActor;
     Player* player = GET_PLAYER(play);
 
     if (play->csCtx.state != CS_STATE_IDLE) {
@@ -1080,7 +1080,7 @@ void func_80A0461C(EnElf* this, PlayState* play) {
         }
 
     } else {
-        targetableOption = play->actorCtx.targetCtx.targetableOption;
+        nextLockOnActor = play->actorCtx.targetCtx.nextLockOnActor;
 
         // `R_SCENE_CAM_TYPE` is not a bit field, but this conditional checks for a specific bit.
         // This `& 0x10` check will pass for either `SCENE_CAM_TYPE_FIXED_SHOP_VIEWPOINT`, `SCENE_CAM_TYPE_FIXED`, or
@@ -1091,8 +1091,8 @@ void func_80A0461C(EnElf* this, PlayState* play) {
             ((R_SCENE_CAM_TYPE & 0x10) && Play_CheckViewpoint(play, VIEWPOINT_PIVOT))) {
             temp = 12;
             this->unk_2C0 = 100;
-        } else if (targetableOption == NULL || targetableOption->category == ACTORCAT_NPC) {
-            if (targetableOption != NULL) {
+        } else if (nextLockOnActor == NULL || nextLockOnActor->category == ACTORCAT_NPC) {
+            if (nextLockOnActor != NULL) {
                 this->unk_2C0 = 100;
                 player->stateFlags2 |= PLAYER_STATE2_NAVI_IS_ACTIVE;
                 temp = 0;
@@ -1223,8 +1223,8 @@ void func_80A04DE4(EnElf* this, PlayState* play) {
     if (this->fairyFlags & 0x10) {
         naviHintPos = play->actorCtx.targetCtx.naviHintPos;
 
-        if ((player->targetedActor == NULL) || (&player->actor == player->targetedActor) ||
-            (&this->actor == player->targetedActor)) {
+        if ((player->lockOnActor == NULL) || (&player->actor == player->lockOnActor) ||
+            (&this->actor == player->lockOnActor)) {
             naviHintPos.x =
                 player->bodyPartsPos[PLAYER_BODYPART_HEAD].x + (Math_SinS(player->actor.shape.rot.y) * 20.0f);
             naviHintPos.y = player->bodyPartsPos[PLAYER_BODYPART_HEAD].y + 5.0f;
@@ -1378,7 +1378,7 @@ void func_80A053F0(Actor* thisx, PlayState* play) {
     EnElf* this = (EnElf*)thisx;
 
     if (player->naviTextId == 0) {
-        if (player->targetedActor == NULL) {
+        if (player->lockOnActor == NULL) {
             if (((gSaveContext.naviTimer >= 600) && (gSaveContext.naviTimer <= 3000)) || (nREG(89) != 0)) {
                 player->naviTextId = QuestHint_GetNaviTextId(play);
 

@@ -8,7 +8,7 @@
 #include "assets/objects/object_wallmaster/object_wallmaster.h"
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY | ACTOR_FLAG_NO_UPDATE_CULLING)
 
 #define TIMER_SCALE ((f32)OS_CLOCK_RATE / 10000000000)
 

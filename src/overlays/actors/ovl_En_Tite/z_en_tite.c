@@ -10,7 +10,7 @@
 #include "terminal.h"
 #include "assets/objects/object_tite/object_tite.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY | ACTOR_FLAG_NO_UPDATE_CULLING)
 
 // EnTite_Idle
 #define vIdleTimer actionVar1

@@ -7,8 +7,8 @@
 #include "z_en_ma1.h"
 #include "assets/objects/object_ma1/object_ma1.h"
 
-#define FLAGS                                                                                                  \
-    (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_NO_DRAW_CULLING | \
+#define FLAGS                                                                                                \
+    (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIEND | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_NO_DRAW_CULLING | \
      ACTOR_FLAG_OCARINA_NO_FREEZE)
 
 void EnMa1_Init(Actor* thisx, PlayState* play);

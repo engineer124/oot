@@ -7,7 +7,7 @@
 #include "z_en_test.h"
 #include "assets/objects/object_sk2/object_sk2.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY | ACTOR_FLAG_NO_UPDATE_CULLING)
 
 void EnTest_Init(Actor* thisx, PlayState* play);
 void EnTest_Destroy(Actor* thisx, PlayState* play);
@@ -404,7 +404,7 @@ void EnTest_ChooseAction(EnTest* this, PlayState* play) {
         } else {
             if (this->actor.xzDistToPlayer < 110.0f) {
                 if (Rand_ZeroOne() > 0.2f) {
-                    if (player->stateFlags1 & PLAYER_STATE1_Z_TARGETING_UNFRIENDLY) {
+                    if (player->stateFlags1 & PLAYER_STATE1_LOCK_ON_ENEMY) {
                         if (this->actor.isTargeted) {
                             EnTest_SetupSlashDown(this);
                         } else {
@@ -689,7 +689,7 @@ void EnTest_WalkAndBlock(EnTest* this, PlayState* play) {
 
         if (this->actor.xzDistToPlayer < 110.0f) {
             if (Rand_ZeroOne() > 0.2f) {
-                if (player->stateFlags1 & PLAYER_STATE1_Z_TARGETING_UNFRIENDLY) {
+                if (player->stateFlags1 & PLAYER_STATE1_LOCK_ON_ENEMY) {
                     if (this->actor.isTargeted) {
                         EnTest_SetupSlashDown(this);
                     } else {
@@ -974,7 +974,7 @@ void EnTest_SlashDownEnd(EnTest* this, PlayState* play) {
             if ((ABS(yawDiff) > 0x3E80) && (this->actor.params != STALFOS_TYPE_CEILING)) {
                 this->actor.world.rot.y = this->actor.yawTowardsPlayer;
                 EnTest_SetupJumpBack(this);
-            } else if (player->stateFlags1 & PLAYER_STATE1_Z_TARGETING_UNFRIENDLY) {
+            } else if (player->stateFlags1 & PLAYER_STATE1_LOCK_ON_ENEMY) {
                 if (this->actor.isTargeted) {
                     EnTest_SetupSlashDown(this);
                 } else if ((play->gameplayFrames % 2) != 0) {

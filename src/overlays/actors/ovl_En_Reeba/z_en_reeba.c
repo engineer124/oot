@@ -10,7 +10,7 @@
 #include "terminal.h"
 #include "assets/objects/object_reeba/object_reeba.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_CANT_LOCK_ON)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_CANT_LOCK_ON)
 
 void EnReeba_Init(Actor* thisx, PlayState* play);
 void EnReeba_Destroy(Actor* thisx, PlayState* play);
@@ -278,7 +278,7 @@ void EnReeba_Move(EnReeba* this, PlayState* play) {
 }
 
 void EnReeba_SetupMoveBig(EnReeba* this, PlayState* play) {
-    this->actor.flags |= ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY;
+    this->actor.flags |= ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY;
     this->actionfunc = EnReeba_MoveBig;
 }
 
@@ -342,7 +342,7 @@ void EnReeba_SetupSink(EnReeba* this, PlayState* play) {
     this->stunType = LEEVER_STUN_NONE;
     Actor_PlaySfx(&this->actor, NA_SE_EN_AKINDONUTS_HIDE);
     this->actor.flags |= ACTOR_FLAG_CANT_LOCK_ON;
-    this->actor.flags &= ~(ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY);
+    this->actor.flags &= ~(ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY);
     this->actionfunc = EnReeba_Sink;
 }
 
@@ -394,7 +394,7 @@ void EnReeba_SetupStunned(EnReeba* this, PlayState* play) {
     this->actor.world.rot.y = this->actor.yawTowardsPlayer;
     this->actor.speed = -8.0f;
     this->actor.flags |= ACTOR_FLAG_CANT_LOCK_ON;
-    this->actor.flags &= ~(ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY);
+    this->actor.flags &= ~(ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY);
     this->actionfunc = EnReeba_Stunned;
 }
 

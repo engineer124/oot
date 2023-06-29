@@ -1,8 +1,7 @@
 #include "z_en_rd.h"
 #include "assets/objects/object_rd/object_rd.h"
 
-#define FLAGS \
-    (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_HOOK_BRING_PLAYER)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_HOOK_BRING_PLAYER)
 
 void EnRd_Init(Actor* thisx, PlayState* play);
 void EnRd_Destroy(Actor* thisx, PlayState* play);
@@ -279,7 +278,7 @@ void EnRd_Idle(EnRd* this, PlayState* play) {
         }
 
         this->isMourning = false;
-        if ((this->actor.xzDistToPlayer <= 150.0f) && func_8002DDE4(play)) {
+        if ((this->actor.xzDistToPlayer <= 150.0f) && Player_IsMakingNoticableSfx(play)) {
             if ((this->actor.params != REDEAD_TYPE_CRYING) && !this->isMourning) {
                 EnRd_SetupAttemptPlayerFreeze(this);
             } else {
@@ -363,8 +362,8 @@ void EnRd_WalkToPlayer(EnRd* this, PlayState* play) {
             if (this->playerStunWaitTimer == 0) {
                 if (!(this->rdFlags & 0x80)) {
                     player->actor.freezeTimer = 40;
-                    func_8008EEAC(play, &this->actor);
-                    GET_PLAYER(play)->forcedTargetedActor = &this->actor;
+                    Player_ForceLockOn(play, &this->actor);
+                    GET_PLAYER(play)->forcedLockOn = &this->actor;
                     Rumble_Request(this->actor.xzDistToPlayer, 255, 20, 150);
                 }
 
@@ -607,7 +606,7 @@ void EnRd_AttemptPlayerFreeze(EnRd* this, PlayState* play) {
         if (!(this->rdFlags & 0x80)) {
             player->actor.freezeTimer = 60;
             Rumble_Request(this->actor.xzDistToPlayer, 255, 20, 150);
-            func_8008EEAC(play, &this->actor);
+            Player_ForceLockOn(play, &this->actor);
         }
 
         Actor_PlaySfx(&this->actor, NA_SE_EN_REDEAD_AIM);

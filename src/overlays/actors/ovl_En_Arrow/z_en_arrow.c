@@ -457,7 +457,7 @@ void EnArrow_Draw(Actor* thisx, PlayState* play) {
     if (this->actor.params <= ARROW_0E) {
         Gfx_SetupDL_25Opa(play->state.gfxCtx);
         SkelAnime_DrawLod(play, this->skelAnime.skeleton, this->skelAnime.jointTable, NULL, NULL, this,
-                          (this->actor.projectedPos.z < MREG(95)) ? 0 : 1);
+                          (this->actor.projectedPos.z < R_PLAYER_BOOT_16) ? 0 : 1);
     } else if (this->actor.speed != 0.0f) {
         alpha = (Math_CosS(this->timer * 5000) * 127.5f) + 127.5f;
 

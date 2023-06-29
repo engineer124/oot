@@ -7,7 +7,7 @@
 #include "z_obj_dekujr.h"
 #include "assets/objects/object_dekujr/object_dekujr.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIEND)
 
 void ObjDekujr_Init(Actor* thisx, PlayState* play);
 void ObjDekujr_Destroy(Actor* thisx, PlayState* play);

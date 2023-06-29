@@ -1189,7 +1189,7 @@ void func_80980F58(DemoGt* this, PlayState* play) {
     u16 csCurFrame = play->csCtx.curFrame;
 
     if (csCurFrame == 244) {
-        func_80078914(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
+        Audio_PlaySfx_AtPos(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
     }
 }
 
@@ -1312,7 +1312,7 @@ void func_80981424(DemoGt* this, PlayState* play) {
     u16 csCurFrame = play->csCtx.curFrame;
 
     if (csCurFrame == 789) {
-        func_80078914(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
+        Audio_PlaySfx_AtPos(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
     }
 }
 
@@ -1430,7 +1430,7 @@ void func_809818FC(DemoGt* this, PlayState* play) {
     u16 csCurFrame = play->csCtx.curFrame;
 
     if (csCurFrame == 845) {
-        func_80078914(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
+        Audio_PlaySfx_AtPos(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
     }
 }
 void func_80981930(DemoGt* this, PlayState* play) {
@@ -1521,7 +1521,7 @@ void func_80981CEC(DemoGt* this, PlayState* play) {
     u16 csCurFrame = play->csCtx.curFrame;
 
     if (csCurFrame == 183) {
-        func_80078914(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
+        Audio_PlaySfx_AtPos(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
     }
 }
 
@@ -1612,7 +1612,7 @@ void func_809820AC(DemoGt* this, PlayState* play) {
     u16 csCurFrame = play->csCtx.curFrame;
 
     if (csCurFrame == 154) {
-        func_80078914(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
+        Audio_PlaySfx_AtPos(&this->dyna.actor.projectedPos, NA_SE_EV_TOWER_PARTS_BROKEN - SFX_FLAG);
     }
 }
 

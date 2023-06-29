@@ -8,7 +8,7 @@
 #include "overlays/actors/ovl_En_Bom/z_en_bom.h"
 #include "assets/objects/object_dodojr/object_dodojr.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY)
 
 void EnDodojr_Init(Actor* thisx, PlayState* play);
 void EnDodojr_Destroy(Actor* thisx, PlayState* play);

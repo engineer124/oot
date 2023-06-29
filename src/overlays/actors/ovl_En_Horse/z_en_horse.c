@@ -721,7 +721,7 @@ void EnHorse_ResetRace(EnHorse* this, PlayState* play) {
 s32 EnHorse_PlayerCanMove(EnHorse* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if ((player->stateFlags1 & PLAYER_STATE1_EXITING_SCENE) || func_8002DD78(GET_PLAYER(play)) == 1 ||
+    if ((player->stateFlags1 & PLAYER_STATE1_EXITING_SCENE) || Player_IsAimingFpsItem(GET_PLAYER(play)) == 1 ||
         (player->stateFlags1 & PLAYER_STATE1_IN_FIRST_PERSON_MODE) ||
         ((this->stateFlags & ENHORSE_FLAG_19) && !this->inRace) || this->action == ENHORSE_ACT_HBA ||
         player->actor.flags & ACTOR_FLAG_TALK_REQUESTED || play->csCtx.state != 0) {

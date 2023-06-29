@@ -1761,13 +1761,13 @@ void DemoEffect_DrawGodLgt(Actor* thisx, PlayState* play) {
         if (gSaveContext.entranceIndex == ENTR_CUTSCENE_MAP_0) {
             if (gSaveContext.sceneLayer == 4) {
                 if (play->csCtx.curFrame <= 680) {
-                    func_80078914(&this->actor.projectedPos, NA_SE_EV_GOD_FLYING - SFX_FLAG);
+                    Audio_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_EV_GOD_FLYING - SFX_FLAG);
                 }
             } else {
-                func_80078914(&this->actor.projectedPos, NA_SE_EV_GOD_FLYING - SFX_FLAG);
+                Audio_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_EV_GOD_FLYING - SFX_FLAG);
             }
         } else {
-            func_80078914(&this->actor.projectedPos, NA_SE_EV_GOD_FLYING - SFX_FLAG);
+            Audio_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_EV_GOD_FLYING - SFX_FLAG);
         }
 
         gSPSegment(POLY_XLU_DISP++, 8,

@@ -7,7 +7,7 @@
 #include "z_en_skjneedle.h"
 #include "assets/objects/object_skj/object_skj.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_HOOK_CAN_CARRY)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY | ACTOR_FLAG_HOOK_CAN_CARRY)
 
 void EnSkjneedle_Init(Actor* thisx, PlayState* play);
 void EnSkjneedle_Destroy(Actor* thisx, PlayState* play);

@@ -7,7 +7,7 @@
 #include "z_en_girla.h"
 #include "terminal.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIEND | ACTOR_FLAG_NO_UPDATE_CULLING)
 
 void EnGirlA_Init(Actor* thisx, PlayState* play);
 void EnGirlA_Destroy(Actor* thisx, PlayState* play);
@@ -755,7 +755,7 @@ void EnGirlA_ItemGive_DekuSticks(PlayState* play, EnGirlA* this) {
 }
 
 void EnGirlA_ItemGive_Longsword(PlayState* play, EnGirlA* this) {
-    func_800849EC(play);
+    Inventory_BreakGiantsKnife(play);
     gSaveContext.swordHealth = 8;
     Rupees_ChangeBy(-this->basePrice);
 }

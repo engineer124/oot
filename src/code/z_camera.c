@@ -2191,7 +2191,7 @@ s32 Camera_Parallel3(Camera* camera) {
         camera->stateFlags |= CAM_STATE_10;
     }
     if (interfaceField & PARALLEL3_FLAG_1) {
-        camera->stateFlags |= CAM_STATE_4;
+        camera->stateFlags |= CAM_STATE_CAM_FUNC_FINISH;
     }
     //! @bug doesn't return
 }
@@ -3397,7 +3397,7 @@ s32 Camera_KeepOn3(Camera* camera) {
         }
         camera->stateFlags &= ~CAM_STATE_5;
     }
-    camera->stateFlags &= ~CAM_STATE_4;
+    camera->stateFlags &= ~CAM_STATE_CAM_FUNC_FINISH;
     if (RELOAD_PARAMS(camera) || R_RELOAD_CAM_PARAMS) {
         CameraModeValue* values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
         f32 yNormal =
@@ -3493,7 +3493,7 @@ s32 Camera_KeepOn3(Camera* camera) {
             }
         }
         osSyncPrintf("camera: talk: BG&collision check %d time(s)\n", i);
-        camera->stateFlags &= ~(CAM_STATE_2 | CAM_STATE_3);
+        camera->stateFlags &= ~(CAM_STATE_2 | CAM_STATE_EXTERNAL_FINISHED);
         pad = ((rwData->animTimer + 1) * rwData->animTimer) >> 1;
         rwData->eyeToAtTargetYaw = (f32)(s16)(atToEyeAdj.yaw - atToEyeNextDir.yaw) / pad;
         rwData->eyeToAtTargetPitch = (f32)(s16)(atToEyeAdj.pitch - atToEyeNextDir.pitch) / pad;
@@ -3518,10 +3518,10 @@ s32 Camera_KeepOn3(Camera* camera) {
         Camera_BGCheck(camera, at, eye);
         rwData->animTimer--;
     } else {
-        camera->stateFlags |= (CAM_STATE_4 | CAM_STATE_10);
+        camera->stateFlags |= (CAM_STATE_CAM_FUNC_FINISH | CAM_STATE_10);
     }
 
-    if (camera->stateFlags & CAM_STATE_3) {
+    if (camera->stateFlags & CAM_STATE_EXTERNAL_FINISHED) {
         sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_NONE, CAM_HUD_VISIBILITY_ALL, 0);
         func_80043B60(camera);
         camera->atLERPStepScale = 0.0f;
@@ -3535,7 +3535,7 @@ s32 Camera_KeepOn3(Camera* camera) {
             CHECK_BTN_ALL(D_8015BD7C->state.input[0].press.button, BTN_R) ||
             CHECK_BTN_ALL(D_8015BD7C->state.input[0].press.button, BTN_Z)) {
             camera->stateFlags |= CAM_STATE_2;
-            camera->stateFlags &= ~CAM_STATE_3;
+            camera->stateFlags &= ~CAM_STATE_EXTERNAL_FINISHED;
         }
     }
     return 1;
@@ -3591,7 +3591,7 @@ s32 Camera_KeepOn4(Camera* camera) {
     }
 
     playerHeight = Player_GetHeight(camera->player);
-    camera->stateFlags &= ~CAM_STATE_4;
+    camera->stateFlags &= ~CAM_STATE_CAM_FUNC_FINISH;
     if (RELOAD_PARAMS(camera) || R_RELOAD_CAM_PARAMS) {
         CameraModeValue* values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
         f32 yNormal = 1.0f + t - (68.0f / playerHeight * t);
@@ -3826,18 +3826,18 @@ s32 Camera_KeepOn4(Camera* camera) {
         rwData->unk_0E += (s16)rwData->unk_04;
         rwData->unk_10--;
     } else if (roData->interfaceField & KEEPON4_FLAG_4) {
-        camera->stateFlags |= (CAM_STATE_4 | CAM_STATE_10);
+        camera->stateFlags |= (CAM_STATE_CAM_FUNC_FINISH | CAM_STATE_10);
         camera->stateFlags |= (CAM_STATE_1 | CAM_STATE_2);
-        camera->stateFlags &= ~CAM_STATE_3;
+        camera->stateFlags &= ~CAM_STATE_EXTERNAL_FINISHED;
         if (camera->timer > 0) {
             camera->timer--;
         }
     } else {
-        camera->stateFlags |= (CAM_STATE_4 | CAM_STATE_10);
-        if ((camera->stateFlags & CAM_STATE_3) || (roData->interfaceField & KEEPON4_FLAG_7)) {
+        camera->stateFlags |= (CAM_STATE_CAM_FUNC_FINISH | CAM_STATE_10);
+        if ((camera->stateFlags & CAM_STATE_EXTERNAL_FINISHED) || (roData->interfaceField & KEEPON4_FLAG_7)) {
             sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_NONE, CAM_HUD_VISIBILITY_ALL, 0);
             camera->stateFlags |= (CAM_STATE_1 | CAM_STATE_2);
-            camera->stateFlags &= ~CAM_STATE_3;
+            camera->stateFlags &= ~CAM_STATE_EXTERNAL_FINISHED;
             if (camera->prevBgCamIndex < 0) {
                 Camera_ChangeSettingFlags(camera, camera->prevSetting, 2);
             } else {
@@ -3871,7 +3871,7 @@ s32 Camera_KeepOn0(Camera* camera) {
     UNUSED Vec3s bgCamRot;
     s16 fov;
 
-    camera->stateFlags &= ~CAM_STATE_4;
+    camera->stateFlags &= ~CAM_STATE_CAM_FUNC_FINISH;
 
     if (RELOAD_PARAMS(camera) || R_RELOAD_CAM_PARAMS) {
         CameraModeValue* values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
@@ -3928,7 +3928,7 @@ s32 Camera_KeepOn0(Camera* camera) {
         Camera_AddVecGeoToVec3f(at, eye, &eyeAtOffset);
         rwData->animTimer--;
     } else {
-        camera->stateFlags |= (CAM_STATE_4 | CAM_STATE_10);
+        camera->stateFlags |= (CAM_STATE_CAM_FUNC_FINISH | CAM_STATE_10);
     }
     camera->fov = Camera_LERPCeilF(rwData->fovTarget, camera->fov, 0.5f, 10.0f);
     return true;
@@ -4838,7 +4838,7 @@ s32 Camera_Unique3(Camera* camera) {
     PosRot* cameraPlayerPosRot = &camera->playerPosRot;
 
     playerHeight = Player_GetHeight(camera->player);
-    camera->stateFlags &= ~CAM_STATE_4;
+    camera->stateFlags &= ~CAM_STATE_CAM_FUNC_FINISH;
 
     if (RELOAD_PARAMS(camera) || R_RELOAD_CAM_PARAMS) {
         CameraModeValue* values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
@@ -4859,7 +4859,7 @@ s32 Camera_Unique3(Camera* camera) {
     switch (camera->animState) {
         case 0:
             func_80043B60(camera);
-            camera->stateFlags &= ~(CAM_STATE_2 | CAM_STATE_3);
+            camera->stateFlags &= ~(CAM_STATE_2 | CAM_STATE_EXTERNAL_FINISHED);
             rwData->initialFov = camera->fov;
             rwData->initialDist = OLib_Vec3fDist(at, &camera->eye);
             camera->animState++;
@@ -4892,8 +4892,8 @@ s32 Camera_Unique3(Camera* camera) {
             camera->animState++;
             FALLTHROUGH;
         case 3:
-            camera->stateFlags |= (CAM_STATE_4 | CAM_STATE_10);
-            if (camera->stateFlags & CAM_STATE_3) {
+            camera->stateFlags |= (CAM_STATE_CAM_FUNC_FINISH | CAM_STATE_10);
+            if (camera->stateFlags & CAM_STATE_EXTERNAL_FINISHED) {
                 camera->animState++;
             } else {
                 break;
@@ -4902,7 +4902,7 @@ s32 Camera_Unique3(Camera* camera) {
         case 4:
             if (roData->interfaceField & UNIQUE3_FLAG_1) {
                 camera->stateFlags |= CAM_STATE_2;
-                camera->stateFlags &= ~CAM_STATE_3;
+                camera->stateFlags &= ~CAM_STATE_EXTERNAL_FINISHED;
                 Camera_ChangeSettingFlags(camera, CAM_SET_PIVOT_IN_FRONT, 2);
                 break;
             }
@@ -4933,7 +4933,7 @@ s32 Camera_Unique3(Camera* camera) {
             FALLTHROUGH;
         default:
             camera->stateFlags |= CAM_STATE_2;
-            camera->stateFlags &= ~CAM_STATE_3;
+            camera->stateFlags &= ~CAM_STATE_EXTERNAL_FINISHED;
             camera->fov = roData->fov;
             Camera_ChangeSettingFlags(camera, camera->prevSetting, 2);
             camera->atLERPStepScale = 0.0f;
@@ -5485,9 +5485,9 @@ s32 Camera_Unique9(Camera* camera) {
             // same as 15, but with unk_38 ?
             if (rwData->unk_38 == 0) {
                 rwData->unk_38 = 1;
-            } else if (camera->stateFlags & CAM_STATE_3) {
+            } else if (camera->stateFlags & CAM_STATE_EXTERNAL_FINISHED) {
                 rwData->unk_38 = 0;
-                camera->stateFlags &= ~CAM_STATE_3;
+                camera->stateFlags &= ~CAM_STATE_EXTERNAL_FINISHED;
             }
             *at = rwData->atTarget;
             *eyeNext = rwData->eyeTarget;
@@ -5496,10 +5496,10 @@ s32 Camera_Unique9(Camera* camera) {
             break;
 
         case ONEPOINT_CS_ACTION_ID_16:
-            // same as 21, but don't unset CAM_STATE_3 on stateFlags
+            // same as 21, but don't unset CAM_STATE_EXTERNAL_FINISHED on stateFlags
             if (rwData->unk_38 == 0) {
                 rwData->unk_38 = 1;
-            } else if (camera->stateFlags & CAM_STATE_3) {
+            } else if (camera->stateFlags & CAM_STATE_EXTERNAL_FINISHED) {
                 rwData->unk_38 = 0;
             }
 
@@ -5821,7 +5821,7 @@ s32 Camera_Demo3(Camera* camera) {
     Demo3ReadWriteData* rwData = &camera->paramData.demo3.rwData;
     s32 pad2;
 
-    camera->stateFlags &= ~CAM_STATE_4;
+    camera->stateFlags &= ~CAM_STATE_CAM_FUNC_FINISH;
 
     if (RELOAD_PARAMS(camera) || R_RELOAD_CAM_PARAMS) {
         CameraModeValue* values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
@@ -5841,7 +5841,7 @@ s32 Camera_Demo3(Camera* camera) {
 
     switch (camera->animState) {
         case 0:
-            camera->stateFlags &= ~(CAM_STATE_2 | CAM_STATE_3);
+            camera->stateFlags &= ~(CAM_STATE_2 | CAM_STATE_EXTERNAL_FINISHED);
             func_80043B60(camera);
             camera->fov = roData->fov;
             camera->roll = rwData->animFrame = 0;
@@ -5939,7 +5939,7 @@ s32 Camera_Demo3(Camera* camera) {
             break;
         case 30:
             camera->stateFlags |= CAM_STATE_10;
-            if (camera->stateFlags & CAM_STATE_3) {
+            if (camera->stateFlags & CAM_STATE_EXTERNAL_FINISHED) {
                 camera->animState = 4;
             }
             FALLTHROUGH;
@@ -5963,13 +5963,13 @@ s32 Camera_Demo3(Camera* camera) {
                    CHECK_BTN_ALL(D_8015BD7C->state.input[0].press.button, BTN_CRIGHT) ||
                    CHECK_BTN_ALL(D_8015BD7C->state.input[0].press.button, BTN_R) ||
                    CHECK_BTN_ALL(D_8015BD7C->state.input[0].press.button, BTN_Z)) &&
-                  (camera->stateFlags & CAM_STATE_3))) {
+                  (camera->stateFlags & CAM_STATE_EXTERNAL_FINISHED))) {
                 goto skipeyeUpdate;
             }
             FALLTHROUGH;
         default:
-            camera->stateFlags |= (CAM_STATE_2 | CAM_STATE_4);
-            camera->stateFlags &= ~CAM_STATE_3;
+            camera->stateFlags |= (CAM_STATE_2 | CAM_STATE_CAM_FUNC_FINISH);
+            camera->stateFlags &= ~CAM_STATE_EXTERNAL_FINISHED;
             if (camera->prevBgCamIndex < 0) {
                 Camera_ChangeSettingFlags(camera, camera->prevSetting, 2);
             } else {
@@ -6885,7 +6885,7 @@ s32 Camera_Special9(Camera* camera) {
     BgCamFuncData* bgCamFuncData;
 
     playerYOffset = Player_GetHeight(camera->player);
-    camera->stateFlags &= ~CAM_STATE_4;
+    camera->stateFlags &= ~CAM_STATE_CAM_FUNC_FINISH;
     yNormal =
         1.0f + CAM_DATA_SCALED(R_CAM_YOFFSET_NORM) - (CAM_DATA_SCALED(R_CAM_YOFFSET_NORM) * (68.0f / playerYOffset));
 
@@ -6986,7 +6986,7 @@ s32 Camera_Special9(Camera* camera) {
             camera->animState++;
             FALLTHROUGH;
         default:
-            camera->stateFlags |= (CAM_STATE_4 | CAM_STATE_10);
+            camera->stateFlags |= (CAM_STATE_CAM_FUNC_FINISH | CAM_STATE_10);
             sCameraInterfaceField = CAM_INTERFACE_FIELD(CAM_LETTERBOX_NONE, CAM_HUD_VISIBILITY_ALL, 0);
 
             if (camera->xzSpeed > 0.001f || CHECK_BTN_ALL(D_8015BD7C->state.input[0].press.button, BTN_A) ||
@@ -7671,7 +7671,7 @@ Vec3s Camera_Update(Camera* camera) {
 
     camera->behaviorFlags = 0;
     camera->stateFlags &= ~(CAM_STATE_10 | CAM_STATE_5);
-    camera->stateFlags |= CAM_STATE_4;
+    camera->stateFlags |= CAM_STATE_CAM_FUNC_FINISH;
 
     if (R_DEBUG_CAM_UPDATE) {
         osSyncPrintf("camera: engine (%d %d %d) %04x \n", camera->setting, camera->mode,
@@ -7840,7 +7840,7 @@ void Camera_Finish(Camera* camera) {
                 osSyncPrintf("camera: player demo end!!\n");
             }
 
-            mainCam->stateFlags |= CAM_STATE_3;
+            mainCam->stateFlags |= CAM_STATE_EXTERNAL_FINISHED;
         }
 
         if (CHILD_CAM(camera)->parentCamId == camera->camId) {
@@ -7864,8 +7864,8 @@ void Camera_Finish(Camera* camera) {
 }
 
 s32 func_8005A02C(Camera* camera) {
-    camera->stateFlags |= (CAM_STATE_2 | CAM_STATE_3);
-    camera->stateFlags &= ~(CAM_STATE_3 | CAM_STATE_12);
+    camera->stateFlags |= (CAM_STATE_2 | CAM_STATE_EXTERNAL_FINISHED);
+    camera->stateFlags &= ~(CAM_STATE_EXTERNAL_FINISHED | CAM_STATE_12);
     return true;
 }
 
@@ -8045,8 +8045,8 @@ s16 Camera_ChangeSettingFlags(Camera* camera, s16 setting, s16 flags) {
         camera->behaviorFlags |= CAM_BEHAVIOR_SETTING_1;
     }
 
-    camera->stateFlags |= (CAM_STATE_2 | CAM_STATE_3);
-    camera->stateFlags &= ~(CAM_STATE_3 | CAM_STATE_12);
+    camera->stateFlags |= (CAM_STATE_2 | CAM_STATE_EXTERNAL_FINISHED);
+    camera->stateFlags &= ~(CAM_STATE_EXTERNAL_FINISHED | CAM_STATE_12);
 
     if (!(sCameraSettings[camera->setting].unk_00 & 0x40000000)) {
         camera->prevSetting = camera->setting;
@@ -8404,11 +8404,11 @@ s32 func_8005B198(void) {
     return D_8011D3AC;
 }
 
-s16 func_8005B1A4(Camera* camera) {
-    camera->stateFlags |= CAM_STATE_3;
+s16 Camera_SetFinishedFlag(Camera* camera) {
+    camera->stateFlags |= CAM_STATE_EXTERNAL_FINISHED;
 
     if ((camera->camId == CAM_ID_MAIN) && (camera->play->activeCamId != CAM_ID_MAIN)) {
-        GET_ACTIVE_CAM(camera->play)->stateFlags |= CAM_STATE_3;
+        GET_ACTIVE_CAM(camera->play)->stateFlags |= CAM_STATE_EXTERNAL_FINISHED;
         return camera->play->activeCamId;
     }
 

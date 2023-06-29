@@ -7,7 +7,7 @@
 #include "z_en_geldb.h"
 #include "assets/objects/object_geldb/object_geldb.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY | ACTOR_FLAG_NO_UPDATE_CULLING)
 
 typedef enum {
     /*  0 */ GELDB_WAIT,

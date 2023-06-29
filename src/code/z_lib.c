@@ -600,6 +600,6 @@ void func_800788CC(u16 sfxId) {
                          &gSfxDefaultReverb);
 }
 
-void func_80078914(Vec3f* arg0, u16 sfxId) {
+void Audio_PlaySfx_AtPos(Vec3f* arg0, u16 sfxId) {
     Audio_PlaySfxGeneral(sfxId, arg0, 4, &gSfxDefaultFreqAndVolScale, &gSfxDefaultFreqAndVolScale, &gSfxDefaultReverb);
 }

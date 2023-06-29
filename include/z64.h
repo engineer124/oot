@@ -243,7 +243,7 @@ typedef struct {
     /* 0x0C */ Vec3f    targetCenterPos;
     /* 0x18 */ Color_RGBAf naviInner;
     /* 0x28 */ Color_RGBAf naviOuter;
-    /* 0x38 */ Actor*   targetableOption;
+    /* 0x38 */ Actor*   nextLockOnActor;
     /* 0x3C */ Actor*   targetedActor;
     /* 0x40 */ f32      fairyMoveProgressFactor;
     /* 0x44 */ f32      lockOnRadius;
@@ -837,7 +837,7 @@ typedef struct PlayState {
     /* 0x11D48 */ s32 (*startPlayerFishing)(struct PlayState* play);
     /* 0x11D4C */ s32 (*grabPlayer)(struct PlayState* play, Player* player);
     /* 0x11D50 */ s32 (*startPlayerCutscene)(struct PlayState* play, Actor* actor, s32 csMode);
-    /* 0x11D54 */ void (*func_11D54)(Player* player, struct PlayState* play);
+    /* 0x11D54 */ void (*playerSetupIdle)(Player* player, struct PlayState* play);
     /* 0x11D58 */ s32 (*damagePlayer)(struct PlayState* play, s32 damage);
     /* 0x11D5C */ void (*talkWithPlayer)(struct PlayState* play, Actor* actor);
     /* 0x11D60 */ MtxF viewProjectionMtxF;

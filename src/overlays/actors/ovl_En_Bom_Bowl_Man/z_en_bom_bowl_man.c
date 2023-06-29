@@ -4,8 +4,8 @@
 #include "overlays/actors/ovl_En_Ex_Item/z_en_ex_item.h"
 #include "assets/objects/object_bg/object_bg.h"
 
-#define FLAGS                                                                                                  \
-    (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_NO_DRAW_CULLING | \
+#define FLAGS                                                                                                \
+    (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIEND | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_NO_DRAW_CULLING | \
      ACTOR_FLAG_CANT_LOCK_ON)
 
 typedef enum {
@@ -452,7 +452,7 @@ void EnBomBowlMan_BeginPlayGame(EnBomBowlMan* this, PlayState* play) {
 
     if ((Message_GetState(&play->msgCtx) == this->dialogState) && Message_ShouldAdvance(play)) {
         Message_CloseTextbox(play);
-        func_8005B1A4(GET_ACTIVE_CAM(play));
+        Camera_SetFinishedFlag(GET_ACTIVE_CAM(play));
         this->startedPlaying = true;
 
         if (BREG(2)) {

@@ -7,8 +7,7 @@
 #include "z_en_torch2.h"
 #include "assets/objects/object_torch2/object_torch2.h"
 
-#define FLAGS \
-    (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_NO_DRAW_CULLING)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY | ACTOR_FLAG_NO_UPDATE_CULLING | ACTOR_FLAG_NO_DRAW_CULLING)
 
 typedef enum {
     /* 0 */ ENTORCH2_WAIT,
@@ -113,7 +112,7 @@ void EnTorch2_Init(Actor* thisx, PlayState* play2) {
     this->actor.colChkInfo.health = gSaveContext.healthCapacity >> 3;
     this->actor.colChkInfo.cylRadius = 60;
     this->actor.colChkInfo.cylHeight = 100;
-    play->func_11D54(this, play);
+    play->playerSetupIdle(this, play);
 
     sActionState = ENTORCH2_WAIT;
     sDodgeRollState = 0;
@@ -509,7 +508,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
                     this->actor.world.pos.y = this->actor.floorHeight;
                 }
                 Math_Vec3f_Copy(&this->actor.home.pos, &this->actor.world.pos);
-                play->func_11D54(this, play);
+                play->playerSetupIdle(this, play);
                 sActionState = ENTORCH2_ATTACK;
                 sStickTilt = 0.0f;
                 if (sAlpha != 255) {
@@ -574,8 +573,8 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
 
         if (!Actor_ApplyDamage(&this->actor)) {
             func_800F5B58();
-            this->actor.flags &= ~(ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY);
-            this->unk_8A1 = 2;
+            this->actor.flags &= ~(ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY);
+            this->specialDamageEffect = 2;
             this->unk_8A4 = 6.0f;
             this->unk_8A8 = 6.0f;
             this->unk_8A0 = this->actor.colChkInfo.damage;
@@ -596,7 +595,7 @@ void EnTorch2_Update(Actor* thisx, PlayState* play2) {
             } else {
                 this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
                 this->unk_8A0 = this->actor.colChkInfo.damage;
-                this->unk_8A1 = 1;
+                this->specialDamageEffect = 1;
                 this->unk_8A8 = 6.0f;
                 this->unk_8A4 = 8.0f;
                 this->unk_8A2 = this->actor.yawTowardsPlayer + 0x8000;

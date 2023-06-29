@@ -141,8 +141,8 @@ typedef struct {
 } ActorShape; // size = 0x30
 
 #define ACTOR_FLAG_TARGETABLE (1 << 0) // Navi will fly over the actor and it can be Z targeted
-#define ACTOR_FLAG_UNFRIENDLY (1 << 2) // changes targeting behavior for unfriendly actors (sound, Link's stance)
-#define ACTOR_FLAG_FRIENDLY (1 << 3) // opposite of the unfriendly flag. flag is not checked against in the original game
+#define ACTOR_FLAG_ENEMY (1 << 2) // changes targeting behavior for unfriendly actors (sound, Link's stance)
+#define ACTOR_FLAG_FRIEND (1 << 3) // opposite of the unfriendly flag. flag is not checked against in the original game
 #define ACTOR_FLAG_NO_UPDATE_CULLING (1 << 4) // actor will keep updating even if outside of the uncull zone i.e. "update-culling" does not occur
 #define ACTOR_FLAG_NO_DRAW_CULLING (1 << 5) // actor will keep drawing even if outside of the uncull zone i.e. "draw-culling" does not occur
 #define ACTOR_FLAG_IN_UNCULL_ZONE (1 << 6) // actor is currently in the uncull zone

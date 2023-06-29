@@ -7,7 +7,7 @@
 #include "z_en_zo.h"
 #include "assets/objects/object_zo/object_zo.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIEND)
 
 typedef enum {
     /* 0 */ ENZO_EFFECT_NONE,

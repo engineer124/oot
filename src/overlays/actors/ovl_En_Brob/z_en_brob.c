@@ -7,7 +7,7 @@
 #include "z_en_brob.h"
 #include "assets/objects/object_brob/object_brob.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY)
 
 void EnBrob_Init(Actor* thisx, PlayState* play);
 void EnBrob_Destroy(Actor* thisx, PlayState* play);

@@ -218,7 +218,7 @@ void EnExRuppy_DropIntoWater(EnExRuppy* this, PlayState* play) {
         this->actor.speed = 0.0f;
         this->actor.velocity.x = this->actor.velocity.y = this->actor.velocity.z = 0.0f;
         this->actor.gravity = 0.0f;
-        func_80078914(&this->actor.projectedPos, NA_SE_EV_BOMB_DROP_WATER);
+        Audio_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_EV_BOMB_DROP_WATER);
         this->actionFunc = EnExRuppy_EnterWater;
     }
 }
@@ -255,7 +255,7 @@ void EnExRuppy_Sink(EnExRuppy* this, PlayState* play) {
         this->actor.velocity.y = -1.0f;
         this->actor.gravity = -0.2f;
         EffectSsGSplash_Spawn(play, &pos, NULL, NULL, 0, 800);
-        func_80078914(&this->actor.projectedPos, NA_SE_EV_BOMB_DROP_WATER);
+        Audio_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_EV_BOMB_DROP_WATER);
         this->actionFunc = EnExRuppy_WaitInGame;
     }
     divingGame = (EnDivingGame*)this->actor.parent;

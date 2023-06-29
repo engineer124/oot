@@ -7,7 +7,7 @@
 #include "z_en_zf.h"
 #include "assets/objects/object_zf/object_zf.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_NO_UPDATE_CULLING)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY | ACTOR_FLAG_NO_UPDATE_CULLING)
 
 void EnZf_Init(Actor* thisx, PlayState* play);
 void EnZf_Destroy(Actor* thisx, PlayState* play);
@@ -547,7 +547,7 @@ s32 EnZf_CanAttack(PlayState* play, EnZf* this) {
             return true;
         }
         if (this->actor.params == ENZF_TYPE_DINOLFOS) {
-            targetedActor = player->targetedActor;
+            targetedActor = player->lockOnActor;
             if (targetedActor == NULL) {
                 return false;
             } else {
@@ -1218,7 +1218,7 @@ void EnZf_Slash(EnZf* this, PlayState* play) {
                         this->actor.world.rot.y = this->actor.yawTowardsPlayer;
                         func_80B483E4(this, play);
                     } else if (player->stateFlags1 &
-                               (PLAYER_STATE1_Z_TARGETING_UNFRIENDLY | PLAYER_STATE1_HANGING_FROM_LEDGE_SLIP |
+                               (PLAYER_STATE1_LOCK_ON_ENEMY | PLAYER_STATE1_HANGING_FROM_LEDGE_SLIP |
                                 PLAYER_STATE1_CLIMBING_ONTO_LEDGE)) {
                         if (this->actor.isTargeted) {
                             EnZf_SetupSlash(this);

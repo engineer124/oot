@@ -597,7 +597,7 @@ typedef struct {
     /* 0x44 */ Vec3s unk_44;
     /* 0x4A */ Vec3s unk_4A[4];
     /* 0x62 */ Vec3s unk_62[4];
-    /* 0x7A */ Vec3s unk_7A[2];
+    /* 0x7A */ Vec3s climbLeftSpeed[2];
     /* 0x86 */ Vec3s unk_86[2];
     /* 0x92 */ u16 voiceSfxIdOffset;
     /* 0x94 */ u16 surfaceSfxIdOffset;
@@ -607,7 +607,7 @@ typedef struct {
     /* 0xA4 */ PlayerAnimationHeader* unk_A4;
     /* 0xA8 */ PlayerAnimationHeader* unk_A8;
     /* 0xAC */ PlayerAnimationHeader* unk_AC[4];
-    /* 0xBC */ PlayerAnimationHeader* unk_BC[2];
+    /* 0xBC */ PlayerAnimationHeader* climbHorizontalAnims[2];
     /* 0xC4 */ PlayerAnimationHeader* unk_C4[2];
     /* 0xCC */ PlayerAnimationHeader* unk_CC[2];
 } PlayerAgeProperties; // size = 0xD4
@@ -621,8 +621,8 @@ typedef struct {
 #define PLAYER_STATE1_EXITING_SCENE (1 << 0)
 #define PLAYER_STATE1_SWINGING_BOTTLE (1 << 1)
 #define PLAYER_STATE1_END_HOOKSHOT_MOVE (1 << 2)
-#define PLAYER_STATE1_AIMING_FPS_ITEM (1 << 3)
-#define PLAYER_STATE1_Z_TARGETING_UNFRIENDLY (1 << 4)
+#define PLAYER_STATE1_USING_FPS_ITEM (1 << 3)
+#define PLAYER_STATE1_LOCK_ON_ENEMY (1 << 4)
 #define PLAYER_STATE1_INPUT_DISABLED (1 << 5)
 #define PLAYER_STATE1_TALKING (1 << 6)
 #define PLAYER_STATE1_IN_DEATH_CUTSCENE (1 << 7)
@@ -634,27 +634,27 @@ typedef struct {
 #define PLAYER_STATE1_HANGING_FROM_LEDGE_SLIP (1 << 13)
 #define PLAYER_STATE1_CLIMBING_ONTO_LEDGE (1 << 14)
 #define PLAYER_STATE1_UNUSED_Z_TARGETING_FLAG (1 << 15)
-#define PLAYER_STATE1_FORCE_STRAFING (1 << 16)
-#define PLAYER_STATE1_Z_TARGETING_FRIENDLY (1 << 17)
+#define PLAYER_STATE1_STRAFE (1 << 16) // Lock on friend, carrying actor, following boomerang
+#define PLAYER_STATE1_Z_PARALLEL (1 << 17)
 #define PLAYER_STATE1_JUMPING (1 << 18)
 #define PLAYER_STATE1_FREEFALLING (1 << 19)
 #define PLAYER_STATE1_IN_FIRST_PERSON_MODE (1 << 20)
 #define PLAYER_STATE1_CLIMBING (1 << 21)
 #define PLAYER_STATE1_HOLDING_SHIELD (1 << 22)
 #define PLAYER_STATE1_RIDING_HORSE (1 << 23)
-#define PLAYER_STATE1_AIMING_BOOMERANG (1 << 24)
+#define PLAYER_STATE1_USING_BOOMERANG (1 << 24)
 #define PLAYER_STATE1_AWAITING_THROWN_BOOMERANG (1 << 25)
 #define PLAYER_STATE1_TAKING_DAMAGE (1 << 26)
 #define PLAYER_STATE1_SWIMMING (1 << 27)
 #define PLAYER_STATE1_SKIP_OTHER_ACTORS_UPDATE (1 << 28)
 #define PLAYER_STATE1_IN_CUTSCENE (1 << 29)
-#define PLAYER_STATE1_30 (1 << 30)
+#define PLAYER_STATE1_Z_PARALLEL_FROM_UNTARGET (1 << 30)
 #define PLAYER_STATE1_FALLING_INTO_GROTTO_OR_VOID (1 << 31)
 
 #define PLAYER_STATE2_CAN_GRAB_PUSH_PULL_WALL (1 << 0)
 #define PLAYER_STATE2_CAN_SPEAK_OR_CHECK (1 << 1)
 #define PLAYER_STATE2_CAN_CLIMB_PUSH_PULL_WALL (1 << 2)
-#define PLAYER_STATE2_MAKING_REACTABLE_NOISE (1 << 3)
+#define PLAYER_STATE2_MAKING_NOTICABLE_SFX (1 << 3)
 #define PLAYER_STATE2_MOVING_PUSH_PULL_WALL (1 << 4)
 #define PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING (1 << 5)
 #define PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION (1 << 6)
@@ -762,7 +762,7 @@ typedef struct Player {
     /* 0x0498 */ ColliderCylinder cylinder;
     /* 0x04E4 */ ColliderQuad meleeWeaponQuads[2];
     /* 0x05E4 */ ColliderQuad shieldQuad;
-    /* 0x0664 */ Actor*     targetedActor;
+    /* 0x0664 */ Actor*     lockOnActor;
     /* 0x0668 */ char       unk_668[0x004];
     /* 0x066C */ s32        zTargetSwitchTimer;
     /* 0x0670 */ s32        meleeWeaponEffectIndex;
@@ -770,7 +770,7 @@ typedef struct Player {
     /* 0x0678 */ PlayerAgeProperties* ageProperties;
     /* 0x067C */ u32        stateFlags1;
     /* 0x0680 */ u32        stateFlags2;
-    /* 0x0684 */ Actor*     forcedTargetedActor;
+    /* 0x0684 */ Actor*     forcedLockOn;
     /* 0x0688 */ Actor*     boomerangActor;
     /* 0x068C */ Actor*     naviActor;
     /* 0x0690 */ s16        naviTextId;
@@ -829,7 +829,7 @@ typedef struct Player {
                     s16 rollVar16; // Action: Roll
                     s16 chargeSpinAttackVar16; // Action: ChargeSpinAttack
                     s16 jumpToLedgeVar16; // Action: JumpToLedge
-                    s16 IdleZTargetEnemyVar16; // Action: IdleZTargetEnemy
+                    s16 IdleLockOnEnemyVar16; // Action: IdleZTargetEnemy
                     s16 knockbackFlyVar16; // Action: KnockbackFly
                     s16 knockbackDownVar16; // Action: KnockbackDown
                     s16 dieVar16; // Action: Die & SwimDrown
@@ -843,6 +843,7 @@ typedef struct Player {
                     s16 aimFirstPersonVar16; // Action: AimFirstPerson
                     s16 pushVar16; // Action: Push
                     s16 shieldAimCrouchedVar16; // Action: ShieldAimCrouched
+                    s16 enterGrottoDelayTransTimer; // Action: EnterGrotto
                 };
     /* 0x0854 */ f32        unk_854;
     /* 0x0858 */ f32        spinAttackTimer;
@@ -850,10 +851,10 @@ typedef struct Player {
     /* 0x0860 */ s16        stickFlameTimer; // stick flame timer among other things
     /* 0x0862 */ s8         unk_862; // get item draw ID + 1
     /* 0x0864 */ f32        unk_864;
-    /* 0x0868 */ f32        unk_868;
+    /* 0x0868 */ f32        walkCurFrame;
     /* 0x086C */ f32        unk_86C;
-    /* 0x0870 */ f32        unk_870;
-    /* 0x0874 */ f32        unk_874;
+    /* 0x0870 */ f32        leftRightBlendWeight;
+    /* 0x0874 */ f32        leftRightBlendWeightTarget;
     /* 0x0878 */ f32        unk_878;
     /* 0x087C */ s16        unk_87C;
     /* 0x087E */ s16        unk_87E;
@@ -872,10 +873,10 @@ typedef struct Player {
     /* 0x0896 */ s16        fallDistance; // truncated Y distance the player has fallen so far (positive is down)
     /* 0x0898 */ s16        floorPitch; // angle of the floor slope in the direction of current world yaw (positive for ascending slope)
     /* 0x089A */ s16        floorPitchAlt; // the calculation for this value is bugged and doesn't represent anything meaningful
-    /* 0x089C */ s16        unk_89C;
+    /* 0x089C */ s16        walkFloorPitch;
     /* 0x089E */ u16        floorSfxOffset;
     /* 0x08A0 */ u8         unk_8A0;
-    /* 0x08A1 */ u8         unk_8A1;
+    /* 0x08A1 */ u8         specialDamageEffect;
     /* 0x08A2 */ s16        unk_8A2;
     /* 0x08A4 */ f32        unk_8A4;
     /* 0x08A8 */ f32        unk_8A8;

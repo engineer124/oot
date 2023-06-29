@@ -590,7 +590,7 @@ void func_80B4FD90(EnZl2* this, PlayState* play) {
 
 void func_80B4FDD4(EnZl2* this) {
     if (Animation_OnFrame(&this->skelAnime, 14.0f)) {
-        func_80078914(&this->actor.projectedPos, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_STONE);
+        Audio_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_PL_WALK_GROUND + SURFACE_SFX_OFFSET_STONE);
     }
 }
 
@@ -601,23 +601,23 @@ void func_80B4FE10(PlayState* play) {
 }
 
 void func_80B4FE48(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_EV_GOTO_HEAVEN - SFX_FLAG);
+    Audio_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_EV_GOTO_HEAVEN - SFX_FLAG);
 }
 
 void func_80B4FE6C(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_EN_GANON_LAUGH);
+    Audio_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_EN_GANON_LAUGH);
 }
 
 void func_80B4FE90(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_VO_Z1_SURPRISE);
+    Audio_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_Z1_SURPRISE);
 }
 
 void func_80B4FEB4(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
+    Audio_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_Z1_PAIN);
 }
 
 void func_80B4FED8(EnZl2* this) {
-    func_80078914(&this->actor.projectedPos, NA_SE_VO_Z1_CRY_0);
+    Audio_PlaySfx_AtPos(&this->actor.projectedPos, NA_SE_VO_Z1_CRY_0);
 }
 
 void EnZl2_GiveLightArrows(EnZl2* this, PlayState* play) {
@@ -1446,7 +1446,7 @@ void func_80B51D24(EnZl2* this, PlayState* play) {
         if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
             sfxId = NA_SE_PL_WALK_GROUND;
             sfxId += SurfaceType_GetSfxOffset(&play->colCtx, this->actor.floorPoly, this->actor.floorBgId);
-            func_80078914(&this->actor.projectedPos, sfxId);
+            Audio_PlaySfx_AtPos(&this->actor.projectedPos, sfxId);
         }
     }
 }
