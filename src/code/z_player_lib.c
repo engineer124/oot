@@ -492,7 +492,7 @@ s32 Player_InBlockingCsMode(PlayState* play, Player* this) {
            (this->csMode != PLAYER_CSMODE_NONE) || (play->transitionTrigger == TRANS_TRIGGER_START) ||
            (this->stateFlags1 & PLAYER_STATE1_EXITING_SCENE) ||
            (this->stateFlags3 & PLAYER_STATE3_FLYING_ALONG_HOOKSHOT_PATH) ||
-           ((gSaveContext.magicState != MAGIC_STATE_IDLE) && (Player_ActionToMagicSpell(this, this->itemAction) >= 0));
+           ((gSaveContext.magicState != MAGIC_STATE_IDLE) && (Player_MagicSpellFromIA(this, this->itemAction) >= 0));
 }
 
 s32 Player_InCsMode(PlayState* play) {
@@ -509,7 +509,7 @@ s32 Player_IsChildWithHylianShield(Player* this) {
     return gSaveContext.linkAge != LINK_AGE_ADULT && (this->currentShield == PLAYER_SHIELD_HYLIAN);
 }
 
-s32 Player_ActionToModelGroup(Player* this, s32 itemAction) {
+s32 Player_ModelGroupFromIA(Player* this, s32 itemAction) {
     s32 modelGroup = sActionModelGroups[itemAction];
 
     if ((modelGroup == PLAYER_MODELGROUP_SWORD) && Player_IsChildWithHylianShield(this)) {
@@ -523,7 +523,7 @@ s32 Player_ActionToModelGroup(Player* this, s32 itemAction) {
 void Player_SetModelsForHoldingShield(Player* this) {
     if ((this->stateFlags1 & PLAYER_STATE1_HOLDING_SHIELD) &&
         ((this->itemAction < 0) || (this->itemAction == this->heldItemAction))) {
-        if (!Player_HoldsTwoHandedWeapon(this) && !Player_IsChildWithHylianShield(this)) {
+        if (!Player_IsHoldingTwoHandedWeapon(this) && !Player_IsChildWithHylianShield(this)) {
             this->rightHandType = PLAYER_MODELTYPE_RH_SHIELD;
             this->rightHandDLists = sPlayerDListGroups[PLAYER_MODELTYPE_RH_SHIELD] + ((void)0, gSaveContext.linkAge);
             if (this->sheathType == PLAYER_MODELTYPE_SHEATH_18) {
@@ -573,7 +573,7 @@ void Player_SetModelGroup(Player* this, s32 modelGroup) {
 
 void func_8008EC70(Player* this) {
     this->itemAction = this->heldItemAction;
-    Player_SetModelGroup(this, Player_ActionToModelGroup(this, this->heldItemAction));
+    Player_SetModelGroup(this, Player_ModelGroupFromIA(this, this->heldItemAction));
     this->attentionMode = PLAYER_ATTENTIONMODE_NONE;
 }
 
@@ -583,7 +583,7 @@ void Player_SetEquipmentData(PlayState* play, Player* this) {
         this->currentTunic = TUNIC_EQUIP_TO_PLAYER(CUR_EQUIP_VALUE(EQUIP_TYPE_TUNIC));
         this->currentBoots = BOOTS_EQUIP_TO_PLAYER(CUR_EQUIP_VALUE(EQUIP_TYPE_BOOTS));
         this->currentSwordItemId = B_BTN_ITEM;
-        Player_SetModelGroup(this, Player_ActionToModelGroup(this, this->heldItemAction));
+        Player_SetModelGroup(this, Player_ModelGroupFromIA(this, this->heldItemAction));
         Player_SetBootData(play, this);
     }
 }
@@ -691,13 +691,13 @@ s32 Player_HasMirrorShieldEquipped(PlayState* play) {
     return (this->currentShield == PLAYER_SHIELD_MIRROR);
 }
 
-s32 Player_HasMirrorShieldSetToDraw(PlayState* play) {
+s32 Player_IsHoldingMirrorShield(PlayState* play) {
     Player* this = GET_PLAYER(play);
 
     return (this->rightHandType == PLAYER_MODELTYPE_RH_SHIELD) && (this->currentShield == PLAYER_SHIELD_MIRROR);
 }
 
-s32 Player_ActionToMagicSpell(Player* this, s32 itemAction) {
+s32 Player_MagicSpellFromIA(Player* this, s32 itemAction) {
     s32 magicSpell = itemAction - PLAYER_IA_MAGIC_SPELL_15;
 
     if ((magicSpell >= 0) && (magicSpell < 6)) {
@@ -707,15 +707,15 @@ s32 Player_ActionToMagicSpell(Player* this, s32 itemAction) {
     }
 }
 
-s32 Player_HoldsHookshot(Player* this) {
+s32 Player_IsHoldingHookshot(Player* this) {
     return (this->heldItemAction == PLAYER_IA_HOOKSHOT) || (this->heldItemAction == PLAYER_IA_LONGSHOT);
 }
 
-s32 func_8008F128(Player* this) {
-    return Player_HoldsHookshot(this) && (this->heldActor == NULL);
+s32 Player_IsShootingHookshot(Player* this) {
+    return Player_IsHoldingHookshot(this) && (this->heldActor == NULL);
 }
 
-s32 Player_ActionToMeleeWeapon(s32 itemAction) {
+s32 Player_MeleeWeaponFromIA(s32 itemAction) {
     s32 meleeWeapon = itemAction - PLAYER_IA_FISHING_POLE;
 
     if ((meleeWeapon > 0) && (meleeWeapon < 6)) {
@@ -726,14 +726,14 @@ s32 Player_ActionToMeleeWeapon(s32 itemAction) {
 }
 
 s32 Player_GetMeleeWeaponHeld(Player* this) {
-    return Player_ActionToMeleeWeapon(this->heldItemAction);
+    return Player_MeleeWeaponFromIA(this->heldItemAction);
 }
 
-s32 Player_HoldsTwoHandedWeapon(Player* this) {
+s32 Player_IsHoldingTwoHandedWeapon(Player* this) {
     if ((this->heldItemAction >= PLAYER_IA_SWORD_BIGGORON) && (this->heldItemAction <= PLAYER_IA_HAMMER)) {
-        return 1;
+        return true;
     } else {
-        return 0;
+        return false;
     }
 }
 
@@ -741,7 +741,7 @@ s32 Player_HoldsBrokenKnife(Player* this) {
     return (this->heldItemAction == PLAYER_IA_SWORD_BIGGORON) && (gSaveContext.swordHealth <= 0.0f);
 }
 
-s32 Player_ActionToBottle(Player* this, s32 itemAction) {
+s32 Player_BottleFromIA(Player* this, s32 itemAction) {
     s32 bottle = itemAction - PLAYER_IA_BOTTLE;
 
     if ((bottle >= 0) && (bottle < 13)) {
@@ -752,10 +752,10 @@ s32 Player_ActionToBottle(Player* this, s32 itemAction) {
 }
 
 s32 Player_GetBottleHeld(Player* this) {
-    return Player_ActionToBottle(this, this->heldItemAction);
+    return Player_BottleFromIA(this, this->heldItemAction);
 }
 
-s32 Player_ActionToExplosive(Player* this, s32 itemAction) {
+s32 Player_ExplosiveFromIA(Player* this, s32 itemAction) {
     s32 explosive = itemAction - PLAYER_IA_BOMB;
 
     if ((explosive >= 0) && (explosive < 2)) {
@@ -766,10 +766,10 @@ s32 Player_ActionToExplosive(Player* this, s32 itemAction) {
 }
 
 s32 Player_GetExplosiveHeld(Player* this) {
-    return Player_ActionToExplosive(this, this->heldItemAction);
+    return Player_ExplosiveFromIA(this, this->heldItemAction);
 }
 
-s32 func_8008F2BC(Player* this, s32 itemAction) {
+s32 Player_SwordFromIA(Player* this, s32 itemAction) {
     s32 sword = 0;
 
     if (itemAction != PLAYER_IA_LAST_USED) {
@@ -984,7 +984,7 @@ void func_8008F87C(PlayState* play, Player* this, SkelAnime* skelAnime, Vec3f* p
     s32 temp3;
 
     if ((this->actor.scale.y >= 0.0f) && !(this->stateFlags1 & PLAYER_STATE1_IN_DEATH_CUTSCENE) &&
-        (Player_ActionToMagicSpell(this, this->itemAction) < 0)) {
+        (Player_MagicSpellFromIA(this, this->itemAction) < 0)) {
         s32 pad;
 
         sp7C = D_80126058[(void)0, gSaveContext.linkAge];
@@ -1198,8 +1198,9 @@ s32 Player_OverrideLimbDrawGameplayFirstPerson(PlayState* play, s32 limbIndex, G
         } else if (limbIndex == PLAYER_LIMB_R_FOREARM) {
             *dList = sFirstPersonForearmDLs[(void)0, gSaveContext.linkAge];
         } else if (limbIndex == PLAYER_LIMB_R_HAND) {
-            *dList = Player_HoldsHookshot(this) ? gLinkAdultRightHandHoldingHookshotFarDL
-                                                : sFirstPersonRightHandHoldingWeaponDLs[(void)0, gSaveContext.linkAge];
+            *dList = Player_IsHoldingHookshot(this)
+                         ? gLinkAdultRightHandHoldingHookshotFarDL
+                         : sFirstPersonRightHandHoldingWeaponDLs[(void)0, gSaveContext.linkAge];
         } else {
             *dList = NULL;
         }
@@ -1496,7 +1497,7 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
             func_80090A28(this, spE4);
             func_800906D4(play, this, spE4);
         } else if ((*dList != NULL) && (this->leftHandType == PLAYER_MODELTYPE_LH_BOTTLE)) {
-            Color_RGB8* bottleColor = &sBottleColors[Player_ActionToBottle(this, this->itemAction)];
+            Color_RGB8* bottleColor = &sBottleColors[Player_BottleFromIA(this, this->itemAction)];
 
             OPEN_DISPS(play->state.gfxCtx, "../z_player_lib.c", 2710);
 
@@ -1509,7 +1510,7 @@ void Player_PostLimbDrawGameplay(PlayState* play, s32 limbIndex, Gfx** dList, Ve
         }
 
         if (this->actor.scale.y >= 0.0f) {
-            if (!Player_HoldsHookshot(this) && ((hookedActor = this->heldActor) != NULL)) {
+            if (!Player_IsHoldingHookshot(this) && ((hookedActor = this->heldActor) != NULL)) {
                 if (this->stateFlags1 & PLAYER_STATE1_READY_TO_SHOOT) {
                     Matrix_MultVec3f(&D_80126128, &hookedActor->world.pos);
                     Matrix_RotateZYX(0x69E8, -0x5708, 0x458E, MTXMODE_APPLY);

@@ -1840,7 +1840,7 @@ void func_8002F994(Actor* actor, s32 timer) {
 }
 
 // Tests if something hit Jabu Jabu surface, displaying hit splash and playing sfx if true
-s32 func_8002F9EC(PlayState* play, Actor* actor, CollisionPoly* poly, s32 bgId, Vec3f* pos) {
+s32 Actor_TryCollisionWithJabuSurface(PlayState* play, Actor* actor, CollisionPoly* poly, s32 bgId, Vec3f* pos) {
     if (SurfaceType_GetFloorType(&play->colCtx, poly, bgId) == FLOOR_TYPE_8) {
         play->roomCtx.unk_74[0] = 1;
         CollisionCheck_BlueBlood(play, NULL, pos);

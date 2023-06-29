@@ -119,7 +119,7 @@ void ArmsHook_DetachHookFromActor(ArmsHook* this) {
 s32 ArmsHook_CheckForCancel(ArmsHook* this) {
     Player* player = (Player*)this->actor.parent;
 
-    if (Player_HoldsHookshot(player)) {
+    if (Player_IsHoldingHookshot(player)) {
         if ((player->itemAction != player->heldItemAction) || (player->actor.flags & ACTOR_FLAG_TALK_REQUESTED) ||
             ((player->stateFlags1 & (PLAYER_STATE1_IN_DEATH_CUTSCENE | PLAYER_STATE1_TAKING_DAMAGE)))) {
             this->timer = 0;
@@ -159,7 +159,7 @@ void ArmsHook_Shoot(ArmsHook* this, PlayState* play) {
     f32 velocity;
     s32 pad1;
 
-    if ((this->actor.parent == NULL) || (!Player_HoldsHookshot(player))) {
+    if ((this->actor.parent == NULL) || (!Player_IsHoldingHookshot(player))) {
         ArmsHook_DetachHookFromActor(this);
         Actor_Kill(&this->actor);
         return;
@@ -260,7 +260,7 @@ void ArmsHook_Shoot(ArmsHook* this, PlayState* play) {
         sp60.z = this->unk_1F4.z - (this->unk_1E8.z - this->unk_1F4.z);
         if (BgCheck_EntityLineTest1(&play->colCtx, &sp60, &this->unk_1E8, &intersectPos, &poly, true, true, true, true,
                                     &bgId) &&
-            !func_8002F9EC(play, &this->actor, poly, bgId, &intersectPos)) {
+            !Actor_TryCollisionWithJabuSurface(play, &this->actor, poly, bgId, &intersectPos)) {
             polyNormalX = COLPOLY_GET_NORMAL(poly->normal.x);
             polyNormalZ = COLPOLY_GET_NORMAL(poly->normal.z);
             Math_Vec3f_Copy(&this->actor.world.pos, &intersectPos);

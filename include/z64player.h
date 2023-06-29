@@ -848,7 +848,10 @@ typedef struct Player {
     /* 0x0854 */ f32        unk_854;
     /* 0x0858 */ f32        spinAttackTimer;
     /* 0x085C */ f32        dekuStickLength; // stick length among other things
-    /* 0x0860 */ s16        stickFlameTimer; // stick flame timer among other things
+    /* 0x0860 */ union {
+                    s16 stickFlameTimer; // stick flame timer among other things
+                    s16 unk_860;
+                 };
     /* 0x0862 */ s8         unk_862; // get item draw ID + 1
     /* 0x0864 */ f32        unk_864;
     /* 0x0868 */ f32        walkCurFrame;
