@@ -348,7 +348,7 @@ void func_80AEB1D8(EnRu1* this) {
     this->actor.velocity.z = 0.0f;
     this->actor.speed = 0.0f;
     this->actor.gravity = 0.0f;
-    this->actor.minVelocityY = 0.0f;
+    this->actor.terminalVelocity = 0.0f;
     func_80AEB0EC(this, 0);
 }
 
@@ -427,7 +427,7 @@ void EnRu1_SpawnRipple(EnRu1* this, PlayState* play, s16 radiusMax, s16 life) {
     Actor* thisx = &this->actor;
 
     pos.x = this->actor.world.pos.x;
-    pos.y = this->actor.world.pos.y + this->actor.yDistToWater;
+    pos.y = this->actor.world.pos.y + this->actor.depthInWater;
     pos.z = this->actor.world.pos.z;
     EffectSsGRipple_Spawn(play, &pos, 100, radiusMax, life);
 }
@@ -450,7 +450,7 @@ void EnRu1_SpawnSplash(EnRu1* this, PlayState* play) {
     Vec3f pos;
 
     pos.x = this->actor.world.pos.x;
-    pos.y = this->actor.world.pos.y + this->actor.yDistToWater;
+    pos.y = this->actor.world.pos.y + this->actor.depthInWater;
     pos.z = this->actor.world.pos.z;
 
     EffectSsGSplash_Spawn(play, &pos, NULL, NULL, 1, 0);
@@ -1030,12 +1030,12 @@ void func_80AECE20(EnRu1* this, PlayState* play) {
 void func_80AECEB4(EnRu1* this, PlayState* play) {
     s32 pad;
     Player* player = GET_PLAYER(play);
-    Vec3f* player_unk_450 = &player->unk_450;
+    Vec3f* player_miniCsStartPos = &player->miniCsPosTarget;
     Vec3f* pos = &this->actor.world.pos;
     s16 shapeRotY = this->actor.shape.rot.y;
 
-    player_unk_450->x = ((kREG(2) + 30.0f) * Math_SinS(shapeRotY)) + pos->x;
-    player_unk_450->z = ((kREG(2) + 30.0f) * Math_CosS(shapeRotY)) + pos->z;
+    player_miniCsStartPos->x = ((kREG(2) + 30.0f) * Math_SinS(shapeRotY)) + pos->x;
+    player_miniCsStartPos->z = ((kREG(2) + 30.0f) * Math_CosS(shapeRotY)) + pos->z;
 }
 
 s32 func_80AECF6C(EnRu1* this, PlayState* play) {
@@ -1050,9 +1050,9 @@ s32 func_80AECF6C(EnRu1* this, PlayState* play) {
     this->unk_26C += 1.0f;
     if ((player->actor.speed == 0.0f) && (this->unk_26C >= 3.0f)) {
         otherPlayer = GET_PLAYER(play);
-        player->actor.world.pos.x = otherPlayer->unk_450.x;
-        player->actor.world.pos.y = otherPlayer->unk_450.y;
-        player->actor.world.pos.z = otherPlayer->unk_450.z;
+        player->actor.world.pos.x = otherPlayer->miniCsPosTarget.x;
+        player->actor.world.pos.y = otherPlayer->miniCsPosTarget.y;
+        player->actor.world.pos.z = otherPlayer->miniCsPosTarget.z;
         shapeRotY = &player->actor.shape.rot.y;
         temp1 = this->actor.world.pos.x - player->actor.world.pos.x;
         temp2 = this->actor.world.pos.z - player->actor.world.pos.z;
@@ -1225,7 +1225,7 @@ s32 func_80AED624(EnRu1* this, PlayState* play) {
         Actor_Kill(&this->actor);
         return false;
     } else if (((this->roomNum1 != curRoomNum) || (this->roomNum2 != curRoomNum)) &&
-               (this->actor.yDistToWater > kREG(16) + 50.0f) && (this->action != 33)) {
+               (this->actor.depthInWater > kREG(16) + 50.0f) && (this->action != 33)) {
         this->action = 33;
         this->drawConfig = 2;
         this->alpha = 0xFF;
@@ -1351,7 +1351,7 @@ void func_80AEDB30(EnRu1* this, PlayState* play) {
             if (dynaPolyActor != NULL) {
                 if (dynaPolyActor->actor.id != ACTOR_EN_BOX) {
                     *velocityY = 0.0f;
-                    this->actor.minVelocityY = 0.0f;
+                    this->actor.terminalVelocity = 0.0f;
                     *gravity = 0.0f;
                 } else {
                     *velocityY *= -1.0f;
@@ -1360,7 +1360,7 @@ void func_80AEDB30(EnRu1* this, PlayState* play) {
                 *velocityY *= -((kREG(20) * 0.01f) + 0.6f);
                 if (*velocityY <= -*gravity * ((kREG(20) * 0.01f) + 0.6f)) {
                     *velocityY = 0.0f;
-                    this->actor.minVelocityY = 0.0f;
+                    this->actor.terminalVelocity = 0.0f;
                     *gravity = 0.0f;
                 }
             }
@@ -1436,7 +1436,7 @@ void func_80AEE02C(EnRu1* this) {
     this->actor.velocity.z = 0.0f;
     this->actor.speed = 0.0f;
     this->actor.gravity = 0.0f;
-    this->actor.minVelocityY = 0.0f;
+    this->actor.terminalVelocity = 0.0f;
 }
 
 void func_80AEE050(EnRu1* this) {
@@ -1447,18 +1447,18 @@ void func_80AEE050(EnRu1* this) {
     EnRu1* thisx = this; // necessary to match
 
     if (this->unk_350 == 0) {
-        if ((this->actor.minVelocityY == 0.0f) && (this->actor.speed == 0.0f)) {
+        if ((this->actor.terminalVelocity == 0.0f) && (this->actor.speed == 0.0f)) {
             this->unk_350 = 1;
             func_80AEE02C(this);
             this->unk_35C = 0;
-            this->unk_358 = (this->actor.yDistToWater - 10.0f) * 0.5f;
+            this->unk_358 = (this->actor.depthInWater - 10.0f) * 0.5f;
             this->unk_354 = this->actor.world.pos.y + thisx->unk_358; // thisx only used here
         } else {
             this->actor.gravity = 0.0f;
-            this->actor.minVelocityY *= 0.2f;
+            this->actor.terminalVelocity *= 0.2f;
             this->actor.velocity.y *= 0.2f;
-            if (this->actor.minVelocityY >= -0.1f) {
-                this->actor.minVelocityY = 0.0f;
+            if (this->actor.terminalVelocity >= -0.1f) {
+                this->actor.terminalVelocity = 0.0f;
                 this->actor.velocity.y = 0.0f;
             }
             this->actor.speed *= 0.5f;
@@ -1561,7 +1561,7 @@ void func_80AEE488(EnRu1* this, PlayState* play) {
         this->action = 31;
         func_80AED520(this, play);
     } else if (!func_80AEE394(this, play) && !(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
-        this->actor.minVelocityY = -((kREG(24) * 0.01f) + 6.8f);
+        this->actor.terminalVelocity = -((kREG(24) * 0.01f) + 6.8f);
         this->actor.gravity = -((kREG(23) * 0.01f) + 1.3f);
         this->action = 28;
     }
@@ -1570,12 +1570,12 @@ void func_80AEE488(EnRu1* this, PlayState* play) {
 void func_80AEE568(EnRu1* this, PlayState* play) {
     if (!func_80AEE394(this, play)) {
         if ((this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) && (this->actor.speed == 0.0f) &&
-            (this->actor.minVelocityY == 0.0f)) {
+            (this->actor.terminalVelocity == 0.0f)) {
             func_80AEE02C(this);
             Actor_OfferCarry(&this->actor, play);
             this->action = 27;
             func_80AEADD8(this);
-        } else if (this->actor.yDistToWater > 0.0f) {
+        } else if (this->actor.depthInWater > 0.0f) {
             this->action = 29;
             this->unk_350 = 0;
         }
@@ -1628,7 +1628,7 @@ void func_80AEE7C4(EnRu1* this, PlayState* play) {
         func_80AED6DC(this, play);
         this->actor.speed *= (kREG(25) * 0.01f) + 1.0f;
         this->actor.velocity.y *= (kREG(26) * 0.01f) + 1.0f;
-        this->actor.minVelocityY = -((kREG(24) * 0.01f) + 6.8f);
+        this->actor.terminalVelocity = -((kREG(24) * 0.01f) + 6.8f);
         this->actor.gravity = -((kREG(23) * 0.01f) + 1.3f);
         func_80AED57C(this);
         this->action = 28;
@@ -1686,7 +1686,7 @@ void func_80AEEB24(EnRu1* this, PlayState* play) {
         this->action = 30;
         func_80AEE02C(this);
         this->actor.gravity = -0.1f;
-        this->actor.minVelocityY = -((kREG(18) * 0.1f) + 0.7f);
+        this->actor.terminalVelocity = -((kREG(18) * 0.1f) + 0.7f);
     }
 }
 

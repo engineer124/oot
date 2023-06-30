@@ -97,8 +97,8 @@ void EnFdFire_UpdatePos(EnFdFire* this, Vec3f* targetPos) {
     }
 
     this->actor.velocity.y += this->actor.gravity;
-    if (!(this->actor.minVelocityY <= this->actor.velocity.y)) {
-        this->actor.velocity.y = this->actor.minVelocityY;
+    if (!(this->actor.terminalVelocity <= this->actor.velocity.y)) {
+        this->actor.velocity.y = this->actor.terminalVelocity;
     }
 }
 

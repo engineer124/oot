@@ -472,7 +472,7 @@ void DemoGj_SetupMovement(DemoGj* this, PlayState* play) {
                 unk_172->x = kREG(18);
                 unk_172->y = kREG(19) + 0x3E8;
                 unk_172->z = kREG(20) + 0xBB8;
-                actor->minVelocityY = kREG(21) * 0.01f + -29.0f;
+                actor->terminalVelocity = kREG(21) * 0.01f + -29.0f;
                 actor->gravity = kREG(22) * 0.01f + -5.0f;
                 break;
 
@@ -482,7 +482,7 @@ void DemoGj_SetupMovement(DemoGj* this, PlayState* play) {
                 unk_172->x = kREG(31);
                 unk_172->y = kREG(32) + 0x3E8;
                 unk_172->z = kREG(33) + 0xBB8;
-                actor->minVelocityY = kREG(34) * 0.01f + -29.0f;
+                actor->terminalVelocity = kREG(34) * 0.01f + -29.0f;
                 actor->gravity = kREG(35) * 0.01f + -5.0f;
                 break;
 
@@ -492,7 +492,7 @@ void DemoGj_SetupMovement(DemoGj* this, PlayState* play) {
                 unk_172->x = kREG(44);
                 unk_172->y = kREG(45) + 0x3E8;
                 unk_172->z = kREG(46) + 0xBB8;
-                actor->minVelocityY = kREG(47) * 0.01f + -29.0f;
+                actor->terminalVelocity = kREG(47) * 0.01f + -29.0f;
                 actor->gravity = kREG(48) * 0.01f + -5.0f;
                 break;
 
@@ -502,7 +502,7 @@ void DemoGj_SetupMovement(DemoGj* this, PlayState* play) {
                 unk_172->x = kREG(57);
                 unk_172->y = kREG(58) + 0x3E8;
                 unk_172->z = kREG(59) + 0xBB8;
-                actor->minVelocityY = kREG(60) * 0.01f + -29.0f;
+                actor->terminalVelocity = kREG(60) * 0.01f + -29.0f;
                 actor->gravity = kREG(61) * 0.01f + -5.0f;
                 break;
 
@@ -512,7 +512,7 @@ void DemoGj_SetupMovement(DemoGj* this, PlayState* play) {
                 unk_172->x = kREG(70);
                 unk_172->y = kREG(71) + 0x3E8;
                 unk_172->z = kREG(72) + 0xBB8;
-                actor->minVelocityY = kREG(73) * 0.01f + -29.0f;
+                actor->terminalVelocity = kREG(73) * 0.01f + -29.0f;
                 actor->gravity = kREG(74) * 0.01f + -5.0f;
                 break;
 
@@ -522,7 +522,7 @@ void DemoGj_SetupMovement(DemoGj* this, PlayState* play) {
                 unk_172->x = kREG(83);
                 unk_172->y = kREG(84) + 0x3E8;
                 unk_172->z = kREG(85) + 0xBB8;
-                actor->minVelocityY = kREG(86) * 0.01f + -29.0f;
+                actor->terminalVelocity = kREG(86) * 0.01f + -29.0f;
                 actor->gravity = kREG(87) * 0.01f + -5.0f;
                 break;
 
@@ -532,7 +532,7 @@ void DemoGj_SetupMovement(DemoGj* this, PlayState* play) {
                 unk_172->x = kREG(15);
                 unk_172->y = kREG(14) + 0x3E8;
                 unk_172->z = kREG(13) + 0xBB8;
-                actor->minVelocityY = kREG(12) * 0.01f + -29.0f;
+                actor->terminalVelocity = kREG(12) * 0.01f + -29.0f;
                 actor->gravity = kREG(11) * 0.01f + -5.0f;
                 break;
 

@@ -162,7 +162,7 @@ void EnGe2_Init(Actor* thisx, PlayState* play) {
     this->unk_304 = 0; // Set and not used
     this->walkTimer = 0;
     this->playerSpottedParam = 0;
-    this->actor.minVelocityY = -4.0f;
+    this->actor.terminalVelocity = -4.0f;
     this->actor.gravity = -1.0f;
     this->walkDirection = this->actor.world.rot.y;
     this->walkDuration = ((this->actor.params & 0xFF00) >> 8) * 10;

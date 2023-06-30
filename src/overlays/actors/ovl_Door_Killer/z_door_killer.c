@@ -156,7 +156,7 @@ void DoorKiller_Init(Actor* thisx, PlayState* play2) {
             DoorKiller_SetProperties(this, play);
 
             this->actor.gravity = -0.6f;
-            this->actor.minVelocityY = -6.0f;
+            this->actor.terminalVelocity = -6.0f;
 
             // Random trajectories for rubble pieces
             randF = Rand_CenteredFloat(8.0f);
@@ -205,8 +205,8 @@ void DoorKiller_SpawnRubble(Actor* thisx, PlayState* play) {
  */
 void DoorKiller_FallAsRubble(DoorKiller* this, PlayState* play) {
     this->actor.velocity.y += this->actor.gravity;
-    if (this->actor.velocity.y < this->actor.minVelocityY) {
-        this->actor.velocity.y = this->actor.minVelocityY;
+    if (this->actor.velocity.y < this->actor.terminalVelocity) {
+        this->actor.velocity.y = this->actor.terminalVelocity;
     }
 
     this->actor.velocity.x *= 0.98f;

@@ -87,9 +87,12 @@ static Vec3f sUnitDirections[] = {
 static s16 sFragmentScales[] = { 108, 102, 96, 84, 66, 55, 42, 38 };
 
 static InitChainEntry sInitChain[] = {
-    ICHAIN_VEC3F_DIV1000(scale, 400, ICHAIN_CONTINUE),         ICHAIN_F32_DIV1000(gravity, -3200, ICHAIN_CONTINUE),
-    ICHAIN_F32_DIV1000(minVelocityY, -17000, ICHAIN_CONTINUE), ICHAIN_F32(uncullZoneForward, 1200, ICHAIN_CONTINUE),
-    ICHAIN_F32(uncullZoneScale, 100, ICHAIN_CONTINUE),         ICHAIN_F32(uncullZoneDownward, 120, ICHAIN_STOP),
+    ICHAIN_VEC3F_DIV1000(scale, 400, ICHAIN_CONTINUE),
+    ICHAIN_F32_DIV1000(gravity, -3200, ICHAIN_CONTINUE),
+    ICHAIN_F32_DIV1000(terminalVelocity, -17000, ICHAIN_CONTINUE),
+    ICHAIN_F32(uncullZoneForward, 1200, ICHAIN_CONTINUE),
+    ICHAIN_F32(uncullZoneScale, 100, ICHAIN_CONTINUE),
+    ICHAIN_F32(uncullZoneDownward, 120, ICHAIN_STOP),
 };
 
 void EnKusa_SetupAction(EnKusa* this, EnKusaActionFunc actionFunc) {
@@ -149,8 +152,8 @@ void EnKusa_DropCollectible(EnKusa* this, PlayState* play) {
 void EnKusa_UpdateVelY(EnKusa* this) {
     this->actor.velocity.y += this->actor.gravity;
 
-    if (this->actor.velocity.y < this->actor.minVelocityY) {
-        this->actor.velocity.y = this->actor.minVelocityY;
+    if (this->actor.velocity.y < this->actor.terminalVelocity) {
+        this->actor.velocity.y = this->actor.terminalVelocity;
     }
 }
 
@@ -394,13 +397,13 @@ void EnKusa_Fall(EnKusa* this, PlayState* play) {
 
     if (this->actor.bgCheckFlags & BGCHECKFLAG_WATER_TOUCH) {
         contactPos.x = this->actor.world.pos.x;
-        contactPos.y = this->actor.world.pos.y + this->actor.yDistToWater;
+        contactPos.y = this->actor.world.pos.y + this->actor.depthInWater;
         contactPos.z = this->actor.world.pos.z;
         EffectSsGSplash_Spawn(play, &contactPos, NULL, NULL, 0, 400);
         EffectSsGRipple_Spawn(play, &contactPos, 150, 650, 0);
         EffectSsGRipple_Spawn(play, &contactPos, 400, 800, 4);
         EffectSsGRipple_Spawn(play, &contactPos, 500, 1100, 8);
-        this->actor.minVelocityY = -3.0f;
+        this->actor.terminalVelocity = -3.0f;
         rotSpeedX >>= 1;
         rotSpeedXtarget >>= 1;
         rotSpeedY >>= 1;

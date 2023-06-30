@@ -86,7 +86,7 @@ void EnAni_Init(Actor* thisx, PlayState* play) {
     }
     this->unk_2AA = 0;
     this->unk_2A8 = 0;
-    this->actor.minVelocityY = -1.0f;
+    this->actor.terminalVelocity = -1.0f;
     this->actor.velocity.y = -1.0f;
 }
 

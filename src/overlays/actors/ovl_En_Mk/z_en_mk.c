@@ -52,7 +52,7 @@ void EnMk_Init(Actor* thisx, PlayState* play) {
     EnMk* this = (EnMk*)thisx;
     s32 swimFlag;
 
-    this->actor.minVelocityY = -4.0f;
+    this->actor.terminalVelocity = -4.0f;
     this->actor.gravity = -1.0f;
     ActorShape_Init(&this->actor.shape, 0.0f, ActorShadow_DrawCircle, 36.0f);
     SkelAnime_InitFlex(play, &this->skelAnime, &object_mk_Skel_005DF0, &object_mk_Anim_000D88, this->jointTable,
@@ -314,7 +314,7 @@ void EnMk_Update(Actor* thisx, PlayState* play) {
         if (player->currentBoots == PLAYER_BOOTS_IRON) {
             this->flags |= 8;
         } else if (player->stateFlags2 & PLAYER_STATE2_DIVING) {
-            swimFlag = player->actor.yDistToWater;
+            swimFlag = player->actor.depthInWater;
 
             if (swimFlag > 0) {
                 if (swimFlag >= 320) {

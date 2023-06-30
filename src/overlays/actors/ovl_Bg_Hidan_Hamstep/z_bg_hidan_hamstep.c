@@ -176,7 +176,7 @@ void BgHidanHamstep_Init(Actor* thisx, PlayState* play) {
     }
 
     this->dyna.actor.gravity = -1.2f;
-    this->dyna.actor.minVelocityY = -12.0f;
+    this->dyna.actor.terminalVelocity = -12.0f;
 
     if ((this->dyna.actor.params & 0xFF) == 0) {
         // "Fire Temple Object [Hammer Step] appears"
@@ -296,7 +296,7 @@ void func_80888860(BgHidanHamstep* this, PlayState* play) {
 
     Actor_MoveXZGravity(&this->dyna.actor);
 
-    if (((this->dyna.actor.world.pos.y - this->dyna.actor.home.pos.y) < (-20.0f - this->dyna.actor.minVelocityY)) &&
+    if (((this->dyna.actor.world.pos.y - this->dyna.actor.home.pos.y) < (-20.0f - this->dyna.actor.terminalVelocity)) &&
         (this->dyna.actor.velocity.y <= 0.0f)) {
         this->unk_244++;
 

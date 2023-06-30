@@ -128,7 +128,7 @@ void func_80B86BC8(ItemShield* this, PlayState* play) {
     if (this->collider.base.acFlags & AC_HIT) {
         ItemShield_SetupAction(this, func_80B86AC8);
         this->actor.velocity.y = 4.0f;
-        this->actor.minVelocityY = -4.0f;
+        this->actor.terminalVelocity = -4.0f;
         this->actor.gravity = -0.8f;
         this->actor.speed = 0.0f;
         this->timer = 160;
@@ -201,7 +201,7 @@ void func_80B86F68(ItemShield* this, PlayState* play) {
     ItemShield_SetupAction(this, func_80B86CA8);
 
     this->actor.velocity.y = 4.0;
-    this->actor.minVelocityY = -4.0;
+    this->actor.terminalVelocity = -4.0;
     this->actor.gravity = -0.8;
     this->unk_198 = 0;
     this->timer = 70;

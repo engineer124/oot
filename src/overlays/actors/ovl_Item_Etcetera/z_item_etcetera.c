@@ -218,12 +218,12 @@ void ItemEtcetera_UpdateFireArrow(ItemEtcetera* this, PlayState* play) {
         if (play->csCtx.actorCues[0]->id == 2) {
             this->actor.draw = ItemEtcetera_Draw;
             this->actor.gravity = -0.1f;
-            this->actor.minVelocityY = -4.0f;
+            this->actor.terminalVelocity = -4.0f;
             this->actionFunc = ItemEtcetera_MoveFireArrowDown;
         }
     } else {
         this->actor.gravity = -0.1f;
-        this->actor.minVelocityY = -4.0f;
+        this->actor.terminalVelocity = -4.0f;
         this->actionFunc = ItemEtcetera_MoveFireArrowDown;
     }
 }

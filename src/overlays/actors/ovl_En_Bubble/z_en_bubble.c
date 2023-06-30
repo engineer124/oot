@@ -217,8 +217,8 @@ void EnBubble_Fly(EnBubble* this, PlayState* play) {
         this->velocityFromBump.z += (this->normalizedBumpVelocity.z * 3.0f);
     }
     this->sinkSpeed -= 0.1f;
-    if (this->sinkSpeed < this->actor.minVelocityY) {
-        this->sinkSpeed = this->actor.minVelocityY;
+    if (this->sinkSpeed < this->actor.terminalVelocity) {
+        this->sinkSpeed = this->actor.terminalVelocity;
     }
     sp54.x = this->velocityFromBounce.x + this->velocityFromBump.x;
     sp54.y = this->velocityFromBounce.y + this->velocityFromBump.y + this->sinkSpeed;

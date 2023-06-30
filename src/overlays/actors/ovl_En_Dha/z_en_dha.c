@@ -213,7 +213,7 @@ void EnDha_Wait(EnDha* this, PlayState* play) {
 
         if (Math_Vec3f_DistXYZ(&playerPos, &this->handPos[0]) <= 12.0f) {
             if (this->unk_1CC == 0) {
-                if (play->grabPlayer(play, player)) {
+                if (play->tryGrabbingPlayer(play, player)) {
                     this->timer = 0;
                     this->unk_1CC++;
 

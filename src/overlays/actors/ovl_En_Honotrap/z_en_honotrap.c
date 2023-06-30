@@ -191,7 +191,7 @@ void EnHonotrap_InitFlame(Actor* thisx, PlayState* play) {
     Collider_InitCylinder(play, &this->collider.cyl);
     Collider_SetCylinder(play, &this->collider.cyl, &this->actor, &sCylinderInit);
     Collider_UpdateCylinder(&this->actor, &this->collider.cyl);
-    this->actor.minVelocityY = -1.0f;
+    this->actor.terminalVelocity = -1.0f;
     CollisionCheck_SetInfo(&this->actor.colChkInfo, NULL, &sColChkInfoInit);
     ActorShape_Init(&this->actor.shape, 0.0f, ActorShadow_DrawCircle, 30.0f);
     this->actor.shape.shadowAlpha = 128;

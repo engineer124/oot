@@ -152,7 +152,7 @@ void EnTa_Init(Actor* thisx, PlayState* play2) {
     Actor_SetScale(&this->actor, 0.01f);
     this->actor.targetMode = 6;
     this->actor.velocity.y = -4.0f;
-    this->actor.minVelocityY = -4.0f;
+    this->actor.terminalVelocity = -4.0f;
     this->actor.gravity = -1.0f;
 
     switch (this->actor.params) {

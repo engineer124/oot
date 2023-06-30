@@ -487,8 +487,8 @@ void func_809FE890(EnDu* this, PlayState* play) {
             this->actor.velocity.y = (endPos.y - startPos.y) / frame;
             this->actor.velocity.y += this->actor.gravity;
 
-            if (this->actor.velocity.y < this->actor.minVelocityY) {
-                this->actor.velocity.y = this->actor.minVelocityY;
+            if (this->actor.velocity.y < this->actor.terminalVelocity) {
+                this->actor.velocity.y = this->actor.terminalVelocity;
             }
 
             this->actor.velocity.z = (endPos.z - startPos.z) / frame;

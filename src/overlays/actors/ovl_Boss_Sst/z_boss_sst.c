@@ -2410,7 +2410,7 @@ void BossSst_HandBreakIce(BossSst* this, PlayState* play) {
 void BossSst_HandGrabPlayer(BossSst* this, PlayState* play) {
     Player* player = GET_PLAYER(play);
 
-    if (play->grabPlayer(play, player)) {
+    if (play->tryGrabbingPlayer(play, player)) {
         player->actor.parent = &this->actor;
         if (player->actor.colChkInfo.health > 0) {
             this->colliderJntSph.base.ocFlags1 &= ~OC1_ON;

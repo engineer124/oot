@@ -298,7 +298,7 @@ void EnFr_Update(Actor* thisx, PlayState* play) {
         // When the frogs are not active (link doesn't have his ocarina out),
         // Then shrink the frogs down by a factor of 10,000
         Actor_SetScale(&this->actor, this->scale * 0.0001f);
-        this->actor.minVelocityY = -9999.0f;
+        this->actor.terminalVelocity = -9999.0f;
         Actor_SetFocus(&this->actor, 10.0f);
         this->eyeTexIndex = 1;
         this->blinkTimer = (s16)(Rand_ZeroFloat(60.0f) + 20.0f);

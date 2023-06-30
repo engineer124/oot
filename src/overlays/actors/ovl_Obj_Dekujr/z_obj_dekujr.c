@@ -124,8 +124,8 @@ void ObjDekujr_ComeUp(ObjDekujr* this, PlayState* play) {
                 this->actor.velocity.y = (finalPos.y - initPos.y) / cueDuration;
                 this->actor.velocity.y += gravity;
 
-                if (this->actor.velocity.y < this->actor.minVelocityY) {
-                    this->actor.velocity.y = this->actor.minVelocityY;
+                if (this->actor.velocity.y < this->actor.terminalVelocity) {
+                    this->actor.velocity.y = this->actor.terminalVelocity;
                 }
 
                 this->actor.velocity.z = (finalPos.z - initPos.z) / cueDuration;

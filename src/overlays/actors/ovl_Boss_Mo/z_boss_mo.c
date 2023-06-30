@@ -726,7 +726,7 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
             }
             if (this->work[MO_TENT_ACTION_STATE] == MO_TENT_CURL) {
                 if ((this->timers[0] >= 5) && (this->playerHitTimer != 0) && (player->actor.parent == NULL)) {
-                    if (play->grabPlayer(play, player)) {
+                    if (play->tryGrabbingPlayer(play, player)) {
                         player->actor.parent = &this->actor;
                         this->work[MO_TENT_ACTION_STATE] = MO_TENT_GRAB;
                         Audio_PlaySfx_AtPos(&this->tentTipPos, NA_SE_EN_MOFER_CATCH);

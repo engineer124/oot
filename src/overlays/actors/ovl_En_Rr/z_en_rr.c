@@ -509,7 +509,7 @@ void EnRr_CollisionCheck(EnRr* this, PlayState* play) {
             this->collider2.base.ocFlags1 &= ~OC1_HIT;
             // "catch"
             osSyncPrintf(VT_FGCOL(GREEN) "キャッチ(%d)！！" VT_RST "\n", this->frameCount);
-            if (play->grabPlayer(play, player)) {
+            if (play->tryGrabbingPlayer(play, player)) {
                 player->actor.parent = &this->actor;
                 this->stopScroll = false;
                 EnRr_SetupGrabPlayer(this, player);

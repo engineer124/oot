@@ -263,8 +263,8 @@ void EnIshi_DropCollectible(EnIshi* this, PlayState* play) {
 void EnIshi_Fall(EnIshi* this) {
     this->actor.velocity.y += this->actor.gravity;
 
-    if (this->actor.velocity.y < this->actor.minVelocityY) {
-        this->actor.velocity.y = this->actor.minVelocityY;
+    if (this->actor.velocity.y < this->actor.terminalVelocity) {
+        this->actor.velocity.y = this->actor.terminalVelocity;
     }
 }
 
@@ -292,14 +292,14 @@ void EnIshi_SpawnBugs(EnIshi* this, PlayState* play) {
 static InitChainEntry sInitChains[][5] = {
     {
         ICHAIN_F32_DIV1000(gravity, -1200, ICHAIN_CONTINUE),
-        ICHAIN_F32_DIV1000(minVelocityY, -20000, ICHAIN_CONTINUE),
+        ICHAIN_F32_DIV1000(terminalVelocity, -20000, ICHAIN_CONTINUE),
         ICHAIN_F32(uncullZoneForward, 1200, ICHAIN_CONTINUE),
         ICHAIN_F32(uncullZoneScale, 150, ICHAIN_CONTINUE),
         ICHAIN_F32(uncullZoneDownward, 400, ICHAIN_STOP),
     },
     {
         ICHAIN_F32_DIV1000(gravity, -2500, ICHAIN_CONTINUE),
-        ICHAIN_F32_DIV1000(minVelocityY, -20000, ICHAIN_CONTINUE),
+        ICHAIN_F32_DIV1000(terminalVelocity, -20000, ICHAIN_CONTINUE),
         ICHAIN_F32(uncullZoneForward, 2000, ICHAIN_CONTINUE),
         ICHAIN_F32(uncullZoneScale, 250, ICHAIN_CONTINUE),
         ICHAIN_F32(uncullZoneDownward, 500, ICHAIN_STOP),
@@ -443,7 +443,7 @@ void EnIshi_Fly(EnIshi* this, PlayState* play) {
     }
     if (this->actor.bgCheckFlags & BGCHECKFLAG_WATER_TOUCH) {
         contactPos.x = this->actor.world.pos.x;
-        contactPos.y = this->actor.world.pos.y + this->actor.yDistToWater;
+        contactPos.y = this->actor.world.pos.y + this->actor.depthInWater;
         contactPos.z = this->actor.world.pos.z;
         EffectSsGSplash_Spawn(play, &contactPos, NULL, NULL, 0, 350);
         if (type == ROCK_SMALL) {
@@ -455,7 +455,7 @@ void EnIshi_Fly(EnIshi* this, PlayState* play) {
             EffectSsGRipple_Spawn(play, &contactPos, 500, 900, 4);
             EffectSsGRipple_Spawn(play, &contactPos, 500, 1300, 8);
         }
-        this->actor.minVelocityY = -6.0f;
+        this->actor.terminalVelocity = -6.0f;
         sRotSpeedX >>= 2;
         sRotSpeedY >>= 2;
         SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 40, NA_SE_EV_DIVE_INTO_WATER_L);

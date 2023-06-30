@@ -74,8 +74,8 @@ void ObjKibako_SpawnCollectible(ObjKibako* this, PlayState* play) {
 
 void ObjKibako_ApplyGravity(ObjKibako* this) {
     this->actor.velocity.y += this->actor.gravity;
-    if (this->actor.velocity.y < this->actor.minVelocityY) {
-        this->actor.velocity.y = this->actor.minVelocityY;
+    if (this->actor.velocity.y < this->actor.terminalVelocity) {
+        this->actor.velocity.y = this->actor.terminalVelocity;
     }
 }
 
@@ -93,7 +93,7 @@ void ObjKibako_Init(Actor* thisx, PlayState* play) {
 
     Actor_ProcessInitChain(&this->actor, sInitChain);
     this->actor.gravity = -1.2f;
-    this->actor.minVelocityY = -13.0f;
+    this->actor.terminalVelocity = -13.0f;
     ObjKibako_InitCollider(&this->actor, play);
     CollisionCheck_SetInfo(&this->actor.colChkInfo, NULL, &sCCInfoInit);
     ObjKibako_SetupIdle(this);
@@ -152,7 +152,7 @@ void ObjKibako_WaterBreak(ObjKibako* this, PlayState* play) {
     Vec3f velocity;
 
     pos = *breakPos;
-    pos.y += this->actor.yDistToWater;
+    pos.y += this->actor.depthInWater;
     EffectSsGSplash_Spawn(play, &pos, NULL, NULL, 0, 500);
 
     for (i = 0, angle = 0; i < 12; i++, angle += 0x4E20) {
@@ -187,7 +187,7 @@ void ObjKibako_Idle(ObjKibako* this, PlayState* play) {
 
     if (Actor_HasParent(&this->actor, play)) {
         ObjKibako_SetupHeld(this);
-    } else if ((this->actor.bgCheckFlags & BGCHECKFLAG_WATER) && (this->actor.yDistToWater > 19.0f)) {
+    } else if ((this->actor.bgCheckFlags & BGCHECKFLAG_WATER) && (this->actor.depthInWater > 19.0f)) {
         ObjKibako_WaterBreak(this, play);
         SfxSource_PlaySfxAtFixedWorldPos(play, &this->actor.world.pos, 20, NA_SE_EV_WOODBOX_BREAK);
         ObjKibako_SpawnCollectible(this, play);

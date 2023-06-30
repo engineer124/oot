@@ -83,10 +83,10 @@ void ItemOcarina_Fly(ItemOcarina* this, PlayState* play) {
     this->actor.shape.rot.x += this->spinRotOffset * 2;
     this->actor.shape.rot.y += this->spinRotOffset * 3;
 
-    if (this->actor.minVelocityY < this->actor.velocity.y) {
+    if (this->actor.terminalVelocity < this->actor.velocity.y) {
         this->actor.velocity.y += this->actor.gravity;
-        if (this->actor.velocity.y < this->actor.minVelocityY) {
-            this->actor.velocity.y = this->actor.minVelocityY;
+        if (this->actor.velocity.y < this->actor.terminalVelocity) {
+            this->actor.velocity.y = this->actor.terminalVelocity;
         }
     }
 
@@ -106,7 +106,7 @@ void ItemOcarina_Fly(ItemOcarina* this, PlayState* play) {
         this->actor.velocity.y = 0.0f;
         this->actor.velocity.z = 0.0f;
         this->actor.gravity = -0.1f;
-        this->actor.minVelocityY = -0.5f;
+        this->actor.terminalVelocity = -0.5f;
         this->spinRotOffset = 0;
         Actor_PlaySfx(&this->actor, NA_SE_EV_BOMB_DROP_WATER);
     }
@@ -122,7 +122,7 @@ void ItemOcarina_Fly(ItemOcarina* this, PlayState* play) {
 
 void ItemOcarina_GetThrown(ItemOcarina* this, PlayState* play) {
     this->actor.gravity = -0.3f;
-    this->actor.minVelocityY = -5.0f;
+    this->actor.terminalVelocity = -5.0f;
     this->actor.velocity.x = 0.0f;
     this->actor.velocity.y = 6.0f;
     this->actor.velocity.z = 0.0f;
@@ -134,11 +134,11 @@ void func_80B864EC(ItemOcarina* this, PlayState* play) {
     this->actor.shape.rot.x += this->spinRotOffset * 2;
     this->actor.shape.rot.y += this->spinRotOffset * 3;
 
-    if (this->actor.minVelocityY < this->actor.velocity.y) {
+    if (this->actor.terminalVelocity < this->actor.velocity.y) {
         this->actor.velocity.y += this->actor.gravity;
 
-        if (this->actor.velocity.y < this->actor.minVelocityY) {
-            this->actor.velocity.y = this->actor.minVelocityY;
+        if (this->actor.velocity.y < this->actor.terminalVelocity) {
+            this->actor.velocity.y = this->actor.terminalVelocity;
         }
     }
 
@@ -150,13 +150,13 @@ void func_80B864EC(ItemOcarina* this, PlayState* play) {
         this->actor.velocity.y = 2.0f;
         this->actor.velocity.z = -7.0f;
         this->actor.gravity = -0.15f;
-        this->actor.minVelocityY = -5.0f;
+        this->actor.terminalVelocity = -5.0f;
     }
 }
 
 void func_80B865E0(ItemOcarina* this, PlayState* play) {
     this->actor.gravity = -0.3f;
-    this->actor.minVelocityY = -5.0f;
+    this->actor.terminalVelocity = -5.0f;
     this->actor.velocity.x = 0.0f;
     this->actor.velocity.y = 4.0f;
     this->actor.velocity.z = 6.0f;

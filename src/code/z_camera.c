@@ -7600,8 +7600,8 @@ Vec3s Camera_Update(Camera* camera) {
         Actor_GetWorldPosShapeRot(&curPlayerPosRot, &camera->player->actor);
         camera->xzSpeed = playerXZSpeed = OLib_Vec3fDistXZ(&curPlayerPosRot.pos, &camera->playerPosRot.pos);
 
-        camera->speedRatio =
-            OLib_ClampMaxDist(playerXZSpeed / (func_8002DCE4(camera->player) * CAM_DATA_SCALED(OREG(8))), 1.0f);
+        camera->speedRatio = OLib_ClampMaxDist(
+            playerXZSpeed / (Player_GetRunSpeedLimit(camera->player) * CAM_DATA_SCALED(OREG(8))), 1.0f);
         camera->playerPosDelta.x = curPlayerPosRot.pos.x - camera->playerPosRot.pos.x;
         camera->playerPosDelta.y = curPlayerPosRot.pos.y - camera->playerPosRot.pos.y;
         camera->playerPosDelta.z = curPlayerPosRot.pos.z - camera->playerPosRot.pos.z;

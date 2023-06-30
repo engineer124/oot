@@ -633,8 +633,8 @@ typedef struct {
 #define PLAYER_STATE1_CHARGING_SPIN_ATTACK (1 << 12)
 #define PLAYER_STATE1_HANGING_FROM_LEDGE_SLIP (1 << 13)
 #define PLAYER_STATE1_CLIMBING_ONTO_LEDGE (1 << 14)
-#define PLAYER_STATE1_UNUSED_Z_TARGETING_FLAG (1 << 15)
-#define PLAYER_STATE1_STRAFE (1 << 16) // Lock on friend, carrying actor, following boomerang
+#define PLAYER_STATE1_Z_TARGETING (1 << 15) // Unused
+#define PLAYER_STATE1_LOCK_ON_FRIEND (1 << 16) // Lock on friend, carrying actor, following boomerang
 #define PLAYER_STATE1_Z_PARALLEL (1 << 17)
 #define PLAYER_STATE1_JUMPING (1 << 18)
 #define PLAYER_STATE1_FREEFALLING (1 << 19)
@@ -649,7 +649,7 @@ typedef struct {
 #define PLAYER_STATE1_SKIP_OTHER_ACTORS_UPDATE (1 << 28)
 #define PLAYER_STATE1_IN_CUTSCENE (1 << 29)
 #define PLAYER_STATE1_Z_PARALLEL_FROM_UNTARGET (1 << 30)
-#define PLAYER_STATE1_FALLING_INTO_GROTTO_OR_VOID (1 << 31)
+#define PLAYER_STATE1_FALLING_INTO_GROTTO (1 << 31)
 
 #define PLAYER_STATE2_CAN_GRAB_PUSH_PULL_WALL (1 << 0)
 #define PLAYER_STATE2_CAN_SPEAK_OR_CHECK (1 << 1)
@@ -753,8 +753,8 @@ typedef struct Player {
     /* 0x0447 */ u8         unk_447;
     /* 0x0448 */ Actor*     unk_448;
     /* 0x044C */ char       unk_44C[0x004];
-    /* 0x0450 */ Vec3f      unk_450;
-    /* 0x045C */ Vec3f      unk_45C;
+    /* 0x0450 */ Vec3f      miniCsPosTarget;
+    /* 0x045C */ Vec3f      miniCsEndPos;
     /* 0x0468 */ char       unk_468[0x002];
     /* 0x046A */ s16        doorBgCamIndex;
     /* 0x046C */ s16        subCamId;
@@ -776,8 +776,8 @@ typedef struct Player {
     /* 0x0690 */ s16        naviTextId;
     /* 0x0692 */ u8         stateFlags3;
     /* 0x0693 */ s8         exchangeItemId;
-    /* 0x0694 */ Actor*     targetActor;
-    /* 0x0698 */ f32        targetActorDistance;
+    /* 0x0694 */ Actor*     talkActor;
+    /* 0x0698 */ f32        talkActorDistance;
     /* 0x069C */ char       unk_69C[0x004];
     /* 0x06A0 */ f32        secretRumbleCharge;
     /* 0x06A4 */ f32        closestSecretDistSq;
@@ -812,7 +812,7 @@ typedef struct Player {
     /* 0x084B */ s8         analogStickDirection4Parts[4];
     /* 0x084F */ union {
                     s8 actionVar8;
-                    s8 miniCutsceneMoveVar8;
+                    s8 miniCsHasMovedToStart;
                     s8 spawnFromBlueWarpVar8;
                     s8 frozenInIceVar8;
                     s8 shieldAimCrouchedVar8;
@@ -822,7 +822,7 @@ typedef struct Player {
                 };
     /* 0x0850 */ union {
                     s16 actionVar16;
-                    s16 miniCutsceneMoveVar16; // Action: MiniCutsceneMove
+                    s16 miniCutsceneVar16; // Action: MiniCutsceneMove
                     s16 spawnFromBlueWarpVar16; // Action: SpawnFromBlueWarp
                     s16 startCutsceneDelayedVar16; // Action: StartCutscene
                     s16 midairVar16; // Action: Midair
@@ -858,7 +858,7 @@ typedef struct Player {
     /* 0x086C */ f32        unk_86C;
     /* 0x0870 */ f32        leftRightBlendWeight;
     /* 0x0874 */ f32        leftRightBlendWeightTarget;
-    /* 0x0878 */ f32        unk_878;
+    /* 0x0878 */ f32        rideOffsetY;
     /* 0x087C */ s16        unk_87C;
     /* 0x087E */ s16        unk_87E;
     /* 0x0880 */ f32        speedLimit;

@@ -235,7 +235,7 @@ void BgMoriHashigo_SetupLadderFall(BgMoriHashigo* this) {
     this->bounceCounter = 0;
     this->actionFunc = BgMoriHashigo_LadderFall;
     this->dyna.actor.gravity = -1.0f;
-    this->dyna.actor.minVelocityY = -10.0f;
+    this->dyna.actor.terminalVelocity = -10.0f;
     this->dyna.actor.velocity.y = 2.0f;
 }
 

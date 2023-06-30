@@ -961,7 +961,7 @@ void DemoEffect_InitCreationFireball(DemoEffect* this, PlayState* play) {
     this->actor.world.rot.y = parent->shape.rot.y;
     this->fireBall.timer = 50;
     this->actor.speed = 1.5f;
-    this->actor.minVelocityY = -1.5f;
+    this->actor.terminalVelocity = -1.5f;
     this->actor.gravity = -0.03f;
     this->updateFunc = DemoEffect_UpdateCreationFireball;
 }

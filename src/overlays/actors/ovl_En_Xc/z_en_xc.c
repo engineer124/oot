@@ -676,7 +676,7 @@ void func_80B3D8A4(EnXc* this, PlayState* play, s32 animFinished) {
 
         func_80B3C9DC(this);
         this->actor.gravity = -((kREG(1) * 0.01f) + 13.0f);
-        this->actor.minVelocityY = -((kREG(1) * 0.01f) + 13.0f);
+        this->actor.terminalVelocity = -((kREG(1) * 0.01f) + 13.0f);
     } else {
         func_80B3C8CC(this, play);
     }

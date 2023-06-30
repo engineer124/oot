@@ -514,7 +514,7 @@ void func_80B0D3AC(EnSw* this, PlayState* play) {
     this->actor.world.pos.y += this->unk_37C.y * this->actor.speed;
     this->actor.world.pos.z += this->unk_37C.z * this->actor.speed;
     this->actor.velocity.y += this->actor.gravity;
-    this->actor.velocity.y = CLAMP_MIN(this->actor.velocity.y, this->actor.minVelocityY);
+    this->actor.velocity.y = CLAMP_MIN(this->actor.velocity.y, this->actor.terminalVelocity);
 
     if (this->actor.velocity.y < 0.0f) {
         this->unk_360 = 0;

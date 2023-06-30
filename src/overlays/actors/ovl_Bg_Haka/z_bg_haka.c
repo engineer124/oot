@@ -33,7 +33,7 @@ ActorInit Bg_Haka_InitVars = {
 };
 
 static InitChainEntry sInitChain[] = {
-    ICHAIN_F32(minVelocityY, 0, ICHAIN_CONTINUE),
+    ICHAIN_F32(terminalVelocity, 0, ICHAIN_CONTINUE),
     ICHAIN_VEC3F_DIV1000(scale, 100, ICHAIN_STOP),
 };
 
@@ -94,11 +94,11 @@ void func_8087B938(BgHaka* this, PlayState* play) {
 
     this->dyna.actor.speed += 0.05f;
     this->dyna.actor.speed = CLAMP_MAX(this->dyna.actor.speed, 1.5f);
-    sp38 = Math_StepToF(&this->dyna.actor.minVelocityY, 60.0f, this->dyna.actor.speed);
+    sp38 = Math_StepToF(&this->dyna.actor.terminalVelocity, 60.0f, this->dyna.actor.speed);
     this->dyna.actor.world.pos.x =
-        Math_SinS(this->dyna.actor.world.rot.y) * this->dyna.actor.minVelocityY + this->dyna.actor.home.pos.x;
+        Math_SinS(this->dyna.actor.world.rot.y) * this->dyna.actor.terminalVelocity + this->dyna.actor.home.pos.x;
     this->dyna.actor.world.pos.z =
-        Math_CosS(this->dyna.actor.world.rot.y) * this->dyna.actor.minVelocityY + this->dyna.actor.home.pos.z;
+        Math_CosS(this->dyna.actor.world.rot.y) * this->dyna.actor.terminalVelocity + this->dyna.actor.home.pos.z;
     if (sp38 != 0) {
         this->dyna.unk_150 = 0.0f;
         player->stateFlags2 &= ~PLAYER_STATE2_MOVING_PUSH_PULL_WALL;
@@ -154,7 +154,7 @@ void BgHaka_Draw(Actor* thisx, PlayState* play) {
     gSPMatrix(POLY_OPA_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_haka.c", 406),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_OPA_DISP++, gGravestoneStoneDL);
-    Matrix_Translate(0.0f, 0.0f, thisx->minVelocityY * 10.0f, MTXMODE_APPLY);
+    Matrix_Translate(0.0f, 0.0f, thisx->terminalVelocity * 10.0f, MTXMODE_APPLY);
     gSPMatrix(POLY_XLU_DISP++, Matrix_NewMtx(play->state.gfxCtx, "../z_bg_haka.c", 416),
               G_MTX_NOPUSH | G_MTX_LOAD | G_MTX_MODELVIEW);
     gSPDisplayList(POLY_XLU_DISP++, gGravestoneEarthDL);

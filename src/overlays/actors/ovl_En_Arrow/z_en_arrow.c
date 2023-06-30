@@ -52,7 +52,7 @@ static ColliderQuadInit sColliderInit = {
 };
 
 static InitChainEntry sInitChain[] = {
-    ICHAIN_F32(minVelocityY, -150, ICHAIN_STOP),
+    ICHAIN_F32(terminalVelocity, -150, ICHAIN_STOP),
 };
 
 void EnArrow_SetupAction(EnArrow* this, EnArrowActionFunc actionFunc) {

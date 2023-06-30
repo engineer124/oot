@@ -411,8 +411,8 @@ void func_80B4B8B4(EnZl1* this, PlayState* play) {
             this->actor.velocity.y = (sp68.y - sp74.y) / cueDuration;
             this->actor.velocity.y += this->actor.gravity;
 
-            if (this->actor.velocity.y < this->actor.minVelocityY) {
-                this->actor.velocity.y = this->actor.minVelocityY;
+            if (this->actor.velocity.y < this->actor.terminalVelocity) {
+                this->actor.velocity.y = this->actor.terminalVelocity;
             }
             this->actor.velocity.z = (sp68.z - sp74.z) / cueDuration;
         }
@@ -494,8 +494,8 @@ void func_80B4BC78(EnZl1* this, PlayState* play) {
             this->actor.velocity.y = (sp64.y - sp70.y) / cueDuration;
             this->actor.velocity.y += this->actor.gravity;
 
-            if (this->actor.velocity.y < this->actor.minVelocityY) {
-                this->actor.velocity.y = this->actor.minVelocityY;
+            if (this->actor.velocity.y < this->actor.terminalVelocity) {
+                this->actor.velocity.y = this->actor.terminalVelocity;
             }
 
             this->actor.velocity.z = (sp64.z - sp70.z) / cueDuration;

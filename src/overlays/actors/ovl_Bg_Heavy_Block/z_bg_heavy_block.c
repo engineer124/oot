@@ -58,7 +58,7 @@ void BgHeavyBlock_InitPiece(BgHeavyBlock* this, f32 scale) {
     f32 randChoice;
 
     this->dyna.actor.gravity = -0.6f;
-    this->dyna.actor.minVelocityY = -12.0f;
+    this->dyna.actor.terminalVelocity = -12.0f;
     randChoice = Rand_CenteredFloat(12.0f * scale);
     rand = (randChoice < 0.0f) ? randChoice - 2.0f : randChoice + 2.0f;
     this->dyna.actor.velocity.y = (Rand_ZeroFloat(8.0f) + 4.0f) * scale;
@@ -166,8 +166,8 @@ void BgHeavyBlock_MovePiece(BgHeavyBlock* this, PlayState* play) {
 
     thisx->velocity.y += thisx->gravity;
 
-    if (thisx->velocity.y < thisx->minVelocityY) {
-        thisx->velocity.y = thisx->minVelocityY;
+    if (thisx->velocity.y < thisx->terminalVelocity) {
+        thisx->velocity.y = thisx->terminalVelocity;
     }
 
     thisx->velocity.x *= 0.98f;

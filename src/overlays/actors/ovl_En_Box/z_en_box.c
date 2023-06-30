@@ -114,7 +114,7 @@ void EnBox_Init(Actor* thisx, PlayState* play2) {
     this->unk_1FB = ENBOX_STATE_0;
     this->dyna.actor.gravity = -5.5f;
     this->switchFlag = this->dyna.actor.world.rot.z;
-    this->dyna.actor.minVelocityY = -50.0f;
+    this->dyna.actor.terminalVelocity = -50.0f;
 
     if (play) {} // helps the compiler store play2 into s1
 

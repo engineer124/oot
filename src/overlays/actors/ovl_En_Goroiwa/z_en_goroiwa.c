@@ -523,7 +523,7 @@ void EnGoroiwa_SpawnFragments(EnGoroiwa* this, PlayState* play) {
 }
 
 static InitChainEntry sInitChain[] = {
-    ICHAIN_F32_DIV1000(gravity, -860, ICHAIN_CONTINUE), ICHAIN_F32_DIV1000(minVelocityY, -15000, ICHAIN_CONTINUE),
+    ICHAIN_F32_DIV1000(gravity, -860, ICHAIN_CONTINUE), ICHAIN_F32_DIV1000(terminalVelocity, -15000, ICHAIN_CONTINUE),
     ICHAIN_VEC3F_DIV1000(scale, 100, ICHAIN_CONTINUE),  ICHAIN_F32(uncullZoneForward, 1500, ICHAIN_CONTINUE),
     ICHAIN_F32(uncullZoneScale, 150, ICHAIN_CONTINUE),  ICHAIN_F32(uncullZoneDownward, 1500, ICHAIN_STOP),
 };
@@ -636,7 +636,7 @@ void EnGoroiwa_SetupMoveAndFallToGround(EnGoroiwa* this) {
     this->actionFunc = EnGoroiwa_MoveAndFallToGround;
     EnGoroiwa_UpdateFlags(this, ENGOROIWA_ENABLE_OC);
     this->actor.gravity = -0.86f;
-    this->actor.minVelocityY = -15.0f;
+    this->actor.terminalVelocity = -15.0f;
     this->actor.speed *= 0.15f;
     this->actor.velocity.y = 5.0f;
     this->rollRotSpeed = 1.0f;

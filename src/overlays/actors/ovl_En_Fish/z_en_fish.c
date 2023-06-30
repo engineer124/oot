@@ -191,7 +191,7 @@ s32 EnFish_CheckXZDistanceToPlayer(EnFish* this, PlayState* play) {
 
 void EnFish_Respawning_SetupSlowDown(EnFish* this) {
     this->actor.gravity = 0.0f;
-    this->actor.minVelocityY = 0.0f;
+    this->actor.terminalVelocity = 0.0f;
     this->timer = Rand_S16Offset(5, 35);
     this->unk_250 = 0;
     EnFish_SetInWaterAnimation(this);
@@ -218,7 +218,7 @@ void EnFish_Respawning_SlowDown(EnFish* this, PlayState* play) {
 
 void EnFish_Respawning_SetupFollowChild(EnFish* this) {
     this->actor.gravity = 0.0f;
-    this->actor.minVelocityY = 0.0f;
+    this->actor.terminalVelocity = 0.0f;
     this->timer = Rand_S16Offset(15, 45);
     this->unk_250 = 0;
     EnFish_SetInWaterAnimation(this);
@@ -254,7 +254,7 @@ void EnFish_Respawning_FollowChild(EnFish* this, PlayState* play) {
 
 void EnFish_Respawning_SetupFleePlayer(EnFish* this) {
     this->actor.gravity = 0.0f;
-    this->actor.minVelocityY = 0.0f;
+    this->actor.terminalVelocity = 0.0f;
     this->timer = Rand_S16Offset(10, 40);
     this->unk_250 = 0;
     EnFish_SetInWaterAnimation(this);
@@ -309,7 +309,7 @@ void EnFish_Respawning_FleePlayer(EnFish* this, PlayState* play) {
 
 void EnFish_Respawning_SetupApproachPlayer(EnFish* this) {
     this->actor.gravity = 0.0f;
-    this->actor.minVelocityY = 0.0f;
+    this->actor.terminalVelocity = 0.0f;
     EnFish_SetInWaterAnimation(this);
     this->timer = Rand_S16Offset(10, 40);
     this->unk_250 = 0;
@@ -359,7 +359,7 @@ void EnFish_Respawning_ApproachPlayer(EnFish* this, PlayState* play) {
 
 void EnFish_Dropped_SetupFall(EnFish* this) {
     this->actor.gravity = -1.0f;
-    this->actor.minVelocityY = -10.0f;
+    this->actor.terminalVelocity = -10.0f;
     this->actor.shape.yOffset = 0.0f;
     EnFish_SetOutOfWaterAnimation(this);
     this->unk_250 = UPDBGCHECKINFO_FLAG_0 | UPDBGCHECKINFO_FLAG_2;
@@ -401,7 +401,7 @@ void EnFish_Dropped_SetupFlopOnGround(EnFish* this) {
     s32 playSfx;
 
     this->actor.gravity = -1.0f;
-    this->actor.minVelocityY = -10.0f;
+    this->actor.terminalVelocity = -10.0f;
     randomFloat = Rand_ZeroOne();
 
     if (randomFloat < 0.1f) {
@@ -475,7 +475,7 @@ void EnFish_Dropped_SetupSwimAway(EnFish* this) {
     this->actor.flags |= ACTOR_FLAG_NO_UPDATE_CULLING;
     this->timer = 200;
     this->actor.gravity = 0.0f;
-    this->actor.minVelocityY = 0.0f;
+    this->actor.terminalVelocity = 0.0f;
     this->actor.shape.yOffset = 0.0f;
     EnFish_SetInWaterAnimation(this);
     this->actionFunc = EnFish_Dropped_SwimAway;
@@ -523,7 +523,7 @@ void EnFish_Dropped_SwimAway(EnFish* this, PlayState* play) {
 
 void EnFish_Unique_SetupSwimIdle(EnFish* this) {
     this->actor.gravity = 0.0f;
-    this->actor.minVelocityY = 0.0f;
+    this->actor.terminalVelocity = 0.0f;
     this->timer = Rand_S16Offset(5, 35);
     this->unk_250 = 0;
     EnFish_SetInWaterAnimation(this);

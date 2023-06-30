@@ -382,7 +382,7 @@ void EnRd_WalkToPlayer(EnRd* this, PlayState* play) {
     if (!this->grabWaitTimer && (Actor_WorldDistXYZToActor(&this->actor, &player->actor) <= 45.0f) &&
         Actor_IsFacingPlayer(&this->actor, 0x38E3)) {
         player->actor.freezeTimer = 0;
-        if (play->grabPlayer(play, player)) {
+        if (play->tryGrabbingPlayer(play, player)) {
             this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
             EnRd_SetupGrab(this);
         }

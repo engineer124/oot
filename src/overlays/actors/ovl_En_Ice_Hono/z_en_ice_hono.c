@@ -122,7 +122,7 @@ void EnIceHono_InitDroppedFlame(Actor* thisx, PlayState* play) {
     Actor_ProcessInitChain(&this->actor, sInitChainDroppedFlame);
     this->actor.scale.x = this->actor.scale.z = this->actor.scale.y = 0.00002f;
     this->actor.gravity = -0.3f;
-    this->actor.minVelocityY = -4.0f;
+    this->actor.terminalVelocity = -4.0f;
     this->actor.shape.yOffset = 0.0f;
     this->actor.shape.rot.x = this->actor.shape.rot.y = this->actor.shape.rot.z = this->actor.world.rot.x =
         this->actor.world.rot.y = this->actor.world.rot.z = 0;
@@ -143,7 +143,7 @@ void EnIceHono_InitSmallFlame(Actor* thisx, PlayState* play) {
     Actor_ProcessInitChain(&this->actor, sInitChainSmallFlame);
     this->actor.scale.x = this->actor.scale.z = this->actor.scale.y = 0.0008f;
     this->actor.gravity = -0.3f;
-    this->actor.minVelocityY = -4.0f;
+    this->actor.terminalVelocity = -4.0f;
     this->actor.shape.yOffset = 0.0f;
 
     EnIceHono_SetupActionSmallFlame(this);

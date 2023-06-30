@@ -604,7 +604,7 @@ void Player_Untarget(Player* this) {
     this->stateFlags2 &= ~PLAYER_STATE2_USING_SWITCH_Z_TARGET;
 }
 
-void func_8008EE08(Player* this) {
+void Player_UntargetCheckFloor(Player* this) {
     if (
         // Option 1
         (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) ||
@@ -615,7 +615,7 @@ void func_8008EE08(Player* this) {
          ((this->actor.world.pos.y - this->actor.floorHeight) < 100.0f))) {
 
         this->stateFlags1 &=
-            ~(PLAYER_STATE1_UNUSED_Z_TARGETING_FLAG | PLAYER_STATE1_STRAFE | PLAYER_STATE1_Z_PARALLEL |
+            ~(PLAYER_STATE1_Z_TARGETING | PLAYER_STATE1_LOCK_ON_FRIEND | PLAYER_STATE1_Z_PARALLEL |
               PLAYER_STATE1_JUMPING | PLAYER_STATE1_FREEFALLING | PLAYER_STATE1_Z_PARALLEL_FROM_UNTARGET);
     } else if (!(this->stateFlags1 & (PLAYER_STATE1_JUMPING | PLAYER_STATE1_FREEFALLING | PLAYER_STATE1_CLIMBING))) {
         this->stateFlags1 |= PLAYER_STATE1_FREEFALLING;
@@ -627,10 +627,10 @@ void func_8008EE08(Player* this) {
 void Player_ForceLockOn(PlayState* play, Actor* actor) {
     Player* this = GET_PLAYER(play);
 
-    func_8008EE08(this);
+    Player_UntargetCheckFloor(this);
     this->lockOnActor = actor;
     this->forcedLockOn = actor;
-    this->stateFlags1 |= PLAYER_STATE1_STRAFE;
+    this->stateFlags1 |= PLAYER_STATE1_LOCK_ON_FRIEND;
     Camera_SetViewParam(Play_GetCamera(play, CAM_ID_MAIN), CAM_VIEW_TARGET, actor);
     Camera_ChangeMode(Play_GetCamera(play, CAM_ID_MAIN), CAM_MODE_Z_TARGET_FRIENDLY);
 }

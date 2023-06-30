@@ -699,8 +699,8 @@ void func_80AF68E4(EnSa* this, PlayState* play) {
                 gravity = 0.0f;
             }
             this->actor.velocity.y += gravity;
-            if (this->actor.velocity.y < this->actor.minVelocityY) {
-                this->actor.velocity.y = this->actor.minVelocityY;
+            if (this->actor.velocity.y < this->actor.terminalVelocity) {
+                this->actor.velocity.y = this->actor.terminalVelocity;
             }
             this->actor.velocity.z = (endPos.z - startPos.z) / temp_f0;
         }

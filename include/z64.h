@@ -244,7 +244,7 @@ typedef struct {
     /* 0x18 */ Color_RGBAf naviInner;
     /* 0x28 */ Color_RGBAf naviOuter;
     /* 0x38 */ Actor*   nextLockOnActor;
-    /* 0x3C */ Actor*   targetedActor;
+    /* 0x3C */ Actor*   lockOnActor;
     /* 0x40 */ f32      fairyMoveProgressFactor;
     /* 0x44 */ f32      lockOnRadius;
     /* 0x48 */ s16      lockOnAlpha;
@@ -835,7 +835,7 @@ typedef struct PlayState {
     /* 0x11D40 */ void (*playerUpdate)(Player* player, struct PlayState* play, Input* input);
     /* 0x11D44 */ s32 (*isPlayerDroppingFish)(struct PlayState* play);
     /* 0x11D48 */ s32 (*startPlayerFishing)(struct PlayState* play);
-    /* 0x11D4C */ s32 (*grabPlayer)(struct PlayState* play, Player* player);
+    /* 0x11D4C */ s32 (*tryGrabbingPlayer)(struct PlayState* play, Player* player);
     /* 0x11D50 */ s32 (*startPlayerCutscene)(struct PlayState* play, Actor* actor, s32 csMode);
     /* 0x11D54 */ void (*playerSetupIdle)(Player* player, struct PlayState* play);
     /* 0x11D58 */ s32 (*damagePlayer)(struct PlayState* play, s32 damage);

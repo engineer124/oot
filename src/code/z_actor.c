@@ -294,7 +294,7 @@ void Target_SetNaviToActor(TargetContext* targetCtx, Actor* actor, s32 actorCate
 
 void Target_Init(TargetContext* targetCtx, Actor* actor, PlayState* play) {
     targetCtx->nextLockOnActor = NULL;
-    targetCtx->targetedActor = NULL;
+    targetCtx->lockOnActor = NULL;
     targetCtx->fairyMoveProgressFactor = 0.0f;
     targetCtx->nextTargetableOption = NULL;
     targetCtx->bgmEnemy = NULL;
@@ -305,7 +305,7 @@ void Target_Init(TargetContext* targetCtx, Actor* actor, PlayState* play) {
 }
 
 void Target_Draw(TargetContext* targetCtx, PlayState* play) {
-    Actor* actor = targetCtx->targetedActor;
+    Actor* actor = targetCtx->lockOnActor;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_actor.c", 2029);
 
@@ -421,7 +421,7 @@ void Target_Draw(TargetContext* targetCtx, PlayState* play) {
     CLOSE_DISPS(play->state.gfxCtx, "../z_actor.c", 2158);
 }
 
-void Target_Update(TargetContext* targetCtx, Player* player, Actor* targetedActor, PlayState* play) {
+void Target_Update(TargetContext* targetCtx, Player* player, Actor* lockOnActor, PlayState* play) {
     s32 pad;
     Actor* actor;
     s32 actorCategory;
@@ -440,8 +440,8 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* targetedActo
     if (targetCtx->nextTargetableOption != NULL) {
         actor = targetCtx->nextTargetableOption;
         targetCtx->nextTargetableOption = NULL;
-    } else if (targetedActor != NULL) {
-        actor = targetedActor;
+    } else if (lockOnActor != NULL) {
+        actor = lockOnActor;
     }
 
     if (actor != NULL) {
@@ -473,38 +473,37 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* targetedActo
         Target_SetNaviToActor(targetCtx, actor, actorCategory, play);
     }
 
-    if ((targetedActor != NULL) && (targetCtx->rotZTick == 0)) {
-        Actor_ProjectPos(play, &targetedActor->focus.pos, &projectedFocusPos, &cappedInvWDest);
+    if ((lockOnActor != NULL) && (targetCtx->rotZTick == 0)) {
+        Actor_ProjectPos(play, &lockOnActor->focus.pos, &projectedFocusPos, &cappedInvWDest);
         if (((projectedFocusPos.z <= 0.0f) || (1.0f <= fabsf(projectedFocusPos.x * cappedInvWDest))) ||
             (1.0f <= fabsf(projectedFocusPos.y * cappedInvWDest))) {
-            targetedActor = NULL;
+            lockOnActor = NULL;
         }
     }
 
-    if (targetedActor != NULL) {
-        if (targetedActor != targetCtx->targetedActor) {
+    if (lockOnActor != NULL) {
+        if (lockOnActor != targetCtx->lockOnActor) {
             s32 sfxId;
 
             // Lock On entries need to be re-initialized when changing the targeted actor
-            Target_InitLockOn(targetCtx, targetedActor->category, play);
+            Target_InitLockOn(targetCtx, lockOnActor->category, play);
 
-            targetCtx->targetedActor = targetedActor;
+            targetCtx->lockOnActor = lockOnActor;
 
-            if (targetedActor->id == ACTOR_EN_BOOM) {
+            if (lockOnActor->id == ACTOR_EN_BOOM) {
                 // Avoid drawing the lock on triangles on a boomerang
                 targetCtx->lockOnAlpha = 0;
             }
 
-            sfxId = CHECK_FLAG_ALL(targetedActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY)
+            sfxId = CHECK_FLAG_ALL(lockOnActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_ENEMY)
                         ? NA_SE_SY_LOCK_ON
                         : NA_SE_SY_LOCK_ON_HUMAN;
             Audio_PlaySfx(sfxId);
         }
 
-        targetCtx->targetCenterPos.x = targetedActor->world.pos.x;
-        targetCtx->targetCenterPos.y =
-            targetedActor->world.pos.y - (targetedActor->shape.yOffset * targetedActor->scale.y);
-        targetCtx->targetCenterPos.z = targetedActor->world.pos.z;
+        targetCtx->targetCenterPos.x = lockOnActor->world.pos.x;
+        targetCtx->targetCenterPos.y = lockOnActor->world.pos.y - (lockOnActor->shape.yOffset * lockOnActor->scale.y);
+        targetCtx->targetCenterPos.z = lockOnActor->world.pos.z;
 
         if (targetCtx->rotZTick == 0) {
             f32 lockOnStep = (500.0f - targetCtx->lockOnRadius) * 3.0f;
@@ -521,7 +520,7 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* targetedActo
             targetCtx->lockOnRadius = 120.0f;
         }
     } else {
-        targetCtx->targetedActor = NULL;
+        targetCtx->lockOnActor = NULL;
         Math_StepToF(&targetCtx->lockOnRadius, 500.0f, 80.0f);
     }
 }
@@ -823,7 +822,7 @@ void Actor_Init(Actor* actor, PlayState* play) {
     Math_Vec3f_Copy(&actor->prevPos, &actor->world.pos);
     Actor_SetScale(actor, 0.01f);
     actor->targetMode = 3;
-    actor->minVelocityY = -20.0f;
+    actor->terminalVelocity = -20.0f;
     actor->xyzDistToPlayerSq = FLT_MAX;
     actor->naviEnemyId = NAVI_ENEMY_NONE;
     actor->uncullZoneForward = 1000.0f;
@@ -875,8 +874,8 @@ void Actor_UpdateVelocityXZGravity(Actor* actor) {
 
     actor->velocity.y += actor->gravity;
 
-    if (actor->velocity.y < actor->minVelocityY) {
-        actor->velocity.y = actor->minVelocityY;
+    if (actor->velocity.y < actor->terminalVelocity) {
+        actor->velocity.y = actor->terminalVelocity;
     }
 }
 
@@ -1004,7 +1003,7 @@ f32 Player_GetHeight(Player* player) {
     }
 }
 
-f32 func_8002DCE4(Player* player) {
+f32 Player_GetRunSpeedLimit(Player* player) {
     if (player->stateFlags1 & PLAYER_STATE1_RIDING_HORSE) {
         return 8.0f;
     } else if (player->stateFlags1 & PLAYER_STATE1_SWIMMING) {
@@ -1051,7 +1050,7 @@ void func_8002DE04(PlayState* play, Actor* actorA, Actor* actorB) {
     actorA->flags &= ~ACTOR_FLAG_HOOK_ATTACHED;
 }
 
-void func_8002DE74(PlayState* play, Player* player) {
+void Actor_SetCameraHorseSetting(PlayState* play, Player* player) {
     if ((play->roomCtx.curRoom.behaviorType1 != ROOM_BEHAVIOR_TYPE1_4) && Play_CamIsNotFixed(play)) {
         Camera_ChangeSetting(Play_GetCamera(play, CAM_ID_MAIN), CAM_SET_HORSE);
     }
@@ -1323,8 +1322,8 @@ void Actor_UpdateBgCheckInfo(PlayState* play, Actor* actor, f32 wallCheckHeight,
         waterBoxYSurface = actor->world.pos.y;
         if (WaterBox_GetSurface1(play, &play->colCtx, actor->world.pos.x, actor->world.pos.z, &waterBoxYSurface,
                                  &waterBox)) {
-            actor->yDistToWater = waterBoxYSurface - actor->world.pos.y;
-            if (actor->yDistToWater < 0.0f) {
+            actor->depthInWater = waterBoxYSurface - actor->world.pos.y;
+            if (actor->depthInWater < 0.0f) {
                 actor->bgCheckFlags &= ~(BGCHECKFLAG_WATER | BGCHECKFLAG_WATER_TOUCH);
             } else {
                 if (!(actor->bgCheckFlags & BGCHECKFLAG_WATER)) {
@@ -1342,7 +1341,7 @@ void Actor_UpdateBgCheckInfo(PlayState* play, Actor* actor, f32 wallCheckHeight,
             }
         } else {
             actor->bgCheckFlags &= ~(BGCHECKFLAG_WATER | BGCHECKFLAG_WATER_TOUCH);
-            actor->yDistToWater = BGCHECK_Y_MIN;
+            actor->depthInWater = BGCHECK_Y_MIN;
         }
     }
 }
@@ -1564,13 +1563,13 @@ s32 func_8002F1C4(Actor* actor, PlayState* play, f32 arg2, f32 arg3, u32 exchang
     if ((player->actor.flags & ACTOR_FLAG_TALK_REQUESTED) ||
         ((exchangeItemId != EXCH_ITEM_NONE) && Player_InCsMode(play)) ||
         (!actor->isTargeted &&
-         ((arg3 < fabsf(actor->yDistToPlayer)) || (player->targetActorDistance < actor->xzDistToPlayer) ||
+         ((arg3 < fabsf(actor->yDistToPlayer)) || (player->talkActorDistance < actor->xzDistToPlayer) ||
           (arg2 < actor->xzDistToPlayer)))) {
         return false;
     }
 
-    player->targetActor = actor;
-    player->targetActorDistance = actor->xzDistToPlayer;
+    player->talkActor = actor;
+    player->talkActorDistance = actor->xzDistToPlayer;
     player->exchangeItemId = exchangeItemId;
 
     return true;
@@ -1652,7 +1651,7 @@ s32 Actor_OfferGetItem(Actor* actor, PlayState* play, s32 getItemId, f32 xzRange
            PLAYER_STATE1_HANGING_FROM_LEDGE_SLIP | PLAYER_STATE1_CLIMBING_ONTO_LEDGE | PLAYER_STATE1_JUMPING |
            PLAYER_STATE1_FREEFALLING | PLAYER_STATE1_IN_FIRST_PERSON_MODE | PLAYER_STATE1_CLIMBING)) &&
         Player_GetExplosiveHeld(player) < 0) {
-        if ((((player->heldActor != NULL) || (actor == player->targetActor)) && (getItemId > GI_NONE) &&
+        if ((((player->heldActor != NULL) || (actor == player->talkActor)) && (getItemId > GI_NONE) &&
              (getItemId < GI_MAX)) ||
             (!(player->stateFlags1 & (PLAYER_STATE1_HOLDING_ACTOR | PLAYER_STATE1_IN_CUTSCENE)))) {
             if ((actor->xzDistToPlayer < xzRange) && (fabsf(actor->yDistToPlayer) < yRange)) {
@@ -1787,7 +1786,7 @@ void func_8002F850(PlayState* play, Actor* actor) {
     s32 surfaceSfxOffset;
 
     if (actor->bgCheckFlags & BGCHECKFLAG_WATER) {
-        if (actor->yDistToWater < 20.0f) {
+        if (actor->depthInWater < 20.0f) {
             surfaceSfxOffset = SURFACE_SFX_OFFSET_WATER_SHALLOW;
         } else {
             surfaceSfxOffset = SURFACE_SFX_OFFSET_WATER_DEEP;
@@ -2116,7 +2115,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
     u32* categoryFreezeMaskP;
     u32 requiredActorFlag;
     u32 canFreezeCategory;
-    Actor* sp74;
+    Actor* talkActor;
     ActorEntry* actorEntry;
     s32 i;
 
@@ -2127,7 +2126,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
         ASSERT(gMaxActorId == ACTOR_ID_MAX, "MaxProfile == ACTOR_DLF_MAX", "../z_actor.c", UNK_LINE);
     }
 
-    sp74 = NULL;
+    talkActor = NULL;
     requiredActorFlag = 0;
 
     if (play->numActorEntries != 0) {
@@ -2156,7 +2155,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
     }
 
     if ((player->stateFlags1 & PLAYER_STATE1_TALKING) && ((player->actor.textId & 0xFF00) != 0x600)) {
-        sp74 = player->targetActor;
+        talkActor = player->talkActor;
     }
 
     for (i = 0; i < ARRAY_COUNT(actorCtx->actorLists); i++, categoryFreezeMaskP++) {
@@ -2182,7 +2181,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
                 actor = actor->next;
             } else if ((requiredActorFlag && !(actor->flags & requiredActorFlag)) ||
                        (!requiredActorFlag && canFreezeCategory &&
-                        !((sp74 == actor) || (actor == player->naviActor) || (actor == player->heldActor) ||
+                        !((talkActor == actor) || (actor == player->naviActor) || (actor == player->heldActor) ||
                           (&player->actor == actor->parent)))) {
                 CollisionCheck_ResetDamage(&actor->colChkInfo);
                 actor = actor->next;

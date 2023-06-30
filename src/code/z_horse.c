@@ -57,7 +57,7 @@ void func_8006D0EC(PlayState* play, Player* player) {
         ASSERT(player->rideActor != NULL, "player->ride.actor != NULL", "../z_horse.c", 343);
 
         Actor_MountHorse(play, player, player->rideActor);
-        func_8002DE74(play, player);
+        Actor_SetCameraHorseSetting(play, player);
         gSaveContext.horseData.sceneId = play->sceneId;
 
         if (play->sceneId == SCENE_GERUDOS_FORTRESS) {
@@ -157,7 +157,7 @@ void func_8006D684(PlayState* play, Player* player) {
         ASSERT(player->rideActor != NULL, "player->ride.actor != NULL", "../z_horse.c", 561);
 
         Actor_MountHorse(play, player, player->rideActor);
-        func_8002DE74(play, player);
+        Actor_SetCameraHorseSetting(play, player);
         gSaveContext.horseData.sceneId = play->sceneId;
     } else if ((play->sceneId == SCENE_LON_LON_RANCH) && (GET_EVENTINF_HORSES_STATE() == EVENTINF_HORSES_STATE_6) &&
                !Flags_GetEventChkInf(EVENTCHKINF_EPONA_OBTAINED) && (DREG(1) == 0)) {
@@ -166,7 +166,7 @@ void func_8006D684(PlayState* play, Player* player) {
         ASSERT(player->rideActor != NULL, "player->ride.actor != NULL", "../z_horse.c", 582);
 
         Actor_MountHorse(play, player, player->rideActor);
-        func_8002DE74(play, player);
+        Actor_SetCameraHorseSetting(play, player);
         gSaveContext.horseData.sceneId = play->sceneId;
 
         if (play->sceneId == SCENE_GERUDOS_FORTRESS) {
@@ -200,7 +200,7 @@ void func_8006D684(PlayState* play, Player* player) {
                     ASSERT(player->rideActor != NULL, "player->ride.actor != NULL", "../z_horse.c", 628);
 
                     Actor_MountHorse(play, player, player->rideActor);
-                    func_8002DE74(play, player);
+                    Actor_SetCameraHorseSetting(play, player);
                 } else if ((D_8011F9B8[i].type == 5) || (D_8011F9B8[i].type == 6) || (D_8011F9B8[i].type == 8)) {
                     Vec3f sp54;
                     s32 temp = 0;
@@ -221,7 +221,7 @@ void func_8006D684(PlayState* play, Player* player) {
                     player->actor.shape.rot.y = D_8011F9B8[i].angle;
 
                     Actor_MountHorse(play, player, player->rideActor);
-                    func_8002DE74(play, player);
+                    Actor_SetCameraHorseSetting(play, player);
 
                     sp54.x = player->actor.world.pos.x - 200.0f;
                     sp54.y = player->actor.world.pos.y + 100.0f;

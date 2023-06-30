@@ -129,7 +129,7 @@ static InitChainEntry sInitChainBoulder[] = {
 
 static InitChainEntry sInitChainDebris[] = {
     ICHAIN_F32(gravity, -1, ICHAIN_CONTINUE),
-    ICHAIN_F32(minVelocityY, -10, ICHAIN_CONTINUE),
+    ICHAIN_F32(terminalVelocity, -10, ICHAIN_CONTINUE),
     ICHAIN_F32(uncullZoneForward, 1000, ICHAIN_CONTINUE),
     ICHAIN_F32(uncullZoneScale, 200, ICHAIN_CONTINUE),
     ICHAIN_F32(uncullZoneDownward, 1000, ICHAIN_STOP),
