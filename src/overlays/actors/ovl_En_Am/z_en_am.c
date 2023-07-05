@@ -690,7 +690,7 @@ void EnAm_Statue(EnAm* this, PlayState* play) {
 
             this->unk_258 = 0;
             player->stateFlags2 &= ~(PLAYER_STATE2_CAN_GRAB_PUSH_PULL_WALL | PLAYER_STATE2_MOVING_PUSH_PULL_WALL |
-                                     PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION | PLAYER_STATE2_ENABLE_PUSH_PULL_CAM);
+                                     PLAYER_STATE2_NO_YAW_UPDATE | PLAYER_STATE2_ENABLE_PUSH_PULL_CAM);
             player->actor.speed = 0.0f;
             this->dyna.unk_150 = this->dyna.unk_154 = 0.0f;
         }

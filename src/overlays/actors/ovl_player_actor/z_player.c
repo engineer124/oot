@@ -1,7 +1,7 @@
 /*
  * File: z_player.c
  * Overlay: ovl_player_actor
- * Description: Link
+ * Description: Player
  */
 
 #include "ultra64.h"
@@ -23,58 +23,7 @@
 #include "assets/objects/gameplay_keep/gameplay_keep.h"
 #include "assets/objects/object_link_child/object_link_child.h"
 
-typedef enum AnimSfxType {
-    /*  1 */ ANIMSFX_TYPE_GENERAL = 1,
-    /*  2 */ ANIMSFX_TYPE_FLOOR,
-    /*  3 */ ANIMSFX_TYPE_FLOOR_BY_AGE,
-    /*  4 */ ANIMSFX_TYPE_VOICE,
-    /*  5 */ ANIMSFX_TYPE_FLOOR_LAND,
-    /*  6 */ ANIMSFX_TYPE_FLOOR_WALK_HIGH, // High frequency, high volume
-    /*  7 */ ANIMSFX_TYPE_FLOOR_JUMP,
-    /*  8 */ ANIMSFX_TYPE_FLOOR_WALK_LOW, // Low frequency, low volume
-    /*  9 */ ANIMSFX_TYPE_WALK_WOOD
-} AnimSfxType;
-
-#define ANIMSFX_SHIFT_TYPE(type) ((type) << 11)
-
-#define ANIMSFX_CONTINUE (1)
-#define ANIMSFX_STOP (0)
-
-#define ANIMSFX_FLAGS(type, frame, cont) \
-    (((ANIMSFX_##cont) == ANIMSFX_STOP ? -1 : 1) * (ANIMSFX_SHIFT_TYPE(type) | ((frame)&0x7FF)))
-
-#define ANIMSFX(type, frame, sfxId, cont) \
-    { (sfxId), ANIMSFX_FLAGS(type, frame, cont) }
-
-#define ANIMSFX_GET_TYPE(data) ((data)&0x7800)
-#define ANIMSFX_GET_FRAME(data) ((data)&0x7FF)
-
-typedef struct {
-    /* 0x00 */ u16 sfxId;
-    /* 0x02 */ s16 flags; // negative marks the end
-} AnimSfxEntry;           // size = 0x04
-
-#define PLAYER_ROT_OVERRIDE_FOCUS_ROT_X (1 << 0)
-#define PLAYER_ROT_OVERRIDE_FOCUS_ROT_Y (1 << 1)
-#define PLAYER_ROT_OVERRIDE_FOCUS_ROT_Z (1 << 2)
-
-#define PLAYER_ROT_OVERRIDE_HEAD_ROT_X (1 << 3)
-#define PLAYER_ROT_OVERRIDE_HEAD_ROT_Y (1 << 4)
-#define PLAYER_ROT_OVERRIDE_HEAD_ROT_Z (1 << 5)
-
-#define PLAYER_ROT_OVERRIDE_UPPER_ROT_X (1 << 6)
-#define PLAYER_ROT_OVERRIDE_UPPER_ROT_Y (1 << 7)
-#define PLAYER_ROT_OVERRIDE_UPPER_ROT_Z (1 << 8)
-
-typedef enum {
-    /* 0 */ PLAYER_DMGREACTION_DEFAULT,
-    /* 1 */ PLAYER_DMGREACTION_KNOCKBACK,
-    /* 2 */ PLAYER_DMGREACTION_HOP,
-    /* 3 */ PLAYER_DMGREACTION_FROZEN,
-    /* 4 */ PLAYER_DMGREACTION_ELECTRIC_SHOCK
-} PlayerDamageReaction;
-
-void Player_Talk(PlayState* play, Actor* actor);
+void Player_SetupTalk(PlayState* play, Actor* actor);
 void Player_UseItem(PlayState* play, Player* this, s32 itemId);
 s32 Player_StartFishing(PlayState* play);
 void Player_SetupIdleWithMorph(Player* this, PlayState* play);
@@ -113,12 +62,12 @@ void Player_Action_SidewalkFast(Player* this, PlayState* play);
 void Player_Action_Turn(Player* this, PlayState* play);
 void Player_Action_Run(Player* this, PlayState* play);
 void Player_Action_RunZTarget(Player* this, PlayState* play);
-void Player_Action_PlantMagicBeans(Player* this, PlayState* play);
 void Player_Action_BackwalkEnemy(Player* this, PlayState* play);
 void Player_Action_BackwalkEndEnemy(Player* this, PlayState* play);
+void Player_Action_PlantMagicBeans(Player* this, PlayState* play);
 void Player_Action_ShieldCrouched(Player* this, PlayState* play);
 void Player_Action_ShieldDeflectAttack(Player* this, PlayState* play);
-void Player_Action_Damaged(Player* this, PlayState* play);
+void Player_Action_Damage(Player* this, PlayState* play);
 void Player_Action_KnockbackFly(Player* this, PlayState* play);
 void Player_Action_KnockbackDown(Player* this, PlayState* play);
 void Player_Action_KnockbackGetUp(Player* this, PlayState* play);
@@ -197,7 +146,7 @@ s32 Player_UpperAction_IdleWithSword(Player* this, PlayState* play);
 s32 Player_UpperAction_2(Player* this, PlayState* play);
 s32 Player_UpperAction_ShieldStanding(Player* this, PlayState* play);
 s32 Player_UpperAction_X(Player* this, PlayState* play);
-s32 Player_UpperAction_4(Player* this, PlayState* play);
+s32 Player_UpperAction_ShieldStandingEnd(Player* this, PlayState* play);
 s32 Player_UpperAction_IA_Aim(Player* this, PlayState* play);
 s32 Player_UpperAction_ReadyFpsItemToShoot(Player* this, PlayState* play);
 s32 Player_UpperAction_7(Player* this, PlayState* play);
@@ -319,6 +268,57 @@ void Player_CsAction_53(PlayState* play, Player* this, CsCmdActorCue* cue);
 void Player_CsAction_SetStartPosAndYaw(PlayState* play, Player* this, CsCmdActorCue* cue);
 void Player_CsAction_55(PlayState* play, Player* this, CsCmdActorCue* cue);
 
+typedef enum AnimSfxType {
+    /*  1 */ ANIMSFX_TYPE_GENERAL = 1,
+    /*  2 */ ANIMSFX_TYPE_FLOOR,
+    /*  3 */ ANIMSFX_TYPE_FLOOR_BY_AGE,
+    /*  4 */ ANIMSFX_TYPE_VOICE,
+    /*  5 */ ANIMSFX_TYPE_FLOOR_LAND,
+    /*  6 */ ANIMSFX_TYPE_FLOOR_WALK_HIGH, // High frequency, high volume
+    /*  7 */ ANIMSFX_TYPE_FLOOR_JUMP,
+    /*  8 */ ANIMSFX_TYPE_FLOOR_WALK_LOW, // Low frequency, low volume
+    /*  9 */ ANIMSFX_TYPE_WALK_WOOD
+} AnimSfxType;
+
+#define ANIMSFX_SHIFT_TYPE(type) ((type) << 11)
+
+#define ANIMSFX_CONTINUE (1)
+#define ANIMSFX_STOP (0)
+
+#define ANIMSFX_FLAGS(type, frame, cond) \
+    (((ANIMSFX_##cond) == ANIMSFX_STOP ? -1 : 1) * (ANIMSFX_SHIFT_TYPE(type) | ((frame)&0x7FF)))
+
+#define ANIMSFX(type, frame, sfxId, cond) \
+    { (sfxId), ANIMSFX_FLAGS(type, frame, cond) }
+
+#define ANIMSFX_GET_TYPE(data) ((data)&0x7800)
+#define ANIMSFX_GET_FRAME(data) ((data)&0x7FF)
+
+typedef struct {
+    /* 0x0 */ u16 sfxId;
+    /* 0x2 */ s16 flags; // negative marks the end
+} AnimSfxEntry;          // size = 0x4
+
+#define PLAYER_ROT_OVERRIDE_FOCUS_ROT_X (1 << 0)
+#define PLAYER_ROT_OVERRIDE_FOCUS_ROT_Y (1 << 1)
+#define PLAYER_ROT_OVERRIDE_FOCUS_ROT_Z (1 << 2)
+
+#define PLAYER_ROT_OVERRIDE_HEAD_ROT_X (1 << 3)
+#define PLAYER_ROT_OVERRIDE_HEAD_ROT_Y (1 << 4)
+#define PLAYER_ROT_OVERRIDE_HEAD_ROT_Z (1 << 5)
+
+#define PLAYER_ROT_OVERRIDE_UPPER_ROT_X (1 << 6)
+#define PLAYER_ROT_OVERRIDE_UPPER_ROT_Y (1 << 7)
+#define PLAYER_ROT_OVERRIDE_UPPER_ROT_Z (1 << 8)
+
+typedef enum {
+    /* 0 */ PLAYER_DMGREACTION_DEFAULT,
+    /* 1 */ PLAYER_DMGREACTION_KNOCKBACK,
+    /* 2 */ PLAYER_DMGREACTION_FLINCH,
+    /* 3 */ PLAYER_DMGREACTION_FROZEN,
+    /* 4 */ PLAYER_DMGREACTION_ELECTRIC_SHOCK
+} PlayerDamageReaction;
+
 // .bss part 1
 static s32 D_80858AA0;
 static s32 D_80858AA4;
@@ -333,6 +333,7 @@ static u8 D_80853410[] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1,
 #define SFX_PLAYER_BANK_SIZE 0x80
 
 static PlayerAgeProperties sAgeProperties[] = {
+    // LINK_AGE_ADULT
     {
         56.0f,            // ceilingCheckHeight
         90.0f,            // unk_04
@@ -344,7 +345,7 @@ static PlayerAgeProperties sAgeProperties[] = {
         41.0f,            // unk_1C
         19.0f,            // unk_20
         36.0f,            // unk_24
-        44.8f,            // unk_28
+        44.8f,            // buoyancyDepthInWater
         56.0f,            // unk_2C
         68.0f,            // unk_30
         70.0f,            // unk_34
@@ -385,6 +386,7 @@ static PlayerAgeProperties sAgeProperties[] = {
         { &gPlayerAnim_link_normal_climb_endAL, &gPlayerAnim_link_normal_climb_endAR },   // unk_C4
         { &gPlayerAnim_link_normal_climb_endBR, &gPlayerAnim_link_normal_climb_endBL },   // unk_CC
     },
+    // LINK_AGE_CHILD
     {
         40.0f,                   // ceilingCheckHeight
         60.0f,                   // unk_04
@@ -396,7 +398,7 @@ static PlayerAgeProperties sAgeProperties[] = {
         27.0f,                   // unk_1C
         19.0f,                   // unk_20
         22.0f,                   // unk_24
-        29.6f,                   // unk_28
+        29.6f,                   // buoyancyDepthInWater
         32.0f,                   // unk_2C
         48.0f,                   // unk_30
         70.0f * (11.0f / 17.0f), // unk_34
@@ -760,7 +762,7 @@ static PlayerAnimationHeader* D_80853914[PLAYER_ANIMGROUP_MAX * PLAYER_ANIMTYPE_
     &gPlayerAnim_link_fighter_run_long,
     &gPlayerAnim_link_normal_run_free,
     &gPlayerAnim_link_normal_run_free,
-    /* PLAYER_ANIMGROUP_damage_run */
+    /* PLAYER_ANIMGROUP_FLINCH */
     &gPlayerAnim_link_normal_damage_run_free,
     &gPlayerAnim_link_fighter_damage_run,
     &gPlayerAnim_link_normal_damage_run_free,
@@ -1562,7 +1564,7 @@ BAD_RETURN(s32) Player_ClearAttentionModeAndStopMoving(Player* this) {
     this->attentionMode = PLAYER_ATTENTIONMODE_NONE;
 }
 
-s32 Player_IsTalkRequested(PlayState* play) {
+s32 Player_IsTalking(PlayState* play) {
     Player* this = GET_PLAYER(play);
 
     return CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_TALK_REQUESTED);
@@ -1669,16 +1671,16 @@ void Player_DetachHeldActorAndResetAttributes(PlayState* play, Player* this) {
     Player_DetatchHeldActor(play, this);
 }
 
-s32 func_80832594(Player* this, s32 arg1, s32 arg2) {
-    s16 temp = this->analogStickAngle - sAnalogStickAngle;
+s32 Player_MashTimerThresholdExceeded(Player* this, s32 timerStep, s32 timerThreshold) {
+    s16 yawDiff = this->analogStickAngle - sAnalogStickAngle;
 
-    this->actionVar16 += arg1 + (s16)(ABS(temp) * fabsf(sAnalogStickDistance) * 2.5415802156203426e-06f);
+    this->actionVar16 += timerStep + (s16)(ABS(yawDiff) * fabsf(sAnalogStickDistance) * (9.9939f / (0x10000 * 60.0f)));
 
     if (CHECK_BTN_ANY(sControlInput->press.button, BTN_A | BTN_B)) {
         this->actionVar16 += 5;
     }
 
-    return this->actionVar16 > arg2;
+    return this->actionVar16 > timerThreshold;
 }
 
 void Player_SetOneFrameFreezeFlash(PlayState* play) {
@@ -1771,7 +1773,7 @@ void Player_PlaySfx_Noticable(Player* this, u16 sfxId) {
 void Player_AnimSfx_Play(Player* this, AnimSfxEntry* entry) {
     s32 data;
     s32 type;
-    u32 cont;
+    u32 cond;
     s32 pad;
 
     do {
@@ -1800,9 +1802,9 @@ void Player_AnimSfx_Play(Player* this, AnimSfxEntry* entry) {
                               0.0f);
             }
         }
-        cont = (entry->flags >= 0);
+        cond = (entry->flags >= 0);
         entry++;
-    } while (cont);
+    } while (cond);
 }
 
 void Player_Anim_PlayOnceWithMorph(PlayState* play, Player* this, PlayerAnimationHeader* anim) {
@@ -1853,12 +1855,13 @@ void Player_Anim_ResetModelYaw(Player* this) {
 }
 
 void Player_Anim_ResetMove(Player* this) {
-    if (this->skelAnime.moveFlags != 0) {
+    if (this->skelAnime.moveFlags) {
         Player_Anim_ResetModelRotY(this);
         this->skelAnime.jointTable[LIMB_INDEX_MODEL_TRANSLATION].x = this->skelAnime.baseTransl.x;
         this->skelAnime.jointTable[LIMB_INDEX_MODEL_TRANSLATION].z = this->skelAnime.baseTransl.z;
-        if (this->skelAnime.moveFlags & 8) {
-            if (this->skelAnime.moveFlags & 2) {
+
+        if (this->skelAnime.moveFlags & ANIM_FLAG_8) {
+            if (this->skelAnime.moveFlags & ANIM_FLAG_UPDATE_Y) {
                 this->skelAnime.jointTable[LIMB_INDEX_MODEL_TRANSLATION].y = this->skelAnime.prevTransl.y;
             }
         } else {
@@ -1879,7 +1882,7 @@ void Player_AnimReplace_SetupLedgeClimb(Player* this, s32 moveFlags) {
     this->skelAnime.prevTransl = this->skelAnime.baseTransl;
     SkelAnime_UpdateTranslation(&this->skelAnime, &pos, this->actor.shape.rot.y);
 
-    if (moveFlags & 1) {
+    if (moveFlags & ANIM_FLAG_1) {
         if (!LINK_IS_ADULT) {
             pos.x *= 0.64f;
             pos.z *= 0.64f;
@@ -1888,8 +1891,8 @@ void Player_AnimReplace_SetupLedgeClimb(Player* this, s32 moveFlags) {
         this->actor.world.pos.z += pos.z * this->actor.scale.z;
     }
 
-    if (moveFlags & 2) {
-        if (!(moveFlags & 4)) {
+    if (moveFlags & ANIM_FLAG_UPDATE_Y) {
+        if (!(moveFlags & ANIM_FLAG_4)) {
             pos.y *= this->ageProperties->unk_08;
         }
         this->actor.world.pos.y += pos.y * this->actor.scale.y;
@@ -1899,9 +1902,9 @@ void Player_AnimReplace_SetupLedgeClimb(Player* this, s32 moveFlags) {
 }
 
 void Player_AnimReplace_Setup(PlayState* play, Player* this, s32 moveFlags) {
-    if (moveFlags & 0x200) {
+    if (moveFlags & ANIM_FLAG_200) {
         Player_Anim_ResetTranslationAgeAdjusted(this);
-    } else if ((moveFlags & 0x100) || (this->skelAnime.moveFlags != 0)) {
+    } else if ((moveFlags & ANIM_FLAG_100) || (this->skelAnime.moveFlags != 0)) {
         Player_Anim_ResetTranslation(this);
     } else {
         this->skelAnime.prevTransl = this->skelAnime.jointTable[0];
@@ -1928,7 +1931,7 @@ void Player_AnimReplace_PlayOnceAdjusted(PlayState* play, Player* this, PlayerAn
 }
 
 void Player_AnimReplace_PlayOnceAdjustedUnkFlags(PlayState* play, Player* this, PlayerAnimationHeader* anim) {
-    Player_AnimReplace_PlayOnceAdjusted(play, this, anim, 0x1C);
+    Player_AnimReplace_PlayOnceAdjusted(play, this, anim, ANIM_FLAG_4 | ANIM_FLAG_8 | ANIM_FLAG_NOMOVE);
 }
 
 void Player_AnimReplace_PlayLoopSetSpeed(PlayState* play, Player* this, PlayerAnimationHeader* anim, s32 moveFlags,
@@ -2022,9 +2025,9 @@ void func_808333FC(Player* this, s32 arg1) {
     }
 }
 
-PlayerAnimationHeader* func_80833438(Player* this) {
+PlayerAnimationHeader* Player_GetRunAnim(Player* this) {
     if (this->unk_890 != 0) {
-        return GET_PLAYER_ANIM(PLAYER_ANIMGROUP_damage_run, this->modelAnimType);
+        return GET_PLAYER_ANIM(PLAYER_ANIMGROUP_FLINCH, this->modelAnimType);
     } else if (!(this->stateFlags1 & (PLAYER_STATE1_SWIMMING | PLAYER_STATE1_IN_CUTSCENE)) &&
                (this->currentBoots == PLAYER_BOOTS_IRON)) {
         return GET_PLAYER_ANIM(PLAYER_ANIMGROUP_heavy_run, this->modelAnimType);
@@ -2577,11 +2580,11 @@ s32 Player_UpperAction_IdleDefault(Player* this, PlayState* play) {
     return false;
 }
 
-void func_80834894(Player* this) {
-    Player_SetUpperAction(this, Player_UpperAction_4);
+void Player_SetupShieldStandingEnd(Player* this) {
+    Player_SetUpperAction(this, Player_UpperAction_ShieldStandingEnd);
 
     if (this->itemAction < 0) {
-        func_8008EC70(this);
+        Player_SetHeldItem(this);
     }
 
     Animation_Reverse(&this->upperSkelAnime);
@@ -2649,7 +2652,7 @@ s32 Player_UpperAction_ShieldStanding(Player* this, PlayState* play) {
     PlayerAnimation_Update(play, &this->upperSkelAnime);
 
     if (!CHECK_BTN_ALL(sControlInput->cur.button, BTN_R)) {
-        func_80834894(this);
+        Player_SetupShieldStandingEnd(this);
         return true;
     }
 
@@ -2676,7 +2679,7 @@ s32 Player_UpperAction_X(Player* this, PlayState* play) {
     return true;
 }
 
-s32 Player_UpperAction_4(Player* this, PlayState* play) {
+s32 Player_UpperAction_ShieldStandingEnd(Player* this, PlayState* play) {
     D_80853614 = D_80853618;
 
     if (D_80853614 || PlayerAnimation_Update(play, &this->upperSkelAnime)) {
@@ -2758,7 +2761,7 @@ s32 func_80834FBC(Player* this) {
     if (this->actor.child != NULL) {
         if (this->heldActor == NULL) {
             this->heldActor = this->actor.child;
-            Player_RequestRumble(this, 255, 10, 250, 0);
+            Player_RequestRumble(this, 255, 10, 250, SQ(0));
             Player_PlaySfx(this, NA_SE_IT_HOOKSHOT_RECEIVE);
         }
 
@@ -2801,9 +2804,9 @@ s32 func_808350A4(PlayState* play, Player* this) {
                 play->shootingGalleryStatus = -10;
             }
 
-            Player_RequestRumble(this, 150, 10, 150, 0);
+            Player_RequestRumble(this, 150, 10, 150, SQ(0));
         } else {
-            Player_RequestRumble(this, 255, 20, 150, 0);
+            Player_RequestRumble(this, 255, 20, 150, SQ(0));
         }
 
         this->unk_A73 = 4;
@@ -3107,7 +3110,7 @@ s32 Player_SetAction(PlayState* play, Player* this, PlayerActionFunc actionFunc,
 
     if ((this->itemAction != this->heldItemAction) &&
         (!(flags & 1) || !(this->stateFlags1 & PLAYER_STATE1_HOLDING_SHIELD))) {
-        func_8008EC70(this);
+        Player_SetHeldItem(this);
     }
 
     if (!(flags & 1) && !(this->stateFlags1 & PLAYER_STATE1_HOLDING_ACTOR)) {
@@ -3363,29 +3366,27 @@ s32 Player_TryUpperAction(Player* this, PlayState* play) {
 s32 Player_SetupCsIntoAction(PlayState* play, Player* this, PlayerCsIntoActionFunc csIntoActionFunc) {
     this->csIntoActionFunc = csIntoActionFunc;
     Player_SetAction(play, this, Player_Action_CsIntoAction, 0);
-    this->stateFlags2 |= PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE;
     return Player_UnequipItem(play, this);
 }
 
-void func_808368EC(Player* this, PlayState* play) {
+void Player_UpdateYaw(Player* this, PlayState* play) {
     s16 previousYaw = this->actor.shape.rot.y;
 
-    if (!(this->stateFlags2 &
-          (PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING | PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION))) {
+    if (!(this->stateFlags2 & (PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON | PLAYER_STATE2_NO_YAW_UPDATE))) {
         if ((this->lockOnActor != NULL) &&
             ((play->actorCtx.targetCtx.rotZTick != 0) || (this->actor.category != ACTORCAT_PLAYER))) {
             Math_ScaledStepToS(&this->actor.shape.rot.y,
                                Math_Vec3f_Yaw(&this->actor.world.pos, &this->lockOnActor->focus.pos), 4000);
         } else if ((this->stateFlags1 & PLAYER_STATE1_Z_PARALLEL) &&
-                   !(this->stateFlags2 & (PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING |
-                                          PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION))) {
+                   !(this->stateFlags2 & (PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON | PLAYER_STATE2_NO_YAW_UPDATE))) {
             Math_ScaledStepToS(&this->actor.shape.rot.y, this->zTargetYaw, 4000);
         }
-    } else if (!(this->stateFlags2 & PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION)) {
+    } else if (!(this->stateFlags2 & PLAYER_STATE2_NO_YAW_UPDATE)) {
         Math_ScaledStepToS(&this->actor.shape.rot.y, this->yaw, 2000);
     }
 
-    this->unk_87C = this->actor.shape.rot.y - previousYaw;
+    this->yawDiffPrevFrame = this->actor.shape.rot.y - previousYaw;
 }
 
 // Steps angle based on offset from referenceAngle, then returns any excess angle difference beyond angleMinMax
@@ -3420,15 +3421,19 @@ s32 Player_UpdateLookAngles(Player* this, s32 syncUpperRotToFocusRot) {
         this->upperLimbRot.x = this->actor.focus.rot.x;
         this->rotOverrideFlags |= PLAYER_ROT_OVERRIDE_FOCUS_ROT_X | PLAYER_ROT_OVERRIDE_UPPER_ROT_X;
     } else {
-        Player_StepAngleWithOffset(&this->upperLimbRot.x,
-                                   Player_StepAngleWithOffset(&this->headLimbRot.x, this->actor.focus.rot.x, 600, 10000,
-                                                              this->actor.focus.rot.x, 0),
-                                   200, 4000, this->headLimbRot.x, 10000);
+        Player_StepAngleWithOffset(
+            &this->upperLimbRot.x,
+            Player_StepAngleWithOffset(&this->headLimbRot.x, this->actor.focus.rot.x, DEG_TO_BINANG(3.3f),
+                                       DEG_TO_BINANG(54.935f), this->actor.focus.rot.x, 0),
+            DEG_TO_BINANG(1.1f), DEG_TO_BINANG(21.975f), this->headLimbRot.x, DEG_TO_BINANG(54.935f));
         yawDiff = this->actor.focus.rot.y - yaw;
-        Player_StepAngleWithOffset(&yawDiff, 0, 200, 24000, this->upperLimbRot.y, 8000);
+        Player_StepAngleWithOffset(&yawDiff, 0, DEG_TO_BINANG(1.1f), DEG_TO_BINANG(131.84f), this->upperLimbRot.y,
+                                   DEG_TO_BINANG(43.95f));
         yaw = this->actor.focus.rot.y - yawDiff;
-        Player_StepAngleWithOffset(&this->headLimbRot.y, yawDiff - this->upperLimbRot.y, 200, 8000, yawDiff, 8000);
-        Player_StepAngleWithOffset(&this->upperLimbRot.y, yawDiff, 200, 8000, this->headLimbRot.y, 8000);
+        Player_StepAngleWithOffset(&this->headLimbRot.y, yawDiff - this->upperLimbRot.y, DEG_TO_BINANG(1.1f),
+                                   DEG_TO_BINANG(43.95f), yawDiff, DEG_TO_BINANG(43.95f));
+        Player_StepAngleWithOffset(&this->upperLimbRot.y, yawDiff, DEG_TO_BINANG(1.1f), DEG_TO_BINANG(43.95f),
+                                   this->headLimbRot.y, DEG_TO_BINANG(43.95f));
         this->rotOverrideFlags |= PLAYER_ROT_OVERRIDE_FOCUS_ROT_X | PLAYER_ROT_OVERRIDE_HEAD_ROT_X |
                                   PLAYER_ROT_OVERRIDE_HEAD_ROT_Y | PLAYER_ROT_OVERRIDE_UPPER_ROT_X |
                                   PLAYER_ROT_OVERRIDE_UPPER_ROT_Y;
@@ -3443,7 +3448,7 @@ void Player_UpdateZTarget(Player* this, PlayState* play) {
     Actor* actorToLockOn;
     s32 pad;
     s32 isHoldZTarget;
-    s32 isTalkRequested;
+    s32 isTalking;
 
     if (!zBtnPressed) {
         this->stateFlags1 &= ~PLAYER_STATE1_Z_PARALLEL_FROM_UNTARGET;
@@ -3470,11 +3475,11 @@ void Player_UpdateZTarget(Player* this, PlayState* play) {
         ignoreLeash = true;
     }
 
-    isTalkRequested = Player_IsTalkRequested(play);
+    isTalking = Player_IsTalking(play);
 
-    if (isTalkRequested || (this->zTargetSwitchTimer != 0) ||
+    if (isTalking || (this->zTargetSwitchTimer != 0) ||
         (this->stateFlags1 & (PLAYER_STATE1_CHARGING_SPIN_ATTACK | PLAYER_STATE1_AWAITING_THROWN_BOOMERANG))) {
-        if (!isTalkRequested) {
+        if (!isTalking) {
             if (!(this->stateFlags1 & PLAYER_STATE1_AWAITING_THROWN_BOOMERANG) &&
                 ((this->heldItemAction != PLAYER_IA_FISHING_POLE) || (this->stickFlameTimer == 0)) &&
                 CHECK_BTN_ALL(sControlInput->press.button, BTN_Z)) {
@@ -3545,7 +3550,7 @@ void Player_UpdateZTarget(Player* this, PlayState* play) {
     }
 }
 
-s32 Player_CalculateTargetVelocityAndYaw(PlayState* play, Player* this, f32* targetVelocity, s16* targetYaw, f32 arg4) {
+s32 Player_CalculateTargetVelocityAndYaw(PlayState* play, Player* this, f32* inputVelocity, s16* inputYaw, f32 arg4) {
     f32 baseSpeedScale;
     f32 slope;
     f32 slopeSpeedScale;
@@ -3553,22 +3558,22 @@ s32 Player_CalculateTargetVelocityAndYaw(PlayState* play, Player* this, f32* tar
 
     if ((this->attentionMode != PLAYER_ATTENTIONMODE_NONE) || (play->transitionTrigger == TRANS_TRIGGER_START) ||
         (this->stateFlags1 & PLAYER_STATE1_EXITING_SCENE)) {
-        *targetVelocity = 0.0f;
-        *targetYaw = this->actor.shape.rot.y;
+        *inputVelocity = 0.0f;
+        *inputYaw = this->actor.shape.rot.y;
     } else {
-        *targetVelocity = sAnalogStickDistance;
-        *targetYaw = sAnalogStickAngle;
+        *inputVelocity = sAnalogStickDistance;
+        *inputYaw = sAnalogStickAngle;
 
         if (arg4 != 0.0f) {
-            *targetVelocity -= 20.0f;
-            if (*targetVelocity < 0.0f) {
-                *targetVelocity = 0.0f;
+            *inputVelocity -= 20.0f;
+            if (*inputVelocity < 0.0f) {
+                *inputVelocity = 0.0f;
             } else {
-                baseSpeedScale = 1.0f - Math_CosS(*targetVelocity * 450.0f);
-                *targetVelocity = (SQ(baseSpeedScale) * 30.0f) + 7.0f;
+                baseSpeedScale = 1.0f - Math_CosS(*inputVelocity * 450.0f);
+                *inputVelocity = (SQ(baseSpeedScale) * 30.0f) + 7.0f;
             }
         } else {
-            *targetVelocity *= 0.8f;
+            *inputVelocity *= 0.8f;
         }
 
         if (sAnalogStickDistance != 0.0f) {
@@ -3583,8 +3588,8 @@ s32 Player_CalculateTargetVelocityAndYaw(PlayState* play, Player* this, f32* tar
                 }
             }
 
-            *targetVelocity = (*targetVelocity * 0.14f) - (8.0f * slopeSpeedScale * slopeSpeedScale);
-            *targetVelocity = CLAMP(*targetVelocity, 0.0f, speedLimit);
+            *inputVelocity = (*inputVelocity * 0.14f) - (8.0f * slopeSpeedScale * slopeSpeedScale);
+            *inputVelocity = CLAMP(*inputVelocity, 0.0f, speedLimit);
 
             return true;
         }
@@ -3597,23 +3602,22 @@ s32 Player_StepHorizontalSpeedToZero(Player* this) {
     return Math_StepToF(&this->speedXZ, 0.0f, R_PLAYER_BOOT_8 / 100.0f);
 }
 
-s32 Player_GetTargetVelocityAndYaw(Player* this, f32* targetVelocity, s16* targetYaw, f32 arg3, PlayState* play) {
-    if (!Player_CalculateTargetVelocityAndYaw(play, this, targetVelocity, targetYaw, arg3)) {
-        *targetYaw = this->actor.shape.rot.y;
+s32 Player_GetInputVelocityAndYaw(Player* this, f32* inputVelocity, s16* inputYaw, f32 arg3, PlayState* play) {
+    if (!Player_CalculateTargetVelocityAndYaw(play, this, inputVelocity, inputYaw, arg3)) {
+        *inputYaw = this->actor.shape.rot.y;
 
         if (this->lockOnActor != NULL) {
-            if ((play->actorCtx.targetCtx.rotZTick != 0) &&
-                !(this->stateFlags2 & PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION)) {
-                *targetYaw = Math_Vec3f_Yaw(&this->actor.world.pos, &this->lockOnActor->focus.pos);
+            if ((play->actorCtx.targetCtx.rotZTick != 0) && !(this->stateFlags2 & PLAYER_STATE2_NO_YAW_UPDATE)) {
+                *inputYaw = Math_Vec3f_Yaw(&this->actor.world.pos, &this->lockOnActor->focus.pos);
             }
         } else if (Player_IsZParallelOrLockOnFriend(this)) {
-            *targetYaw = this->zTargetYaw;
+            *inputYaw = this->zTargetYaw;
         }
 
         return false;
     }
 
-    *targetYaw += Camera_GetInputDirYaw(GET_ACTIVE_CAM(play));
+    *inputYaw += Camera_GetInputDirYaw(GET_ACTIVE_CAM(play));
     return true;
 }
 
@@ -3690,15 +3694,15 @@ typedef enum {
 // Returns -1 is action is not interrupted at all, 0 if interrupted by a sub-action, 1 if interrupted by the player
 // moving
 s32 Player_GetActionInterruptState(PlayState* play, Player* this, SkelAnime* skelAnime, f32 framesFromEnd) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
 
     if (skelAnime->curFrame >= (skelAnime->endFrame - framesFromEnd)) {
         if (Player_TrySwappingAction(play, this, sIdleSwapActionList, true)) {
             return PLAYER_ACTION_INTERRUPT_SWAP;
         }
 
-        if (Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.018f, play)) {
+        if (Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.018f, play)) {
             return PLAYER_ACTION_INTERRUPT_MOVE;
         }
     }
@@ -3966,14 +3970,14 @@ void Player_ApplyDamage(PlayState* play, Player* this, s32 damageReaction, f32 a
         sp2C = &gPlayerAnim_link_normal_ice_down;
 
         Player_ClearAttentionModeAndStopMoving(this);
-        Player_RequestRumble(this, 255, 10, 40, 0);
+        Player_RequestRumble(this, 255, 10, 40, SQ(0));
 
         Player_PlaySfx(this, NA_SE_PL_FREEZE_S);
         Player_AnimSfx_PlayVoice(this, NA_SE_VO_LI_FREEZE);
     } else if (damageReaction == PLAYER_DMGREACTION_ELECTRIC_SHOCK) {
         Player_SetAction(play, this, Player_Action_ElectricShock, 0);
 
-        Player_RequestRumble(this, 255, 80, 150, 0);
+        Player_RequestRumble(this, 255, 80, 150, SQ(0));
 
         Player_Anim_PlayLoopAdjusted(play, this, &gPlayerAnim_link_normal_electric_shock);
         Player_ClearAttentionModeAndStopMoving(this);
@@ -3983,7 +3987,7 @@ void Player_ApplyDamage(PlayState* play, Player* this, s32 damageReaction, f32 a
         arg5 -= this->actor.shape.rot.y;
         if (this->stateFlags1 & PLAYER_STATE1_SWIMMING) {
             Player_SetAction(play, this, Player_Action_SwimDamage, 0);
-            Player_RequestRumble(this, 180, 20, 50, 0);
+            Player_RequestRumble(this, 180, 20, 50, SQ(0));
 
             this->speedXZ = 4.0f;
             this->actor.velocity.y = 0.0f;
@@ -3991,7 +3995,7 @@ void Player_ApplyDamage(PlayState* play, Player* this, s32 damageReaction, f32 a
             sp2C = &gPlayerAnim_link_swimer_swim_hit;
 
             Player_AnimSfx_PlayVoice(this, NA_SE_VO_LI_DAMAGE_S);
-        } else if ((damageReaction == PLAYER_DMGREACTION_KNOCKBACK) || (damageReaction == PLAYER_DMGREACTION_HOP) ||
+        } else if ((damageReaction == PLAYER_DMGREACTION_KNOCKBACK) || (damageReaction == PLAYER_DMGREACTION_FLINCH) ||
                    !(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) ||
                    (this->stateFlags1 & (PLAYER_STATE1_HANGING_FROM_LEDGE_SLIP | PLAYER_STATE1_CLIMBING_ONTO_LEDGE |
                                          PLAYER_STATE1_CLIMBING))) {
@@ -3999,10 +4003,10 @@ void Player_ApplyDamage(PlayState* play, Player* this, s32 damageReaction, f32 a
 
             this->stateFlags3 |= PLAYER_STATE3_MIDAIR;
 
-            Player_RequestRumble(this, 255, 20, 150, 0);
+            Player_RequestRumble(this, 255, 20, 150, SQ(0));
             Player_ClearAttentionModeAndStopMoving(this);
 
-            if (damageReaction == PLAYER_DMGREACTION_HOP) {
+            if (damageReaction == PLAYER_DMGREACTION_FLINCH) {
                 this->knockbackFlyVar16 = 4;
 
                 this->actor.speed = 3.0f;
@@ -4010,7 +4014,7 @@ void Player_ApplyDamage(PlayState* play, Player* this, s32 damageReaction, f32 a
                 this->actor.velocity.y = 6.0f;
 
                 Player_Anim_PlayOnceForOneFrame(play, this,
-                                                GET_PLAYER_ANIM(PLAYER_ANIMGROUP_damage_run, this->modelAnimType));
+                                                GET_PLAYER_ANIM(PLAYER_ANIMGROUP_FLINCH, this->modelAnimType));
                 Player_AnimSfx_PlayVoice(this, NA_SE_VO_LI_DAMAGE_S);
             } else {
                 this->actor.speed = arg3;
@@ -4035,20 +4039,20 @@ void Player_ApplyDamage(PlayState* play, Player* this, s32 damageReaction, f32 a
         } else {
             if ((this->speedXZ > 4.0f) && !Player_IsEnemyLockOn(this)) {
                 this->unk_890 = 20;
-                Player_RequestRumble(this, 120, 20, 10, 0);
+                Player_RequestRumble(this, 120, 20, 10, SQ(0));
                 Player_AnimSfx_PlayVoice(this, NA_SE_VO_LI_DAMAGE_S);
                 return;
             }
 
             sp28 = D_808544B0;
 
-            Player_SetAction(play, this, Player_Action_Damaged, 0);
+            Player_SetAction(play, this, Player_Action_Damage, 0);
             Player_ResetLeftRightBlendWeight(this);
 
             if (this->actor.colChkInfo.damage < 5) {
-                Player_RequestRumble(this, 120, 20, 10, 0);
+                Player_RequestRumble(this, 120, 20, 10, SQ(0));
             } else {
-                Player_RequestRumble(this, 180, 20, 100, 0);
+                Player_RequestRumble(this, 180, 20, 100, SQ(0));
                 this->speedXZ = 23.0f;
                 sp28 += 4;
             }
@@ -4134,15 +4138,15 @@ typedef struct {
     /* 0x0C */ s16 yaw;
 } SpecialRespawnInfo; // size = 0x10
 
-s32 func_808382DC(Player* this, PlayState* play) {
+s32 Player_UpdateDamage(Player* this, PlayState* play) {
     s32 pad;
     s32 sp68 = false;
     s32 sp64;
 
-    if (this->unk_A86 != 0) {
+    if (this->voidRespawnCounter != 0) {
         if (!Player_InBlockingCsMode(play, this)) {
             Player_InflictDamage(play, -16);
-            this->unk_A86 = 0;
+            this->voidRespawnCounter = 0;
         }
     } else {
         sp68 = ((Player_GetHeight(this) - 8.0f) < (this->shapeOffsetY * this->actor.scale.y));
@@ -4182,7 +4186,7 @@ s32 func_808382DC(Player* this, PlayState* play) {
             Audio_PlaySfx(NA_SE_OC_ABYSS);
         } else if ((this->specialDamageEffect != 0) &&
                    ((this->specialDamageEffect >= 2) || (this->invincibilityTimer == 0))) {
-            u8 damageReactions[] = { PLAYER_DMGREACTION_HOP, PLAYER_DMGREACTION_KNOCKBACK,
+            u8 damageReactions[] = { PLAYER_DMGREACTION_FLINCH, PLAYER_DMGREACTION_KNOCKBACK,
                                      PLAYER_DMGREACTION_KNOCKBACK };
 
             Player_TryBurning(this);
@@ -4191,9 +4195,9 @@ s32 func_808382DC(Player* this, PlayState* play) {
                 this->shockTimer = 40;
             }
 
-            this->actor.colChkInfo.damage += this->unk_8A0;
-            Player_ApplyDamage(play, this, damageReactions[this->specialDamageEffect - 1], this->unk_8A4, this->unk_8A8,
-                               this->unk_8A2, 20);
+            this->actor.colChkInfo.damage += this->damageAmount;
+            Player_ApplyDamage(play, this, damageReactions[this->specialDamageEffect - 1], this->damageSpeedXZ,
+                               this->damageSpeedY, this->damageYaw, 20);
         } else {
             sp64 = (this->shieldQuad.base.acFlags & AC_BOUNCED) != 0;
 
@@ -4204,7 +4208,7 @@ s32 func_808382DC(Player* this, PlayState* play) {
             if (sp64 || ((this->invincibilityTimer < 0) && (this->cylinder.base.acFlags & AC_HIT) &&
                          (this->cylinder.info.atHit != NULL) && (this->cylinder.info.atHit->atFlags & 0x20000000))) {
 
-                Player_RequestRumble(this, 180, 20, 100, 0);
+                Player_RequestRumble(this, 180, 20, 100, SQ(0));
 
                 if (!Player_IsChildWithHylianShield(this)) {
                     if (this->invincibilityTimer >= 0) {
@@ -4662,17 +4666,18 @@ Actor* Player_SpawnFairy(PlayState* play, Player* this, Vec3f* arg2, Vec3f* arg3
     return Actor_Spawn(&play->actorCtx, play, ACTOR_EN_ELF, pos.x, pos.y, pos.z, 0, 0, 0, type);
 }
 
-f32 func_808396F4(PlayState* play, Player* this, Vec3f* arg2, Vec3f* arg3, CollisionPoly** arg4, s32* arg5) {
-    Player_GetRelativePosition(this, &this->actor.world.pos, arg2, arg3);
+f32 Player_PosVsFloorLineTestImpl(PlayState* play, Player* this, Vec3f* offset, Vec3f* result,
+                                  CollisionPoly** floorPoly, s32* floorBgId) {
+    Player_GetRelativePosition(this, &this->actor.world.pos, offset, result);
 
-    return BgCheck_EntityRaycastDown3(&play->colCtx, arg4, arg5, arg3);
+    return BgCheck_EntityRaycastDown3(&play->colCtx, floorPoly, floorBgId, result);
 }
 
-f32 func_8083973C(PlayState* play, Player* this, Vec3f* arg2, Vec3f* arg3) {
-    CollisionPoly* sp24;
-    s32 sp20;
+f32 Player_PosVsFloorLineTest(PlayState* play, Player* this, Vec3f* offset, Vec3f* result) {
+    CollisionPoly* floorPoly;
+    s32 floorBgId;
 
-    return func_808396F4(play, this, arg2, arg3, &sp24, &sp20);
+    return Player_PosVsFloorLineTestImpl(play, this, offset, result, &floorPoly, &floorBgId);
 }
 
 /**
@@ -4719,7 +4724,7 @@ s32 Player_SwapAction_TryOpeningDoor(Player* this, PlayState* play) {
 
             if (this->doorType <= PLAYER_DOORTYPE_AJAR) {
                 doorActor->textId = 0xD0;
-                Player_Talk(play, doorActor);
+                Player_SetupTalk(play, doorActor);
                 return false;
             }
 
@@ -5192,7 +5197,7 @@ void func_8083AA10(Player* this, PlayState* play) {
                     if ((sPrevFloorProperty == FLOOR_PROPERTY_11) &&
                         !(this->stateFlags1 & PLAYER_STATE1_HOLDING_ACTOR)) {
 
-                        sp40 = func_808396F4(play, this, &D_8085451C, &sp44, &sp58, &sp54);
+                        sp40 = Player_PosVsFloorLineTestImpl(play, this, &D_8085451C, &sp44, &sp58, &sp54);
                         sp3C = this->actor.world.pos.y;
 
                         if (WaterBox_GetSurface1(play, &play->colCtx, sp44.x, sp44.z, &sp3C, &sp50) &&
@@ -5551,7 +5556,7 @@ s32 Player_SwapAction_TryTalking(Player* this, PlayState* play) {
                     }
 
                     this->currentMask = D_80858AA4;
-                    Player_Talk(play, talkActor);
+                    Player_SetupTalk(play, talkActor);
 
                     return true;
                 }
@@ -5822,13 +5827,13 @@ s32 Player_SwapAction_TryShieldingCrouched(Player* this, PlayState* play) {
     return false;
 }
 
-s32 func_8083C484(Player* this, f32* targetVelocity, s16* targetYaw) {
-    s16 yaw = this->yaw - *targetYaw;
+s32 func_8083C484(Player* this, f32* inputVelocity, s16* inputYaw) {
+    s16 yaw = this->yaw - *inputYaw;
 
     if (ABS(yaw) > DEG_TO_BINANG(135.0f)) {
         if (Player_StepHorizontalSpeedToZero(this)) {
-            *targetVelocity = 0.0f;
-            *targetYaw = this->yaw;
+            *inputVelocity = 0.0f;
+            *inputYaw = this->yaw;
         } else {
             return true;
         }
@@ -6004,12 +6009,12 @@ void Player_InitMode_F(PlayState* play, Player* this) {
     }
 }
 
-void Player_SetupBackwalkFriend(Player* this, s16 yaw, PlayState* play) {
+void Player_SetupBackwalkFriend(Player* this, s16 inputYaw, PlayState* play) {
     Player_SetAction(play, this, Player_Action_BackwalkFriend, 1);
     PlayerAnimation_CopyJointToMorph(play, &this->skelAnime);
     this->walkCurFrame = 0.0f;
     this->unk_864 = 0.0f;
-    this->yaw = yaw;
+    this->yaw = inputYaw;
 }
 
 void Player_SetupSidewalkSlow(Player* this, PlayState* play) {
@@ -6017,12 +6022,12 @@ void Player_SetupSidewalkSlow(Player* this, PlayState* play) {
     Player_Anim_PlayLoopWithMorph(play, this, GET_PLAYER_ANIM(PLAYER_ANIMGROUP_walk, this->modelAnimType));
 }
 
-void Player_SetupBackwalkEnemy(Player* this, s16 yaw, PlayState* play) {
+void Player_SetupBackwalkEnemy(Player* this, s16 inputYaw, PlayState* play) {
     Player_SetAction(play, this, Player_Action_BackwalkEnemy, 1);
     PlayerAnimation_Change(play, &this->skelAnime, &gPlayerAnim_link_anchor_back_walk, 2.2f, 0.0f,
                            Animation_GetLastFrame(&gPlayerAnim_link_anchor_back_walk), ANIMMODE_ONCE, -6.0f);
     this->speedXZ = 8.0f;
-    this->yaw = yaw;
+    this->yaw = inputYaw;
 }
 
 void Player_SetupSidewalkFast(Player* this, PlayState* play) {
@@ -6119,24 +6124,25 @@ void Player_JumpOutOfWater(PlayState* play, Player* this, f32 arg2) {
     Player_SetBootData(play, this);
 }
 
-s32 func_8083D12C(PlayState* play, Player* this, Input* arg2) {
+s32 Player_TrySwimDivingOrGetItem(PlayState* play, Player* this, Input* input) {
     if (!(this->stateFlags1 & PLAYER_STATE1_GETTING_ITEM) && !(this->stateFlags2 & PLAYER_STATE2_DIVING)) {
-        if ((arg2 == NULL) || (CHECK_BTN_ALL(arg2->press.button, BTN_A) && (ABS(this->unk_6C2) < 12000) &&
-                               (this->currentBoots != PLAYER_BOOTS_IRON))) {
+        if ((input == NULL) ||
+            (CHECK_BTN_ALL(input->press.button, BTN_A) && (ABS(this->shapePitchOffset) < DEG_TO_BINANG(65.918f)) &&
+             (this->currentBoots != PLAYER_BOOTS_IRON))) {
 
             Player_SetAction(play, this, Player_Action_SwimDive, 0);
             Player_Anim_PlayOnce(play, this, &gPlayerAnim_link_swimer_swim_deep_start);
 
-            this->unk_6C2 = 0;
+            this->shapePitchOffset = 0;
             this->stateFlags2 |= PLAYER_STATE2_DIVING;
             this->actor.velocity.y = 0.0f;
 
-            if (arg2 != NULL) {
+            if (input != NULL) {
                 this->stateFlags2 |= PLAYER_STATE2_ENABLE_DIVE_CAMERA_AND_TIMER;
                 Player_PlaySfx(this, NA_SE_PL_DIVE_BUBBLE);
             }
 
-            return 1;
+            return true;
         }
     }
 
@@ -6146,7 +6152,7 @@ s32 func_8083D12C(PlayState* play, Player* this, Input* arg2) {
 
                 this->stateFlags2 &= ~PLAYER_STATE2_DIVING;
 
-                if (arg2 != NULL) {
+                if (input != NULL) {
                     Player_SetAction(play, this, Player_Action_SwimGetItem, 1);
 
                     if (this->stateFlags1 & PLAYER_STATE1_GETTING_ITEM) {
@@ -6167,17 +6173,17 @@ s32 func_8083D12C(PlayState* play, Player* this, Input* arg2) {
                     Player_PlaySfx(this, NA_SE_PL_FACE_UP);
                 }
 
-                return 1;
+                return true;
             }
         }
     }
 
-    return 0;
+    return false;
 }
 
 void func_8083D330(PlayState* play, Player* this) {
     Player_Anim_PlayLoop(play, this, &gPlayerAnim_link_swimer_swim);
-    this->unk_6C2 = 16000;
+    this->shapePitchOffset = 16000;
     this->actionVar16 = 1;
 }
 
@@ -6187,7 +6193,7 @@ void func_8083D36C(PlayState* play, Player* this) {
 
         if ((this->currentBoots != PLAYER_BOOTS_IRON) && (this->stateFlags2 & PLAYER_STATE2_DIVING)) {
             this->stateFlags2 &= ~PLAYER_STATE2_DIVING;
-            func_8083D12C(play, this, NULL);
+            Player_TrySwimDivingOrGetItem(play, this, NULL);
             this->actionVar8 = 1;
         } else if (Player_Action_FallDive == this->actionFunc) {
             Player_SetAction(play, this, Player_Action_SwimDive, 0);
@@ -6219,7 +6225,7 @@ void func_8083D36C(PlayState* play, Player* this) {
     Player_SetBootData(play, this);
 }
 
-void func_8083D53C(PlayState* play, Player* this) {
+void Player_UpdateUnderwater(PlayState* play, Player* this) {
     if (this->actor.depthInWater < this->ageProperties->unk_2C) {
         Audio_SetBaseFilter(0);
         this->underwaterTimer = 0;
@@ -6234,7 +6240,7 @@ void func_8083D53C(PlayState* play, Player* this) {
         return;
     }
 
-    if (this->ageProperties->unk_2C < this->actor.depthInWater) {
+    if (this->actor.depthInWater > this->ageProperties->unk_2C) {
         if (!(this->stateFlags1 & PLAYER_STATE1_SWIMMING) ||
             (!((this->currentBoots == PLAYER_BOOTS_IRON) && (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) &&
              (Player_Action_SwimDamage != this->actionFunc) && (Player_Action_SwimDrown != this->actionFunc) &&
@@ -6368,7 +6374,7 @@ s32 Player_LookAtTargetActor(Player* this, s32 syncUpperRotToFocusRot) {
 
 static Vec3f D_8085456C = { 0.0f, 100.0f, 40.0f };
 
-void func_8083DC54(Player* this, PlayState* play) {
+void Player_SetLookAngle(Player* this, PlayState* play) {
     s16 sp46;
     s16 temp2;
     f32 temp1;
@@ -6387,7 +6393,7 @@ void func_8083DC54(Player* this, PlayState* play) {
         Math_SmoothStepToS(&this->actor.focus.rot.x, -20000, 10, 4000, 800);
     } else {
         sp46 = 0;
-        temp1 = func_8083973C(play, this, &D_8085456C, &sp34);
+        temp1 = Player_PosVsFloorLineTest(play, this, &D_8085456C, &sp34);
         if (temp1 > BGCHECK_Y_MIN) {
             temp2 = Math_Atan2S(40.0f, this->actor.world.pos.y - temp1);
             sp46 = CLAMP(temp2, -4000, 4000);
@@ -6415,17 +6421,17 @@ void func_8083DDC8(Player* this, PlayState* play) {
         this->rotOverrideFlags |= PLAYER_ROT_OVERRIDE_HEAD_ROT_X | PLAYER_ROT_OVERRIDE_HEAD_ROT_Z |
                                   PLAYER_ROT_OVERRIDE_UPPER_ROT_X | PLAYER_ROT_OVERRIDE_UPPER_ROT_Z;
     } else {
-        func_8083DC54(this, play);
+        Player_SetLookAngle(this, play);
     }
 }
 
-void func_8083DF68(Player* this, f32 targetVelocity, s16 targetYaw) {
-    Math_AsymStepToF(&this->speedXZ, targetVelocity, R_PLAYER_BOOT_0 / 100.0f, 1.5f);
-    Math_ScaledStepToS(&this->yaw, targetYaw, REG(27));
+void func_8083DF68(Player* this, f32 inputVelocity, s16 inputYaw) {
+    Math_AsymStepToF(&this->speedXZ, inputVelocity, R_PLAYER_BOOT_0 / 100.0f, 1.5f);
+    Math_ScaledStepToS(&this->yaw, inputYaw, REG(27));
 }
 
-void func_8083DFE0(Player* this, f32* targetVelocity, s16* targetYaw) {
-    s16 yawDiff = this->yaw - *targetYaw;
+void func_8083DFE0(Player* this, f32* inputVelocity, s16* inputYaw) {
+    s16 yawDiff = this->yaw - *inputYaw;
 
     if (this->meleeWeaponState == 0) {
         this->speedXZ = CLAMP(this->speedXZ, -(R_RUN_SPEED_LIMIT / 100.0f), (R_RUN_SPEED_LIMIT / 100.0f));
@@ -6433,11 +6439,11 @@ void func_8083DFE0(Player* this, f32* targetVelocity, s16* targetYaw) {
 
     if (ABS(yawDiff) > DEG_TO_BINANG(135.0f)) {
         if (Math_StepToF(&this->speedXZ, 0.0f, 1.0f)) {
-            this->yaw = *targetYaw;
+            this->yaw = *inputYaw;
         }
     } else {
-        Math_AsymStepToF(&this->speedXZ, *targetVelocity, 0.05f, 0.1f);
-        Math_ScaledStepToS(&this->yaw, *targetYaw, 200);
+        Math_AsymStepToF(&this->speedXZ, *inputVelocity, 0.05f, 0.1f);
+        Math_ScaledStepToS(&this->yaw, *inputYaw, 200);
     }
 }
 
@@ -7135,8 +7141,8 @@ s32 Player_TryLettingGoWhileClimbing(Player* this, PlayState* play) {
     return true;
 }
 
-s32 Player_GetZLockOnEnemyMoveDirection(Player* this, f32 targetVelocity, s16 targetYaw) {
-    f32 targetYawDiff = (s16)(targetYaw - this->actor.shape.rot.y);
+s32 Player_GetZLockOnEnemyMoveDirection(Player* this, f32 inputVelocity, s16 inputYaw) {
+    f32 targetYawDiff = (s16)(inputYaw - this->actor.shape.rot.y);
     f32 yawRatio;
 
     if (this->lockOnActor != NULL) {
@@ -7145,9 +7151,9 @@ s32 Player_GetZLockOnEnemyMoveDirection(Player* this, f32 targetVelocity, s16 ta
 
     yawRatio = fabsf(targetYawDiff) / 0x8000;
 
-    if (targetVelocity > ((SQ(yawRatio) * 50.0f) + 6.0f)) {
+    if (inputVelocity > ((SQ(yawRatio) * 50.0f) + 6.0f)) {
         return 1;
-    } else if (targetVelocity > (((1.0f - yawRatio) * 10.0f) + 6.8f)) {
+    } else if (inputVelocity > (((1.0f - yawRatio) * 10.0f) + 6.8f)) {
         return -1;
     }
 
@@ -7155,17 +7161,17 @@ s32 Player_GetZLockOnEnemyMoveDirection(Player* this, f32 targetVelocity, s16 ta
 }
 
 // Updates focus and look angles, then returns direction to move in?
-s32 Player_GetZParallelMoveDirection(Player* this, f32* targetVelocity, s16* targetYaw, PlayState* play) {
-    s16 sp2E = *targetYaw - this->zTargetYaw;
+s32 Player_GetZParallelMoveDirection(Player* this, f32* inputVelocity, s16* inputYaw, PlayState* play) {
+    s16 sp2E = *inputYaw - this->zTargetYaw;
     u16 sp2C = ABS(sp2E);
 
     if ((Player_IsAimingFpsItem(this) || Player_IsAimingBoomerang(this)) && (this->lockOnActor == NULL)) {
-        *targetVelocity *= Math_SinS(sp2C);
+        *inputVelocity *= Math_SinS(sp2C);
 
-        if (*targetVelocity != 0.0f) {
-            *targetYaw = (((sp2E >= 0) ? 1 : -1) * 0x4000) + this->actor.shape.rot.y;
+        if (*inputVelocity != 0.0f) {
+            *inputYaw = (((sp2E >= 0) ? 1 : -1) * 0x4000) + this->actor.shape.rot.y;
         } else {
-            *targetYaw = this->actor.shape.rot.y;
+            *inputYaw = this->actor.shape.rot.y;
         }
 
         if (this->lockOnActor != NULL) {
@@ -7176,14 +7182,14 @@ s32 Player_GetZParallelMoveDirection(Player* this, f32* targetVelocity, s16* tar
         }
     } else {
         if (this->lockOnActor != NULL) {
-            return Player_GetZLockOnEnemyMoveDirection(this, *targetVelocity, *targetYaw);
+            return Player_GetZLockOnEnemyMoveDirection(this, *inputVelocity, *inputYaw);
         }
 
-        func_8083DC54(this, play);
+        Player_SetLookAngle(this, play);
 
-        if ((*targetVelocity != 0.0f) && (sp2C < 6000)) {
+        if ((*inputVelocity != 0.0f) && (sp2C < 6000)) {
             return 1;
-        } else if (*targetVelocity > Math_SinS((0x4000 - (sp2C >> 1))) * 200.0f) {
+        } else if (*inputVelocity > Math_SinS((0x4000 - (sp2C >> 1))) * 200.0f) {
             return -1;
         }
     }
@@ -7210,13 +7216,13 @@ s32 Player_GetPushPullDirection(Player* this, f32* arg1, s16* arg2) {
 }
 
 s32 Player_GetSpinAttackMoveDirection(Player* this, f32* arg1, s16* arg2, PlayState* play) {
-    func_8083DC54(this, play);
+    Player_SetLookAngle(this, play);
 
-    if ((*arg1 != 0.0f) || (ABS(this->unk_87C) > 400)) {
+    if ((*arg1 != 0.0f) || (ABS(this->yawDiffPrevFrame) > 400)) {
         s16 temp1 = *arg2 - Camera_GetInputDirYaw(GET_ACTIVE_CAM(play));
         u16 temp2 = (ABS(temp1) - 0x2000) & 0xFFFF;
 
-        if ((temp2 < 0x4000) || (this->unk_87C != 0)) {
+        if ((temp2 < 0x4000) || (this->yawDiffPrevFrame != 0)) {
             return -1;
         } else {
             return 1;
@@ -7295,8 +7301,8 @@ void Player_UpdateWalkFrame(Player* this, f32 frameStep) {
 }
 
 void Player_Action_IdleLockOnEnemy(Player* this, PlayState* play) {
-    f32 sp44;
-    s16 sp42;
+    f32 inputVelocity;
+    s16 inputYaw;
     s32 temp1;
     u32 temp2;
     s16 temp3;
@@ -7304,8 +7310,7 @@ void Player_Action_IdleLockOnEnemy(Player* this, PlayState* play) {
 
     if (this->stateFlags3 & PLAYER_STATE3_ENDING_MELEE_ATTACK) {
         if (Player_GetMeleeWeaponHeld(this) != 0) {
-            this->stateFlags2 |=
-                PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING | PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+            this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON | PLAYER_STATE2_NO_YAW_UPDATE;
         } else {
             this->stateFlags3 &= ~PLAYER_STATE3_ENDING_MELEE_ATTACK;
         }
@@ -7335,27 +7340,27 @@ void Player_Action_IdleLockOnEnemy(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &sp44, &sp42, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
-    temp1 = Player_GetZLockOnEnemyMoveDirection(this, sp44, sp42);
+    temp1 = Player_GetZLockOnEnemyMoveDirection(this, inputVelocity, inputYaw);
 
     if (temp1 > 0) {
-        Player_SetupRunTowardsYaw(this, play, sp42);
+        Player_SetupRunTowardsYaw(this, play, inputYaw);
         return;
     }
 
     if (temp1 < 0) {
-        Player_SetupBackwalkEnemy(this, sp42, play);
+        Player_SetupBackwalkEnemy(this, inputYaw, play);
         return;
     }
 
-    if (sp44 > 4.0f) {
+    if (inputVelocity > 4.0f) {
         Player_SetupSidewalkFast(this, play);
         return;
     }
 
     Player_UpdateWalkFrame(this, (this->speedXZ * 0.3f) + 1.0f);
-    func_80840138(this, sp44, sp42);
+    func_80840138(this, inputVelocity, inputYaw);
 
     temp2 = this->walkCurFrame;
     if ((temp2 < 6) || ((temp2 - 0xE) < 6)) {
@@ -7363,26 +7368,26 @@ void Player_Action_IdleLockOnEnemy(Player* this, PlayState* play) {
         return;
     }
 
-    temp3 = sp42 - this->yaw;
+    temp3 = inputYaw - this->yaw;
     temp4 = ABS(temp3);
 
     if (temp4 > 0x4000) {
         if (Math_StepToF(&this->speedXZ, 0.0f, 1.5f)) {
-            this->yaw = sp42;
+            this->yaw = inputYaw;
         }
         return;
     }
 
-    Math_AsymStepToF(&this->speedXZ, sp44 * 0.3f, 2.0f, 1.5f);
+    Math_AsymStepToF(&this->speedXZ, inputVelocity * 0.3f, 2.0f, 1.5f);
 
     if (!(this->stateFlags3 & PLAYER_STATE3_ENDING_MELEE_ATTACK)) {
-        Math_ScaledStepToS(&this->yaw, sp42, temp4 * 0.1f);
+        Math_ScaledStepToS(&this->yaw, inputYaw, temp4 * 0.1f);
     }
 }
 
 void Player_Action_IdleZParallelOrLockOnFriend(Player* this, PlayState* play) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
     s32 moveDir;
     s16 temp2;
     s32 temp3;
@@ -7414,38 +7419,38 @@ void Player_Action_IdleZParallelOrLockOnFriend(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.0f, play);
-    moveDir = Player_GetZParallelMoveDirection(this, &targetVelocity, &targetYaw, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
+    moveDir = Player_GetZParallelMoveDirection(this, &inputVelocity, &inputYaw, play);
 
     if (moveDir > 0) {
-        Player_SetupRunTowardsYaw(this, play, targetYaw);
+        Player_SetupRunTowardsYaw(this, play, inputYaw);
         return;
     }
 
     if (moveDir < 0) {
-        Player_SetupBackwalkFriend(this, targetYaw, play);
+        Player_SetupBackwalkFriend(this, inputYaw, play);
         return;
     }
 
-    if (targetVelocity > 4.9f) {
+    if (inputVelocity > 4.9f) {
         Player_SetupSidewalkFast(this, play);
         Player_ResetLeftRightBlendWeight(this);
         return;
     }
-    if (targetVelocity != 0.0f) {
+    if (inputVelocity != 0.0f) {
         Player_SetupSidewalkSlow(this, play);
         return;
     }
 
-    temp2 = targetYaw - this->actor.shape.rot.y;
+    temp2 = inputYaw - this->actor.shape.rot.y;
     temp3 = ABS(temp2);
 
     if (temp3 > 800) {
-        Player_SetupTurn(play, this, targetYaw);
+        Player_SetupTurn(play, this, inputYaw);
     }
 }
 
-void func_808409CC(PlayState* play, Player* this) {
+void Player_ChooseIdleAnim(PlayState* play, Player* this) {
     PlayerAnimationHeader* anim;
     PlayerAnimationHeader** animPtr;
     s32 heathIsCritical;
@@ -7496,9 +7501,9 @@ void func_808409CC(PlayState* play, Player* this) {
 void Player_Action_Idle(Player* this, PlayState* play) {
     s32 sp44 = func_80833350(this);
     s32 isAnimDone = PlayerAnimation_Update(play, &this->skelAnime);
-    f32 sp3C;
-    s16 sp3A;
-    s16 temp;
+    f32 inputVelocity;
+    s16 inputYaw;
+    s16 yawDiff;
 
     if (sp44 > 0) {
         func_808333FC(this, sp44 - 1);
@@ -7512,7 +7517,7 @@ void Player_Action_Idle(Player* this, PlayState* play) {
             this->skelAnime.jointTable[0].y = (this->skelAnime.jointTable[0].y + ((this->idleVar16 & 1) * 0x50)) - 0x28;
         } else {
             Player_Anim_ResetMove(this);
-            func_808409CC(play, this);
+            Player_ChooseIdleAnim(play, this);
         }
     }
 
@@ -7536,32 +7541,32 @@ void Player_Action_Idle(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &sp3C, &sp3A, 0.018f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.018f, play);
 
-    if (sp3C != 0.0f) {
-        Player_SetupRunTowardsYaw(this, play, sp3A);
+    if (inputVelocity != 0.0f) {
+        Player_SetupRunTowardsYaw(this, play, inputYaw);
         return;
     }
 
-    temp = sp3A - this->actor.shape.rot.y;
-    if (ABS(temp) > 800) {
-        Player_SetupTurn(play, this, sp3A);
+    yawDiff = inputYaw - this->actor.shape.rot.y;
+    if (ABS(yawDiff) > DEG_TO_BINANG(4.4f)) {
+        Player_SetupTurn(play, this, inputYaw);
         return;
     }
 
-    Math_ScaledStepToS(&this->actor.shape.rot.y, sp3A, 1200);
+    Math_ScaledStepToS(&this->actor.shape.rot.y, inputYaw, DEG_TO_BINANG(6.595f));
     this->yaw = this->actor.shape.rot.y;
 
     if (Player_GetIdleAnim(this) == this->skelAnime.animation) {
-        func_8083DC54(this, play);
+        Player_SetLookAngle(this, play);
     }
 }
 
 void Player_Action_SidewalkSlow(Player* this, PlayState* play) {
     f32 frames;
     f32 coeff;
-    f32 sp44;
-    s16 sp42;
+    f32 inputVelocity;
+    s16 inputYaw;
     s32 moveDir;
     s16 temp2;
     s32 temp3;
@@ -7611,42 +7616,42 @@ void Player_Action_SidewalkSlow(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &sp44, &sp42, 0.0f, play);
-    moveDir = Player_GetZParallelMoveDirection(this, &sp44, &sp42, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
+    moveDir = Player_GetZParallelMoveDirection(this, &inputVelocity, &inputYaw, play);
 
     if (moveDir > 0) {
-        Player_SetupRunTowardsYaw(this, play, sp42);
+        Player_SetupRunTowardsYaw(this, play, inputYaw);
         return;
     }
 
     if (moveDir < 0) {
-        Player_SetupBackwalkFriend(this, sp42, play);
+        Player_SetupBackwalkFriend(this, inputYaw, play);
         return;
     }
 
-    if (sp44 > 4.9f) {
+    if (inputVelocity > 4.9f) {
         Player_SetupSidewalkFast(this, play);
         Player_ResetLeftRightBlendWeight(this);
         return;
     }
 
-    if ((sp44 == 0.0f) && (this->speedXZ == 0.0f)) {
+    if ((inputVelocity == 0.0f) && (this->speedXZ == 0.0f)) {
         Player_Setup1_IdleZParallelOrLockOnFriend(this, play);
         return;
     }
 
-    temp2 = sp42 - this->yaw;
+    temp2 = inputYaw - this->yaw;
     temp3 = ABS(temp2);
 
     if (temp3 > 0x4000) {
         if (Math_StepToF(&this->speedXZ, 0.0f, 1.5f)) {
-            this->yaw = sp42;
+            this->yaw = inputYaw;
         }
         return;
     }
 
-    Math_AsymStepToF(&this->speedXZ, sp44 * 0.4f, 1.5f, 1.5f);
-    Math_ScaledStepToS(&this->yaw, sp42, temp3 * 0.1f);
+    Math_AsymStepToF(&this->speedXZ, inputVelocity * 0.4f, 1.5f, 1.5f);
+    Math_ScaledStepToS(&this->yaw, inputYaw, temp3 * 0.1f);
 }
 
 void func_80841138(Player* this, PlayState* play) {
@@ -7699,7 +7704,7 @@ void Player_SetupBackwalkHaltFriend(Player* this, PlayState* play) {
     Player_Anim_PlayOnceWithMorph(play, this, &gPlayerAnim_link_normal_back_brake);
 }
 
-s32 func_80841458(Player* this, f32* arg1, s16* arg2, PlayState* play) {
+s32 func_80841458(Player* this, f32* arg1, s16* inputYaw, PlayState* play) {
     if (this->speedXZ > 6.0f) {
         Player_SetupBackwalkHaltFriend(this, play);
         return true;
@@ -7708,7 +7713,7 @@ s32 func_80841458(Player* this, f32* arg1, s16* arg2, PlayState* play) {
     if (*arg1 != 0.0f) {
         if (Player_StepHorizontalSpeedToZero(this)) {
             *arg1 = 0.0f;
-            *arg2 = this->yaw;
+            *inputYaw = this->yaw;
         } else {
             return true;
         }
@@ -7718,8 +7723,8 @@ s32 func_80841458(Player* this, f32* arg1, s16* arg2, PlayState* play) {
 }
 
 void Player_Action_BackwalkFriend(Player* this, PlayState* play) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
     s32 moveDir;
     s16 targetYawDiff;
 
@@ -7734,26 +7739,26 @@ void Player_Action_BackwalkFriend(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.0f, play);
-    moveDir = Player_GetZParallelMoveDirection(this, &targetVelocity, &targetYaw, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
+    moveDir = Player_GetZParallelMoveDirection(this, &inputVelocity, &inputYaw, play);
 
     if (moveDir >= 0) {
-        if (!func_80841458(this, &targetVelocity, &targetYaw, play)) {
+        if (!func_80841458(this, &inputVelocity, &inputYaw, play)) {
             if (moveDir != 0) {
                 Player_SetupRun(this, play);
-            } else if (targetVelocity > 4.9f) {
+            } else if (inputVelocity > 4.9f) {
                 Player_SetupSidewalkFast(this, play);
             } else {
                 Player_SetupSidewalkSlow(this, play);
             }
         }
     } else {
-        targetYawDiff = targetYaw - this->yaw;
+        targetYawDiff = inputYaw - this->yaw;
 
-        Math_AsymStepToF(&this->speedXZ, targetVelocity * 1.5f, 1.5f, 2.0f);
-        Math_ScaledStepToS(&this->yaw, targetYaw, targetYawDiff * 0.1f);
+        Math_AsymStepToF(&this->speedXZ, inputVelocity * 1.5f, 1.5f, 2.0f);
+        Math_ScaledStepToS(&this->yaw, inputYaw, targetYawDiff * 0.1f);
 
-        if ((targetVelocity == 0.0f) && (this->speedXZ == 0.0f)) {
+        if ((inputVelocity == 0.0f) && (this->speedXZ == 0.0f)) {
             Player_Setup1_IdleZParallelOrLockOnFriend(this, play);
         }
     }
@@ -7766,8 +7771,8 @@ void Player_SetupBackwalkEndHaltFriend(Player* this, PlayState* play) {
 
 void Player_Action_BackwalkHaltFriend(Player* this, PlayState* play) {
     s32 isAnimDone = PlayerAnimation_Update(play, &this->skelAnime);
-    f32 sp30;
-    s16 sp2E;
+    f32 inputVelocity;
+    s16 inputYaw;
 
     Player_StepHorizontalSpeedToZero(this);
 
@@ -7775,14 +7780,14 @@ void Player_Action_BackwalkHaltFriend(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &sp30, &sp2E, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
     if (this->speedXZ == 0.0f) {
         this->yaw = this->actor.shape.rot.y;
 
-        if (Player_GetZParallelMoveDirection(this, &sp30, &sp2E, play) > 0) {
+        if (Player_GetZParallelMoveDirection(this, &inputVelocity, &inputYaw, play) > 0) {
             Player_SetupRun(this, play);
-        } else if ((sp30 != 0.0f) || isAnimDone) {
+        } else if ((inputVelocity != 0.0f) || isAnimDone) {
             Player_SetupBackwalkEndHaltFriend(this, play);
         }
     }
@@ -7815,8 +7820,8 @@ void Player_UpdateSidewalkFastAnim(PlayState* play, Player* this) {
 }
 
 void Player_Action_SidewalkFast(Player* this, PlayState* play) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
     s32 moveDir;
     s16 temp2;
     s32 temp3;
@@ -7832,12 +7837,12 @@ void Player_Action_SidewalkFast(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
     if (Player_IsZParallelOrLockOnFriend(this)) {
-        moveDir = Player_GetZParallelMoveDirection(this, &targetVelocity, &targetYaw, play);
+        moveDir = Player_GetZParallelMoveDirection(this, &inputVelocity, &inputYaw, play);
     } else {
-        moveDir = Player_GetZLockOnEnemyMoveDirection(this, targetVelocity, targetYaw);
+        moveDir = Player_GetZLockOnEnemyMoveDirection(this, inputVelocity, inputYaw);
     }
 
     if (moveDir > 0) {
@@ -7847,14 +7852,14 @@ void Player_Action_SidewalkFast(Player* this, PlayState* play) {
 
     if (moveDir < 0) {
         if (Player_IsZParallelOrLockOnFriend(this)) {
-            Player_SetupBackwalkFriend(this, targetYaw, play);
+            Player_SetupBackwalkFriend(this, inputYaw, play);
         } else {
-            Player_SetupBackwalkEnemy(this, targetYaw, play);
+            Player_SetupBackwalkEnemy(this, inputYaw, play);
         }
         return;
     }
 
-    if ((this->speedXZ < 3.6f) && (targetVelocity < 4.0f)) {
+    if ((this->speedXZ < 3.6f) && (inputVelocity < 4.0f)) {
         if (!Player_IsEnemyLockOn(this) && Player_IsZParallelOrLockOnFriend(this)) {
             Player_SetupSidewalkSlow(this, play);
         } else {
@@ -7863,26 +7868,26 @@ void Player_Action_SidewalkFast(Player* this, PlayState* play) {
         return;
     }
 
-    func_80840138(this, targetVelocity, targetYaw);
+    func_80840138(this, inputVelocity, inputYaw);
 
-    temp2 = targetYaw - this->yaw;
+    temp2 = inputYaw - this->yaw;
     temp3 = ABS(temp2);
 
     if (temp3 > 0x4000) {
         if (Math_StepToF(&this->speedXZ, 0.0f, 3.0f) != 0) {
-            this->yaw = targetYaw;
+            this->yaw = inputYaw;
         }
         return;
     }
 
-    targetVelocity *= 0.9f;
-    Math_AsymStepToF(&this->speedXZ, targetVelocity, 2.0f, 3.0f);
-    Math_ScaledStepToS(&this->yaw, targetYaw, temp3 * 0.1f);
+    inputVelocity *= 0.9f;
+    Math_AsymStepToF(&this->speedXZ, inputVelocity, 2.0f, 3.0f);
+    Math_ScaledStepToS(&this->yaw, inputYaw, temp3 * 0.1f);
 }
 
 void Player_Action_Turn(Player* this, PlayState* play) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
 
     PlayerAnimation_Update(play, &this->skelAnime);
 
@@ -7893,16 +7898,16 @@ void Player_Action_Turn(Player* this, PlayState* play) {
                                      this->skelAnime.morphTable, D_80853410);
     }
 
-    Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.018f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.018f, play);
 
     if (Player_TrySwappingAction(play, this, sTurnSwapActionList, true)) {
         return;
     }
 
-    if (targetVelocity != 0.0f) {
-        this->actor.shape.rot.y = targetYaw;
+    if (inputVelocity != 0.0f) {
+        this->actor.shape.rot.y = inputYaw;
         Player_SetupRun(this, play);
-    } else if (Math_ScaledStepToS(&this->actor.shape.rot.y, targetYaw, this->unk_87E)) {
+    } else if (Math_ScaledStepToS(&this->actor.shape.rot.y, inputYaw, this->unk_87E)) {
         Player_SetupIdle(this, play);
     }
 
@@ -8002,7 +8007,7 @@ void Player_UpdateRunAnim(Player* this, PlayState* play) {
 
             Player_BlendRunAnims(this, 1, play);
 
-            PlayerAnimation_LoadToJoint(play, &this->skelAnime, func_80833438(this),
+            PlayerAnimation_LoadToJoint(play, &this->skelAnime, Player_GetRunAnim(this),
                                         this->walkCurFrame * (20.0f / 29.0f));
         }
     }
@@ -8013,10 +8018,10 @@ void Player_UpdateRunAnim(Player* this, PlayState* play) {
 }
 
 void Player_Action_Run(Player* this, PlayState* play) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
     Player_UpdateRunAnim(this, play);
 
     if (Player_TrySwappingAction(play, this, sRunSwapActionList, true)) {
@@ -8028,25 +8033,25 @@ void Player_Action_Run(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.018f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.018f, play);
 
-    if (func_8083C484(this, &targetVelocity, &targetYaw)) {
+    if (func_8083C484(this, &inputVelocity, &inputYaw)) {
         return;
     }
 
-    func_8083DF68(this, targetVelocity, targetYaw);
+    func_8083DF68(this, inputVelocity, inputYaw);
     func_8083DDC8(this, play);
 
-    if ((this->speedXZ == 0.0f) && (targetVelocity == 0.0f)) {
+    if ((this->speedXZ == 0.0f) && (inputVelocity == 0.0f)) {
         func_8083C0B8(this, play);
     }
 }
 
 void Player_Action_RunZTarget(Player* this, PlayState* play) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
     Player_UpdateRunAnim(this, play);
 
     if (Player_TrySwappingAction(play, this, sRunZTargetSwapActionList, true)) {
@@ -8058,32 +8063,32 @@ void Player_Action_RunZTarget(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
-    if (func_8083C484(this, &targetVelocity, &targetYaw)) {
+    if (func_8083C484(this, &inputVelocity, &inputYaw)) {
         return;
     }
 
-    if ((Player_IsZParallelOrLockOnFriend(this) && (targetVelocity != 0.0f) &&
-         (Player_GetZParallelMoveDirection(this, &targetVelocity, &targetYaw, play) <= 0)) ||
+    if ((Player_IsZParallelOrLockOnFriend(this) && (inputVelocity != 0.0f) &&
+         (Player_GetZParallelMoveDirection(this, &inputVelocity, &inputYaw, play) <= 0)) ||
         (!Player_IsZParallelOrLockOnFriend(this) &&
-         (Player_GetZLockOnEnemyMoveDirection(this, targetVelocity, targetYaw) <= 0))) {
+         (Player_GetZLockOnEnemyMoveDirection(this, inputVelocity, inputYaw) <= 0))) {
         Player_Setup1_IdleAll(this, play);
         return;
     }
 
-    func_8083DF68(this, targetVelocity, targetYaw);
+    func_8083DF68(this, inputVelocity, inputYaw);
     func_8083DDC8(this, play);
 
-    if ((this->speedXZ == 0) && (targetVelocity == 0)) {
+    if ((this->speedXZ == 0) && (inputVelocity == 0)) {
         Player_Setup1_IdleAll(this, play);
     }
 }
 
 void Player_Action_BackwalkEnemy(Player* this, PlayState* play) {
     s32 isAnimDone = PlayerAnimation_Update(play, &this->skelAnime);
-    f32 sp30;
-    s16 sp2E;
+    f32 inputVelocity;
+    s16 inputYaw;
 
     if (Player_TrySwappingAction(play, this, sSidewalkFastSwapActionList, true)) {
         return;
@@ -8094,13 +8099,14 @@ void Player_Action_BackwalkEnemy(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &sp30, &sp2E, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
     if ((this->skelAnime.morphWeight == 0.0f) && (this->skelAnime.curFrame > 5.0f)) {
         Player_StepHorizontalSpeedToZero(this);
 
-        if ((this->skelAnime.curFrame > 10.0f) && (Player_GetZLockOnEnemyMoveDirection(this, sp30, sp2E) < 0)) {
-            Player_SetupBackwalkEnemy(this, sp2E, play);
+        if ((this->skelAnime.curFrame > 10.0f) &&
+            (Player_GetZLockOnEnemyMoveDirection(this, inputVelocity, inputYaw) < 0)) {
+            Player_SetupBackwalkEnemy(this, inputYaw, play);
             return;
         }
 
@@ -8112,8 +8118,8 @@ void Player_Action_BackwalkEnemy(Player* this, PlayState* play) {
 
 void Player_Action_BackwalkEndEnemy(Player* this, PlayState* play) {
     s32 isAnimDone = PlayerAnimation_Update(play, &this->skelAnime);
-    f32 sp30;
-    s16 sp2E;
+    f32 inputVelocity;
+    s16 inputYaw;
 
     Player_StepHorizontalSpeedToZero(this);
 
@@ -8121,17 +8127,17 @@ void Player_Action_BackwalkEndEnemy(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &sp30, &sp2E, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
     if (this->speedXZ == 0.0f) {
         this->yaw = this->actor.shape.rot.y;
 
-        if (Player_GetZLockOnEnemyMoveDirection(this, sp30, sp2E) > 0) {
+        if (Player_GetZLockOnEnemyMoveDirection(this, inputVelocity, inputYaw) > 0) {
             Player_SetupRun(this, play);
             return;
         }
 
-        if ((sp30 != 0.0f) || isAnimDone) {
+        if ((inputVelocity != 0.0f) || isAnimDone) {
             Player_Setup1_IdleAll(this, play);
         }
     }
@@ -8213,7 +8219,7 @@ void Player_RequestQuake(PlayState* play, s32 speed, s32 y, s32 duration) {
 void Player_RequestQuakeAndRumble(PlayState* play, Player* this) {
     Player_RequestQuake(play, 27767, 7, 20);
     play->actorCtx.unk_02 = 4;
-    Player_RequestRumble(this, 255, 20, 150, 0);
+    Player_RequestRumble(this, 255, 20, 150, SQ(0));
     Player_PlaySfx(this, NA_SE_IT_HAMMER_HIT);
 }
 
@@ -8283,7 +8289,7 @@ void Player_TryRecoiling(PlayState* play, Player* this) {
         Player_Anim_PlayOnceAdjusted(play, this, sRecoilAnims[Player_IsHoldingTwoHandedWeapon(this) + sp28]);
     }
 
-    Player_RequestRumble(this, 180, 20, 100, 0);
+    Player_RequestRumble(this, 180, 20, 100, SQ(0));
     this->speedXZ = -18.0f;
     Player_TryBreakingMeleeWeapons(play, this);
 }
@@ -8343,7 +8349,7 @@ s32 Player_ProcessAttackCollision(PlayState* play, Player* this) {
 
                             Player_TryBreakingMeleeWeapons(play, this);
                             this->speedXZ = -14.0f;
-                            Player_RequestRumble(this, 180, 20, 100, 0);
+                            Player_RequestRumble(this, 180, 20, 100, SQ(0));
                         }
                     }
                 }
@@ -8459,7 +8465,7 @@ void Player_Action_ShieldCrouched(Player* this, PlayState* play) {
                     Player_AnimReplace_Setup(play, this, 4);
                 } else {
                     if (this->itemAction < 0) {
-                        func_8008EC70(this);
+                        Player_SetHeldItem(this);
                     }
                     Player_Setup4_IdleAll(this, GET_PLAYER_ANIM(PLAYER_ANIMGROUP_defense_end, this->modelAnimType),
                                           play);
@@ -8510,7 +8516,7 @@ void Player_Action_ShieldDeflectAttack(Player* this, PlayState* play) {
     }
 }
 
-void Player_Action_Damaged(Player* this, PlayState* play) {
+void Player_Action_Damage(Player* this, PlayState* play) {
     s32 actionInterruptState;
 
     Player_StepHorizontalSpeedToZero(this);
@@ -8524,20 +8530,19 @@ void Player_Action_Damaged(Player* this, PlayState* play) {
 }
 
 void Player_Action_KnockbackFly(Player* this, PlayState* play) {
-    this->stateFlags2 |=
-        PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING | PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON | PLAYER_STATE2_NO_YAW_UPDATE;
 
     Player_GiveOnceSecondInvincibility(this);
 
     if (!(this->stateFlags1 & PLAYER_STATE1_IN_CUTSCENE) && (this->knockbackFlyVar16 == 0) &&
         (this->specialDamageEffect != 0)) {
-        s16 temp = this->actor.shape.rot.y - this->unk_8A2;
+        s16 temp = this->actor.shape.rot.y - this->damageYaw;
 
-        this->yaw = this->actor.shape.rot.y = this->unk_8A2;
-        this->speedXZ = this->unk_8A4;
+        this->yaw = this->actor.shape.rot.y = this->damageYaw;
+        this->speedXZ = this->damageSpeedXZ;
 
         if (ABS(temp) > 0x4000) {
-            this->actor.shape.rot.y = this->unk_8A2 + 0x8000;
+            this->actor.shape.rot.y = this->damageYaw + 0x8000;
         }
 
         if (this->actor.velocity.y < 0.0f) {
@@ -8574,8 +8579,7 @@ void Player_Action_KnockbackFly(Player* this, PlayState* play) {
 }
 
 void Player_Action_KnockbackDown(Player* this, PlayState* play) {
-    this->stateFlags2 |=
-        PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING | PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON | PLAYER_STATE2_NO_YAW_UPDATE;
 
     Player_GiveOnceSecondInvincibility(this);
     Player_StepHorizontalSpeedToZero(this);
@@ -8603,7 +8607,7 @@ static AnimSfxEntry sKnockbackGetUpAnimSfx[] = {
 void Player_Action_KnockbackGetUp(Player* this, PlayState* play) {
     s32 actionInterruptState;
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
     Player_GiveOnceSecondInvincibility(this);
 
     if (this->stateFlags1 & PLAYER_STATE1_IN_CUTSCENE) {
@@ -8748,7 +8752,7 @@ s32 func_80843E64(PlayState* play, Player* this) {
         Player_SetInvincibilityTimerWithDamageFlash(this, 40);
         Player_RequestQuake(play, 32967, 2, 30);
         Player_RequestRumble(this, impactInfo->rumbleStrength, impactInfo->rumbleDuration,
-                             impactInfo->rumbleDecreaseRate, 0);
+                             impactInfo->rumbleDecreaseRate, SQ(0));
         Player_PlaySfx(this, NA_SE_PL_BODY_HIT);
         Player_AnimSfx_PlayVoice(this, impactInfo->sfxId);
 
@@ -8762,7 +8766,7 @@ s32 func_80843E64(PlayState* play, Player* this) {
             fallDistance = 255;
         }
 
-        Player_RequestRumble(this, (u8)fallDistance, (u8)(fallDistance * 0.1f), (u8)fallDistance, 0);
+        Player_RequestRumble(this, (u8)fallDistance, (u8)(fallDistance * 0.1f), (u8)fallDistance, SQ(0));
 
         if (sFloorType == FLOOR_TYPE_6) {
             Player_AnimSfx_PlayVoice(this, NA_SE_VO_LI_CLIMB_END);
@@ -8788,8 +8792,8 @@ void func_8084409C(PlayState* play, Player* this, f32 speedXZ, f32 velocityY) {
 }
 
 void Player_Action_Midair(Player* this, PlayState* play) {
-    f32 sp4C;
-    s16 sp4A;
+    f32 inputVelocity;
+    s16 inputYaw;
 
     if (gSaveContext.respawn[RESPAWN_MODE_TOP].data > 40) {
         this->actor.gravity = 0.0f;
@@ -8797,7 +8801,7 @@ void Player_Action_Midair(Player* this, PlayState* play) {
         this->actor.gravity = -1.2f;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &sp4C, &sp4A, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
     if (!(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
         if (this->stateFlags1 & PLAYER_STATE1_HOLDING_ACTOR) {
@@ -8812,7 +8816,7 @@ void Player_Action_Midair(Player* this, PlayState* play) {
         PlayerAnimation_Update(play, &this->skelAnime);
 
         if (!(this->stateFlags2 & PLAYER_STATE2_BACKFLIPPING_OR_SIDEHOPPING)) {
-            func_8083DFE0(this, &sp4C, &sp4A);
+            func_8083DFE0(this, &inputVelocity, &inputYaw);
         }
 
         Player_TryUpperAction(this, play);
@@ -8922,10 +8926,10 @@ void Player_Action_Roll(Player* this, PlayState* play) {
     s32 isAnimDone;
     DynaPolyActor* wallPolyActor;
     s32 pad;
-    f32 sp38;
-    s16 sp36;
+    f32 inputVelocity;
+    s16 inputYaw;
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
 
     cylinderOc = NULL;
     isAnimDone = PlayerAnimation_Update(play, &this->skelAnime);
@@ -8969,7 +8973,7 @@ void Player_Action_Roll(Player* this, PlayState* play) {
             Player_Anim_PlayOnce(play, this, GET_PLAYER_ANIM(PLAYER_ANIMGROUP_hip_down, this->modelAnimType));
             this->speedXZ = -this->speedXZ;
             Player_RequestQuake(play, 33267, 3, 12);
-            Player_RequestRumble(this, 255, 20, 150, 0);
+            Player_RequestRumble(this, 255, 20, 150, SQ(0));
             Player_PlaySfx(this, NA_SE_PL_BODY_HIT);
             Player_AnimSfx_PlayVoice(this, NA_SE_VO_LI_CLIMB_END);
             this->rollVar16 = true;
@@ -8983,14 +8987,14 @@ void Player_Action_Roll(Player* this, PlayState* play) {
             return;
         }
 
-        Player_GetTargetVelocityAndYaw(this, &sp38, &sp36, 0.018f, play);
+        Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.018f, play);
 
-        sp38 *= 1.5f;
-        if ((sp38 < 3.0f) || (this->analogStickDirection4Parts[this->inputFrameCounter] != 0)) {
-            sp38 = 3.0f;
+        inputVelocity *= 1.5f;
+        if ((inputVelocity < 3.0f) || (this->analogStickDirection4Parts[this->inputFrameCounter] != 0)) {
+            inputVelocity = 3.0f;
         }
 
-        func_8083DF68(this, sp38, this->actor.shape.rot.y);
+        func_8083DF68(this, inputVelocity, this->actor.shape.rot.y);
 
         if (func_8084269C(play, this)) {
             Actor_PlaySfx_Flagged(&this->actor, NA_SE_PL_ROLL_DUST - SFX_FLAG);
@@ -9001,7 +9005,7 @@ void Player_Action_Roll(Player* this, PlayState* play) {
 }
 
 void Player_Action_FallDive(Player* this, PlayState* play) {
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
 
     if (PlayerAnimation_Update(play, &this->skelAnime)) {
         Player_Anim_PlayLoop(play, this, &gPlayerAnim_link_normal_run_jump_water_fall_wait);
@@ -9016,10 +9020,10 @@ void Player_Action_FallDive(Player* this, PlayState* play) {
 }
 
 void Player_Action_JumpSlash(Player* this, PlayState* play) {
-    f32 sp2C;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
 
     this->actor.gravity = -1.2f;
     PlayerAnimation_Update(play, &this->skelAnime);
@@ -9031,8 +9035,8 @@ void Player_Action_JumpSlash(Player* this, PlayState* play) {
     func_8084285C(this, 6.0f, 7.0f, 99.0f);
 
     if (!(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
-        Player_GetTargetVelocityAndYaw(this, &sp2C, &targetYaw, 0.0f, play);
-        func_8083DFE0(this, &sp2C, &this->yaw);
+        Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
+        func_8083DFE0(this, &inputVelocity, &this->yaw);
         return;
     }
 
@@ -9099,8 +9103,8 @@ void Player_UpdateSpinAttackTimer(Player* this) {
 }
 
 void Player_Action_ChargeSpinAttack(Player* this, PlayState* play) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
     s32 moveDir;
 
     this->stateFlags1 |= PLAYER_STATE1_CHARGING_SPIN_ATTACK;
@@ -9139,9 +9143,9 @@ void Player_Action_ChargeSpinAttack(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
-    moveDir = Player_GetSpinAttackMoveDirection(this, &targetVelocity, &targetYaw, play);
+    moveDir = Player_GetSpinAttackMoveDirection(this, &inputVelocity, &inputYaw, play);
     if (moveDir > 0) {
         Player_SetupChargeSpinAttackWalk(this, play);
     } else if (moveDir < 0) {
@@ -9154,8 +9158,8 @@ void Player_Action_ChargeSpinAttackWalk(Player* this, PlayState* play) {
     s32 absCurYawDiff;
     f32 absLinearVelocity;
     f32 blendWeight;
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
     s32 moveDir;
     s16 targetYawDiff;
     s32 absTargetYawDiff;
@@ -9187,9 +9191,9 @@ void Player_Action_ChargeSpinAttackWalk(Player* this, PlayState* play) {
     }
 
     Player_UpdateSpinAttackTimer(this);
-    Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
-    moveDir = Player_GetSpinAttackMoveDirection(this, &targetVelocity, &targetYaw, play);
+    moveDir = Player_GetSpinAttackMoveDirection(this, &inputVelocity, &inputYaw, play);
 
     if (moveDir < 0) {
         Player_SetupChargeSpinAttackSidewalk(this, play);
@@ -9197,24 +9201,24 @@ void Player_Action_ChargeSpinAttackWalk(Player* this, PlayState* play) {
     }
 
     if (moveDir == 0) {
-        targetVelocity = 0.0f;
-        targetYaw = this->yaw;
+        inputVelocity = 0.0f;
+        inputYaw = this->yaw;
     }
 
-    targetYawDiff = targetYaw - this->yaw;
+    targetYawDiff = inputYaw - this->yaw;
     absTargetYawDiff = ABS(targetYawDiff);
 
     if (absTargetYawDiff > 0x4000) {
         if (Math_StepToF(&this->speedXZ, 0.0f, 1.0f)) {
-            this->yaw = targetYaw;
+            this->yaw = inputYaw;
         }
         return;
     }
 
-    Math_AsymStepToF(&this->speedXZ, targetVelocity * 0.2f, 1.0f, 0.5f);
-    Math_ScaledStepToS(&this->yaw, targetYaw, absTargetYawDiff * 0.1f);
+    Math_AsymStepToF(&this->speedXZ, inputVelocity * 0.2f, 1.0f, 0.5f);
+    Math_ScaledStepToS(&this->yaw, inputYaw, absTargetYawDiff * 0.1f);
 
-    if ((targetVelocity == 0.0f) && (this->speedXZ == 0.0f)) {
+    if ((inputVelocity == 0.0f) && (this->speedXZ == 0.0f)) {
         Player_Setup2_ChargeSpinAttack(this, play);
     }
 }
@@ -9222,8 +9226,8 @@ void Player_Action_ChargeSpinAttackWalk(Player* this, PlayState* play) {
 void Player_Action_ChargeSpinAttackSidewalk(Player* this, PlayState* play) {
     f32 sp5C = fabsf(this->speedXZ);
     f32 sp58;
-    f32 sp54;
-    s16 sp52;
+    f32 inputVelocity;
+    s16 inputYaw;
     s32 temp4;
     s16 temp5;
     s32 sp44;
@@ -9231,11 +9235,11 @@ void Player_Action_ChargeSpinAttackSidewalk(Player* this, PlayState* play) {
     this->stateFlags1 |= PLAYER_STATE1_CHARGING_SPIN_ATTACK;
 
     if (sp5C == 0.0f) {
-        sp5C = ABS(this->unk_87C) * 0.0015f;
+        sp5C = ABS(this->yawDiffPrevFrame) * 0.0015f;
         if (sp5C < 400.0f) {
             sp5C = 0.0f;
         }
-        Player_UpdateWalkFrame(this, ((this->unk_87C >= 0) ? 1 : -1) * sp5C);
+        Player_UpdateWalkFrame(this, ((this->yawDiffPrevFrame >= 0) ? 1 : -1) * sp5C);
     } else {
         sp58 = sp5C * 1.5f;
         if (sp58 < 1.5f) {
@@ -9255,9 +9259,9 @@ void Player_Action_ChargeSpinAttackSidewalk(Player* this, PlayState* play) {
     }
 
     Player_UpdateSpinAttackTimer(this);
-    Player_GetTargetVelocityAndYaw(this, &sp54, &sp52, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
-    temp4 = Player_GetSpinAttackMoveDirection(this, &sp54, &sp52, play);
+    temp4 = Player_GetSpinAttackMoveDirection(this, &inputVelocity, &inputYaw, play);
 
     if (temp4 > 0) {
         Player_SetupChargeSpinAttackWalk(this, play);
@@ -9265,24 +9269,24 @@ void Player_Action_ChargeSpinAttackSidewalk(Player* this, PlayState* play) {
     }
 
     if (temp4 == 0) {
-        sp54 = 0.0f;
-        sp52 = this->yaw;
+        inputVelocity = 0.0f;
+        inputYaw = this->yaw;
     }
 
-    temp5 = sp52 - this->yaw;
+    temp5 = inputYaw - this->yaw;
     sp44 = ABS(temp5);
 
     if (sp44 > 0x4000) {
         if (Math_StepToF(&this->speedXZ, 0.0f, 1.0f)) {
-            this->yaw = sp52;
+            this->yaw = inputYaw;
         }
         return;
     }
 
-    Math_AsymStepToF(&this->speedXZ, sp54 * 0.2f, 1.0f, 0.5f);
-    Math_ScaledStepToS(&this->yaw, sp52, sp44 * 0.1f);
+    Math_AsymStepToF(&this->speedXZ, inputVelocity * 0.2f, 1.0f, 0.5f);
+    Math_ScaledStepToS(&this->yaw, inputYaw, sp44 * 0.1f);
 
-    if ((sp54 == 0.0f) && (this->speedXZ == 0.0f) && (sp5C == 0.0f)) {
+    if ((inputVelocity == 0.0f) && (this->speedXZ == 0.0f) && (sp5C == 0.0f)) {
         Player_Setup2_ChargeSpinAttack(this, play);
     }
 }
@@ -9293,7 +9297,7 @@ void Player_Action_JumpToLedge(Player* this, PlayState* play) {
     s32 actionInterruptState;
     f32 temp3;
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
     isAnimDone = PlayerAnimation_Update(play, &this->skelAnime);
 
     if (this->skelAnime.animation == &gPlayerAnim_link_normal_250jump_start) {
@@ -9363,8 +9367,7 @@ void Player_Action_JumpToLedge(Player* this, PlayState* play) {
 }
 
 void Player_Action_CsIntoAction(Player* this, PlayState* play) {
-    this->stateFlags2 |=
-        PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING | PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON | PLAYER_STATE2_NO_YAW_UPDATE;
 
     PlayerAnimation_Update(play, &this->skelAnime);
 
@@ -9408,7 +9411,7 @@ s32 Player_CutsceneMove(PlayState* play, Player* this, CsCmdActorCue* cue, f32 a
         }
     }
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
     Player_UpdateRunAnim(this, play);
     func_8083DF68(this, arg3, arg4);
 
@@ -9514,7 +9517,7 @@ void Player_Action_MiniCutscene(Player* this, PlayState* play) {
 void Player_Action_OpenDoor(Player* this, PlayState* play) {
     s32 isAnimDone;
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
     isAnimDone = PlayerAnimation_Update(play, &this->skelAnime);
 
     Player_TryUpperAction(this, play);
@@ -9693,14 +9696,14 @@ void Player_Action_PutDown(Player* this, PlayState* play) {
 }
 
 void Player_Action_Throw(Player* this, PlayState* play) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
 
     Player_StepHorizontalSpeedToZero(this);
 
     if (PlayerAnimation_Update(play, &this->skelAnime) ||
         ((this->skelAnime.curFrame >= 8.0f) &&
-         Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.018f, play))) {
+         Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.018f, play))) {
         Player_Setup1_IdleAll(this, play);
         return;
     }
@@ -9940,7 +9943,7 @@ void Player_Init(Actor* thisx, PlayState* play2) {
     play->startPlayerCutscene = Player_SetupCutsceneWithCsMode;
     play->playerSetupIdle = Player_SetupIdleWithMorph;
     play->damagePlayer = Player_InflictDamage;
-    play->talkWithPlayer = Player_Talk;
+    play->talkWithPlayer = Player_SetupTalk;
 
     thisx->room = -1;
     this->ageProperties = &sAgeProperties[gSaveContext.linkAge];
@@ -9960,7 +9963,7 @@ void Player_Init(Actor* thisx, PlayState* play2) {
             thisx->params = gSaveContext.respawn[RESPAWN_MODE_RETURN].playerParams;
         } else {
             if ((respawnFlag == 1) || (respawnFlag == -1)) {
-                this->unk_A86 = -2;
+                this->voidRespawnCounter = -2;
             }
 
             if (respawnFlag < 0) {
@@ -10875,10 +10878,10 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
 
     sControlInput = input;
 
-    if (this->unk_A86 < 0) {
-        this->unk_A86++;
-        if (this->unk_A86 == 0) {
-            this->unk_A86 = 1;
+    if (this->voidRespawnCounter < 0) {
+        this->voidRespawnCounter++;
+        if (this->voidRespawnCounter == 0) {
+            this->voidRespawnCounter = 1;
             Audio_PlaySfx(NA_SE_OC_REVENGE);
         }
     }
@@ -10946,7 +10949,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
             if (this->currentBoots == PLAYER_BOOTS_IRON) {
                 if (this->stateFlags1 & PLAYER_STATE1_SWIMMING) {
                     Player_ResetSubCam(play, this);
-                    if (this->ageProperties->unk_2C < this->actor.depthInWater) {
+                    if (this->actor.depthInWater > this->ageProperties->unk_2C) {
                         this->stateFlags2 |= PLAYER_STATE2_DIVING;
                     }
                 }
@@ -10979,7 +10982,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
             this->unk_844--;
         }
 
-        Math_ScaledStepToS(&this->unk_6C2, 0, 400);
+        Math_ScaledStepToS(&this->shapePitchOffset, 0, 400);
         func_80032CB4(this->unk_3A8, 20, 80, 6);
 
         this->actor.shape.face = this->unk_3A8[0] + ((play->gameplayFrames & 32) ? 0 : 3);
@@ -11052,7 +11055,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
                 Vec3f sp4C;
 
                 if (!(rideActor->actor.bgCheckFlags & BGCHECKFLAG_GROUND)) {
-                    func_808396F4(play, this, &D_80854814, &sp4C, &sp5C, &sp58);
+                    Player_PosVsFloorLineTestImpl(play, this, &D_80854814, &sp4C, &sp5C, &sp58);
                 } else {
                     sp5C = rideActor->actor.floorPoly;
                     sp58 = rideActor->actor.floorBgId;
@@ -11099,7 +11102,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
         }
 
         if (!Player_InBlockingCsMode(play, this) && !(this->stateFlags2 & PLAYER_STATE2_CRAWLING)) {
-            func_8083D53C(play, this);
+            Player_UpdateUnderwater(play, this);
 
             if ((this->actor.category == ACTORCAT_PLAYER) && (gSaveContext.health == 0)) {
                 if (this->stateFlags1 & (PLAYER_STATE1_HANGING_FROM_LEDGE_SLIP | PLAYER_STATE1_CLIMBING_ONTO_LEDGE |
@@ -11115,7 +11118,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
                 }
             } else {
                 if ((this->actor.parent == NULL) && ((play->transitionTrigger == TRANS_TRIGGER_START) ||
-                                                     (this->unk_A87 != 0) || !func_808382DC(this, play))) {
+                                                     (this->unk_A87 != 0) || !Player_UpdateDamage(this, play))) {
                     func_8083AA10(this, play);
                 } else {
                     this->fallStartHeight = this->actor.world.pos.y;
@@ -11161,10 +11164,10 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
                                PLAYER_STATE1_CHARGING_SPIN_ATTACK | PLAYER_STATE1_HOLDING_SHIELD);
         this->stateFlags2 &=
             ~(PLAYER_STATE2_CAN_GRAB_PUSH_PULL_WALL | PLAYER_STATE2_CAN_CLIMB_PUSH_PULL_WALL |
-              PLAYER_STATE2_MAKING_NOTICABLE_SFX | PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING |
-              PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION | PLAYER_STATE2_ENABLE_PUSH_PULL_CAM |
-              PLAYER_STATE2_FORCE_SAND_FLOOR_SOUND | PLAYER_STATE2_IDLE_WHILE_CLIMBING | PLAYER_STATE2_FROZEN_IN_ICE |
-              PLAYER_STATE2_DO_ACTION_ENTER | PLAYER_STATE2_CAN_DISMOUNT_HORSE | PLAYER_STATE2_DRAW_REFLECTION);
+              PLAYER_STATE2_MAKING_NOTICABLE_SFX | PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON |
+              PLAYER_STATE2_NO_YAW_UPDATE | PLAYER_STATE2_ENABLE_PUSH_PULL_CAM | PLAYER_STATE2_FORCE_SAND_FLOOR_SOUND |
+              PLAYER_STATE2_IDLE_WHILE_CLIMBING | PLAYER_STATE2_FROZEN_IN_ICE | PLAYER_STATE2_DO_ACTION_ENTER |
+              PLAYER_STATE2_CAN_DISMOUNT_HORSE | PLAYER_STATE2_DRAW_REFLECTION);
         this->stateFlags3 &= ~PLAYER_STATE3_CHECKING_FLOOR_AND_WATER_COLLISION;
 
         Player_StepRotToZero(this);
@@ -11191,7 +11194,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
                                           (this->skelAnime.moveFlags & 4) ? 1.0f : this->ageProperties->unk_08);
         }
 
-        func_808368EC(this, play);
+        Player_UpdateYaw(this, play);
 
         if (CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_TALK_REQUESTED)) {
             this->talkActorDistance = 0.0f;
@@ -11577,60 +11580,62 @@ s16 func_8084ABD8(PlayState* play, Player* this, s32 arg2, s16 arg3) {
            arg3;
 }
 
-void Player_UpdateSwimMovement(Player* this, f32* linearVelocity, f32 targetVelocity, s16 targetYaw) {
-    f32 step;
-    f32 speedLimit;
+void Player_UpdateSwimVelocityYaw(Player* this, f32* linearVelocity, f32 inputVelocity, s16 inputYaw) {
+    f32 step = this->skelAnime.curFrame - 10.0f;
+    f32 speedLimit = (R_RUN_SPEED_LIMIT / 100.0f) * 0.8f;
 
-    step = this->skelAnime.curFrame - 10.0f;
-
-    speedLimit = (R_RUN_SPEED_LIMIT / 100.0f) * 0.8f;
     if (*linearVelocity > speedLimit) {
         *linearVelocity = speedLimit;
     }
 
-    if ((0.0f < step) && (step < 10.0f)) {
+    if ((step > 0.0f) && (step < 10.0f)) {
         step *= 6.0f;
     } else {
         step = 0.0f;
-        targetVelocity = 0.0f;
+        inputVelocity = 0.0f;
     }
 
-    Math_AsymStepToF(linearVelocity, targetVelocity * 0.8f, step, (fabsf(*linearVelocity) * 0.02f) + 0.05f);
-    Math_ScaledStepToS(&this->yaw, targetYaw, 1600);
+    Math_AsymStepToF(linearVelocity, inputVelocity * 0.8f, step, (fabsf(*linearVelocity) * 0.02f) + 0.05f);
+    Math_ScaledStepToS(&this->yaw, inputYaw, 1600);
 }
 
-void func_8084B000(Player* this) {
-    f32 phi_f18;
-    f32 phi_f16;
-    f32 phi_f14;
+#define IRON_BOOTS_MAX_SINK_SPEED -3.0f
+#define IRON_BOOTS_SINK_ACCEL -0.2f
+
+void Player_ApplyBuoyancy(Player* this) {
+    f32 accel;
+    f32 maxVelocity = -5.0f;
+    f32 buoyancyDepthInWater = this->ageProperties->buoyancyDepthInWater;
     f32 depthInWater;
+    f32 extraAccel;
 
-    phi_f14 = -5.0f;
-
-    phi_f16 = this->ageProperties->unk_28;
     if (this->actor.velocity.y < 0.0f) {
-        phi_f16 += 1.0f;
+        buoyancyDepthInWater += 1.0f;
     }
 
-    if (this->actor.depthInWater < phi_f16) {
+    if (this->actor.depthInWater < buoyancyDepthInWater) {
+        // Above buoyancy equilibrium point. Accelerate down
         if (this->actor.velocity.y <= 0.0f) {
-            phi_f16 = 0.0f;
+            extraAccel = 0.0f;
         } else {
-            phi_f16 = this->actor.velocity.y * 0.5f;
+            extraAccel = this->actor.velocity.y * 0.5f;
         }
-        phi_f18 = -0.1f - phi_f16;
+        accel = -0.1f - extraAccel;
     } else {
+        // Below buoyancy equilibrium point
         if (!(this->stateFlags1 & PLAYER_STATE1_IN_DEATH_CUTSCENE) && (this->currentBoots == PLAYER_BOOTS_IRON) &&
-            (this->actor.velocity.y >= -3.0f)) {
-            phi_f18 = -0.2f;
+            (this->actor.velocity.y >= IRON_BOOTS_MAX_SINK_SPEED)) {
+            // Force accelerate down
+            accel = IRON_BOOTS_SINK_ACCEL;
         } else {
-            phi_f14 = 2.0f;
+            // Accelerate up
+            maxVelocity = 2.0f;
             if (this->actor.velocity.y >= 0.0f) {
-                phi_f16 = 0.0f;
+                extraAccel = 0.0f;
             } else {
-                phi_f16 = this->actor.velocity.y * -0.3f;
+                extraAccel = this->actor.velocity.y * -0.3f;
             }
-            phi_f18 = phi_f16 + 0.1f;
+            accel = extraAccel + 0.1f;
         }
 
         depthInWater = this->actor.depthInWater;
@@ -11639,38 +11644,38 @@ void func_8084B000(Player* this) {
         }
     }
 
-    this->actor.velocity.y += phi_f18;
+    this->actor.velocity.y += accel;
 
-    if (((this->actor.velocity.y - phi_f14) * phi_f18) > 0) {
-        this->actor.velocity.y = phi_f14;
+    if (((this->actor.velocity.y - maxVelocity) * accel) > 0) {
+        this->actor.velocity.y = maxVelocity;
     }
 
     this->actor.gravity = 0.0f;
 }
 
-void func_8084B158(PlayState* play, Player* this, Input* input, f32 arg3) {
-    f32 temp;
+void Player_UpdateSwimAnim(PlayState* play, Player* this, Input* input, f32 arg3) {
+    f32 playSpeed;
 
     if ((input != NULL) && CHECK_BTN_ANY(input->press.button, BTN_A | BTN_B)) {
-        temp = 1.0f;
+        playSpeed = 1.0f;
     } else {
-        temp = 0.5f;
+        playSpeed = 0.5f;
     }
 
-    temp *= arg3;
+    playSpeed *= arg3;
 
-    if (temp < 1.0f) {
-        temp = 1.0f;
+    if (playSpeed < 1.0f) {
+        playSpeed = 1.0f;
     }
 
-    this->skelAnime.playSpeed = temp;
+    this->skelAnime.playSpeed = playSpeed;
     PlayerAnimation_Update(play, &this->skelAnime);
 }
 
 void Player_Action_AimFirstPerson(Player* this, PlayState* play) {
     if (this->stateFlags1 & PLAYER_STATE1_SWIMMING) {
-        func_8084B000(this);
-        Player_UpdateSwimMovement(this, &this->speedXZ, 0.0f, this->actor.shape.rot.y);
+        Player_ApplyBuoyancy(this);
+        Player_UpdateSwimVelocityYaw(this, &this->speedXZ, 0.0f, this->actor.shape.rot.y);
     } else {
         Player_StepHorizontalSpeedToZero(this);
     }
@@ -11741,7 +11746,7 @@ s32 Player_TryOcarinaAfterTextbox(PlayState* play, Player* this) {
 }
 
 void Player_Action_Talk(Player* this, PlayState* play) {
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
 
     Player_TryUpperAction(this, play);
 
@@ -11797,12 +11802,12 @@ void Player_Action_Talk(Player* this, PlayState* play) {
 }
 
 void Player_Action_GrabWall(Player* this, PlayState* play) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
     s32 pushPullDir;
 
-    this->stateFlags2 |= PLAYER_STATE2_CAN_GRAB_PUSH_PULL_WALL | PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION |
-                         PLAYER_STATE2_ENABLE_PUSH_PULL_CAM;
+    this->stateFlags2 |=
+        PLAYER_STATE2_CAN_GRAB_PUSH_PULL_WALL | PLAYER_STATE2_NO_YAW_UPDATE | PLAYER_STATE2_ENABLE_PUSH_PULL_CAM;
     Player_ProcessGrabPushPullWallInteraction(play, this);
 
     if (!PlayerAnimation_Update(play, &this->skelAnime)) {
@@ -11813,9 +11818,9 @@ void Player_Action_GrabWall(Player* this, PlayState* play) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
-    pushPullDir = Player_GetPushPullDirection(this, &targetVelocity, &targetYaw);
+    pushPullDir = Player_GetPushPullDirection(this, &inputVelocity, &inputYaw);
     if (pushPullDir > 0) {
         Player_SetupPush(this, play);
     } else if (pushPullDir < 0) {
@@ -11839,12 +11844,12 @@ static AnimSfxEntry D_80854870[] = {
 };
 
 void Player_Action_Push(Player* this, PlayState* play) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
     s32 pushPullDir;
 
-    this->stateFlags2 |= PLAYER_STATE2_CAN_GRAB_PUSH_PULL_WALL | PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION |
-                         PLAYER_STATE2_ENABLE_PUSH_PULL_CAM;
+    this->stateFlags2 |=
+        PLAYER_STATE2_CAN_GRAB_PUSH_PULL_WALL | PLAYER_STATE2_NO_YAW_UPDATE | PLAYER_STATE2_ENABLE_PUSH_PULL_CAM;
 
     if (Player_Anim_PlayLoopOnceFinished(play, this, &gPlayerAnim_link_normal_pushing)) {
         this->pushVar16 = true;
@@ -11858,8 +11863,8 @@ void Player_Action_Push(Player* this, PlayState* play) {
     Player_ProcessGrabPushPullWallInteraction(play, this);
 
     if (!func_8083F9D0(play, this)) {
-        Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.0f, play);
-        pushPullDir = Player_GetPushPullDirection(this, &targetVelocity, &targetYaw);
+        Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
+        pushPullDir = Player_GetPushPullDirection(this, &inputVelocity, &inputYaw);
         if (pushPullDir < 0) {
             Player_SetupPull(this, play);
         } else if (pushPullDir == 0) {
@@ -11884,8 +11889,8 @@ static Vec3f D_80854880 = { 0.0f, 26.0f, -40.0f };
 
 void Player_Action_Pull(Player* this, PlayState* play) {
     PlayerAnimationHeader* anim;
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
     s32 pushPullDir;
     Vec3f sp5C;
     f32 temp2;
@@ -11895,8 +11900,8 @@ void Player_Action_Pull(Player* this, PlayState* play) {
     Vec3f sp38;
 
     anim = GET_PLAYER_ANIM(PLAYER_ANIMGROUP_pulling, this->modelAnimType);
-    this->stateFlags2 |= PLAYER_STATE2_CAN_GRAB_PUSH_PULL_WALL | PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION |
-                         PLAYER_STATE2_ENABLE_PUSH_PULL_CAM;
+    this->stateFlags2 |=
+        PLAYER_STATE2_CAN_GRAB_PUSH_PULL_WALL | PLAYER_STATE2_NO_YAW_UPDATE | PLAYER_STATE2_ENABLE_PUSH_PULL_CAM;
 
     if (Player_Anim_PlayLoopOnceFinished(play, this, anim)) {
         this->actionVar16 = 1;
@@ -11913,8 +11918,8 @@ void Player_Action_Pull(Player* this, PlayState* play) {
     Player_ProcessGrabPushPullWallInteraction(play, this);
 
     if (!func_8083F9D0(play, this)) {
-        Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.0f, play);
-        pushPullDir = Player_GetPushPullDirection(this, &targetVelocity, &targetYaw);
+        Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
+        pushPullDir = Player_GetPushPullDirection(this, &inputVelocity, &inputYaw);
         if (pushPullDir > 0) {
             Player_SetupPush(this, play);
         } else if (pushPullDir == 0) {
@@ -11925,7 +11930,7 @@ void Player_Action_Pull(Player* this, PlayState* play) {
     }
 
     if (this->stateFlags2 & PLAYER_STATE2_MOVING_PUSH_PULL_WALL) {
-        temp2 = func_8083973C(play, this, &D_80854880, &sp5C) - this->actor.world.pos.y;
+        temp2 = Player_PosVsFloorLineTest(play, this, &D_80854880, &sp5C) - this->actor.world.pos.y;
         if (fabsf(temp2) < 20.0f) {
             sp44.x = this->actor.world.pos.x;
             sp44.z = this->actor.world.pos.z;
@@ -11940,12 +11945,12 @@ void Player_Action_Pull(Player* this, PlayState* play) {
 }
 
 void Player_Action_GrabLedge(Player* this, PlayState* play) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
     PlayerAnimationHeader* anim;
     f32 temp;
 
-    this->stateFlags2 |= PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE;
 
     if (PlayerAnimation_Update(play, &this->skelAnime)) {
         // clang-format off
@@ -11971,7 +11976,7 @@ void Player_Action_GrabLedge(Player* this, PlayState* play) {
     Math_ScaledStepToS(&this->actor.shape.rot.y, this->yaw, 0x800);
 
     if (this->actionVar8 != 0) {
-        Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.0f, play);
+        Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
         if (this->analogStickDirection128Parts[this->inputFrameCounter] >= 0) {
             if (this->actionVar8 > 0) {
                 anim = GET_PLAYER_ANIM(PLAYER_ANIMGROUP_fall_up, this->modelAnimType);
@@ -11996,7 +12001,7 @@ void Player_Action_GrabLedge(Player* this, PlayState* play) {
 }
 
 void Player_Action_ClimbLedge(Player* this, PlayState* play) {
-    this->stateFlags2 |= PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE;
 
     if (PlayerAnimation_Update(play, &this->skelAnime)) {
         Player_AnimReplace_SetupLedgeClimb(this, 1);
@@ -12035,7 +12040,7 @@ void Player_Action_ClimbWall(Player* this, PlayState* play) {
     stickAdjX = sControlInput->rel.stick_x;
 
     this->fallStartHeight = this->actor.world.pos.y;
-    this->stateFlags2 |= PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE;
 
     if ((this->actionVar8 != 0) && (ABS(stickAdjY) < ABS(stickAdjX))) {
         animPlaySpeed = ABS(stickAdjX) * 0.0325f;
@@ -12086,7 +12091,7 @@ void Player_Action_ClimbWall(Player* this, PlayState* play) {
 
                 if (stickAdjY > 0) {
                     D_8085488C.y = this->ageProperties->unk_40;
-                    temp_f0 = func_8083973C(play, this, &D_8085488C, &sp5C);
+                    temp_f0 = Player_PosVsFloorLineTest(play, this, &D_8085488C, &sp5C);
 
                     if (this->actor.world.pos.y < temp_f0) {
                         if (this->actionVar8 != 0) {
@@ -12178,7 +12183,7 @@ void Player_Action_ClimbEnd(Player* this, PlayState* play) {
     s32 bgId;
     Vec3f sp24;
 
-    this->stateFlags2 |= PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE;
 
     actionInterruptState = Player_GetActionInterruptState(play, this, &this->skelAnime, 4.0f);
 
@@ -12231,7 +12236,7 @@ static AnimSfxEntry sEnterCrawlspaceAnimSfx[] = {
  * Once inside, stop all player animations and update player's movement.
  */
 void Player_Action_Crawl(Player* this, PlayState* play) {
-    this->stateFlags2 |= PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE;
 
     if (PlayerAnimation_Update(play, &this->skelAnime)) {
         if (!(this->stateFlags1 & PLAYER_STATE1_EXITING_SCENE)) {
@@ -12269,7 +12274,7 @@ static AnimSfxEntry sLeaveCrawlspaceAnimSfx[] = {
  * Update player's animation while leaving the crawlspace.
  */
 void Player_Action_LeaveCrawlspace(Player* this, PlayState* play) {
-    this->stateFlags2 |= PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE;
 
     if (PlayerAnimation_Update(play, &this->skelAnime)) {
         // Player is finished exiting the crawlspace and control is returned
@@ -12309,7 +12314,7 @@ s32 Player_CanDismountHorse(PlayState* play, Player* this, s32 dismountSide, f32
     sp50 = rideActor->actor.world.pos.y + 20.0f;
     sp4C = rideActor->actor.world.pos.y - 20.0f;
 
-    *arg3 = func_8083973C(play, this, &D_808548FC[dismountSide], &sp40);
+    *arg3 = Player_PosVsFloorLineTest(play, this, &D_808548FC[dismountSide], &sp40);
 
     return (sp4C < *arg3) && (*arg3 < sp50) &&
            !Player_PosVsWallLineTest(play, this, &D_80854914[dismountSide], &sp30, &sp2C, &sp34) &&
@@ -12426,7 +12431,7 @@ void Player_Action_RideHorse(Player* this, PlayState* play) {
     EnHorse* rideActor = (EnHorse*)this->rideActor;
     u8* arr;
 
-    this->stateFlags2 |= PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE;
 
     Player_BounceOnHorse(this, 1.0f, 10.0f);
 
@@ -12477,7 +12482,7 @@ void Player_Action_RideHorse(Player* this, PlayState* play) {
     }
 
     if (this->rideHorseVar16 == 1) {
-        if (D_808535E0 || Player_IsTalkRequested(play)) {
+        if (D_808535E0 || Player_IsTalking(play)) {
             Player_Anim_PlayOnce(play, this, &gPlayerAnim_link_uma_wait_3);
         } else if (PlayerAnimation_Update(play, &this->skelAnime)) {
             this->rideHorseVar16 = 99;
@@ -12512,8 +12517,7 @@ void Player_Action_RideHorse(Player* this, PlayState* play) {
     this->yaw = this->actor.shape.rot.y = rideActor->actor.shape.rot.y;
 
     if ((this->csMode != PLAYER_CSMODE_NONE) ||
-        (!Player_IsTalkRequested(play) &&
-         ((rideActor->actor.speed != 0.0f) || !Player_SwapAction_TryTalking(this, play)) &&
+        (!Player_IsTalking(play) && ((rideActor->actor.speed != 0.0f) || !Player_SwapAction_TryTalking(this, play)) &&
          !Player_SwapAction_TryRolling(this, play))) {
         if (!D_808535E0) {
             if (this->actionVar8 != 0) {
@@ -12600,7 +12604,7 @@ static AnimSfxEntry sDismountHorseAnimSfx[] = {
 };
 
 void Player_Action_DismountHorse(Player* this, PlayState* play) {
-    this->stateFlags2 |= PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE;
     Player_BounceOnHorse(this, 1.0f, 10.0f);
 
     if (PlayerAnimation_Update(play, &this->skelAnime)) {
@@ -12633,14 +12637,14 @@ static AnimSfxEntry sSwimAnimSfx[] = {
     ANIMSFX(ANIMSFX_TYPE_GENERAL, 0, NA_SE_PL_SWIM, STOP),
 };
 
-void Player_UpdateSwimMovementWithAnimSfx(Player* this, f32* linearVelocity, f32 swimVelocity, s16 swimYaw) {
-    Player_UpdateSwimMovement(this, linearVelocity, swimVelocity, swimYaw);
+void Player_UpdateSwimMovementWithAnimSfx(Player* this, f32* linearVelocity, f32 inputVelocity, s16 inputYaw) {
+    Player_UpdateSwimVelocityYaw(this, linearVelocity, inputVelocity, inputYaw);
     Player_AnimSfx_Play(this, sSwimAnimSfx);
 }
 
-void Player_SetupSwimMove(PlayState* play, Player* this, s16 swimYaw) {
+void Player_SetupSwimMove(PlayState* play, Player* this, s16 inputYaw) {
     Player_SetAction(play, this, Player_Action_SwimMove, 0);
-    this->actor.shape.rot.y = this->yaw = swimYaw;
+    this->actor.shape.rot.y = this->yaw = inputYaw;
     Player_Anim_PlayLoopWithLongMorph(play, this, &gPlayerAnim_link_swimer_swim);
 }
 
@@ -12650,13 +12654,13 @@ void Player_SetupSwimZTarget(PlayState* play, Player* this) {
 }
 
 void Player_Action_SwimIdle(Player* this, PlayState* play) {
-    f32 swimVelocity;
-    s16 swimYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
 
     Player_Anim_PlayLoopOnceFinished(play, this, &gPlayerAnim_link_swimer_swim_wait);
-    func_8084B000(this);
+    Player_ApplyBuoyancy(this);
 
-    if (Player_IsTalkRequested(play)) {
+    if (Player_IsTalking(play)) {
         return;
     }
 
@@ -12664,7 +12668,7 @@ void Player_Action_SwimIdle(Player* this, PlayState* play) {
         return;
     }
 
-    if (func_8083D12C(play, this, sControlInput)) {
+    if (Player_TrySwimDivingOrGetItem(play, this, sControlInput)) {
         return;
     }
 
@@ -12673,32 +12677,32 @@ void Player_Action_SwimIdle(Player* this, PlayState* play) {
     }
 
     if (this->currentBoots == PLAYER_BOOTS_IRON) {
-        swimVelocity = 0.0f;
-        swimYaw = this->actor.shape.rot.y;
+        inputVelocity = 0.0f;
+        inputYaw = this->actor.shape.rot.y;
 
         if (this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) {
             Player_Setup4_IdleAll(this, GET_PLAYER_ANIM(PLAYER_ANIMGROUP_short_landing, this->modelAnimType), play);
             Player_AnimSfx_PlayFloorLand(this);
         }
     } else {
-        Player_GetTargetVelocityAndYaw(this, &swimVelocity, &swimYaw, 0.0f, play);
+        Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
-        if (swimVelocity != 0.0f) {
-            s16 temp = this->actor.shape.rot.y - swimYaw;
+        if (inputVelocity != 0.0f) {
+            s16 yawDiff = this->actor.shape.rot.y - inputYaw;
 
-            if ((ABS(temp) > DEG_TO_BINANG(135.0f)) && !Math_StepToF(&this->speedXZ, 0.0f, 1.0f)) {
+            if ((ABS(yawDiff) > DEG_TO_BINANG(135.0f)) && !Math_StepToF(&this->speedXZ, 0.0f, 1.0f)) {
                 return;
             }
 
             if (Player_TryZTargeting(this)) {
                 Player_SetupSwimZTarget(play, this);
             } else {
-                Player_SetupSwimMove(play, this, swimYaw);
+                Player_SetupSwimMove(play, this, inputYaw);
             }
         }
     }
 
-    Player_UpdateSwimMovement(this, &this->speedXZ, swimVelocity, swimYaw);
+    Player_UpdateSwimVelocityYaw(this, &this->speedXZ, inputVelocity, inputYaw);
 }
 
 void Player_Action_SwimSpawn(Player* this, PlayState* play) {
@@ -12706,10 +12710,10 @@ void Player_Action_SwimSpawn(Player* this, PlayState* play) {
         return;
     }
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
 
-    func_8084B158(play, this, NULL, this->speedXZ);
-    func_8084B000(this);
+    Player_UpdateSwimAnim(play, this, NULL, this->speedXZ);
+    Player_ApplyBuoyancy(this);
 
     if (DECR(this->swimSpawnVar16) == 0) {
         Player_SetupSwimIdle(play, this);
@@ -12717,57 +12721,58 @@ void Player_Action_SwimSpawn(Player* this, PlayState* play) {
 }
 
 void Player_Action_SwimMove(Player* this, PlayState* play) {
-    f32 swimVelocity;
-    s16 swimYaw;
-    s16 temp;
+    f32 inputVelocity;
+    s16 inputYaw;
+    s16 inputYawDiff;
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
 
-    func_8084B158(play, this, sControlInput, this->speedXZ);
-    func_8084B000(this);
+    Player_UpdateSwimAnim(play, this, sControlInput, this->speedXZ);
+    Player_ApplyBuoyancy(this);
 
     if (Player_TrySwappingAction(play, this, sSwimSwapActionList, true)) {
         return;
     }
 
-    if (func_8083D12C(play, this, sControlInput)) {
+    if (Player_TrySwimDivingOrGetItem(play, this, sControlInput)) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &swimVelocity, &swimYaw, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
-    temp = this->actor.shape.rot.y - swimYaw;
-    if ((swimVelocity == 0.0f) || (ABS(temp) > DEG_TO_BINANG(135.0f)) || (this->currentBoots == PLAYER_BOOTS_IRON)) {
+    inputYawDiff = this->actor.shape.rot.y - inputYaw;
+    if ((inputVelocity == 0.0f) || (ABS(inputYawDiff) > DEG_TO_BINANG(135.0f)) ||
+        (this->currentBoots == PLAYER_BOOTS_IRON)) {
         Player_SetupSwimIdle(play, this);
     } else if (Player_TryZTargeting(this)) {
         Player_SetupSwimZTarget(play, this);
     }
 
-    Player_UpdateSwimMovementWithAnimSfx(this, &this->speedXZ, swimVelocity, swimYaw);
+    Player_UpdateSwimMovementWithAnimSfx(this, &this->speedXZ, inputVelocity, inputYaw);
 }
 
-s32 func_8084D980(PlayState* play, Player* this, f32* targetVelocity, s16* targetYaw) {
+s32 func_8084D980(PlayState* play, Player* this, f32* inputVelocity, s16* inputYaw) {
     PlayerAnimationHeader* anim;
-    s16 yawDiff = this->yaw - *targetYaw;
+    s16 yawDiff = this->yaw - *inputYaw;
     s32 moveDir;
 
     if (ABS(yawDiff) > DEG_TO_BINANG(135.0f)) {
         anim = &gPlayerAnim_link_swimer_swim_wait;
 
         if (Math_StepToF(&this->speedXZ, 0.0f, 1.0f)) {
-            this->yaw = *targetYaw;
+            this->yaw = *inputYaw;
         } else {
-            *targetVelocity = 0.0f;
-            *targetYaw = this->yaw;
+            *inputVelocity = 0.0f;
+            *inputYaw = this->yaw;
         }
     } else {
-        moveDir = Player_GetZParallelMoveDirection(this, targetVelocity, targetYaw, play);
+        moveDir = Player_GetZParallelMoveDirection(this, inputVelocity, inputYaw, play);
 
         if (moveDir > 0) {
             anim = &gPlayerAnim_link_swimer_swim;
         } else if (moveDir < 0) {
             anim = &gPlayerAnim_link_swimer_back_swim;
-        } else if ((yawDiff = this->actor.shape.rot.y - *targetYaw) > 0) {
+        } else if ((yawDiff = this->actor.shape.rot.y - *inputYaw) > 0) {
             anim = &gPlayerAnim_link_swimer_Rside_swim;
         } else {
             anim = &gPlayerAnim_link_swimer_Lside_swim;
@@ -12783,46 +12788,46 @@ s32 func_8084D980(PlayState* play, Player* this, f32* targetVelocity, s16* targe
 }
 
 void Player_Action_SwimZTarget(Player* this, PlayState* play) {
-    f32 swimVelocity;
-    s16 swimYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
 
-    func_8084B158(play, this, sControlInput, this->speedXZ);
-    func_8084B000(this);
+    Player_UpdateSwimAnim(play, this, sControlInput, this->speedXZ);
+    Player_ApplyBuoyancy(this);
 
     if (Player_TrySwappingAction(play, this, sSwimSwapActionList, true)) {
         return;
     }
 
-    if (func_8083D12C(play, this, sControlInput)) {
+    if (Player_TrySwimDivingOrGetItem(play, this, sControlInput)) {
         return;
     }
 
-    Player_GetTargetVelocityAndYaw(this, &swimVelocity, &swimYaw, 0.0f, play);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
 
-    if (swimVelocity == 0.0f) {
+    if (inputVelocity == 0.0f) {
         Player_SetupSwimIdle(play, this);
     } else if (!Player_TryZTargeting(this)) {
-        Player_SetupSwimMove(play, this, swimYaw);
+        Player_SetupSwimMove(play, this, inputYaw);
     } else {
-        func_8084D980(play, this, &swimVelocity, &swimYaw);
+        func_8084D980(play, this, &inputVelocity, &inputYaw);
     }
 
-    Player_UpdateSwimMovementWithAnimSfx(this, &this->speedXZ, swimVelocity, swimYaw);
+    Player_UpdateSwimMovementWithAnimSfx(this, &this->speedXZ, inputVelocity, inputYaw);
 }
 
 void func_8084DBC4(PlayState* play, Player* this, f32 arg2) {
-    f32 targetVelocity;
-    s16 targetYaw;
+    f32 inputVelocity;
+    s16 inputYaw;
 
-    Player_GetTargetVelocityAndYaw(this, &targetVelocity, &targetYaw, 0.0f, play);
-    Player_UpdateSwimMovement(this, &this->speedXZ, targetVelocity * 0.5f, targetYaw);
-    Player_UpdateSwimMovement(this, &this->actor.velocity.y, arg2, this->yaw);
+    Player_GetInputVelocityAndYaw(this, &inputVelocity, &inputYaw, 0.0f, play);
+    Player_UpdateSwimVelocityYaw(this, &this->speedXZ, inputVelocity * 0.5f, inputYaw);
+    Player_UpdateSwimVelocityYaw(this, &this->actor.velocity.y, arg2, this->yaw);
 }
 
 void Player_Action_SwimDive(Player* this, PlayState* play) {
     f32 sp2C;
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
     this->actor.gravity = 0.0f;
     Player_TryUpperAction(this, play);
 
@@ -12848,8 +12853,8 @@ void Player_Action_SwimDive(Player* this, PlayState* play) {
             return;
         }
 
-        func_8084B158(play, this, sControlInput, this->actor.velocity.y);
-        this->unk_6C2 = 16000;
+        Player_UpdateSwimAnim(play, this, sControlInput, this->actor.velocity.y);
+        this->shapePitchOffset = 16000;
 
         if (CHECK_BTN_ALL(sControlInput->cur.button, BTN_A) && !Player_SwapAction_TryGetItem(this, play) &&
             !(this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) &&
@@ -12859,31 +12864,39 @@ void Player_Action_SwimDive(Player* this, PlayState* play) {
             this->actionVar8++;
             Player_Anim_PlayLoopWithLongMorph(play, this, &gPlayerAnim_link_swimer_swim_wait);
         }
-    } else if (this->actionVar8 == 1) {
-        PlayerAnimation_Update(play, &this->skelAnime);
-        func_8084B000(this);
+        return;
+    }
 
-        if (this->unk_6C2 < 10000) {
+    if (this->actionVar8 == 1) {
+        PlayerAnimation_Update(play, &this->skelAnime);
+        Player_ApplyBuoyancy(this);
+
+        if (this->shapePitchOffset < 10000) {
             this->actionVar8++;
             this->actionVar16 = this->actor.depthInWater;
             Player_Anim_PlayLoopWithLongMorph(play, this, &gPlayerAnim_link_swimer_swim);
         }
-    } else if (!func_8083D12C(play, this, sControlInput)) {
-        sp2C = (this->actionVar16 * 0.018f) + 4.0f;
-
-        if (this->stateFlags1 & PLAYER_STATE1_HOLDING_ACTOR) {
-            sControlInput = NULL;
-        }
-
-        func_8084B158(play, this, sControlInput, fabsf(this->actor.velocity.y));
-        Math_ScaledStepToS(&this->unk_6C2, -10000, 800);
-
-        if (sp2C > 8.0f) {
-            sp2C = 8.0f;
-        }
-
-        func_8084DBC4(play, this, sp2C);
+        return;
     }
+
+    if (Player_TrySwimDivingOrGetItem(play, this, sControlInput)) {
+        return;
+    }
+
+    sp2C = (this->actionVar16 * 0.018f) + 4.0f;
+
+    if (this->stateFlags1 & PLAYER_STATE1_HOLDING_ACTOR) {
+        sControlInput = NULL;
+    }
+
+    Player_UpdateSwimAnim(play, this, sControlInput, fabsf(this->actor.velocity.y));
+    Math_ScaledStepToS(&this->shapePitchOffset, -10000, 800);
+
+    if (sp2C > 8.0f) {
+        sp2C = 8.0f;
+    }
+
+    func_8084DBC4(play, this, sp2C);
 }
 
 void func_8084DF6C(PlayState* play, Player* this) {
@@ -12950,7 +12963,7 @@ s32 func_8084DFF4(PlayState* play, Player* this) {
 }
 
 void Player_Action_SwimGetItem(Player* this, PlayState* play) {
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
 
     if (PlayerAnimation_Update(play, &this->skelAnime)) {
         if (!(this->stateFlags1 & PLAYER_STATE1_GETTING_ITEM) || func_8084DFF4(play, this)) {
@@ -12968,28 +12981,28 @@ void Player_Action_SwimGetItem(Player* this, PlayState* play) {
         }
     }
 
-    func_8084B000(this);
-    Player_UpdateSwimMovement(this, &this->speedXZ, 0.0f, this->actor.shape.rot.y);
+    Player_ApplyBuoyancy(this);
+    Player_UpdateSwimVelocityYaw(this, &this->speedXZ, 0.0f, this->actor.shape.rot.y);
 }
 
 void Player_Action_SwimDamage(Player* this, PlayState* play) {
-    func_8084B000(this);
+    Player_ApplyBuoyancy(this);
 
     if (PlayerAnimation_Update(play, &this->skelAnime)) {
         Player_SetupSwimIdle(play, this);
     }
 
-    Player_UpdateSwimMovement(this, &this->speedXZ, 0.0f, this->actor.shape.rot.y);
+    Player_UpdateSwimVelocityYaw(this, &this->speedXZ, 0.0f, this->actor.shape.rot.y);
 }
 
 void Player_Action_SwimDrown(Player* this, PlayState* play) {
-    func_8084B000(this);
+    Player_ApplyBuoyancy(this);
 
     if (PlayerAnimation_Update(play, &this->skelAnime)) {
         func_80843AE8(play, this);
     }
 
-    Player_UpdateSwimMovement(this, &this->speedXZ, 0.0f, this->actor.shape.rot.y);
+    Player_UpdateSwimVelocityYaw(this, &this->speedXZ, 0.0f, this->actor.shape.rot.y);
 }
 
 static s16 sWarpSongEntrances[] = {
@@ -13021,11 +13034,11 @@ void Player_Action_PlayOcarina(Player* this, PlayState* play) {
         Camera_SetFinishedFlag(Play_GetCamera(play, CAM_ID_MAIN));
 
         if ((this->talkActor != NULL) && (this->talkActor == this->ocarinaActor)) {
-            Player_Talk(play, this->talkActor);
+            Player_SetupTalk(play, this->talkActor);
         } else if (this->naviTextId < 0) {
             this->talkActor = this->naviActor;
             this->naviActor->textId = -this->naviTextId;
-            Player_Talk(play, this->talkActor);
+            Player_SetupTalk(play, this->talkActor);
         } else if (!Player_SwapAction_TryItemCsFirstPerson(this, play)) {
             Player_Setup4_IdleAll(this, &gPlayerAnim_link_normal_okarina_end, play);
         }
@@ -13097,7 +13110,7 @@ void Player_Action_GetItem(Player* this, PlayState* play) {
                         this->exchangeItemId = EXCH_ITEM_NONE;
 
                         if (!Player_TryOcarinaAfterTextbox(play, this)) {
-                            Player_Talk(play, this->talkActor);
+                            Player_SetupTalk(play, this->talkActor);
                         }
                     } else {
                         func_8084DFAC(play, this);
@@ -13393,7 +13406,7 @@ static AnimSfxEntry sExchangeItemAnimSfx[] = {
 };
 
 void Player_Action_ExchangeItem(Player* this, PlayState* play) {
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
 
     if (PlayerAnimation_Update(play, &this->skelAnime)) {
         if (this->actionVar16 < 0) {
@@ -13406,7 +13419,7 @@ void Player_Action_ExchangeItem(Player* this, PlayState* play) {
                 this->actor.flags |= ACTOR_FLAG_TALK_REQUESTED;
             }
 
-            Player_Talk(play, talkActor);
+            Player_SetupTalk(play, talkActor);
         } else {
             GetItemEntry* giEntry = &sGetItemTable[D_80854528[this->exchangeItemId - 1] - 1];
 
@@ -13446,14 +13459,13 @@ void Player_Action_ExchangeItem(Player* this, PlayState* play) {
 }
 
 void Player_Action_Grabbed(Player* this, PlayState* play) {
-    this->stateFlags2 |=
-        PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING | PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON | PLAYER_STATE2_NO_YAW_UPDATE;
 
     if (PlayerAnimation_Update(play, &this->skelAnime)) {
         Player_Anim_PlayLoop(play, this, &gPlayerAnim_link_normal_re_dead_attack_wait);
     }
 
-    if (func_80832594(this, 0, 100)) {
+    if (Player_MashTimerThresholdExceeded(this, 0, 100)) {
         Player_Setup1_IdleAll(this, play);
         this->stateFlags2 &= ~PLAYER_STATE2_RESTRAINED_BY_ENEMY;
     }
@@ -13468,8 +13480,7 @@ void Player_Action_SlipOnSlope(Player* this, PlayState* play) {
     s16 sp44;
     Vec3f slopeNormal;
 
-    this->stateFlags2 |=
-        PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING | PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON | PLAYER_STATE2_NO_YAW_UPDATE;
     PlayerAnimation_Update(play, &this->skelAnime);
     func_8084269C(play, this);
     func_800F4138(&this->actor.projectedPos, NA_SE_PL_SLIP_LEVEL - SFX_FLAG, this->actor.speed);
@@ -13644,7 +13655,7 @@ void Player_Action_FrozenInIce(Player* this, PlayState* play) {
             this->frozenInIceVar8++;
         }
 
-        if (func_80832594(this, 1, 100)) {
+        if (Player_MashTimerThresholdExceeded(this, 1, 100)) {
             this->frozenInIceVar8 = -1;
             EffectSsIcePiece_SpawnBurst(play, &this->actor.world.pos, this->actor.scale.x);
             Player_PlaySfx(this, NA_SE_PL_ICE_BROKEN);
@@ -13832,7 +13843,7 @@ static Vec3f D_80854A40 = { 0.0f, 40.0f, 45.0f };
 void Player_Action_Attack(Player* this, PlayState* play) {
     struct_80854190* sp44 = &D_80854190[this->meleeWeaponAnimation];
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
 
     if (Player_ProcessAttackCollision(play, this)) {
         return;
@@ -13884,7 +13895,7 @@ void Player_Action_Attack(Player* this, PlayState* play) {
             Vec3f shockwavePos;
             f32 sp2C;
 
-            shockwavePos.y = func_8083973C(play, this, &D_80854A40, &shockwavePos);
+            shockwavePos.y = Player_PosVsFloorLineTest(play, this, &D_80854A40, &shockwavePos);
             sp2C = this->actor.world.pos.y - shockwavePos.y;
 
             Math_ScaledStepToS(&this->actor.focus.rot.x, Math_Atan2S(45.0f, sp2C), 800);
@@ -13912,7 +13923,7 @@ void Player_Action_Recoil(Player* this, PlayState* play) {
 }
 
 void Player_Action_FaroresWindChoice(Player* this, PlayState* play) {
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
 
     PlayerAnimation_Update(play, &this->skelAnime);
     Player_TryUpperAction(this, play);
@@ -14073,7 +14084,7 @@ void Player_Action_CastMagicSpell(Player* this, PlayState* play) {
 void Player_Action_HookshotFly(Player* this, PlayState* play) {
     f32 temp;
 
-    this->stateFlags2 |= PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING;
+    this->stateFlags2 |= PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON;
 
     if (PlayerAnimation_Update(play, &this->skelAnime)) {
         Player_Anim_PlayLoop(play, this, &gPlayerAnim_link_hook_fly_wait);
@@ -14104,7 +14115,7 @@ void Player_Action_HookshotFly(Player* this, PlayState* play) {
     if ((this->skelAnime.animation != &gPlayerAnim_link_hook_fly_start) || (4.0f <= this->skelAnime.curFrame)) {
         this->actor.gravity = 0.0f;
         Math_ScaledStepToS(&this->actor.shape.rot.x, this->actor.world.rot.x, 0x800);
-        Player_RequestRumble(this, 100, 2, 100, 0);
+        Player_RequestRumble(this, 100, 2, 100, SQ(0));
     }
 }
 
@@ -14149,7 +14160,7 @@ void Player_Action_ReleaseFishFromFishingRod(Player* this, PlayState* play) {
 }
 
 typedef void (*PlayerCsAnim)(PlayState*, Player*, void*);
-// typedef void (*PlayerCsAction)(PlayState*, Player*, CsCmdActorCue*);
+typedef void (*PlayerCsAction)(PlayState*, Player*, CsCmdActorCue*);
 
 typedef enum {
     /*   -1 */ PLAYER_CSTYPE_ACTION = -1,
@@ -14565,12 +14576,12 @@ void Player_CsAction_SwimSurfaceFromDive(PlayState* play, Player* this, CsCmdAct
     this->actor.gravity = 0.0f;
 
     if (this->actionVar8 == 0) {
-        if (func_8083D12C(play, this, NULL)) {
+        if (Player_TrySwimDivingOrGetItem(play, this, NULL)) {
             this->actionVar8 = 1;
         } else {
-            func_8084B158(play, this, NULL, fabsf(this->actor.velocity.y));
-            Math_ScaledStepToS(&this->unk_6C2, -10000, 800);
-            Player_UpdateSwimMovement(this, &this->actor.velocity.y, 4.0f, this->yaw);
+            Player_UpdateSwimAnim(play, this, NULL, fabsf(this->actor.velocity.y));
+            Math_ScaledStepToS(&this->shapePitchOffset, -10000, 800);
+            Player_UpdateSwimVelocityYaw(this, &this->actor.velocity.y, 4.0f, this->yaw);
         }
         return;
     }
@@ -14583,8 +14594,8 @@ void Player_CsAction_SwimSurfaceFromDive(PlayState* play, Player* this, CsCmdAct
         }
     }
 
-    func_8084B000(this);
-    Player_UpdateSwimMovement(this, &this->speedXZ, 0.0f, this->actor.shape.rot.y);
+    Player_ApplyBuoyancy(this);
+    Player_UpdateSwimVelocityYaw(this, &this->speedXZ, 0.0f, this->actor.shape.rot.y);
 }
 
 void Player_CsAction_Idle(PlayState* play, Player* this, CsCmdActorCue* cue) {
@@ -15185,7 +15196,7 @@ void Player_CsAction_SetStartPosAndYawIfFar(PlayState* play, Player* this, CsCmd
     f32 dist = sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff));
     s16 yawDiff = (s16)cue->rot.y - this->actor.shape.rot.y;
 
-    if ((this->speedXZ == 0.0f) && ((dist > 50.0f) || (ABS(yawDiff) > 0x4000))) {
+    if ((this->speedXZ == 0.0f) && ((dist > 50.0f) || (ABS(yawDiff) > DEG_TO_BINANG(90.0f)))) {
         Player_CsAction_SetStartPosAndYaw(play, this, cue);
     }
 
@@ -15334,7 +15345,7 @@ s32 Player_InflictDamage(PlayState* play, s32 damage) {
 }
 
 // Start talking with the given actor
-void Player_Talk(PlayState* play, Actor* actor) {
+void Player_SetupTalk(PlayState* play, Actor* actor) {
     Player* this = GET_PLAYER(play);
     s32 pad;
 

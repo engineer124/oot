@@ -311,7 +311,7 @@ typedef enum {
     /* 0x00 */ PLAYER_ANIMGROUP_wait,
     /* 0x01 */ PLAYER_ANIMGROUP_walk,
     /* 0x02 */ PLAYER_ANIMGROUP_run,
-    /* 0x03 */ PLAYER_ANIMGROUP_damage_run,
+    /* 0x03 */ PLAYER_ANIMGROUP_FLINCH,
     /* 0x04 */ PLAYER_ANIMGROUP_heavy_run,
     /* 0x05 */ PLAYER_ANIMGROUP_waitL,
     /* 0x06 */ PLAYER_ANIMGROUP_waitR,
@@ -587,7 +587,7 @@ typedef struct {
     /* 0x1C */ f32 unk_1C;
     /* 0x20 */ f32 unk_20;
     /* 0x24 */ f32 unk_24;
-    /* 0x28 */ f32 unk_28;
+    /* 0x28 */ f32 buoyancyDepthInWater;
     /* 0x2C */ f32 unk_2C;
     /* 0x30 */ f32 unk_30;
     /* 0x34 */ f32 unk_34;
@@ -656,8 +656,8 @@ typedef struct {
 #define PLAYER_STATE2_CAN_CLIMB_PUSH_PULL_WALL (1 << 2)
 #define PLAYER_STATE2_MAKING_NOTICABLE_SFX (1 << 3)
 #define PLAYER_STATE2_MOVING_PUSH_PULL_WALL (1 << 4)
-#define PLAYER_STATE2_DISABLE_MOVE_ROTATION_WHILE_Z_TARGETING (1 << 5)
-#define PLAYER_STATE2_ALWAYS_DISABLE_MOVE_ROTATION (1 << 6)
+#define PLAYER_STATE2_NO_YAW_UPDATE_EXCEPT_LOCK_ON (1 << 5)
+#define PLAYER_STATE2_NO_YAW_UPDATE (1 << 6)
 #define PLAYER_STATE2_RESTRAINED_BY_ENEMY (1 << 7)
 #define PLAYER_STATE2_ENABLE_PUSH_PULL_CAM (1 << 8)
 #define PLAYER_STATE2_FORCE_SAND_FLOOR_SOUND (1 << 9)
@@ -789,7 +789,7 @@ typedef struct Player {
     /* 0x06B2 */ char       unk_6B4[0x004];
     /* 0x06B6 */ Vec3s      headLimbRot;
     /* 0x06BC */ Vec3s      upperLimbRot;
-    /* 0x06C2 */ s16        unk_6C2;
+    /* 0x06C2 */ s16        shapePitchOffset;
     /* 0x06C4 */ f32        shapeOffsetY;
     /* 0x06C8 */ SkelAnime  upperSkelAnime;
     /* 0x070C */ Vec3s      upperJointTable[PLAYER_LIMB_BUF_COUNT];
@@ -859,7 +859,7 @@ typedef struct Player {
     /* 0x0870 */ f32        leftRightBlendWeight;
     /* 0x0874 */ f32        leftRightBlendWeightTarget;
     /* 0x0878 */ f32        rideOffsetY;
-    /* 0x087C */ s16        unk_87C;
+    /* 0x087C */ s16        yawDiffPrevFrame;
     /* 0x087E */ s16        unk_87E;
     /* 0x0880 */ f32        speedLimit;
     /* 0x0884 */ f32        yDistToLedge; // y distance to ground above an interact wall. LEDGE_DIST_MAX if no ground if found
@@ -878,11 +878,11 @@ typedef struct Player {
     /* 0x089A */ s16        floorPitchAlt; // the calculation for this value is bugged and doesn't represent anything meaningful
     /* 0x089C */ s16        walkFloorPitch;
     /* 0x089E */ u16        floorSfxOffset;
-    /* 0x08A0 */ u8         unk_8A0;
+    /* 0x08A0 */ u8         damageAmount;
     /* 0x08A1 */ u8         specialDamageEffect;
-    /* 0x08A2 */ s16        unk_8A2;
-    /* 0x08A4 */ f32        unk_8A4;
-    /* 0x08A8 */ f32        unk_8A8;
+    /* 0x08A2 */ s16        damageYaw;
+    /* 0x08A4 */ f32        damageSpeedXZ;
+    /* 0x08A8 */ f32        damageSpeedY;
     /* 0x08AC */ f32        pushedSpeed; // Pushing player, examples include water currents, floor conveyors, climbing sloped surfaces
     /* 0x08B0 */ s16        pushedYaw; // Yaw direction of player being pushed
     /* 0x08B4 */ WeaponInfo meleeWeaponInfo[3];
@@ -901,7 +901,7 @@ typedef struct Player {
     /* 0x0A80 */ s16        analogStickAngle;
     /* 0x0A82 */ u16        prevFloorSfxOffset;
     /* 0x0A84 */ s16        sceneExitPosY;
-    /* 0x0A86 */ s8         unk_A86;
+    /* 0x0A86 */ s8         voidRespawnCounter;
     /* 0x0A87 */ u8         unk_A87;
     /* 0x0A88 */ Vec3f      unk_A88; // previous body part 0 position
 } Player; // size = 0xA94

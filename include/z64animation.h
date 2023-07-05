@@ -20,6 +20,15 @@ struct SkelAnime;
 
 #define LIMB_DONE 0xFF
 
+#define ANIM_FLAG_1         (1 << 0)
+#define ANIM_FLAG_UPDATE_Y  (1 << 1)
+#define ANIM_FLAG_4         (1 << 2)
+#define ANIM_FLAG_8         (1 << 3)
+#define ANIM_FLAG_NOMOVE    (1 << 4)
+#define ANIM_FLAG_80        (1 << 7)
+#define ANIM_FLAG_100       (1 << 8)
+#define ANIM_FLAG_200       (1 << 9)
+
 typedef struct {
     /* 0x00 */ Vec3s jointPos; // Root is position in model space, children are relative to parent
     /* 0x06 */ u8 child;

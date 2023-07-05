@@ -999,7 +999,7 @@ s32 Player_ModelGroupFromIA(Player* this, s32 itemAction);
 void Player_SetModelsForHoldingShield(Player* this);
 void Player_SetModels(Player* this, s32 modelGroup);
 void Player_SetModelGroup(Player* this, s32 modelGroup);
-void func_8008EC70(Player* this);
+void Player_SetHeldItem(Player* this);
 void Player_SetEquipmentData(PlayState* play, Player* this);
 void Player_UpdateBottleHeld(PlayState* play, Player* this, s32 item, s32 itemAction);
 void Player_Untarget(Player* this);

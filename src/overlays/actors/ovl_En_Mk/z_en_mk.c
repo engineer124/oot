@@ -285,6 +285,7 @@ void EnMk_Update(Actor* thisx, PlayState* play) {
     Vec3s vec;
     Player* player;
     s16 swimFlag;
+    s16 depthInWater;
 
     Collider_UpdateCylinder(&this->actor, &this->collider);
     CollisionCheck_SetOC(play, &play->colChkCtx, &this->collider.base);
