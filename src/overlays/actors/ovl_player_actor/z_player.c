@@ -12366,9 +12366,9 @@ void Player_BounceOnHorse(Player* this, f32 offsetY, f32 frame) {
     if ((this->rideOffsetY != 0.0f) && (this->skelAnime.curFrame >= frame)) {
         if (offsetY < fabsf(this->rideOffsetY)) {
             if (this->rideOffsetY >= 0.0f) {
-                dir = 1;
+                dir = 1.0f;
             } else {
-                dir = -1;
+                dir = -1.0f;
             }
             rideOffsetY = dir * offsetY;
         } else {
@@ -13555,7 +13555,7 @@ void Player_Action_SpawnFromWarpSong(Player* this, PlayState* play) {
 void Player_Action_SpawnFromBlueWarp(Player* this, PlayState* play) {
     s32 pad;
 
-    if ((this->spawnFromBlueWarpVar8 != 0) && (play->csCtx.curFrame <= 304)) {
+    if ((this->spawnFromBlueWarpVar8 != 0) && (play->csCtx.curFrame < 305)) {
         this->actor.gravity = 0.0f;
         this->actor.velocity.y = 0.0f;
     } else if (sYDistToFloor < 150.0f) {
