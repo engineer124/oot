@@ -1,6 +1,7 @@
 #include "global.h"
 
-#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_25 | ACTOR_FLAG_26)
+#define FLAGS \
+    (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY | ACTOR_FLAG_4 | ACTOR_FLAG_5 | ACTOR_FLAG_25 | ACTOR_FLAG_26)
 
 void (*sPlayerCallInitFunc)(Actor* thisx, PlayState* play);
 void (*sPlayerCallDestroyFunc)(Actor* thisx, PlayState* play);

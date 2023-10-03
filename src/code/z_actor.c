@@ -362,7 +362,7 @@ void Target_Draw(TargetContext* targetCtx, PlayState* play) {
 
         Target_SetLockOnPos(targetCtx, targetCtx->lockOnIndex, projectedPos.x, projectedPos.y, projectedPos.z);
 
-        if (!(player->stateFlags1 & PLAYER_STATE1_6) || (actor != player->lockOnActor)) {
+        if (!(player->stateFlags1 & PLAYER_STATE1_6) || (actor != player->targetedActor)) {
             OVERLAY_DISP = Gfx_SetupDL(OVERLAY_DISP, SETUPDL_57);
 
             for (i = 0, index = targetCtx->lockOnIndex; i < totalEntries;
@@ -441,7 +441,7 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* lockOnActor,
 
     // If currently not locked on to an actor and not pressing down on the analog stick then try to find a targetable
     // actor
-    if ((player->lockOnActor != NULL) && (player->unk_84B[player->unk_846] == 2)) {
+    if ((player->targetedActor != NULL) && (player->unk_84B[player->unk_846] == 2)) {
         targetCtx->arrowPointedActor = NULL;
     } else {
         Target_GetTargetActor(play, &play->actorCtx, &actor, player);
@@ -504,8 +504,9 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* lockOnActor,
                 targetCtx->lockOnAlpha = 0;
             }
 
-            lockOnSfxId = CHECK_FLAG_ALL(lockOnActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY) ? NA_SE_SY_LOCK_ON
-                                                                                          : NA_SE_SY_LOCK_ON_HUMAN;
+            lockOnSfxId = CHECK_FLAG_ALL(lockOnActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY)
+                              ? NA_SE_SY_LOCK_ON
+                              : NA_SE_SY_LOCK_ON_HUMAN;
             Sfx_PlaySfxCentered(lockOnSfxId);
         }
 
@@ -1495,7 +1496,7 @@ f32 Target_GetAdjustedDistSq(Actor* actor, Player* player, s16 playerShapeYaw) {
     // The yaw, with player as the origin, from where player is facing to where the actor is positioned
     yawDiff = ABS((s16)((s16)(actor->yawTowardsPlayer - 0x8000) - playerShapeYaw));
 
-    if (player->lockOnActor != NULL) {
+    if (player->targetedActor != NULL) {
         if ((yawDiff > 0x4000) || (actor->flags & ACTOR_FLAG_CANT_LOCK_ON)) {
             return FLT_MAX;
         }
@@ -1559,7 +1560,7 @@ s32 Target_OutsideLeashRange(Actor* actor, Player* player, s32 ignoreLeash) {
         // The yaw, with player as the origin, from where player is facing to where the actor is positioned
         yawDiff = ABS((s16)((s16)(actor->yawTowardsPlayer - 0x8000) - player->actor.shape.rot.y));
 
-        if ((player->lockOnActor == NULL) && (yawDiff > 0x2AAA)) {
+        if ((player->targetedActor == NULL) && (yawDiff > 0x2AAA)) {
             distSq = FLT_MAX;
         } else {
             distSq = actor->xyzDistToPlayerSq;
@@ -2222,13 +2223,13 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
                 actor->flags &= ~ACTOR_FLAG_24;
 
                 if ((DECR(actor->freezeTimer) == 0) && (actor->flags & (ACTOR_FLAG_4 | ACTOR_FLAG_6))) {
-                    if (actor == player->lockOnActor) {
+                    if (actor == player->targetedActor) {
                         actor->isLockedOn = true;
                     } else {
                         actor->isLockedOn = false;
                     }
 
-                    if ((actor->targetPriority != 0) && (player->lockOnActor == NULL)) {
+                    if ((actor->targetPriority != 0) && (player->targetedActor == NULL)) {
                         actor->targetPriority = 0;
                     }
 
@@ -2251,7 +2252,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
         }
     }
 
-    actor = player->lockOnActor;
+    actor = player->targetedActor;
 
     if ((actor != NULL) && (actor->update == NULL)) {
         actor = NULL;
@@ -3005,7 +3006,7 @@ Actor* Actor_Delete(ActorContext* actorCtx, Actor* actor, PlayState* play) {
         osSyncPrintf("アクタークラス削除 [%s]\n", name); // "Actor class deleted [%s]"
     }
 
-    if ((player != NULL) && (actor == player->lockOnActor)) {
+    if ((player != NULL) && (actor == player->targetedActor)) {
         Player_Untarget(player);
         Camera_ChangeMode(Play_GetCamera(play, Play_GetActiveCamId(play)), 0);
     }
@@ -3095,7 +3096,7 @@ void Target_FindTargetableActorForCategory(PlayState* play, ActorContext* actorC
     Vec3f sp70;
 
     actor = actorCtx->actorLists[actorCategory].head;
-    lockOnActor = player->lockOnActor;
+    lockOnActor = player->targetedActor;
 
     for (; actor != NULL; actor = actor->next) {
         if ((actor->update == NULL) || ((Player*)actor == player)) {
@@ -3107,7 +3108,8 @@ void Target_FindTargetableActorForCategory(PlayState* play, ActorContext* actorC
         }
 
         // Determine the closest enemy actor to player within a range. Used for playing enemy background music.
-        if ((actorCategory == ACTORCAT_ENEMY) && CHECK_FLAG_ALL(actor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY)) {
+        if ((actorCategory == ACTORCAT_ENEMY) &&
+            CHECK_FLAG_ALL(actor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY)) {
             if ((actor->xyzDistToPlayerSq < SQ(500.0f)) && (actor->xyzDistToPlayerSq < sBgmEnemyDistSq)) {
                 actorCtx->targetCtx.bgmEnemy = actor;
                 sBgmEnemyDistSq = actor->xyzDistToPlayerSq;

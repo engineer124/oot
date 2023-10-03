@@ -600,7 +600,7 @@ void Player_UpdateBottleHeld(PlayState* play, Player* this, s32 item, s32 itemAc
 }
 
 void Player_Untarget(Player* this) {
-    this->lockOnActor = NULL;
+    this->targetedActor = NULL;
     this->stateFlags2 &= ~PLAYER_STATE2_USING_SWITCH_Z_TARGET;
 }
 
@@ -609,8 +609,8 @@ void Player_UntargetCheckFloor(Player* this) {
         (this->stateFlags1 & (PLAYER_STATE1_21 | PLAYER_STATE1_23 | PLAYER_STATE1_27)) ||
         (!(this->stateFlags1 & (PLAYER_STATE1_18 | PLAYER_STATE1_19)) &&
          ((this->actor.world.pos.y - this->actor.floorHeight) < 100.0f))) {
-        this->stateFlags1 &= ~(PLAYER_STATE1_Z_TARGETING | PLAYER_STATE1_LOCK_ON_FRIEND | PLAYER_STATE1_Z_PARALLEL | PLAYER_STATE1_18 |
-                               PLAYER_STATE1_19 | PLAYER_STATE1_Z_PARALLEL_FROM_UNTARGET);
+        this->stateFlags1 &= ~(PLAYER_STATE1_Z_TARGETING | PLAYER_STATE1_LOCK_ON_FRIEND | PLAYER_STATE1_Z_PARALLEL |
+                               PLAYER_STATE1_18 | PLAYER_STATE1_19 | PLAYER_STATE1_Z_PARALLEL_FROM_UNTARGET);
     } else if (!(this->stateFlags1 & (PLAYER_STATE1_18 | PLAYER_STATE1_19 | PLAYER_STATE1_21))) {
         this->stateFlags1 |= PLAYER_STATE1_19;
     }
@@ -622,7 +622,7 @@ void Player_ForceLockOn(PlayState* play, Actor* actor) {
     Player* this = GET_PLAYER(play);
 
     Player_UntargetCheckFloor(this);
-    this->lockOnActor = actor;
+    this->targetedActor = actor;
     this->forcedLockOn = actor;
     this->stateFlags1 |= PLAYER_STATE1_LOCK_ON_FRIEND;
     Camera_SetViewParam(Play_GetCamera(play, CAM_ID_MAIN), CAM_VIEW_TARGET, actor);
