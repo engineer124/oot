@@ -247,27 +247,27 @@ Gfx D_80115FF0[] = {
     gsSPEndDisplayList(),
 };
 
-void Target_SetLockOnPos(TargetContext* targetCtx, s32 index, f32 x, f32 y, f32 z) {
-    targetCtx->lockOnReticles[index].pos.x = x;
-    targetCtx->lockOnReticles[index].pos.y = y;
-    targetCtx->lockOnReticles[index].pos.z = z;
-    targetCtx->lockOnReticles[index].radius = targetCtx->lockOnRadius;
+void Attention_SetLockOnPos(AttentionContext* attentionCtx, s32 index, f32 x, f32 y, f32 z) {
+    attentionCtx->lockOnReticles[index].pos.x = x;
+    attentionCtx->lockOnReticles[index].pos.y = y;
+    attentionCtx->lockOnReticles[index].pos.z = z;
+    attentionCtx->lockOnReticles[index].radius = attentionCtx->lockOnRadius;
 }
 
-void Target_InitLockOn(TargetContext* targetCtx, s32 actorCategory, PlayState* play) {
+void Attention_InitLockOn(AttentionContext* attentionCtx, s32 actorCategory, PlayState* play) {
     LockOnReticle* reticle;
     NaviColor* naviColorEntry;
     s32 i;
 
-    Math_Vec3f_Copy(&targetCtx->lockOnPos, &play->view.eye);
-    targetCtx->lockOnRadius = 500.0f;
-    targetCtx->lockOnAlpha = 0x100;
+    Math_Vec3f_Copy(&attentionCtx->lockOnPos, &play->view.eye);
+    attentionCtx->lockOnRadius = 500.0f;
+    attentionCtx->lockOnAlpha = 0x100;
 
     naviColorEntry = &sNaviColorList[actorCategory];
 
-    reticle = &targetCtx->lockOnReticles[0];
-    for (i = 0; i < ARRAY_COUNT(targetCtx->lockOnReticles); i++, reticle++) {
-        Target_SetLockOnPos(targetCtx, i, 0.0f, 0.0f, 0.0f);
+    reticle = &attentionCtx->lockOnReticles[0];
+    for (i = 0; i < ARRAY_COUNT(attentionCtx->lockOnReticles); i++, reticle++) {
+        Attention_SetLockOnPos(attentionCtx, i, 0.0f, 0.0f, 0.0f);
 
         reticle->color.r = naviColorEntry->inner.r;
         reticle->color.g = naviColorEntry->inner.g;
@@ -275,39 +275,39 @@ void Target_InitLockOn(TargetContext* targetCtx, s32 actorCategory, PlayState* p
     }
 }
 
-void Target_SetNaviState(TargetContext* targetCtx, Actor* actor, s32 actorCategory, PlayState* play) {
-    targetCtx->naviPos.x = actor->focus.pos.x;
-    targetCtx->naviPos.y = actor->focus.pos.y + (actor->targetArrowOffset * actor->scale.y);
-    targetCtx->naviPos.z = actor->focus.pos.z;
+void Attention_SetNaviState(AttentionContext* attentionCtx, Actor* actor, s32 actorCategory, PlayState* play) {
+    attentionCtx->naviPos.x = actor->focus.pos.x;
+    attentionCtx->naviPos.y = actor->focus.pos.y + (actor->targetArrowOffset * actor->scale.y);
+    attentionCtx->naviPos.z = actor->focus.pos.z;
 
-    targetCtx->naviInnerColor.r = sNaviColorList[actorCategory].inner.r;
-    targetCtx->naviInnerColor.g = sNaviColorList[actorCategory].inner.g;
-    targetCtx->naviInnerColor.b = sNaviColorList[actorCategory].inner.b;
-    targetCtx->naviInnerColor.a = sNaviColorList[actorCategory].inner.a;
-    targetCtx->naviOuterColor.r = sNaviColorList[actorCategory].outer.r;
-    targetCtx->naviOuterColor.g = sNaviColorList[actorCategory].outer.g;
-    targetCtx->naviOuterColor.b = sNaviColorList[actorCategory].outer.b;
-    targetCtx->naviOuterColor.a = sNaviColorList[actorCategory].outer.a;
+    attentionCtx->naviInnerColor.r = sNaviColorList[actorCategory].inner.r;
+    attentionCtx->naviInnerColor.g = sNaviColorList[actorCategory].inner.g;
+    attentionCtx->naviInnerColor.b = sNaviColorList[actorCategory].inner.b;
+    attentionCtx->naviInnerColor.a = sNaviColorList[actorCategory].inner.a;
+    attentionCtx->naviOuterColor.r = sNaviColorList[actorCategory].outer.r;
+    attentionCtx->naviOuterColor.g = sNaviColorList[actorCategory].outer.g;
+    attentionCtx->naviOuterColor.b = sNaviColorList[actorCategory].outer.b;
+    attentionCtx->naviOuterColor.a = sNaviColorList[actorCategory].outer.a;
 }
 
-void Target_Init(TargetContext* targetCtx, Actor* actor, PlayState* play) {
-    targetCtx->naviActor = NULL;
-    targetCtx->lockOnActor = NULL;
-    targetCtx->naviMoveProgressFactor = 0.0f;
-    targetCtx->forcedTargetActor = NULL;
-    targetCtx->bgmEnemy = NULL;
-    targetCtx->rotZTick = 0;
-    targetCtx->lockOnIndex = 0;
-    Target_SetNaviState(targetCtx, actor, actor->category, play);
-    Target_InitLockOn(targetCtx, actor->category, play);
+void Attention_Init(AttentionContext* attentionCtx, Actor* actor, PlayState* play) {
+    attentionCtx->naviHoverActor = NULL;
+    attentionCtx->lockOnActor = NULL;
+    attentionCtx->naviMoveProgressFactor = 0.0f;
+    attentionCtx->forcedLockOnActor = NULL;
+    attentionCtx->bgmEnemy = NULL;
+    attentionCtx->rotZTick = 0;
+    attentionCtx->lockOnIndex = 0;
+    Attention_SetNaviState(attentionCtx, actor, actor->category, play);
+    Attention_InitLockOn(attentionCtx, actor->category, play);
 }
 
-void Target_Draw(TargetContext* targetCtx, PlayState* play) {
-    Actor* actor = targetCtx->lockOnActor;
+void Attention_Draw(AttentionContext* attentionCtx, PlayState* play) {
+    Actor* actor = attentionCtx->lockOnActor;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_actor.c", 2029);
 
-    if (targetCtx->lockOnAlpha != 0) {
+    if (attentionCtx->lockOnAlpha != 0) {
         LockOnReticle* reticle;
         Player* player;
         s16 alpha;
@@ -326,26 +326,26 @@ void Target_Draw(TargetContext* targetCtx, PlayState* play) {
         alpha = 255;
         projectdPosScale = 1.0f;
 
-        if (targetCtx->rotZTick != 0) {
+        if (attentionCtx->rotZTick != 0) {
             totalEntries = 1;
         } else {
             // Use multiple triangle sets for the movement effect when the triangles are
             // getting closer to the actor from the margin of the screen
-            totalEntries = ARRAY_COUNT(targetCtx->lockOnReticles);
+            totalEntries = ARRAY_COUNT(attentionCtx->lockOnReticles);
         }
 
         if (actor != NULL) {
-            Math_Vec3f_Copy(&targetCtx->lockOnPos, &actor->focus.pos);
-            projectdPosScale = (500.0f - targetCtx->lockOnRadius) / 420.0f;
+            Math_Vec3f_Copy(&attentionCtx->lockOnPos, &actor->focus.pos);
+            projectdPosScale = (500.0f - attentionCtx->lockOnRadius) / 420.0f;
         } else {
-            targetCtx->lockOnAlpha -= 120;
-            if (targetCtx->lockOnAlpha < 0) {
-                targetCtx->lockOnAlpha = 0;
+            attentionCtx->lockOnAlpha -= 120;
+            if (attentionCtx->lockOnAlpha < 0) {
+                attentionCtx->lockOnAlpha = 0;
             }
-            alpha = targetCtx->lockOnAlpha;
+            alpha = attentionCtx->lockOnAlpha;
         }
 
-        Actor_ProjectPos(play, &targetCtx->lockOnPos, &projectedPos, &invW);
+        Actor_ProjectPos(play, &attentionCtx->lockOnPos, &projectedPos, &invW);
 
         projectedPos.x = ((SCREEN_WIDTH / 2) * (projectedPos.x * invW)) * projectdPosScale;
         projectedPos.x = CLAMP(projectedPos.x, -SCREEN_WIDTH, SCREEN_WIDTH);
@@ -355,19 +355,19 @@ void Target_Draw(TargetContext* targetCtx, PlayState* play) {
 
         projectedPos.z *= projectdPosScale;
 
-        targetCtx->lockOnIndex--;
-        if (targetCtx->lockOnIndex < 0) {
-            targetCtx->lockOnIndex = ARRAY_COUNT(targetCtx->lockOnReticles) - 1;
+        attentionCtx->lockOnIndex--;
+        if (attentionCtx->lockOnIndex < 0) {
+            attentionCtx->lockOnIndex = ARRAY_COUNT(attentionCtx->lockOnReticles) - 1;
         }
 
-        Target_SetLockOnPos(targetCtx, targetCtx->lockOnIndex, projectedPos.x, projectedPos.y, projectedPos.z);
+        Attention_SetLockOnPos(attentionCtx, attentionCtx->lockOnIndex, projectedPos.x, projectedPos.y, projectedPos.z);
 
         if (!(player->stateFlags1 & PLAYER_STATE1_6) || (actor != player->unk_664)) {
             OVERLAY_DISP = Gfx_SetupDL(OVERLAY_DISP, SETUPDL_57);
 
-            for (i = 0, index = targetCtx->lockOnIndex; i < totalEntries;
-                 i++, index = (index + 1) % ARRAY_COUNT(targetCtx->lockOnReticles)) {
-                reticle = &targetCtx->lockOnReticles[index];
+            for (i = 0, index = attentionCtx->lockOnIndex; i < totalEntries;
+                 i++, index = (index + 1) % ARRAY_COUNT(attentionCtx->lockOnReticles)) {
+                reticle = &attentionCtx->lockOnReticles[index];
 
                 if (reticle->radius < 500.0f) {
                     if (reticle->radius <= 120.0f) {
@@ -382,7 +382,7 @@ void Target_Draw(TargetContext* targetCtx, PlayState* play) {
                     gDPSetPrimColor(OVERLAY_DISP++, 0, 0, reticle->color.r, reticle->color.g, reticle->color.b,
                                     (u8)alpha);
 
-                    Matrix_RotateZ((targetCtx->rotZTick & 0x7F) * (M_PI / 64), MTXMODE_APPLY);
+                    Matrix_RotateZ((attentionCtx->rotZTick & 0x7F) * (M_PI / 64), MTXMODE_APPLY);
 
                     // Draw the 4 lock-on triangles
                     for (triangleIndex = 0; triangleIndex < 4; triangleIndex++) {
@@ -396,7 +396,7 @@ void Target_Draw(TargetContext* targetCtx, PlayState* play) {
                     }
                 }
 
-                alpha -= 255 / ARRAY_COUNT(targetCtx->lockOnReticles);
+                alpha -= 255 / ARRAY_COUNT(attentionCtx->lockOnReticles);
                 if (alpha < 0) {
                     alpha = 0;
                 }
@@ -404,7 +404,7 @@ void Target_Draw(TargetContext* targetCtx, PlayState* play) {
         }
     }
 
-    actor = targetCtx->arrowPointedActor;
+    actor = attentionCtx->arrowPointedActor;
     if ((actor != NULL) && !(actor->flags & ACTOR_FLAG_27)) {
         NaviColor* color = &sNaviColorList[actor->category];
 
@@ -424,7 +424,7 @@ void Target_Draw(TargetContext* targetCtx, PlayState* play) {
     CLOSE_DISPS(play->state.gfxCtx, "../z_actor.c", 2158);
 }
 
-void Target_Update(TargetContext* targetCtx, Player* player, Actor* lockOnActor, PlayState* play) {
+void Attention_Update(AttentionContext* attentionCtx, Player* player, Actor* lockOnActor, PlayState* play) {
     s32 pad;
     Actor* actor;
     s32 actorCategory;
@@ -442,15 +442,15 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* lockOnActor,
     // If currently not locked on to an actor and not pressing down on the analog stick then try to find a targetable
     // actor
     if ((player->unk_664 != NULL) && (player->unk_84B[player->unk_846] == 2)) {
-        targetCtx->arrowPointedActor = NULL;
+        attentionCtx->arrowPointedActor = NULL;
     } else {
-        Target_GetTargetActor(play, &play->actorCtx, &actor, player);
-        targetCtx->arrowPointedActor = actor;
+        Attention_GetTargetActor(play, &play->actorCtx, &actor, player);
+        attentionCtx->arrowPointedActor = actor;
     }
 
-    if (targetCtx->forcedTargetActor != NULL) {
-        actor = targetCtx->forcedTargetActor;
-        targetCtx->forcedTargetActor = NULL;
+    if (attentionCtx->forcedLockOnActor != NULL) {
+        actor = attentionCtx->forcedLockOnActor;
+        attentionCtx->forcedLockOnActor = NULL;
     } else if (lockOnActor != NULL) {
         actor = lockOnActor;
     }
@@ -461,31 +461,31 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* lockOnActor,
         actorCategory = player->actor.category;
     }
 
-    if ((actor != targetCtx->naviActor) || (actorCategory != targetCtx->naviActorCategory)) {
-        targetCtx->naviActor = actor;
-        targetCtx->naviActorCategory = actorCategory;
-        targetCtx->naviMoveProgressFactor = 1.0f;
+    if ((actor != attentionCtx->naviHoverActor) || (actorCategory != attentionCtx->naviActorCategory)) {
+        attentionCtx->naviHoverActor = actor;
+        attentionCtx->naviActorCategory = actorCategory;
+        attentionCtx->naviMoveProgressFactor = 1.0f;
     }
 
     if (actor == NULL) {
         actor = &player->actor;
     }
 
-    if (!Math_StepToF(&targetCtx->naviMoveProgressFactor, 0.0f, 0.25f)) {
-        fairyMoveScale = 0.25f / targetCtx->naviMoveProgressFactor;
+    if (!Math_StepToF(&attentionCtx->naviMoveProgressFactor, 0.0f, 0.25f)) {
+        fairyMoveScale = 0.25f / attentionCtx->naviMoveProgressFactor;
 
-        velocityX = actor->world.pos.x - targetCtx->naviPos.x;
-        velocityY = (actor->world.pos.y + (actor->targetArrowOffset * actor->scale.y)) - targetCtx->naviPos.y;
-        velocityZ = actor->world.pos.z - targetCtx->naviPos.z;
+        velocityX = actor->world.pos.x - attentionCtx->naviPos.x;
+        velocityY = (actor->world.pos.y + (actor->targetArrowOffset * actor->scale.y)) - attentionCtx->naviPos.y;
+        velocityZ = actor->world.pos.z - attentionCtx->naviPos.z;
 
-        targetCtx->naviPos.x += velocityX * fairyMoveScale;
-        targetCtx->naviPos.y += velocityY * fairyMoveScale;
-        targetCtx->naviPos.z += velocityZ * fairyMoveScale;
+        attentionCtx->naviPos.x += velocityX * fairyMoveScale;
+        attentionCtx->naviPos.y += velocityY * fairyMoveScale;
+        attentionCtx->naviPos.z += velocityZ * fairyMoveScale;
     } else {
-        Target_SetNaviState(targetCtx, actor, actorCategory, play);
+        Attention_SetNaviState(attentionCtx, actor, actorCategory, play);
     }
 
-    if ((lockOnActor != NULL) && (targetCtx->rotZTick == 0)) {
+    if ((lockOnActor != NULL) && (attentionCtx->rotZTick == 0)) {
         Actor_ProjectPos(play, &lockOnActor->focus.pos, &projectedFocusPos, &invW);
         if (((projectedFocusPos.z <= 0.0f) || (1.0f <= fabsf(projectedFocusPos.x * invW))) ||
             (fabsf(projectedFocusPos.y * invW) >= 1.0f)) {
@@ -494,14 +494,14 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* lockOnActor,
     }
 
     if (lockOnActor != NULL) {
-        if (lockOnActor != targetCtx->lockOnActor) {
+        if (lockOnActor != attentionCtx->lockOnActor) {
             // Lock On entries need to be re-initialized when changing the targeted actor
-            Target_InitLockOn(targetCtx, lockOnActor->category, play);
-            targetCtx->lockOnActor = lockOnActor;
+            Attention_InitLockOn(attentionCtx, lockOnActor->category, play);
+            attentionCtx->lockOnActor = lockOnActor;
 
             if (lockOnActor->id == ACTOR_EN_BOOM) {
                 // Avoid drawing the lock on triangles on the boomerang
-                targetCtx->lockOnAlpha = 0;
+                attentionCtx->lockOnAlpha = 0;
             }
 
             lockOnSfxId = CHECK_FLAG_ALL(lockOnActor->flags, ACTOR_FLAG_0 | ACTOR_FLAG_2) ? NA_SE_SY_LOCK_ON
@@ -509,26 +509,26 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* lockOnActor,
             Sfx_PlaySfxCentered(lockOnSfxId);
         }
 
-        targetCtx->lockOnPos.x = lockOnActor->world.pos.x;
-        targetCtx->lockOnPos.y = lockOnActor->world.pos.y - (lockOnActor->shape.yOffset * lockOnActor->scale.y);
-        targetCtx->lockOnPos.z = lockOnActor->world.pos.z;
+        attentionCtx->lockOnPos.x = lockOnActor->world.pos.x;
+        attentionCtx->lockOnPos.y = lockOnActor->world.pos.y - (lockOnActor->shape.yOffset * lockOnActor->scale.y);
+        attentionCtx->lockOnPos.z = lockOnActor->world.pos.z;
 
-        if (targetCtx->rotZTick == 0) {
-            lockOnStep = (500.0f - targetCtx->lockOnRadius) * 3.0f;
+        if (attentionCtx->rotZTick == 0) {
+            lockOnStep = (500.0f - attentionCtx->lockOnRadius) * 3.0f;
             lockOnStep = CLAMP(lockOnStep, 30.0f, 100.0f);
 
-            if (Math_StepToF(&targetCtx->lockOnRadius, 80.0f, lockOnStep)) {
-                targetCtx->rotZTick++;
+            if (Math_StepToF(&attentionCtx->lockOnRadius, 80.0f, lockOnStep)) {
+                attentionCtx->rotZTick++;
             }
         } else {
             // 0x80 is or'd to avoid getting this value be set to zero
             // This rotation value gets multiplied by 0x200, which multiplied by 0x80 gives a full turn (0x10000)
-            targetCtx->rotZTick = (targetCtx->rotZTick + 3) | 0x80;
-            targetCtx->lockOnRadius = 120.0f;
+            attentionCtx->rotZTick = (attentionCtx->rotZTick + 3) | 0x80;
+            attentionCtx->lockOnRadius = 120.0f;
         }
     } else {
-        targetCtx->lockOnActor = NULL;
-        Math_StepToF(&targetCtx->lockOnRadius, 500.0f, 80.0f);
+        attentionCtx->lockOnActor = NULL;
+        Math_StepToF(&attentionCtx->lockOnRadius, 500.0f, 80.0f);
     }
 }
 
@@ -828,7 +828,7 @@ void Actor_Init(Actor* actor, PlayState* play) {
     Actor_SetFocus(actor, 0.0f);
     Math_Vec3f_Copy(&actor->prevPos, &actor->world.pos);
     Actor_SetScale(actor, 0.01f);
-    actor->targetMode = TARGET_MODE_3;
+    actor->attentionMode = ATTENTION_MODE_3;
     actor->minVelocityY = -20.0f;
     actor->xyzDistToPlayerSq = FLT_MAX;
     actor->naviEnemyId = NAVI_ENEMY_NONE;
@@ -1488,7 +1488,7 @@ PosRot* Actor_GetWorldPosShapeRot(PosRot* arg0, Actor* actor) {
  * This distance will be adjusted smaller if Player is already targeting an actor. The more Player is facing the actor,
  * the smaller the distance is adjusted.
  */
-f32 Target_GetAdjustedDistSq(Actor* actor, Player* player, s16 playerShapeYaw) {
+f32 Attention_GetAdjustedDistSq(Actor* actor, Player* player, s16 playerShapeYaw) {
     f32 adjDistSq;
     s16 yawDiff;
 
@@ -1522,24 +1522,24 @@ typedef struct {
 #define TARGET_RANGE(range, leash) \
     { SQ(range), (f32)range / leash }
 
-TargetRangeParams sTargetRanges[TARGET_MODE_MAX] = {
-    TARGET_RANGE(70, 140),        // TARGET_MODE_0
-    TARGET_RANGE(170, 255),       // TARGET_MODE_1
-    TARGET_RANGE(280, 5600),      // TARGET_MODE_2
-    TARGET_RANGE(350, 525),       // TARGET_MODE_3
-    TARGET_RANGE(700, 1050),      // TARGET_MODE_4
-    TARGET_RANGE(1000, 1500),     // TARGET_MODE_5
-    TARGET_RANGE(100, 105.36842), // TARGET_MODE_6
-    TARGET_RANGE(140, 163.33333), // TARGET_MODE_7
-    TARGET_RANGE(240, 576),       // TARGET_MODE_8
-    TARGET_RANGE(280, 280000),    // TARGET_MODE_9
+TargetRangeParams sTargetRanges[ATTENTION_MODE_MAX] = {
+    TARGET_RANGE(70, 140),        // ATTENTION_MODE_0
+    TARGET_RANGE(170, 255),       // ATTENTION_MODE_1
+    TARGET_RANGE(280, 5600),      // ATTENTION_MODE_2
+    TARGET_RANGE(350, 525),       // ATTENTION_MODE_3
+    TARGET_RANGE(700, 1050),      // ATTENTION_MODE_4
+    TARGET_RANGE(1000, 1500),     // ATTENTION_MODE_5
+    TARGET_RANGE(100, 105.36842), // ATTENTION_MODE_6
+    TARGET_RANGE(140, 163.33333), // ATTENTION_MODE_7
+    TARGET_RANGE(240, 576),       // ATTENTION_MODE_8
+    TARGET_RANGE(280, 280000),    // ATTENTION_MODE_9
 };
 
 /**
- * Checks if an actor at distance `distSq` is inside the range specified by its targetMode
+ * Checks if an actor at distance `distSq` is inside the range specified by its attentionMode
  */
-s32 Target_IsActorInRange(Actor* actor, f32 distSq) {
-    return distSq < sTargetRanges[actor->targetMode].rangeSq;
+s32 Attention_IsActorInRange(Actor* actor, f32 distSq) {
+    return distSq < sTargetRanges[actor->attentionMode].rangeSq;
 }
 
 /**
@@ -1547,7 +1547,7 @@ s32 Target_IsActorInRange(Actor* actor, f32 distSq) {
  *
  * Passing true to ignoreLeash avoids the distance and yaw checks, and considers the actor inside the leash distance.
  */
-s32 Target_OutsideLeashRange(Actor* actor, Player* player, s32 ignoreLeash) {
+s32 Attention_OutsideLeashRange(Actor* actor, Player* player, s32 ignoreLeash) {
     if ((actor->update == NULL) || !(actor->flags & ACTOR_FLAG_0)) {
         return true;
     }
@@ -1565,7 +1565,7 @@ s32 Target_OutsideLeashRange(Actor* actor, Player* player, s32 ignoreLeash) {
             distSq = actor->xyzDistToPlayerSq;
         }
 
-        return !Target_IsActorInRange(actor, sTargetRanges[actor->targetMode].leashScale * distSq);
+        return !Attention_IsActorInRange(actor, sTargetRanges[actor->attentionMode].leashScale * distSq);
     }
 
     return false;
@@ -2097,7 +2097,7 @@ void Actor_InitContext(PlayState* play, ActorContext* actorCtx, ActorEntry* play
     actorCtx->absoluteSpace = NULL;
 
     Actor_SpawnEntry(actorCtx, playerEntry, play);
-    Target_Init(&actorCtx->targetCtx, actorCtx->actorLists[ACTORCAT_PLAYER].head, play);
+    Attention_Init(&actorCtx->attentionCtx, actorCtx->actorLists[ACTORCAT_PLAYER].head, play);
     func_8002FA60(play);
 }
 
@@ -2260,13 +2260,13 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
 
     if ((actor == NULL) || (player->unk_66C < 5)) {
         actor = NULL;
-        if (actorCtx->targetCtx.rotZTick != 0) {
-            actorCtx->targetCtx.rotZTick = 0;
+        if (actorCtx->attentionCtx.rotZTick != 0) {
+            actorCtx->attentionCtx.rotZTick = 0;
             Sfx_PlaySfxCentered(NA_SE_SY_LOCK_OFF);
         }
     }
 
-    Target_Update(&actorCtx->targetCtx, player, actor, play);
+    Attention_Update(&actorCtx->attentionCtx, player, actor, play);
     TitleCard_Update(play, &actorCtx->titleCtx);
     DynaPoly_UpdateBgActorTransforms(play, &play->colCtx.dyna);
 }
@@ -3010,16 +3010,16 @@ Actor* Actor_Delete(ActorContext* actorCtx, Actor* actor, PlayState* play) {
         Camera_ChangeMode(Play_GetCamera(play, Play_GetActiveCamId(play)), 0);
     }
 
-    if (actor == actorCtx->targetCtx.naviActor) {
-        actorCtx->targetCtx.naviActor = NULL;
+    if (actor == actorCtx->attentionCtx.naviHoverActor) {
+        actorCtx->attentionCtx.naviHoverActor = NULL;
     }
 
-    if (actor == actorCtx->targetCtx.forcedTargetActor) {
-        actorCtx->targetCtx.forcedTargetActor = NULL;
+    if (actor == actorCtx->attentionCtx.forcedLockOnActor) {
+        actorCtx->attentionCtx.forcedLockOnActor = NULL;
     }
 
-    if (actor == actorCtx->targetCtx.bgmEnemy) {
-        actorCtx->targetCtx.bgmEnemy = NULL;
+    if (actor == actorCtx->attentionCtx.bgmEnemy) {
+        actorCtx->attentionCtx.bgmEnemy = NULL;
     }
 
     Audio_StopSfxByPos(&actor->projectedPos);
@@ -3043,7 +3043,7 @@ Actor* Actor_Delete(ActorContext* actorCtx, Actor* actor, PlayState* play) {
     return newHead;
 }
 
-s32 Target_InTargetableScreenRegion(PlayState* play, Actor* actor) {
+s32 Attention_InTargetableScreenRegion(PlayState* play, Actor* actor) {
     s16 x;
     s16 y;
 
@@ -3063,7 +3063,7 @@ s16 sTargetPlayerRotY;
  * Search for targetable actors of the `actorCategory` category.
  *
  * Looks for the actor of said category with higher targetPriority and the one that is nearest to player. This actor
- * must be within the range (relative to player) speicified by its targetMode.
+ * must be within the range (relative to player) speicified by its attentionMode.
  *
  * The actor must be on-screen
  *
@@ -3076,17 +3076,18 @@ s16 sTargetPlayerRotY;
  * - Not be Player itself.
  * - It must be targetable.
  * - Not be the already targeted actor.
- * - Be withing the range specified by its targetMode.
+ * - Be withing the range specified by its attentionMode.
  * - It must be on-screen (within a margin)
  * - Must not be blocked by a surface
  *
  * This function also checks for the nearest enemy actor, which allows determining if enemy background music should be
- * played. This actor is stored in `targetCtx.bgmEnemy` and its distance is stored in `sBgmEnemyDistSq`
+ * played. This actor is stored in `attentionCtx.bgmEnemy` and its distance is stored in `sBgmEnemyDistSq`
  *
  * This function is expected to be called with almost every actor category in each cycle. On a new cycle its global
  * variables must be reset by the caller, otherwise the information of the previous cycle will be retained on this one.
  */
-void Target_FindTargetableActorForCategory(PlayState* play, ActorContext* actorCtx, Player* player, u32 actorCategory) {
+void Attention_FindTargetableActorForCategory(PlayState* play, ActorContext* actorCtx, Player* player,
+                                              u32 actorCategory) {
     f32 distSq;
     Actor* actor;
     Actor* lockOnActor;
@@ -3109,7 +3110,7 @@ void Target_FindTargetableActorForCategory(PlayState* play, ActorContext* actorC
         // Determine the closest enemy actor to player within a range. Used for playing enemy background music.
         if ((actorCategory == ACTORCAT_ENEMY) && CHECK_FLAG_ALL(actor->flags, ACTOR_FLAG_0 | ACTOR_FLAG_2)) {
             if ((actor->xyzDistToPlayerSq < SQ(500.0f)) && (actor->xyzDistToPlayerSq < sBgmEnemyDistSq)) {
-                actorCtx->targetCtx.bgmEnemy = actor;
+                actorCtx->attentionCtx.bgmEnemy = actor;
                 sBgmEnemyDistSq = actor->xyzDistToPlayerSq;
             }
         }
@@ -3118,10 +3119,10 @@ void Target_FindTargetableActorForCategory(PlayState* play, ActorContext* actorC
             continue;
         }
 
-        distSq = Target_GetAdjustedDistSq(actor, player, sTargetPlayerRotY);
+        distSq = Attention_GetAdjustedDistSq(actor, player, sTargetPlayerRotY);
 
-        if ((distSq < sTargetableNearestActorDistSq) && Target_IsActorInRange(actor, distSq) &&
-            Target_InTargetableScreenRegion(play, actor) &&
+        if ((distSq < sTargetableNearestActorDistSq) && Attention_IsActorInRange(actor, distSq) &&
+            Attention_InTargetableScreenRegion(play, actor) &&
             (!BgCheck_CameraLineTest1(&play->colCtx, &player->actor.focus.pos, &actor->focus.pos, &sp70, &sp80, 1, 1, 1,
                                       1, &sp7C) ||
              SurfaceType_IsIgnoredByProjectiles(&play->colCtx, sp80, sp7C))) {
@@ -3146,12 +3147,12 @@ u8 sTargetableActorCategories[] = {
 /**
  * Search for the nearest targetable actor.
  *
- * The specific criteria is specified in Target_FindTargetableActorForCategory.
+ * The specific criteria is specified in Attention_FindTargetableActorForCategory.
  *
  * The actor found is stored in the targetableP parameter. It may be NULL if no actor that fulfills the criteria is
  * found.
  */
-Actor* Target_GetTargetActor(PlayState* play, ActorContext* actorCtx, Actor** targetableP, Player* player) {
+Actor* Attention_GetTargetActor(PlayState* play, ActorContext* actorCtx, Actor** targetableP, Player* player) {
     s32 i;
     u8* actorCategories;
 
@@ -3162,19 +3163,19 @@ Actor* Target_GetTargetActor(PlayState* play, ActorContext* actorCtx, Actor** ta
     if (!Player_InCsMode(play)) {
         actorCategories = sTargetableActorCategories;
 
-        actorCtx->targetCtx.bgmEnemy = NULL;
+        actorCtx->attentionCtx.bgmEnemy = NULL;
         sTargetPlayerRotY = player->actor.shape.rot.y;
 
         // Try to search for a targetable actor that's a Boss, Enemy or Bg first
         for (i = 0; i < 3; i++) {
-            Target_FindTargetableActorForCategory(play, actorCtx, player, *actorCategories);
+            Attention_FindTargetableActorForCategory(play, actorCtx, player, *actorCategories);
             actorCategories++;
         }
 
         // If no actor in the above categories was found then try to search for one in every other category
         if (sTargetableNearestActor == NULL) {
             for (; i < ARRAY_COUNT(sTargetableActorCategories); i++) {
-                Target_FindTargetableActorForCategory(play, actorCtx, player, *actorCategories);
+                Attention_FindTargetableActorForCategory(play, actorCtx, player, *actorCategories);
                 actorCategories++;
             }
         }

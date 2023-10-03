@@ -200,7 +200,7 @@ typedef struct Actor {
     /* 0x008 */ PosRot home; // Initial position/rotation when spawned. Can be used for other purposes
     /* 0x01C */ s16 params; // Configurable variable set by the actor's spawn data; original name: "args_data"
     /* 0x01E */ s8 objectSlot; // Object slot (in ObjectContext) corresponding to the actor's object; original name: "bank"
-    /* 0x01F */ s8 targetMode; // Controls how far the actor can be targeted from and how far it can stay locked on
+    /* 0x01F */ s8 attentionMode; // Controls how far the actor can be targeted from and how far it can stay locked on
     /* 0x020 */ u16 sfx; // SFX ID to play. Sfx plays when value is set, then is cleared the following update cycle
     /* 0x024 */ PosRot world; // Position/rotation in the world
     /* 0x038 */ PosRot focus; // Target reticle focuses on this position. For player this represents head pos and rot
@@ -524,7 +524,7 @@ typedef struct {
     /* 0x0C */ Vec3f lockOnPos;
     /* 0x18 */ Color_RGBAf naviInnerColor;
     /* 0x28 */ Color_RGBAf naviOuterColor;
-    /* 0x38 */ Actor* naviActor; // The actor that Navi hovers over
+    /* 0x38 */ Actor* naviHoverActor; // The actor that Navi hovers over
     /* 0x3C */ Actor* lockOnActor;
     /* 0x40 */ f32 naviMoveProgressFactor; // Controls Navi so she can smootly transition to the target actor
     /* 0x44 */ f32 lockOnRadius; // Control the circle lock-on triangles coming in from offscreen when you first target
@@ -533,24 +533,24 @@ typedef struct {
     /* 0x4B */ u8 rotZTick;
     /* 0x4C */ s8 lockOnIndex;
     /* 0x50 */ LockOnReticle lockOnReticles[3];
-    /* 0x8C */ Actor* forcedTargetActor; // Never set to non-NULL
+    /* 0x8C */ Actor* forcedLockOnActor; // Never set to non-NULL
     /* 0x90 */ Actor* bgmEnemy; // The nearest enemy to player with the right flags that will trigger NA_BGM_ENEMY
     /* 0x94 */ Actor* arrowPointedActor;
-} TargetContext; // size = 0x98
+} AttentionContext; // size = 0x98
 
 typedef enum {
-    /*  0 */ TARGET_MODE_0,
-    /*  1 */ TARGET_MODE_1,
-    /*  2 */ TARGET_MODE_2,
-    /*  3 */ TARGET_MODE_3,
-    /*  4 */ TARGET_MODE_4,
-    /*  5 */ TARGET_MODE_5,
-    /*  6 */ TARGET_MODE_6,
-    /*  7 */ TARGET_MODE_7,
-    /*  8 */ TARGET_MODE_8,
-    /*  9 */ TARGET_MODE_9,
-    /* 10 */ TARGET_MODE_MAX
-} TargetMode;
+    /*  0 */ ATTENTION_MODE_0,
+    /*  1 */ ATTENTION_MODE_1,
+    /*  2 */ ATTENTION_MODE_2,
+    /*  3 */ ATTENTION_MODE_3,
+    /*  4 */ ATTENTION_MODE_4,
+    /*  5 */ ATTENTION_MODE_5,
+    /*  6 */ ATTENTION_MODE_6,
+    /*  7 */ ATTENTION_MODE_7,
+    /*  8 */ ATTENTION_MODE_8,
+    /*  9 */ ATTENTION_MODE_9,
+    /* 10 */ ATTENTION_MODE_MAX
+} AttentionMode;
 
 #define TRANSITION_ACTOR_PARAMS_INDEX_SHIFT 10
 #define GET_TRANSITION_ACTOR_INDEX(actor) ((u16)(actor)->params >> TRANSITION_ACTOR_PARAMS_INDEX_SHIFT)

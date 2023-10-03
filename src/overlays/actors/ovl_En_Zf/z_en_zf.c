@@ -282,7 +282,7 @@ void EnZf_Init(Actor* thisx, PlayState* play) {
     f32 posDiff;
 
     Actor_ProcessInitChain(thisx, sInitChain);
-    thisx->targetMode = TARGET_MODE_3;
+    thisx->attentionMode = ATTENTION_MODE_3;
     this->clearFlag = (thisx->params & 0xFF00) >> 8;
     /* Strip the top byte of params */
     thisx->params &= 0xFF;

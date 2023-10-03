@@ -323,32 +323,32 @@ typedef struct {
     /* 0x00 */ f32 shadowScale;
     /* 0x04 */ Vec3f modelOffset;
     /* 0x10 */ f32 scale;
-    /* 0x14 */ s8 targetMode;
+    /* 0x14 */ s8 attentionMode;
     /* 0x18 */ f32 interactRange;
 } EnHyInit2Info; // size = 0x1C
 
 static EnHyInit2Info sInit2Info[] = {
-    /* ENHY_TYPE_AOB */ { 36.0f, { 0.0f, 0.0f, 600.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_COB */ { 40.0f, { -100.0f, 0.0f, 400.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_AHG_2 */ { 22.0f, { 0.0f, 0.0f, -200.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_BOJ_3 */ { 20.0f, { -100.0f, 0.0f, 0.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_AHG_4 */ { 22.0f, { 0.0f, 0.0f, 0.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_BOJ_5 */ { 21.0f, { 0.0f, 0.0f, 0.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_BBA */ { 25.0f, { -100.0f, 0.0f, 600.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_BJI_7 */ { 28.0f, { -100.0f, 0.0f, 800.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_CNE_8 */ { 17.0f, { 0.0f, 0.0f, 700.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_BOJ_9 */ { 18.0f, { 0.0f, 0.0f, 100.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_BOJ_10 */ { 18.0f, { 0.0f, 0.0f, -200.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_CNE_11 */ { 17.0f, { 0.0f, 0.0f, 700.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_BOJ_12 */ { 21.0f, { 0.0f, 0.0f, -300.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_AHG_13 */ { 20.0f, { 0.0f, 0.0f, -200.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_BOJ_14 */ { 18.0f, { -200.0f, 0.0f, -200.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_BJI_15 */ { 27.0f, { -100.0f, 0.0f, 800.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_BOJ_16 */ { 19.0f, { 400.0f, 0.0f, 0.0f }, 0.01f, TARGET_MODE_4, 30.0f },
-    /* ENHY_TYPE_AHG_17 */ { 19.0f, { 400.0f, 0.0f, 0.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_BOB_18 */ { 40.0f, { -100.0f, 0.0f, 400.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_BJI_19 */ { 17.0f, { 0.0f, 0.0f, 700.0f }, 0.01f, TARGET_MODE_6, 30.0f },
-    /* ENHY_TYPE_AHG_20 */ { 20.0f, { 0.0f, 0.0f, -200.0f }, 0.01f, TARGET_MODE_6, 30.0f },
+    /* ENHY_TYPE_AOB */ { 36.0f, { 0.0f, 0.0f, 600.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_COB */ { 40.0f, { -100.0f, 0.0f, 400.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_AHG_2 */ { 22.0f, { 0.0f, 0.0f, -200.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_BOJ_3 */ { 20.0f, { -100.0f, 0.0f, 0.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_AHG_4 */ { 22.0f, { 0.0f, 0.0f, 0.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_BOJ_5 */ { 21.0f, { 0.0f, 0.0f, 0.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_BBA */ { 25.0f, { -100.0f, 0.0f, 600.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_BJI_7 */ { 28.0f, { -100.0f, 0.0f, 800.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_CNE_8 */ { 17.0f, { 0.0f, 0.0f, 700.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_BOJ_9 */ { 18.0f, { 0.0f, 0.0f, 100.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_BOJ_10 */ { 18.0f, { 0.0f, 0.0f, -200.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_CNE_11 */ { 17.0f, { 0.0f, 0.0f, 700.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_BOJ_12 */ { 21.0f, { 0.0f, 0.0f, -300.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_AHG_13 */ { 20.0f, { 0.0f, 0.0f, -200.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_BOJ_14 */ { 18.0f, { -200.0f, 0.0f, -200.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_BJI_15 */ { 27.0f, { -100.0f, 0.0f, 800.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_BOJ_16 */ { 19.0f, { 400.0f, 0.0f, 0.0f }, 0.01f, ATTENTION_MODE_4, 30.0f },
+    /* ENHY_TYPE_AHG_17 */ { 19.0f, { 400.0f, 0.0f, 0.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_BOB_18 */ { 40.0f, { -100.0f, 0.0f, 400.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_BJI_19 */ { 17.0f, { 0.0f, 0.0f, 700.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
+    /* ENHY_TYPE_AHG_20 */ { 20.0f, { 0.0f, 0.0f, -200.0f }, 0.01f, ATTENTION_MODE_6, 30.0f },
 };
 
 s32 EnHy_FindSkelAndHeadObjects(EnHy* this, PlayState* play) {
@@ -700,7 +700,7 @@ void EnHy_InitSetProperties(EnHy* this) {
 
     this->actor.shape.shadowScale = sInit2Info[type].shadowScale;
     Actor_SetScale(&this->actor, sInit2Info[type].scale);
-    this->actor.targetMode = sInit2Info[type].targetMode;
+    this->actor.attentionMode = sInit2Info[type].attentionMode;
     this->modelOffset = sInit2Info[type].modelOffset;
     this->interactRange = sInit2Info[type].interactRange;
     this->interactRange += this->collider.dim.radius;

@@ -233,25 +233,25 @@ static EnKoModelInfo sModelInfo[] = {
 };
 
 typedef struct {
-    /* 0x0 */ s8 targetMode;
+    /* 0x0 */ s8 attentionMode;
     /* 0x4 */ f32 lookDist; // extended by collider radius
     /* 0x8 */ f32 appearDist;
 } EnKoInteractInfo; // size = 0xC
 
 static EnKoInteractInfo sInteractInfo[] = {
-    /* ENKO_TYPE_CHILD_0    */ { TARGET_MODE_6, 30.0f, 180.0f },
-    /* ENKO_TYPE_CHILD_1    */ { TARGET_MODE_6, 30.0f, 180.0f },
-    /* ENKO_TYPE_CHILD_2    */ { TARGET_MODE_6, 30.0f, 180.0f },
-    /* ENKO_TYPE_CHILD_3    */ { TARGET_MODE_6, 30.0f, 180.0f },
-    /* ENKO_TYPE_CHILD_4    */ { TARGET_MODE_6, 30.0f, 180.0f },
-    /* ENKO_TYPE_CHILD_5    */ { TARGET_MODE_1, 30.0f, 240.0f },
-    /* ENKO_TYPE_CHILD_6    */ { TARGET_MODE_6, 30.0f, 180.0f },
-    /* ENKO_TYPE_CHILD_7    */ { TARGET_MODE_6, 30.0f, 180.0f },
-    /* ENKO_TYPE_CHILD_8    */ { TARGET_MODE_6, 30.0f, 180.0f },
-    /* ENKO_TYPE_CHILD_9    */ { TARGET_MODE_6, 30.0f, 180.0f },
-    /* ENKO_TYPE_CHILD_10   */ { TARGET_MODE_6, 30.0f, 180.0f },
-    /* ENKO_TYPE_CHILD_11   */ { TARGET_MODE_6, 30.0f, 180.0f },
-    /* ENKO_TYPE_CHILD_FADO */ { TARGET_MODE_6, 30.0f, 180.0f },
+    /* ENKO_TYPE_CHILD_0    */ { ATTENTION_MODE_6, 30.0f, 180.0f },
+    /* ENKO_TYPE_CHILD_1    */ { ATTENTION_MODE_6, 30.0f, 180.0f },
+    /* ENKO_TYPE_CHILD_2    */ { ATTENTION_MODE_6, 30.0f, 180.0f },
+    /* ENKO_TYPE_CHILD_3    */ { ATTENTION_MODE_6, 30.0f, 180.0f },
+    /* ENKO_TYPE_CHILD_4    */ { ATTENTION_MODE_6, 30.0f, 180.0f },
+    /* ENKO_TYPE_CHILD_5    */ { ATTENTION_MODE_1, 30.0f, 240.0f },
+    /* ENKO_TYPE_CHILD_6    */ { ATTENTION_MODE_6, 30.0f, 180.0f },
+    /* ENKO_TYPE_CHILD_7    */ { ATTENTION_MODE_6, 30.0f, 180.0f },
+    /* ENKO_TYPE_CHILD_8    */ { ATTENTION_MODE_6, 30.0f, 180.0f },
+    /* ENKO_TYPE_CHILD_9    */ { ATTENTION_MODE_6, 30.0f, 180.0f },
+    /* ENKO_TYPE_CHILD_10   */ { ATTENTION_MODE_6, 30.0f, 180.0f },
+    /* ENKO_TYPE_CHILD_11   */ { ATTENTION_MODE_6, 30.0f, 180.0f },
+    /* ENKO_TYPE_CHILD_FADO */ { ATTENTION_MODE_6, 30.0f, 180.0f },
 };
 
 s32 EnKo_AreObjectsAvailable(EnKo* this, PlayState* play) {
@@ -1073,7 +1073,7 @@ void func_80A98CD8(EnKo* this) {
     s32 type = ENKO_TYPE;
     EnKoInteractInfo* info = &sInteractInfo[type];
 
-    this->actor.targetMode = info->targetMode;
+    this->actor.attentionMode = info->attentionMode;
     this->lookDist = info->lookDist;
     this->lookDist += this->collider.dim.radius;
     this->appearDist = info->appearDist;

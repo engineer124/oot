@@ -115,13 +115,13 @@ static EnGo2DataStruct1 D_80A4816C[14] = {
 };
 
 static EnGo2DataStruct2 D_80A481F8[14] = {
-    { 30.0f, 0.026f, TARGET_MODE_6, 60.0f }, { 24.0f, 0.008f, TARGET_MODE_6, 30.0f },
-    { 28.0f, 0.16f, TARGET_MODE_5, 380.0f }, { 28.0f, 0.01f, TARGET_MODE_7, 40.0f },
-    { 30.0f, 0.015f, TARGET_MODE_6, 30.0f }, { 28.0f, 0.01f, TARGET_MODE_6, 30.0f },
-    { 28.0f, 0.01f, TARGET_MODE_6, 30.0f },  { 28.0f, 0.01f, TARGET_MODE_6, 30.0f },
-    { 28.0f, 0.01f, TARGET_MODE_6, 30.0f },  { 28.0f, 0.01f, TARGET_MODE_6, 30.0f },
-    { 28.0f, 0.01f, TARGET_MODE_6, 30.0f },  { 28.0f, 0.01f, TARGET_MODE_6, 30.0f },
-    { 28.0f, 0.01f, TARGET_MODE_6, 30.0f },  { 28.0f, 0.01f, TARGET_MODE_6, 30.0f },
+    { 30.0f, 0.026f, ATTENTION_MODE_6, 60.0f }, { 24.0f, 0.008f, ATTENTION_MODE_6, 30.0f },
+    { 28.0f, 0.16f, ATTENTION_MODE_5, 380.0f }, { 28.0f, 0.01f, ATTENTION_MODE_7, 40.0f },
+    { 30.0f, 0.015f, ATTENTION_MODE_6, 30.0f }, { 28.0f, 0.01f, ATTENTION_MODE_6, 30.0f },
+    { 28.0f, 0.01f, ATTENTION_MODE_6, 30.0f },  { 28.0f, 0.01f, ATTENTION_MODE_6, 30.0f },
+    { 28.0f, 0.01f, ATTENTION_MODE_6, 30.0f },  { 28.0f, 0.01f, ATTENTION_MODE_6, 30.0f },
+    { 28.0f, 0.01f, ATTENTION_MODE_6, 30.0f },  { 28.0f, 0.01f, ATTENTION_MODE_6, 30.0f },
+    { 28.0f, 0.01f, ATTENTION_MODE_6, 30.0f },  { 28.0f, 0.01f, ATTENTION_MODE_6, 30.0f },
 };
 
 static f32 sPlayerTrackingYOffsets[14][2] = {
@@ -854,7 +854,7 @@ void EnGo2_SetShape(EnGo2* this) {
 
     this->actor.shape.shadowScale = D_80A481F8[index].shape_unk_10;
     Actor_SetScale(&this->actor, D_80A481F8[index].scale);
-    this->actor.targetMode = D_80A481F8[index].targetMode;
+    this->actor.attentionMode = D_80A481F8[index].attentionMode;
     this->interactRange = D_80A481F8[index].interactRange;
     this->interactRange += this->collider.dim.radius;
 }

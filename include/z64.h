@@ -141,7 +141,7 @@ typedef struct {
     /* 0x0004 */ char   unk_04[0x04];
     /* 0x0008 */ u8     total; // total number of actors loaded
     /* 0x000C */ ActorListEntry actorLists[ACTORCAT_MAX];
-    /* 0x006C */ TargetContext targetCtx;
+    /* 0x006C */ AttentionContext attentionCtx;
     struct {
         /* 0x0104 */ u32    swch;
         /* 0x0108 */ u32    tempSwch;
