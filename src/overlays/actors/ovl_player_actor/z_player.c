@@ -1592,7 +1592,7 @@ BAD_RETURN(s32) func_80832224(Player* this) {
     this->unk_6AD = 0;
 }
 
-s32 func_8083224C(PlayState* play) {
+s32 Player_IsTalking(PlayState* play) {
     Player* this = GET_PLAYER(play);
 
     return CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_8);
@@ -3466,7 +3466,7 @@ void Player_UpdateZTarget(Player* this, PlayState* play) {
         ignoreLeash = true;
     }
 
-    isTalking = func_8083224C(play);
+    isTalking = Player_IsTalking(play);
 
     if (isTalking || (this->zTargetSwitchTimer != 0) || (this->stateFlags1 & (PLAYER_STATE1_12 | PLAYER_STATE1_25))) {
         if (!isTalking) {
@@ -12374,7 +12374,7 @@ void Player_Action_8084CC98(Player* this, PlayState* play) {
     }
 
     if (this->actionVar2 == 1) {
-        if ((D_808535E0 != 0) || func_8083224C(play)) {
+        if ((D_808535E0 != 0) || Player_IsTalking(play)) {
             Player_AnimPlayOnce(play, this, &gPlayerAnim_link_uma_wait_3);
         } else if (LinkAnimation_Update(play, &this->skelAnime)) {
             this->actionVar2 = 99;
@@ -12409,7 +12409,7 @@ void Player_Action_8084CC98(Player* this, PlayState* play) {
     this->yaw = this->actor.shape.rot.y = rideActor->actor.shape.rot.y;
 
     if ((this->csAction != PLAYER_CSACTION_NONE) ||
-        (!func_8083224C(play) && ((rideActor->actor.speed != 0.0f) || !Player_ActionChange_TryTalking(this, play)) &&
+        (!Player_IsTalking(play) && ((rideActor->actor.speed != 0.0f) || !Player_ActionChange_TryTalking(this, play)) &&
          !Player_ActionChange_6(this, play))) {
         if (D_808535E0 == 0) {
             if (this->actionVar1 != 0) {
@@ -12552,7 +12552,7 @@ void Player_Action_8084D610(Player* this, PlayState* play) {
     func_80832CB0(play, this, &gPlayerAnim_link_swimer_swim_wait);
     func_8084B000(this);
 
-    if (!func_8083224C(play) && !Player_TryActionChangeList(play, this, sActionChangeList11, true) &&
+    if (!Player_IsTalking(play) && !Player_TryActionChangeList(play, this, sActionChangeList11, true) &&
         !func_8083D12C(play, this, sControlInput)) {
         if (this->unk_6AD != 1) {
             this->unk_6AD = 0;
