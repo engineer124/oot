@@ -5604,29 +5604,29 @@ s32 Player_ActionChange_13(Player* this, PlayState* play) {
 
 s32 Player_ActionChange_TryTalking(Player* this, PlayState* play) {
     Actor* talkActor = this->talkActor;
-    Actor* lockOnActor = this->targetActor;
+    Actor* targetActor = this->targetActor;
     Actor* sp2C = NULL;
     s32 sp28 = 0;
     s32 sp24;
 
-    sp24 = (lockOnActor != NULL) && (CHECK_FLAG_ALL(lockOnActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_18) ||
-                                     (lockOnActor->naviEnemyId != NAVI_ENEMY_NONE));
+    sp24 = (targetActor != NULL) && (CHECK_FLAG_ALL(targetActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_18) ||
+                                     (targetActor->naviEnemyId != NAVI_ENEMY_NONE));
 
     if (sp24 || (this->naviTextId != 0)) {
         sp28 = (this->naviTextId < 0) && ((ABS(this->naviTextId) & 0xFF00) != 0x200);
         if (sp28 || !sp24) {
             sp2C = this->naviActor;
             if (sp28) {
-                lockOnActor = NULL;
+                targetActor = NULL;
                 talkActor = NULL;
             }
         } else {
-            sp2C = lockOnActor;
+            sp2C = targetActor;
         }
     }
 
     if ((talkActor != NULL) || (sp2C != NULL)) {
-        if ((lockOnActor == NULL) || (lockOnActor == talkActor) || (lockOnActor == sp2C)) {
+        if ((targetActor == NULL) || (targetActor == talkActor) || (targetActor == sp2C)) {
             if (!(this->stateFlags1 & PLAYER_STATE1_11) ||
                 ((this->heldActor != NULL) && (sp28 || (talkActor == this->heldActor) || (sp2C == this->heldActor) ||
                                                ((talkActor != NULL) && (talkActor->flags & ACTOR_FLAG_16))))) {
@@ -6441,7 +6441,7 @@ void func_8083D6EC(PlayState* play, Player* this) {
 }
 
 s32 Player_LookAtTargetActor(Player* this, s32 arg1) {
-    Actor* lockOnActor = this->targetActor;
+    Actor* targetActor = this->targetActor;
     Vec3f headPos;
     s16 pitchTarget;
     s16 yawTarget;
@@ -6450,8 +6450,8 @@ s32 Player_LookAtTargetActor(Player* this, s32 arg1) {
     headPos.y = this->bodyPartsPos[PLAYER_BODYPART_HEAD].y + 3.0f;
     headPos.z = this->actor.world.pos.z;
 
-    pitchTarget = Math_Vec3f_Pitch(&headPos, &lockOnActor->focus.pos);
-    yawTarget = Math_Vec3f_Yaw(&headPos, &lockOnActor->focus.pos);
+    pitchTarget = Math_Vec3f_Pitch(&headPos, &targetActor->focus.pos);
+    yawTarget = Math_Vec3f_Yaw(&headPos, &targetActor->focus.pos);
 
     Math_SmoothStepToS(&this->actor.focus.rot.y, yawTarget, 4, 10000, 0);
     Math_SmoothStepToS(&this->actor.focus.rot.x, pitchTarget, 4, 10000, 0);
@@ -10555,7 +10555,7 @@ void Player_ProcessSceneCollision(PlayState* play, Player* this) {
 void Player_UpdateCamAndSeqModes(PlayState* play, Player* this) {
     u8 seqMode;
     s32 pad;
-    Actor* lockOnActor;
+    Actor* targetActor;
     s32 camMode;
 
     if (this->actor.category == ACTORCAT_PLAYER) {
@@ -10571,7 +10571,7 @@ void Player_UpdateCamAndSeqModes(PlayState* play, Player* this) {
                 camMode = CAM_MODE_STILL;
             } else if (this->stateFlags2 & PLAYER_STATE2_8) {
                 camMode = CAM_MODE_PUSH_PULL;
-            } else if ((lockOnActor = this->targetActor) != NULL) {
+            } else if ((targetActor = this->targetActor) != NULL) {
                 if (CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_8)) {
                     camMode = CAM_MODE_TALK;
                 } else if (this->stateFlags1 & PLAYER_STATE1_LOCK_ON_FRIEND) {
@@ -10583,7 +10583,7 @@ void Player_UpdateCamAndSeqModes(PlayState* play, Player* this) {
                 } else {
                     camMode = CAM_MODE_Z_TARGET_UNFRIENDLY;
                 }
-                Camera_SetViewParam(Play_GetCamera(play, CAM_ID_MAIN), CAM_VIEW_TARGET, lockOnActor);
+                Camera_SetViewParam(Play_GetCamera(play, CAM_ID_MAIN), CAM_VIEW_TARGET, targetActor);
             } else if (this->stateFlags1 & PLAYER_STATE1_12) {
                 camMode = CAM_MODE_CHARGE;
             } else if (this->stateFlags1 & PLAYER_STATE1_25) {
