@@ -362,7 +362,7 @@ void EnRd_WalkToPlayer(EnRd* this, PlayState* play) {
                 if (!(this->rdFlags & 0x80)) {
                     player->actor.freezeTimer = 40;
                     Player_ForceLockOn(play, &this->actor);
-                    GET_PLAYER(play)->forcedLockOn = &this->actor;
+                    GET_PLAYER(play)->forcedTargetActor = &this->actor;
                     Rumble_Request(this->actor.xzDistToPlayer, 255, 20, 150);
                 }
 

@@ -2270,8 +2270,8 @@ s32 Player_IsZParallelOrLockOnFriend(Player* this) {
 }
 
 s32 Player_TryEnemyLockOn(Player* this) {
-    if ((this->targetedActor != NULL) &&
-        CHECK_FLAG_ALL(this->targetedActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY)) {
+    if ((this->targetActor != NULL) &&
+        CHECK_FLAG_ALL(this->targetActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY)) {
         this->stateFlags1 |= PLAYER_STATE1_LOCK_ON_ENEMY;
         return true;
     }
@@ -3038,14 +3038,14 @@ s32 func_808359FC(Player* this, PlayState* play) {
     } else if (LinkAnimation_OnFrame(&this->skelAnimeUpper, 6.0f)) {
         f32 posX = (Math_SinS(this->actor.shape.rot.y) * 10.0f) + this->actor.world.pos.x;
         f32 posZ = (Math_CosS(this->actor.shape.rot.y) * 10.0f) + this->actor.world.pos.z;
-        s32 yaw = (this->targetedActor != NULL) ? this->actor.shape.rot.y + 14000 : this->actor.shape.rot.y;
+        s32 yaw = (this->targetActor != NULL) ? this->actor.shape.rot.y + 14000 : this->actor.shape.rot.y;
         EnBoom* boomerang =
             (EnBoom*)Actor_Spawn(&play->actorCtx, play, ACTOR_EN_BOOM, posX, this->actor.world.pos.y + 30.0f, posZ,
                                  this->actor.focus.rot.x, yaw, 0, 0);
 
         this->boomerangActor = &boomerang->actor;
         if (boomerang != NULL) {
-            boomerang->moveTo = this->targetedActor;
+            boomerang->moveTo = this->targetActor;
             boomerang->returnTimer = 20;
             this->stateFlags1 |= PLAYER_STATE1_25;
             if (!Player_IsEnemyLockOn(this)) {
@@ -3375,10 +3375,10 @@ void func_808368EC(Player* this, PlayState* play) {
     s16 previousYaw = this->actor.shape.rot.y;
 
     if (!(this->stateFlags2 & (PLAYER_STATE2_5 | PLAYER_STATE2_6))) {
-        if ((this->targetedActor != NULL) &&
+        if ((this->targetActor != NULL) &&
             ((play->actorCtx.targetCtx.rotZTick != 0) || (this->actor.category != ACTORCAT_PLAYER))) {
             Math_ScaledStepToS(&this->actor.shape.rot.y,
-                               Math_Vec3f_Yaw(&this->actor.world.pos, &this->targetedActor->focus.pos), 4000);
+                               Math_Vec3f_Yaw(&this->actor.world.pos, &this->targetActor->focus.pos), 4000);
         } else if ((this->stateFlags1 & PLAYER_STATE1_Z_PARALLEL) &&
                    !(this->stateFlags2 & (PLAYER_STATE2_5 | PLAYER_STATE2_6))) {
             Math_ScaledStepToS(&this->actor.shape.rot.y, this->zTargetYaw, 4000);
@@ -3437,7 +3437,7 @@ s32 func_80836AB8(Player* this, s32 arg1) {
 void Player_UpdateZTarget(Player* this, PlayState* play) {
     s32 ignoreLeash = false;
     s32 zBtnPressed = CHECK_BTN_ALL(sControlInput->cur.button, BTN_Z);
-    Actor* actorToLockOn;
+    Actor* actorToTarget;
     s32 pad;
     s32 isHoldZTarget;
     s32 isTalking;
@@ -3450,7 +3450,7 @@ void Player_UpdateZTarget(Player* this, PlayState* play) {
         (this->stateFlags1 & (PLAYER_STATE1_7 | PLAYER_STATE1_29)) || (this->stateFlags3 & PLAYER_STATE3_7)) {
         this->zTargetSwitchTimer = 0;
     } else if (zBtnPressed || (this->stateFlags2 & PLAYER_STATE2_USING_SWITCH_Z_TARGET) ||
-               (this->forcedLockOn != NULL)) {
+               (this->forcedTargetActor != NULL)) {
         if (this->zTargetSwitchTimer <= 5) {
             this->zTargetSwitchTimer = 5;
         } else {
@@ -3475,24 +3475,24 @@ void Player_UpdateZTarget(Player* this, PlayState* play) {
                 CHECK_BTN_ALL(sControlInput->press.button, BTN_Z)) {
 
                 if (this->actor.category == ACTORCAT_PLAYER) {
-                    actorToLockOn = play->actorCtx.targetCtx.naviActor;
+                    actorToTarget = play->actorCtx.targetCtx.naviActor;
                 } else {
-                    actorToLockOn = &GET_PLAYER(play)->actor;
+                    actorToTarget = &GET_PLAYER(play)->actor;
                 }
 
                 isHoldZTarget = (gSaveContext.zTargetSetting != 0) || (this->actor.category != ACTORCAT_PLAYER);
                 this->stateFlags1 |= PLAYER_STATE1_Z_TARGETING;
 
-                if ((actorToLockOn != NULL) && !(actorToLockOn->flags & ACTOR_FLAG_CANT_LOCK_ON)) {
-                    if ((actorToLockOn == this->targetedActor) && (this->actor.category == ACTORCAT_PLAYER)) {
-                        actorToLockOn = play->actorCtx.targetCtx.arrowPointedActor;
+                if ((actorToTarget != NULL) && !(actorToTarget->flags & ACTOR_FLAG_CANT_LOCK_ON)) {
+                    if ((actorToTarget == this->targetActor) && (this->actor.category == ACTORCAT_PLAYER)) {
+                        actorToTarget = play->actorCtx.targetCtx.arrowPointedActor;
                     }
 
-                    if (actorToLockOn != this->targetedActor) {
+                    if (actorToTarget != this->targetActor) {
                         if (!isHoldZTarget) {
                             this->stateFlags2 |= PLAYER_STATE2_USING_SWITCH_Z_TARGET;
                         }
-                        this->targetedActor = actorToLockOn;
+                        this->targetActor = actorToTarget;
                         this->zTargetSwitchTimer = 15;
                         this->stateFlags2 &= ~(PLAYER_STATE2_1 | PLAYER_STATE2_21);
                     } else {
@@ -3509,23 +3509,23 @@ void Player_UpdateZTarget(Player* this, PlayState* play) {
                 }
             }
 
-            if (this->targetedActor != NULL) {
-                if ((this->actor.category == ACTORCAT_PLAYER) && (this->targetedActor != this->forcedLockOn) &&
-                    Target_OutsideLeashRange(this->targetedActor, this, ignoreLeash)) {
+            if (this->targetActor != NULL) {
+                if ((this->actor.category == ACTORCAT_PLAYER) && (this->targetActor != this->forcedTargetActor) &&
+                    Target_OutsideLeashRange(this->targetActor, this, ignoreLeash)) {
                     Player_Untarget(this);
                     this->stateFlags1 |= PLAYER_STATE1_Z_PARALLEL_FROM_UNTARGET;
-                } else if (this->targetedActor != NULL) {
-                    this->targetedActor->targetPriority = 40;
+                } else if (this->targetActor != NULL) {
+                    this->targetActor->targetPriority = 40;
                 }
-            } else if (this->forcedLockOn != NULL) {
-                this->targetedActor = this->forcedLockOn;
+            } else if (this->forcedTargetActor != NULL) {
+                this->targetActor = this->forcedTargetActor;
             }
         }
 
-        if (this->targetedActor != NULL) {
+        if (this->targetActor != NULL) {
             this->stateFlags1 &= ~(PLAYER_STATE1_LOCK_ON_FRIEND | PLAYER_STATE1_Z_PARALLEL);
             if ((this->stateFlags1 & PLAYER_STATE1_11) ||
-                !CHECK_FLAG_ALL(this->targetedActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY)) {
+                !CHECK_FLAG_ALL(this->targetActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_UNFRIENDLY)) {
                 this->stateFlags1 |= PLAYER_STATE1_LOCK_ON_FRIEND;
             }
         } else {
@@ -3645,9 +3645,9 @@ s32 Player_GetMovementSpeedAndYaw(Player* this, f32* outSpeedTarget, s16* outYaw
     if (!Player_CalcSpeedAndYawFromControlStick(play, this, outSpeedTarget, outYawTarget, speedMode)) {
         *outYawTarget = this->actor.shape.rot.y;
 
-        if (this->targetedActor != NULL) {
+        if (this->targetActor != NULL) {
             if ((play->actorCtx.targetCtx.rotZTick != 0) && !(this->stateFlags2 & PLAYER_STATE2_6)) {
-                *outYawTarget = Math_Vec3f_Yaw(&this->actor.world.pos, &this->targetedActor->focus.pos);
+                *outYawTarget = Math_Vec3f_Yaw(&this->actor.world.pos, &this->targetActor->focus.pos);
                 return false;
             }
         } else if (Player_IsZParallelOrLockOnFriend(this)) {
@@ -5102,7 +5102,7 @@ void func_8083A2F8(PlayState* play, Player* this) {
 
     if (this->actor.textId != 0) {
         Message_StartTextbox(play, this->actor.textId, this->talkActor);
-        this->targetedActor = this->talkActor;
+        this->targetActor = this->talkActor;
     }
 }
 
@@ -5525,7 +5525,7 @@ s32 Player_ActionChange_13(Player* this, PlayState* play) {
                                 this->actionVar1 = -1;
                             }
                             talkActor->flags |= ACTOR_FLAG_8;
-                            this->targetedActor = this->talkActor;
+                            this->targetActor = this->talkActor;
                         } else if (sp2C == EXCH_ITEM_BOTTLE_RUTOS_LETTER) {
                             this->actionVar1 = 1;
                             this->actor.textId = 0x4005;
@@ -5604,7 +5604,7 @@ s32 Player_ActionChange_13(Player* this, PlayState* play) {
 
 s32 Player_ActionChange_TryTalking(Player* this, PlayState* play) {
     Actor* talkActor = this->talkActor;
-    Actor* lockOnActor = this->targetedActor;
+    Actor* lockOnActor = this->targetActor;
     Actor* sp2C = NULL;
     s32 sp28 = 0;
     s32 sp24;
@@ -5693,9 +5693,9 @@ s32 Player_ActionChange_0(Player* this, PlayState* play) {
         return 1;
     }
 
-    if ((this->targetedActor != NULL) &&
-        (CHECK_FLAG_ALL(this->targetedActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_18) ||
-         (this->targetedActor->naviEnemyId != NAVI_ENEMY_NONE))) {
+    if ((this->targetActor != NULL) &&
+        (CHECK_FLAG_ALL(this->targetActor->flags, ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_18) ||
+         (this->targetActor->naviEnemyId != NAVI_ENEMY_NONE))) {
         this->stateFlags2 |= PLAYER_STATE2_21;
     } else if ((this->naviTextId == 0) && !Player_IsEnemyLockOn(this) &&
                CHECK_BTN_ALL(sControlInput->press.button, BTN_CUP) &&
@@ -5890,7 +5890,7 @@ s32 Player_ActionChange_11(Player* this, PlayState* play) {
     if ((play->shootingGalleryStatus == 0) && (this->currentShield != PLAYER_SHIELD_NONE) &&
         CHECK_BTN_ALL(sControlInput->cur.button, BTN_R) &&
         (Player_IsChildWithHylianShield(this) ||
-         (!Player_IsZParallelOrLockOnFriend(this) && (this->targetedActor == NULL)))) {
+         (!Player_IsZParallelOrLockOnFriend(this) && (this->targetActor == NULL)))) {
 
         func_80832318(this);
         Player_DetachHeldActor(play, this);
@@ -6441,7 +6441,7 @@ void func_8083D6EC(PlayState* play, Player* this) {
 }
 
 s32 Player_LookAtTargetActor(Player* this, s32 arg1) {
-    Actor* lockOnActor = this->targetedActor;
+    Actor* lockOnActor = this->targetActor;
     Vec3f headPos;
     s16 pitchTarget;
     s16 yawTarget;
@@ -6469,7 +6469,7 @@ void func_8083DC54(Player* this, PlayState* play) {
     f32 temp1;
     Vec3f sp34;
 
-    if (this->targetedActor != NULL) {
+    if (this->targetActor != NULL) {
         if (func_8002DD78(this) || func_808334B4(this)) {
             Player_LookAtTargetActor(this, 1);
         } else {
@@ -7230,7 +7230,7 @@ s32 func_8083FC68(Player* this, f32 arg1, s16 arg2) {
     f32 sp1C = (s16)(arg2 - this->actor.shape.rot.y);
     f32 temp;
 
-    if (this->targetedActor != NULL) {
+    if (this->targetActor != NULL) {
         Player_LookAtTargetActor(this, func_8002DD78(this) || func_808334B4(this));
     }
 
@@ -7249,7 +7249,7 @@ s32 func_8083FD78(Player* this, f32* arg1, s16* arg2, PlayState* play) {
     s16 sp2E = *arg2 - this->zTargetYaw;
     u16 sp2C = ABS(sp2E);
 
-    if ((func_8002DD78(this) || func_808334B4(this)) && (this->targetedActor == NULL)) {
+    if ((func_8002DD78(this) || func_808334B4(this)) && (this->targetActor == NULL)) {
         *arg1 *= Math_SinS(sp2C);
 
         if (*arg1 != 0.0f) {
@@ -7258,14 +7258,14 @@ s32 func_8083FD78(Player* this, f32* arg1, s16* arg2, PlayState* play) {
             *arg2 = this->actor.shape.rot.y;
         }
 
-        if (this->targetedActor != NULL) {
+        if (this->targetActor != NULL) {
             Player_LookAtTargetActor(this, 1);
         } else {
             Math_SmoothStepToS(&this->actor.focus.rot.x, sControlInput->rel.stick_y * 240.0f, 14, 4000, 30);
             func_80836AB8(this, 1);
         }
     } else {
-        if (this->targetedActor != NULL) {
+        if (this->targetActor != NULL) {
             return func_8083FC68(this, *arg1, *arg2);
         } else {
             func_8083DC54(this, play);
@@ -7535,7 +7535,7 @@ void func_808409CC(PlayState* play, Player* this) {
     s32 sp38;
     s32 sp34;
 
-    if ((this->targetedActor != NULL) ||
+    if ((this->targetActor != NULL) ||
         (!(heathIsCritical = Health_IsCritical()) && ((this->unk_6AC = (this->unk_6AC + 1) & 1) != 0))) {
         this->stateFlags2 &= ~PLAYER_STATE2_28;
         anim = func_80833338(this);
@@ -10202,7 +10202,7 @@ void func_808473D4(PlayState* play, Player* this) {
         Interface_SetDoAction(play, doAction);
 
         if (this->stateFlags2 & PLAYER_STATE2_21) {
-            if (this->targetedActor != NULL) {
+            if (this->targetActor != NULL) {
                 Interface_SetNaviCall(play, 0x1E);
             } else {
                 Interface_SetNaviCall(play, 0x1D);
@@ -10571,7 +10571,7 @@ void Player_UpdateCamAndSeqModes(PlayState* play, Player* this) {
                 camMode = CAM_MODE_STILL;
             } else if (this->stateFlags2 & PLAYER_STATE2_8) {
                 camMode = CAM_MODE_PUSH_PULL;
-            } else if ((lockOnActor = this->targetedActor) != NULL) {
+            } else if ((lockOnActor = this->targetActor) != NULL) {
                 if (CHECK_FLAG_ALL(this->actor.flags, ACTOR_FLAG_8)) {
                     camMode = CAM_MODE_TALK;
                 } else if (this->stateFlags1 & PLAYER_STATE1_LOCK_ON_FRIEND) {
@@ -11090,7 +11090,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
 
         func_8083D6EC(play, this);
 
-        if ((this->targetedActor == NULL) && (this->naviTextId == 0)) {
+        if ((this->targetActor == NULL) && (this->naviTextId == 0)) {
             this->stateFlags2 &= ~(PLAYER_STATE2_1 | PLAYER_STATE2_21);
         }
 
@@ -11157,7 +11157,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
 
         this->doorType = PLAYER_DOORTYPE_NONE;
         this->unk_8A1 = 0;
-        this->forcedLockOn = NULL;
+        this->forcedTargetActor = NULL;
 
         phi_f12 =
             ((this->bodyPartsPos[PLAYER_BODYPART_L_FOOT].y + this->bodyPartsPos[PLAYER_BODYPART_R_FOOT].y) * 0.5f) +
@@ -11609,7 +11609,7 @@ void Player_Action_8084B1D8(Player* this, PlayState* play) {
     }
 
     if ((this->csAction != PLAYER_CSACTION_NONE) || (this->unk_6AD == 0) || (this->unk_6AD >= 4) ||
-        Player_TryEnemyLockOn(this) || (this->targetedActor != NULL) || !func_8083AD4C(play, this) ||
+        Player_TryEnemyLockOn(this) || (this->targetActor != NULL) || !func_8083AD4C(play, this) ||
         (((this->unk_6AD == 2) &&
           (CHECK_BTN_ANY(sControlInput->press.button, BTN_A | BTN_B | BTN_R) ||
            Player_IsZParallelOrLockOnFriend(this) || (!func_8002DD78(this) && !func_808334B4(this)))) ||
@@ -11713,7 +11713,7 @@ void Player_Action_8084B530(Player* this, PlayState* play) {
         }
     }
 
-    if (this->targetedActor != NULL) {
+    if (this->targetActor != NULL) {
         this->yaw = this->actor.shape.rot.y = Player_LookAtTargetActor(this, 0);
     }
 }
@@ -12468,7 +12468,7 @@ void Player_Action_8084CC98(Player* this, PlayState* play) {
 
         if ((this->csAction != PLAYER_CSACTION_NONE) ||
             (!func_8084C9BC(this, play) && !Player_ActionChange_13(this, play))) {
-            if (this->targetedActor != NULL) {
+            if (this->targetActor != NULL) {
                 if (func_8002DD78(this) != 0) {
                     this->unk_6BE = Player_LookAtTargetActor(this, 1) - this->actor.shape.rot.y;
                     this->unk_6BE = CLAMP(this->unk_6BE, -0x4AAA, 0x4AAA);
@@ -13295,7 +13295,7 @@ void Player_Action_8084F104(Player* this, PlayState* play) {
         func_80832924(this, D_80854A3C);
     }
 
-    if ((this->actionVar1 == 0) && (this->targetedActor != NULL)) {
+    if ((this->actionVar1 == 0) && (this->targetActor != NULL)) {
         this->yaw = this->actor.shape.rot.y = Player_LookAtTargetActor(this, 0);
     }
 }
@@ -14338,9 +14338,9 @@ void func_80851314(Player* this) {
         this->unk_448 = NULL;
     }
 
-    this->targetedActor = this->unk_448;
+    this->targetActor = this->unk_448;
 
-    if (this->targetedActor != NULL) {
+    if (this->targetActor != NULL) {
         this->actor.shape.rot.y = Player_LookAtTargetActor(this, 0);
     }
 }

@@ -600,7 +600,7 @@ void Player_UpdateBottleHeld(PlayState* play, Player* this, s32 item, s32 itemAc
 }
 
 void Player_Untarget(Player* this) {
-    this->targetedActor = NULL;
+    this->targetActor = NULL;
     this->stateFlags2 &= ~PLAYER_STATE2_USING_SWITCH_Z_TARGET;
 }
 
@@ -622,8 +622,8 @@ void Player_ForceLockOn(PlayState* play, Actor* actor) {
     Player* this = GET_PLAYER(play);
 
     Player_UntargetCheckFloor(this);
-    this->targetedActor = actor;
-    this->forcedLockOn = actor;
+    this->targetActor = actor;
+    this->forcedTargetActor = actor;
     this->stateFlags1 |= PLAYER_STATE1_LOCK_ON_FRIEND;
     Camera_SetViewParam(Play_GetCamera(play, CAM_ID_MAIN), CAM_VIEW_TARGET, actor);
     Camera_ChangeMode(Play_GetCamera(play, CAM_ID_MAIN), CAM_MODE_Z_TARGET_FRIENDLY);

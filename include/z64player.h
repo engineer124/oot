@@ -655,7 +655,7 @@ typedef struct Player {
     /* 0x0498 */ ColliderCylinder cylinder;
     /* 0x04E4 */ ColliderQuad meleeWeaponQuads[2];
     /* 0x05E4 */ ColliderQuad shieldQuad;
-    /* 0x0664 */ Actor* targetedActor;
+    /* 0x0664 */ Actor* targetActor;
     /* 0x0668 */ char unk_668[0x004];
     /* 0x066C */ s32 zTargetSwitchTimer;
     /* 0x0670 */ s32 meleeWeaponEffectIndex;
@@ -663,7 +663,7 @@ typedef struct Player {
     /* 0x0678 */ PlayerAgeProperties* ageProperties;
     /* 0x067C */ u32 stateFlags1;
     /* 0x0680 */ u32 stateFlags2;
-    /* 0x0684 */ Actor* forcedLockOn;
+    /* 0x0684 */ Actor* forcedTargetActor;
     /* 0x0688 */ Actor* boomerangActor;
     /* 0x068C */ Actor* naviActor;
     /* 0x0690 */ s16 naviTextId;

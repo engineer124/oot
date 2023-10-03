@@ -546,7 +546,7 @@ s32 EnZf_CanAttack(PlayState* play, EnZf* this) {
             return true;
         }
         if (this->actor.params == ENZF_TYPE_DINOLFOS) {
-            lockOnActor = player->targetedActor;
+            lockOnActor = player->targetActor;
             if (lockOnActor == NULL) {
                 return false;
             } else {

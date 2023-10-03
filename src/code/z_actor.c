@@ -362,7 +362,7 @@ void Target_Draw(TargetContext* targetCtx, PlayState* play) {
 
         Target_SetLockOnPos(targetCtx, targetCtx->lockOnIndex, projectedPos.x, projectedPos.y, projectedPos.z);
 
-        if (!(player->stateFlags1 & PLAYER_STATE1_6) || (actor != player->targetedActor)) {
+        if (!(player->stateFlags1 & PLAYER_STATE1_6) || (actor != player->targetActor)) {
             OVERLAY_DISP = Gfx_SetupDL(OVERLAY_DISP, SETUPDL_57);
 
             for (i = 0, index = targetCtx->lockOnIndex; i < totalEntries;
@@ -441,7 +441,7 @@ void Target_Update(TargetContext* targetCtx, Player* player, Actor* lockOnActor,
 
     // If currently not locked on to an actor and not pressing down on the analog stick then try to find a targetable
     // actor
-    if ((player->targetedActor != NULL) && (player->unk_84B[player->unk_846] == 2)) {
+    if ((player->targetActor != NULL) && (player->unk_84B[player->unk_846] == 2)) {
         targetCtx->arrowPointedActor = NULL;
     } else {
         Target_GetTargetActor(play, &play->actorCtx, &actor, player);
@@ -1496,7 +1496,7 @@ f32 Target_GetAdjustedDistSq(Actor* actor, Player* player, s16 playerShapeYaw) {
     // The yaw, with player as the origin, from where player is facing to where the actor is positioned
     yawDiff = ABS((s16)((s16)(actor->yawTowardsPlayer - 0x8000) - playerShapeYaw));
 
-    if (player->targetedActor != NULL) {
+    if (player->targetActor != NULL) {
         if ((yawDiff > 0x4000) || (actor->flags & ACTOR_FLAG_CANT_LOCK_ON)) {
             return FLT_MAX;
         }
@@ -1560,7 +1560,7 @@ s32 Target_OutsideLeashRange(Actor* actor, Player* player, s32 ignoreLeash) {
         // The yaw, with player as the origin, from where player is facing to where the actor is positioned
         yawDiff = ABS((s16)((s16)(actor->yawTowardsPlayer - 0x8000) - player->actor.shape.rot.y));
 
-        if ((player->targetedActor == NULL) && (yawDiff > 0x2AAA)) {
+        if ((player->targetActor == NULL) && (yawDiff > 0x2AAA)) {
             distSq = FLT_MAX;
         } else {
             distSq = actor->xyzDistToPlayerSq;
@@ -2223,13 +2223,13 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
                 actor->flags &= ~ACTOR_FLAG_24;
 
                 if ((DECR(actor->freezeTimer) == 0) && (actor->flags & (ACTOR_FLAG_4 | ACTOR_FLAG_6))) {
-                    if (actor == player->targetedActor) {
+                    if (actor == player->targetActor) {
                         actor->isLockedOn = true;
                     } else {
                         actor->isLockedOn = false;
                     }
 
-                    if ((actor->targetPriority != 0) && (player->targetedActor == NULL)) {
+                    if ((actor->targetPriority != 0) && (player->targetActor == NULL)) {
                         actor->targetPriority = 0;
                     }
 
@@ -2252,7 +2252,7 @@ void Actor_UpdateAll(PlayState* play, ActorContext* actorCtx) {
         }
     }
 
-    actor = player->targetedActor;
+    actor = player->targetActor;
 
     if ((actor != NULL) && (actor->update == NULL)) {
         actor = NULL;
@@ -3006,7 +3006,7 @@ Actor* Actor_Delete(ActorContext* actorCtx, Actor* actor, PlayState* play) {
         osSyncPrintf("アクタークラス削除 [%s]\n", name); // "Actor class deleted [%s]"
     }
 
-    if ((player != NULL) && (actor == player->targetedActor)) {
+    if ((player != NULL) && (actor == player->targetActor)) {
         Player_Untarget(player);
         Camera_ChangeMode(Play_GetCamera(play, Play_GetActiveCamId(play)), 0);
     }
@@ -3096,7 +3096,7 @@ void Target_FindTargetableActorForCategory(PlayState* play, ActorContext* actorC
     Vec3f sp70;
 
     actor = actorCtx->actorLists[actorCategory].head;
-    lockOnActor = player->targetedActor;
+    lockOnActor = player->targetActor;
 
     for (; actor != NULL; actor = actor->next) {
         if ((actor->update == NULL) || ((Player*)actor == player)) {
