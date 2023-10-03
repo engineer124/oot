@@ -3656,7 +3656,7 @@ void KaleidoScope_Update(PlayState* play) {
             osSyncPrintf("i=%d  LAST_TIME_TYPE=%d\n", i, gSaveContext.prevHudVisibilityMode);
             gSaveContext.hudVisibilityMode = HUD_VISIBILITY_NO_CHANGE;
             Interface_ChangeHudVisibilityMode(gSaveContext.prevHudVisibilityMode);
-            player->targetActor = NULL;
+            player->talkActor = NULL;
             Player_SetEquipmentData(play, player);
             osSyncPrintf(VT_RST);
             break;

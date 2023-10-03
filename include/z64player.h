@@ -515,7 +515,7 @@ typedef struct {
 #define PLAYER_STATE1_SWINGING_BOTTLE (1 << 1)
 #define PLAYER_STATE1_2 (1 << 2)
 #define PLAYER_STATE1_3 (1 << 3)
-#define PLAYER_STATE1_4 (1 << 4)
+#define PLAYER_STATE1_LOCK_ON_ENEMY (1 << 4)
 #define PLAYER_STATE1_5 (1 << 5)
 #define PLAYER_STATE1_6 (1 << 6)
 #define PLAYER_STATE1_7 (1 << 7)
@@ -526,9 +526,9 @@ typedef struct {
 #define PLAYER_STATE1_12 (1 << 12)
 #define PLAYER_STATE1_13 (1 << 13)
 #define PLAYER_STATE1_14 (1 << 14)
-#define PLAYER_STATE1_15 (1 << 15)
-#define PLAYER_STATE1_16 (1 << 16)
-#define PLAYER_STATE1_17 (1 << 17)
+#define PLAYER_STATE1_Z_TARGETING (1 << 15)
+#define PLAYER_STATE1_LOCK_ON_FRIEND (1 << 16)
+#define PLAYER_STATE1_Z_PARALLEL (1 << 17)
 #define PLAYER_STATE1_18 (1 << 18)
 #define PLAYER_STATE1_19 (1 << 19)
 #define PLAYER_STATE1_20 (1 << 20)
@@ -541,7 +541,7 @@ typedef struct {
 #define PLAYER_STATE1_27 (1 << 27)
 #define PLAYER_STATE1_28 (1 << 28)
 #define PLAYER_STATE1_29 (1 << 29)
-#define PLAYER_STATE1_30 (1 << 30)
+#define PLAYER_STATE1_Z_PARALLEL_FROM_UNTARGET (1 << 30)
 #define PLAYER_STATE1_31 (1 << 31)
 
 #define PLAYER_STATE2_0 (1 << 0)
@@ -557,7 +557,7 @@ typedef struct {
 #define PLAYER_STATE2_10 (1 << 10)
 #define PLAYER_STATE2_11 (1 << 11)
 #define PLAYER_STATE2_12 (1 << 12)
-#define PLAYER_STATE2_13 (1 << 13)
+#define PLAYER_STATE2_USING_SWITCH_Z_TARGET (1 << 13)
 #define PLAYER_STATE2_14 (1 << 14)
 #define PLAYER_STATE2_15 (1 << 15)
 #define PLAYER_STATE2_DO_ACTION_ENTER (1 << 16) // Turns on the "Enter On A" DoAction
@@ -657,20 +657,20 @@ typedef struct Player {
     /* 0x05E4 */ ColliderQuad shieldQuad;
     /* 0x0664 */ Actor* lockOnActor;
     /* 0x0668 */ char unk_668[0x004];
-    /* 0x066C */ s32 unk_66C;
+    /* 0x066C */ s32 zTargetSwitchTimer;
     /* 0x0670 */ s32 meleeWeaponEffectIndex;
     /* 0x0674 */ PlayerActionFunc actionFunc;
     /* 0x0678 */ PlayerAgeProperties* ageProperties;
     /* 0x067C */ u32 stateFlags1;
     /* 0x0680 */ u32 stateFlags2;
-    /* 0x0684 */ Actor* unk_684;
+    /* 0x0684 */ Actor* forcedLockOn;
     /* 0x0688 */ Actor* boomerangActor;
     /* 0x068C */ Actor* naviActor;
     /* 0x0690 */ s16 naviTextId;
     /* 0x0692 */ u8 stateFlags3;
     /* 0x0693 */ s8 exchangeItemId;
-    /* 0x0694 */ Actor* targetActor;
-    /* 0x0698 */ f32 targetActorDistance;
+    /* 0x0694 */ Actor* talkActor;
+    /* 0x0698 */ f32 talkActorDistance;
     /* 0x069C */ char unk_69C[0x004];
     /* 0x06A0 */ f32 unk_6A0;
     /* 0x06A4 */ f32 closestSecretDistSq;

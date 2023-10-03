@@ -140,9 +140,12 @@ typedef struct {
     /* 0x18 */ Vec3f feetPos[2]; // Update by using `Actor_SetFeetPos` in PostLimbDraw
 } ActorShape; // size = 0x30
 
-#define ACTOR_FLAG_0 (1 << 0)
-#define ACTOR_FLAG_2 (1 << 2)
-#define ACTOR_FLAG_3 (1 << 3)
+// Allows Navi to fly over the actor and Z-targeting it
+#define ACTOR_FLAG_TARGETABLE (1 << 0)
+// Changes the targeting behaviour for unfriendly actors (sound effects, Player's stance, etc)
+#define ACTOR_FLAG_UNFRIENDLY (1 << 2)
+// Opposite of the UNFRIENDLY flag. It is not checked explictly in the original game.
+#define ACTOR_FLAG_FRIENDLY (1 << 3)
 #define ACTOR_FLAG_4 (1 << 4)
 #define ACTOR_FLAG_5 (1 << 5)
 #define ACTOR_FLAG_6 (1 << 6)
@@ -166,7 +169,8 @@ typedef struct {
 #define ACTOR_FLAG_24 (1 << 24)
 #define ACTOR_FLAG_25 (1 << 25)
 #define ACTOR_FLAG_26 (1 << 26)
-#define ACTOR_FLAG_27 (1 << 27)
+// Prevents locking on with Z targeting an actor even if Navi is floating over it
+#define ACTOR_FLAG_CANT_LOCK_ON (1 << 27)
 #define ACTOR_FLAG_28 (1 << 28)
 
 #define COLORFILTER_GET_COLORINTENSITY(colorFilterParams) (((colorFilterParams) & 0x1F00) >> 5)

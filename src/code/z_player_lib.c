@@ -500,8 +500,8 @@ s32 Player_InCsMode(PlayState* play) {
     return Player_InBlockingCsMode(play, this) || (this->unk_6AD == 4);
 }
 
-s32 func_8008E9C4(Player* this) {
-    return (this->stateFlags1 & PLAYER_STATE1_4);
+s32 Player_IsEnemyLockOn(Player* this) {
+    return (this->stateFlags1 & PLAYER_STATE1_LOCK_ON_ENEMY);
 }
 
 s32 Player_IsChildWithHylianShield(Player* this) {
@@ -599,32 +599,32 @@ void Player_UpdateBottleHeld(PlayState* play, Player* this, s32 item, s32 itemAc
     this->itemAction = itemAction;
 }
 
-void func_8008EDF0(Player* this) {
+void Player_Untarget(Player* this) {
     this->lockOnActor = NULL;
-    this->stateFlags2 &= ~PLAYER_STATE2_13;
+    this->stateFlags2 &= ~PLAYER_STATE2_USING_SWITCH_Z_TARGET;
 }
 
-void func_8008EE08(Player* this) {
+void Player_UntargetCheckFloor(Player* this) {
     if ((this->actor.bgCheckFlags & BGCHECKFLAG_GROUND) ||
         (this->stateFlags1 & (PLAYER_STATE1_21 | PLAYER_STATE1_23 | PLAYER_STATE1_27)) ||
         (!(this->stateFlags1 & (PLAYER_STATE1_18 | PLAYER_STATE1_19)) &&
          ((this->actor.world.pos.y - this->actor.floorHeight) < 100.0f))) {
-        this->stateFlags1 &= ~(PLAYER_STATE1_15 | PLAYER_STATE1_16 | PLAYER_STATE1_17 | PLAYER_STATE1_18 |
-                               PLAYER_STATE1_19 | PLAYER_STATE1_30);
+        this->stateFlags1 &= ~(PLAYER_STATE1_Z_TARGETING | PLAYER_STATE1_LOCK_ON_FRIEND | PLAYER_STATE1_Z_PARALLEL | PLAYER_STATE1_18 |
+                               PLAYER_STATE1_19 | PLAYER_STATE1_Z_PARALLEL_FROM_UNTARGET);
     } else if (!(this->stateFlags1 & (PLAYER_STATE1_18 | PLAYER_STATE1_19 | PLAYER_STATE1_21))) {
         this->stateFlags1 |= PLAYER_STATE1_19;
     }
 
-    func_8008EDF0(this);
+    Player_Untarget(this);
 }
 
-void func_8008EEAC(PlayState* play, Actor* actor) {
+void Player_ForceLockOn(PlayState* play, Actor* actor) {
     Player* this = GET_PLAYER(play);
 
-    func_8008EE08(this);
+    Player_UntargetCheckFloor(this);
     this->lockOnActor = actor;
-    this->unk_684 = actor;
-    this->stateFlags1 |= PLAYER_STATE1_16;
+    this->forcedLockOn = actor;
+    this->stateFlags1 |= PLAYER_STATE1_LOCK_ON_FRIEND;
     Camera_SetViewParam(Play_GetCamera(play, CAM_ID_MAIN), CAM_VIEW_TARGET, actor);
     Camera_ChangeMode(Play_GetCamera(play, CAM_ID_MAIN), CAM_MODE_Z_TARGET_FRIENDLY);
 }

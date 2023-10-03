@@ -160,7 +160,7 @@ void BgBdanSwitch_Init(Actor* thisx, PlayState* play) {
         case YELLOW_TALL_1:
         case YELLOW_TALL_2:
             BgBdanSwitch_InitCollision(this, play);
-            this->dyna.actor.flags |= ACTOR_FLAG_0;
+            this->dyna.actor.flags |= ACTOR_FLAG_TARGETABLE;
             this->dyna.actor.targetMode = TARGET_MODE_4;
             break;
     }

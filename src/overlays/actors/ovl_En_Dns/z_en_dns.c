@@ -7,7 +7,7 @@
 #include "z_en_dns.h"
 #include "terminal.h"
 
-#define FLAGS (ACTOR_FLAG_0 | ACTOR_FLAG_3)
+#define FLAGS (ACTOR_FLAG_TARGETABLE | ACTOR_FLAG_FRIENDLY)
 
 void EnDns_Init(Actor* thisx, PlayState* play);
 void EnDns_Destroy(Actor* thisx, PlayState* play);
@@ -433,7 +433,7 @@ void EnDns_SetupBurrow(EnDns* this, PlayState* play) {
             this->dnsItemEntry->payment(this);
             this->dropCollectible = true;
             this->bumpOn = false;
-            this->actor.flags &= ~ACTOR_FLAG_0;
+            this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
             EnDns_ChangeAnim(this, DNS_ANIM_BURROW);
             this->actionFunc = EnDns_Burrow;
         }
@@ -441,7 +441,7 @@ void EnDns_SetupBurrow(EnDns* this, PlayState* play) {
         this->dnsItemEntry->payment(this);
         this->dropCollectible = true;
         this->bumpOn = false;
-        this->actor.flags &= ~ACTOR_FLAG_0;
+        this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
         EnDns_ChangeAnim(this, DNS_ANIM_BURROW);
         this->actionFunc = EnDns_Burrow;
     }
@@ -450,7 +450,7 @@ void EnDns_SetupBurrow(EnDns* this, PlayState* play) {
 void EnDns_SetupNoSaleBurrow(EnDns* this, PlayState* play) {
     if ((Message_GetState(&play->msgCtx) == TEXT_STATE_DONE) && Message_ShouldAdvance(play)) {
         this->bumpOn = false;
-        this->actor.flags &= ~ACTOR_FLAG_0;
+        this->actor.flags &= ~ACTOR_FLAG_TARGETABLE;
         EnDns_ChangeAnim(this, DNS_ANIM_BURROW);
         this->actionFunc = EnDns_Burrow;
     }
