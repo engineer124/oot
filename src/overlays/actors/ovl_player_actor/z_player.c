@@ -271,7 +271,7 @@ void Player_Action_80844E68(Player* this, PlayState* play);
 void Player_Action_80845000(Player* this, PlayState* play);
 void Player_Action_80845308(Player* this, PlayState* play);
 void Player_Action_80845668(Player* this, PlayState* play);
-void Player_Action_808458D0(Player* this, PlayState* play);
+void Player_Action_CsIntoAction(Player* this, PlayState* play);
 void Player_Action_80845CA4(Player* this, PlayState* play);
 void Player_Action_80845EF8(Player* this, PlayState* play);
 void Player_Action_80846050(Player* this, PlayState* play);
@@ -3308,7 +3308,7 @@ void func_80836448(PlayState* play, Player* this, LinkAnimationHeader* anim) {
 }
 
 s32 Player_CanUpdateItems(Player* this) {
-    return (!(Player_Action_808458D0 == this->actionFunc) ||
+    return (!(Player_Action_CsIntoAction == this->actionFunc) ||
             ((this->stateFlags1 & PLAYER_STATE1_START_CHANGING_HELD_ITEM) &&
              ((this->heldItemId == ITEM_LAST_USED) || (this->heldItemId == ITEM_NONE)))) &&
            (!(Player_IA_ChangeHeldItem == this->itemActionFunc) ||
@@ -3362,9 +3362,9 @@ s32 Player_UpdateUpperBody(Player* this, PlayState* play) {
     return 1;
 }
 
-s32 func_80836898(PlayState* play, Player* this, PlayerFuncA74 func) {
-    this->func_A74 = func;
-    Player_SetupAction(play, this, Player_Action_808458D0, 0);
+s32 Player_SetupCsIntoAction(PlayState* play, Player* this, PlayerCsIntoActionFunc csIntoActionFunc) {
+    this->csIntoActionFunc = csIntoActionFunc;
+    Player_SetupAction(play, this, Player_Action_CsIntoAction, 0);
     this->stateFlags2 |= PLAYER_STATE2_6;
     return func_80832528(play, this);
 }
@@ -5050,7 +5050,12 @@ s32 func_8083A0D4(Player* this) {
     return (this->interactRangeActor != NULL) && (this->heldActor == NULL);
 }
 
-void func_8083A0F4(PlayState* play, Player* this) {
+/**
+ * The _CsIntoAction_ functions appear to setup a new action with a mini cutscene?
+ **/
+
+// Setup Lift Action
+void Player_CsIntoAction_0(PlayState* play, Player* this) {
     if (func_8083A0D4(this)) {
         Actor* interactRangeActor = this->interactRangeActor;
         s32 interactActorId = interactRangeActor->id;
@@ -5091,7 +5096,8 @@ void func_8083A0F4(PlayState* play, Player* this) {
     }
 }
 
-void func_8083A2F8(PlayState* play, Player* this) {
+// Setup Talk Action
+void Player_CsIntoAction_1(PlayState* play, Player* this) {
     func_80835DAC(play, this, Player_Action_8084B530, 0);
 
     this->stateFlags1 |= PLAYER_STATE1_6 | PLAYER_STATE1_29;
@@ -5102,15 +5108,18 @@ void func_8083A2F8(PlayState* play, Player* this) {
     }
 }
 
-void func_8083A360(PlayState* play, Player* this) {
+// Setup Riding Horse Action
+void Player_CsIntoAction_2(PlayState* play, Player* this) {
     func_80835DAC(play, this, Player_Action_8084CC98, 0);
 }
 
-void func_8083A388(PlayState* play, Player* this) {
+// Setup Grab Wall Action
+void Player_CsIntoAction_3(PlayState* play, Player* this) {
     Player_SetupAction(play, this, Player_Action_8084B78C, 0);
 }
 
-void func_8083A3B0(PlayState* play, Player* this) {
+// Setup Climb Action
+void Player_CsIntoAction_4(PlayState* play, Player* this) {
     s32 sp1C = this->actionVar2;
     s32 sp18 = this->actionVar1;
 
@@ -5121,11 +5130,13 @@ void func_8083A3B0(PlayState* play, Player* this) {
     this->actionVar1 = sp18;
 }
 
-void func_8083A40C(PlayState* play, Player* this) {
+// Setup Crawl Action
+void Player_CsIntoAction_5(PlayState* play, Player* this) {
     func_80835DAC(play, this, Player_Action_8084C760, 0);
 }
 
-void func_8083A434(PlayState* play, Player* this) {
+// Setup Get Item Action
+void Player_CsIntoAction_6(PlayState* play, Player* this) {
     func_80835DAC(play, this, Player_Action_8084E6D4, 0);
 
     this->stateFlags1 |= PLAYER_STATE1_10 | PLAYER_STATE1_29;
@@ -5225,7 +5236,7 @@ s32 func_8083A6AC(Player* this, PlayState* play) {
                           sp50 ? &gPlayerAnim_link_normal_Fclimb_startB : &gPlayerAnim_link_normal_fall);
 
             if (sp50) {
-                func_80836898(play, this, func_8083A3B0);
+                Player_SetupCsIntoAction(play, this, Player_CsIntoAction_4);
 
                 this->yaw += 0x8000;
                 this->actor.shape.rot.y = this->yaw;
@@ -6542,7 +6553,7 @@ s32 Player_ActionChange_3(Player* this, PlayState* play) {
         sp38 = Math_CosS(rideActor->actor.shape.rot.y);
         sp34 = Math_SinS(rideActor->actor.shape.rot.y);
 
-        func_80836898(play, this, func_8083A360);
+        Player_SetupCsIntoAction(play, this, Player_CsIntoAction_2);
 
         this->stateFlags1 |= PLAYER_STATE1_23;
         this->actor.bgCheckFlags &= ~BGCHECKFLAG_WATER;
@@ -6682,7 +6693,7 @@ s32 Player_ActionChange_2(Player* this, PlayState* play) {
                     func_8083AE40(this, giEntry->objectId);
 
                     if (!(this->stateFlags2 & PLAYER_STATE2_10) || (this->currentBoots == PLAYER_BOOTS_IRON)) {
-                        func_80836898(play, this, func_8083A434);
+                        Player_SetupCsIntoAction(play, this, Player_CsIntoAction_6);
                         Player_AnimPlayOnceAdjusted(play, this, &gPlayerAnim_link_demo_get_itemB);
                         func_80835EA4(play, 9);
                     }
@@ -6709,7 +6720,7 @@ s32 Player_ActionChange_2(Player* this, PlayState* play) {
                     }
                 }
 
-                func_80836898(play, this, func_8083A434);
+                Player_SetupCsIntoAction(play, this, Player_CsIntoAction_6);
                 this->stateFlags1 |= PLAYER_STATE1_10 | PLAYER_STATE1_11 | PLAYER_STATE1_29;
                 func_8083AE40(this, giEntry->objectId);
                 this->actor.world.pos.x =
@@ -6743,7 +6754,7 @@ s32 Player_ActionChange_2(Player* this, PlayState* play) {
                     this->itemAction = PLAYER_IA_NONE;
                     this->modelAnimType = PLAYER_ANIMTYPE_0;
                     this->heldItemAction = this->itemAction;
-                    func_80836898(play, this, func_8083A0F4);
+                    Player_SetupCsIntoAction(play, this, Player_CsIntoAction_0);
 
                     if (sp24 == PLAYER_IA_SWORD_MASTER) {
                         this->nextModelGroup = Player_ActionToModelGroup(this, PLAYER_IA_LAST_USED);
@@ -6759,7 +6770,7 @@ s32 Player_ActionChange_2(Player* this, PlayState* play) {
                         return 0;
                     }
 
-                    func_80836898(play, this, func_8083A0F4);
+                    Player_SetupCsIntoAction(play, this, Player_CsIntoAction_0);
                 }
 
                 func_80832224(this);
@@ -6871,7 +6882,7 @@ s32 func_8083EC18(Player* this, PlayState* play, u32 wallFlags) {
                     f32 sp34 = this->distToInteractWall;
                     LinkAnimationHeader* anim;
 
-                    func_80836898(play, this, func_8083A3B0);
+                    Player_SetupCsIntoAction(play, this, Player_CsIntoAction_4);
                     this->stateFlags1 |= PLAYER_STATE1_21;
                     this->stateFlags1 &= ~PLAYER_STATE1_27;
 
@@ -6974,7 +6985,7 @@ s32 Player_TryEnteringCrawlspace(Player* this, PlayState* play, u32 interactWall
                 f32 wallPolyNormalZ = COLPOLY_GET_NORMAL(wallPoly->normal.z);
                 f32 distToInteractWall = this->distToInteractWall;
 
-                func_80836898(play, this, func_8083A40C);
+                Player_SetupCsIntoAction(play, this, Player_CsIntoAction_5);
                 this->stateFlags2 |= PLAYER_STATE2_CRAWLING;
                 this->actor.shape.rot.y = this->yaw = this->actor.wallYaw + 0x8000;
                 this->actor.world.pos.x = xVertex1 + (distToInteractWall * wallPolyNormalX);
@@ -7099,7 +7110,7 @@ s32 Player_TryLeavingCrawlspace(Player* this, PlayState* play) {
 }
 
 void func_8083F72C(Player* this, LinkAnimationHeader* anim, PlayState* play) {
-    if (!func_80836898(play, this, func_8083A388)) {
+    if (!Player_SetupCsIntoAction(play, this, Player_CsIntoAction_3)) {
         Player_SetupAction(play, this, Player_Action_8084B78C, 0);
     }
 
@@ -7136,7 +7147,7 @@ s32 Player_ActionChange_5(Player* this, PlayState* play) {
                             return 0;
                         }
 
-                        func_80836898(play, this, func_8083A0F4);
+                        Player_SetupCsIntoAction(play, this, Player_CsIntoAction_0);
                         this->stateFlags1 |= PLAYER_STATE1_11;
                         this->interactRangeActor = &wallPolyActor->actor;
                         this->getItemId = GI_NONE;
@@ -9350,13 +9361,18 @@ void Player_Action_80845668(Player* this, PlayState* play) {
     }
 }
 
-void Player_Action_808458D0(Player* this, PlayState* play) {
+/**
+ * Transition to a new action through a mini cutscene?
+ * Mini cutscene appears from observation, but unclear how code works
+ */
+void Player_Action_CsIntoAction(Player* this, PlayState* play) {
     this->stateFlags2 |= PLAYER_STATE2_5 | PLAYER_STATE2_6;
     LinkAnimation_Update(play, &this->skelAnime);
 
     if (((this->stateFlags1 & PLAYER_STATE1_11) && (this->heldActor != NULL) && (this->getItemId == GI_NONE)) ||
         !Player_UpdateUpperBody(this, play)) {
-        this->func_A74(play, this);
+        // Setup new action func
+        this->csIntoActionFunc(play, this);
     }
 }
 
@@ -10893,7 +10909,7 @@ void Player_UpdateCommon(Player* this, PlayState* play, Input* input) {
 
         if ((this->actor.parent == NULL) && (this->stateFlags1 & PLAYER_STATE1_23)) {
             this->actor.parent = this->rideActor;
-            func_8083A360(play, this);
+            Player_CsIntoAction_2(play, this);
             this->stateFlags1 |= PLAYER_STATE1_23;
             Player_AnimPlayOnce(play, this, &gPlayerAnim_link_uma_wait_1);
             Player_AnimReplaceApplyFlags(play, this,
@@ -11668,7 +11684,7 @@ void Player_Action_8084B530(Player* this, PlayState* play) {
             if ((this->targetActor != this->interactRangeActor) || !Player_ActionChange_2(this, play)) {
                 if (this->stateFlags1 & PLAYER_STATE1_23) {
                     s32 sp24 = this->actionVar2;
-                    func_8083A360(play, this);
+                    Player_CsIntoAction_2(play, this);
                     this->actionVar2 = sp24;
                 } else if (func_808332B8(this)) {
                     func_80838F18(play, this);
@@ -15142,15 +15158,15 @@ void func_80853148(PlayState* play, Actor* actor) {
             s32 sp24 = this->actionVar2;
 
             func_80832528(play, this);
-            func_8083A2F8(play, this);
+            Player_CsIntoAction_1(play, this);
 
             this->actionVar2 = sp24;
         } else {
             if (func_808332B8(this)) {
-                func_80836898(play, this, func_8083A2F8);
+                Player_SetupCsIntoAction(play, this, Player_CsIntoAction_1);
                 Player_AnimChangeLoopSlowMorph(play, this, &gPlayerAnim_link_swimer_swim_wait);
             } else if ((actor->category != ACTORCAT_NPC) || (this->heldItemAction == PLAYER_IA_FISHING_POLE)) {
-                func_8083A2F8(play, this);
+                Player_CsIntoAction_1(play, this);
 
                 if (!func_8008E9C4(this)) {
                     if ((actor != this->naviActor) && (actor->xzDistToPlayer < 40.0f)) {
@@ -15160,7 +15176,7 @@ void func_80853148(PlayState* play, Actor* actor) {
                     }
                 }
             } else {
-                func_80836898(play, this, func_8083A2F8);
+                Player_SetupCsIntoAction(play, this, Player_CsIntoAction_1);
                 Player_AnimPlayOnceAdjusted(play, this,
                                             (actor->xzDistToPlayer < 40.0f) ? &gPlayerAnim_link_normal_backspace
                                                                             : &gPlayerAnim_link_normal_talk_free);
