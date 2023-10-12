@@ -1637,8 +1637,8 @@ void Player_AnimPlayOnceAdjusted(PlayState* play, Player* this, LinkAnimationHea
 }
 
 void func_808322FC(Player* this) {
-    this->actor.shape.rot.y += this->skelAnime.jointTable[1].y;
-    this->skelAnime.jointTable[1].y = 0;
+    this->actor.shape.rot.y += this->skelAnime.jointTable[LIMB_ROOT_ROT].y;
+    this->skelAnime.jointTable[LIMB_ROOT_ROT].y = 0;
 }
 
 void func_80832318(Player* this) {
@@ -1910,20 +1910,20 @@ void Player_SkelAnimeResetPrevTranslRotAgeScale(Player* this) {
 }
 
 void Player_ZeroRootLimbYaw(Player* this) {
-    this->skelAnime.jointTable[1].y = 0;
+    this->skelAnime.jointTable[LIMB_ROOT_ROT].y = 0;
 }
 
 void func_80832DBC(Player* this) {
     if (this->skelAnime.moveFlags != 0) {
         func_808322FC(this);
-        this->skelAnime.jointTable[0].x = this->skelAnime.baseTransl.x;
-        this->skelAnime.jointTable[0].z = this->skelAnime.baseTransl.z;
+        this->skelAnime.jointTable[LIMB_ROOT_POS].x = this->skelAnime.baseTransl.x;
+        this->skelAnime.jointTable[LIMB_ROOT_POS].z = this->skelAnime.baseTransl.z;
         if (this->skelAnime.moveFlags & ANIM_FLAG_PLAYER_SETMOVE) {
             if (this->skelAnime.moveFlags & ANIM_FLAG_UPDATE_Y) {
-                this->skelAnime.jointTable[0].y = this->skelAnime.prevTransl.y;
+                this->skelAnime.jointTable[LIMB_ROOT_POS].y = this->skelAnime.prevTransl.y;
             }
         } else {
-            this->skelAnime.jointTable[0].y = this->skelAnime.baseTransl.y;
+            this->skelAnime.jointTable[LIMB_ROOT_POS].y = this->skelAnime.baseTransl.y;
         }
         Player_SkelAnimeResetPrevTranslRot(this);
         this->skelAnime.moveFlags = 0;
@@ -1965,7 +1965,7 @@ void Player_AnimReplaceApplyFlags(PlayState* play, Player* this, s32 flags) {
     } else if ((flags & ANIM_REPLACE_APPLY_FLAG_8) || (this->skelAnime.moveFlags != 0)) {
         Player_SkelAnimeResetPrevTranslRot(this);
     } else {
-        this->skelAnime.prevTransl = this->skelAnime.jointTable[0];
+        this->skelAnime.prevTransl = this->skelAnime.jointTable[LIMB_ROOT_POS];
         this->skelAnime.prevRot = this->actor.shape.rot.y;
     }
 
@@ -4082,7 +4082,7 @@ s32 func_80837B18(PlayState* play, Player* this, s32 damage) {
 }
 
 void func_80837B60(Player* this) {
-    this->skelAnime.prevTransl = this->skelAnime.jointTable[0];
+    this->skelAnime.prevTransl = this->skelAnime.jointTable[LIMB_ROOT_POS];
     func_80832E48(this, ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y);
 }
 
@@ -7618,8 +7618,8 @@ void Player_Action_80840BC8(Player* this, PlayState* play) {
             if (DECR(this->av2.actionVar2) == 0) {
                 this->skelAnime.endFrame = this->skelAnime.animLength - 1.0f;
             }
-            this->skelAnime.jointTable[0].y =
-                (this->skelAnime.jointTable[0].y + ((this->av2.actionVar2 & 1) * 0x50)) - 0x28;
+            this->skelAnime.jointTable[LIMB_ROOT_POS].y =
+                (this->skelAnime.jointTable[LIMB_ROOT_POS].y + ((this->av2.actionVar2 & 1) * 0x50)) - 0x28;
         } else {
             func_80832DBC(this);
             func_808409CC(play, this);

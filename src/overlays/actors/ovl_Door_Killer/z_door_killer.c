@@ -131,7 +131,7 @@ void DoorKiller_Init(Actor* thisx, PlayState* play2) {
             DoorKiller_WaitForObject(this, play);
 
             // manually set the overall rotation of the door
-            this->jointTable[1].x = this->jointTable[1].z = 0x4000;
+            this->jointTable[LIMB_ROOT_ROT].x = this->jointTable[LIMB_ROOT_ROT].z = 0x4000;
 
             // Set a cylinder collider to detect link attacks and larger sphere collider to detect explosions
             Collider_InitCylinder(play, &this->colliderCylinder);

@@ -2025,7 +2025,7 @@ void BossVa_ZapperAttack(BossVa* this, PlayState* play) {
             tmp17 = Math_SmoothStepToS(&this->unk_1F2, yaw - 0x4000, 1, 0x9C4, 0);
             sp88 += ABS(tmp17);
 
-            sp96 = this->actor.shape.rot.x + this->skelAnime.jointTable[1].z + this->skelAnime.jointTable[2].z +
+            sp96 = this->actor.shape.rot.x + this->skelAnime.jointTable[LIMB_ROOT_ROT].z + this->skelAnime.jointTable[2].z +
                    this->skelAnime.jointTable[3].z + this->skelAnime.jointTable[4].z + this->skelAnime.jointTable[5].z;
 
             yaw = Math_Vec3f_Pitch(&sp7C, &this->zapNeckPos);
@@ -2287,7 +2287,7 @@ void BossVa_ZapperEnraged(BossVa* this, PlayState* play) {
             tmp16 = Math_SmoothStepToS(&this->unk_1F2, yaw - 0x4000, 1, 0xEA6, 0);
             sp60 += ABS(tmp16);
 
-            sp6A = this->actor.shape.rot.x + this->skelAnime.jointTable[1].x + this->skelAnime.jointTable[2].x +
+            sp6A = this->actor.shape.rot.x + this->skelAnime.jointTable[LIMB_ROOT_ROT].x + this->skelAnime.jointTable[2].x +
                    this->skelAnime.jointTable[3].x + this->skelAnime.jointTable[4].x + this->skelAnime.jointTable[5].x;
 
             yaw = Math_Vec3f_Pitch(&sp54, &this->zapNeckPos);

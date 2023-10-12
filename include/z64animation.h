@@ -14,6 +14,10 @@ struct SkelAnime;
  * Skeletons and limbs
  */
 
+// for indexing `jointTable[]` and `morphTable[]`
+#define LIMB_ROOT_POS 0 // Translation/Offset of the root limb
+#define LIMB_ROOT_ROT 1 // Rotation of the root limb
+
 #define LIMB_DONE 0xFF
 
 typedef struct {

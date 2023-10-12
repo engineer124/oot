@@ -154,7 +154,7 @@ s32 Skin_ApplyAnimTransformations(Skin* skin, MtxF* limbMatrices, Actor* actor, 
     f32 xTransl;
     f32 zTransl;
     SkinLimb** skeleton = SEGMENTED_TO_VIRTUAL(skin->skeletonHeader->segment);
-    Vec3s* jointRot = &skin->skelAnime.jointTable[0];
+    Vec3s* jointRot = &skin->skelAnime.jointTable[LIMB_ROOT_POS];
 
     jointRot++;
 

@@ -460,7 +460,7 @@ void EnRu1_SpawnSplash(EnRu1* this, PlayState* play) {
 void func_80AEB6E0(EnRu1* this, PlayState* play) {
     SkelAnime* skelAnime = &this->skelAnime;
 
-    if (skelAnime->baseTransl.y < skelAnime->jointTable[0].y) {
+    if (skelAnime->baseTransl.y < skelAnime->jointTable[LIMB_ROOT_POS].y) {
         skelAnime->moveFlags |= ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y;
         AnimationContext_SetMoveActor(play, &this->actor, skelAnime, 1.0f);
     }
@@ -469,9 +469,9 @@ void func_80AEB6E0(EnRu1* this, PlayState* play) {
 void func_80AEB738(EnRu1* this, PlayState* play) {
     SkelAnime* skelAnime = &this->skelAnime;
 
-    skelAnime->baseTransl = skelAnime->jointTable[0];
-    skelAnime->prevTransl = skelAnime->jointTable[0];
-    if (skelAnime->baseTransl.y < skelAnime->jointTable[0].y) {
+    skelAnime->baseTransl = skelAnime->jointTable[LIMB_ROOT_POS];
+    skelAnime->prevTransl = skelAnime->jointTable[LIMB_ROOT_POS];
+    if (skelAnime->baseTransl.y < skelAnime->jointTable[LIMB_ROOT_POS].y) {
         skelAnime->moveFlags |= ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y;
         AnimationContext_SetMoveActor(play, &this->actor, skelAnime, 1.0f);
     }

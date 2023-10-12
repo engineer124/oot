@@ -248,7 +248,7 @@ void func_80B3C888(EnXc* this, PlayState* play) {
 void func_80B3C8CC(EnXc* this, PlayState* play) {
     SkelAnime* skelAnime = &this->skelAnime;
 
-    if (skelAnime->jointTable[0].y >= skelAnime->baseTransl.y) {
+    if (skelAnime->jointTable[LIMB_ROOT_POS].y >= skelAnime->baseTransl.y) {
         skelAnime->moveFlags |= ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y;
         AnimationContext_SetMoveActor(play, &this->actor, skelAnime, 1.0f);
     }
@@ -260,8 +260,8 @@ void func_80B3C924(EnXc* this, PlayState* play) {
 }
 
 void func_80B3C964(EnXc* this, PlayState* play) {
-    this->skelAnime.baseTransl = this->skelAnime.jointTable[0];
-    this->skelAnime.prevTransl = this->skelAnime.jointTable[0];
+    this->skelAnime.baseTransl = this->skelAnime.jointTable[LIMB_ROOT_POS];
+    this->skelAnime.prevTransl = this->skelAnime.jointTable[LIMB_ROOT_POS];
     this->skelAnime.moveFlags |= ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y;
     AnimationContext_SetMoveActor(play, &this->actor, &this->skelAnime, 1.0f);
 }

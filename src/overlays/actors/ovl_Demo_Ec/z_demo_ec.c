@@ -181,8 +181,8 @@ void func_8096D594(DemoEc* this, PlayState* play) {
 }
 
 void func_8096D5D4(DemoEc* this, PlayState* play) {
-    this->skelAnime.baseTransl = this->skelAnime.jointTable[0];
-    this->skelAnime.prevTransl = this->skelAnime.jointTable[0];
+    this->skelAnime.baseTransl = this->skelAnime.jointTable[LIMB_ROOT_POS];
+    this->skelAnime.prevTransl = this->skelAnime.jointTable[LIMB_ROOT_POS];
     this->skelAnime.moveFlags |= ANIM_FLAG_0 | ANIM_FLAG_UPDATE_Y;
     AnimationContext_SetMoveActor(play, &this->actor, &this->skelAnime, 1.0f);
 }

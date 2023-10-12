@@ -1349,7 +1349,7 @@ void EnHorse_JumpLanding(EnHorse* this, PlayState* play) {
     this->animationIdx = ENHORSE_ANIM_GALLOP;
     Animation_PlayOnce(&this->skin.skelAnime, sAnimationHeaders[this->type][this->animationIdx]);
     jointTable = this->skin.skelAnime.jointTable;
-    y = jointTable->y;
+    y = jointTable[LIMB_ROOT_POS].y;
     this->riderPos.y += y * 0.01f;
     this->postDrawFunc = NULL;
 }
@@ -1597,7 +1597,7 @@ void EnHorse_StartLowJump(EnHorse* this, PlayState* play) {
     this->actor.velocity.y = 0;
 
     jointTable = this->skin.skelAnime.jointTable;
-    y = jointTable->y;
+    y = jointTable[LIMB_ROOT_POS].y;
     this->riderPos.y -= y * 0.01f;
 
     Audio_PlaySfxGeneral(NA_SE_EV_HORSE_JUMP, &this->actor.projectedPos, 4, &gSfxDefaultFreqAndVolScale,
@@ -1629,7 +1629,7 @@ void EnHorse_LowJump(EnHorse* this, PlayState* play) {
         }
     } else {
         jointTable = this->skin.skelAnime.jointTable;
-        y = jointTable->y;
+        y = jointTable[LIMB_ROOT_POS].y;
         this->actor.world.pos.y = this->jumpStartY + y * 0.01f;
     }
 
@@ -1671,7 +1671,7 @@ void EnHorse_StartHighJump(EnHorse* this, PlayState* play) {
     this->actor.velocity.y = 0.0f;
 
     jointTable = this->skin.skelAnime.jointTable;
-    y = jointTable->y;
+    y = jointTable[LIMB_ROOT_POS].y;
     this->riderPos.y -= y * 0.01f;
 
     this->stateFlags |= ENHORSE_CALC_RIDER_POS;
@@ -1705,7 +1705,7 @@ void EnHorse_HighJump(EnHorse* this, PlayState* play) {
         }
     } else {
         jointTable = this->skin.skelAnime.jointTable;
-        y = jointTable->y;
+        y = jointTable[LIMB_ROOT_POS].y;
         this->actor.world.pos.y = this->jumpStartY + y * 0.01f;
     }
 
@@ -2164,7 +2164,7 @@ void EnHorse_CsPlayHighJumpAnim(EnHorse* this, PlayState* play) {
     this->actor.velocity.y = 0;
 
     jointTable = this->skin.skelAnime.jointTable;
-    y = jointTable->y;
+    y = jointTable[LIMB_ROOT_POS].y;
     this->riderPos.y -= y * 0.01f;
 
     this->stateFlags |= ENHORSE_CALC_RIDER_POS;
@@ -2204,7 +2204,7 @@ void EnHorse_CsJump(EnHorse* this, PlayState* play, CsCmdActorCue* cue) {
         f32 y;
 
         jointTable = this->skin.skelAnime.jointTable;
-        y = jointTable->y;
+        y = jointTable[LIMB_ROOT_POS].y;
         this->actor.world.pos.y = this->jumpStartY + y * 0.01f;
     }
     if (SkelAnime_Update(&this->skin.skelAnime) ||
@@ -2225,7 +2225,7 @@ void EnHorse_CsJump(EnHorse* this, PlayState* play, CsCmdActorCue* cue) {
         Animation_PlayOnceSetSpeed(&this->skin.skelAnime, sAnimationHeaders[this->type][this->animationIdx],
                                    sPlaybackSpeeds[6]);
         jointTable = this->skin.skelAnime.jointTable;
-        y = jointTable->y;
+        y = jointTable[LIMB_ROOT_POS].y;
         this->riderPos.y += y * 0.01f;
         this->postDrawFunc = NULL;
     }
@@ -2753,8 +2753,8 @@ void EnHorse_BridgeJumpInit(EnHorse* this, PlayState* play) {
     this->action = ENHORSE_ACT_BRIDGE_JUMP;
     this->stateFlags |= ENHORSE_JUMPING;
     this->animationIdx = ENHORSE_ANIM_HIGH_JUMP;
-    y = this->skin.skelAnime.jointTable->y;
-    y = y * 0.01f;
+    y = this->skin.skelAnime.jointTable[LIMB_ROOT_POS].y;
+    y *= 0.01f;
     this->bridgeJumpStart = this->actor.world.pos;
     this->bridgeJumpStart.y += y;
     this->bridgeJumpYVel =
