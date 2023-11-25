@@ -3417,7 +3417,7 @@ void func_808368EC(Player* this, PlayState* play) {
 
     if (!(this->stateFlags2 & (PLAYER_STATE2_5 | PLAYER_STATE2_6))) {
         if ((this->targetActor != NULL) &&
-            ((play->actorCtx.targetCtx.rotZTick != 0) || (this->actor.category != ACTORCAT_PLAYER))) {
+            ((play->actorCtx.targetCtx.reticleSpinCounter != 0) || (this->actor.category != ACTORCAT_PLAYER))) {
             Math_ScaledStepToS(&this->actor.shape.rot.y,
                                Math_Vec3f_Yaw(&this->actor.world.pos, &this->targetActor->focus.pos), 4000);
         } else if ((this->stateFlags1 & PLAYER_STATE1_Z_PARALLEL) &&
@@ -3516,7 +3516,7 @@ void Player_UpdateZTarget(Player* this, PlayState* play) {
                 CHECK_BTN_ALL(sControlInput->press.button, BTN_Z)) {
 
                 if (this->actor.category == ACTORCAT_PLAYER) {
-                    actorToTarget = play->actorCtx.targetCtx.naviActor;
+                    actorToTarget = play->actorCtx.targetCtx.naviHoverActor;
                 } else {
                     actorToTarget = &GET_PLAYER(play)->actor;
                 }
@@ -3526,7 +3526,7 @@ void Player_UpdateZTarget(Player* this, PlayState* play) {
 
                 if ((actorToTarget != NULL) && !(actorToTarget->flags & ACTOR_FLAG_CANT_LOCK_ON)) {
                     if ((actorToTarget == this->targetActor) && (this->actor.category == ACTORCAT_PLAYER)) {
-                        actorToTarget = play->actorCtx.targetCtx.arrowPointedActor;
+                        actorToTarget = play->actorCtx.targetCtx.arrowHoverActor;
                     }
 
                     if (actorToTarget != this->targetActor) {
@@ -3687,7 +3687,7 @@ s32 Player_GetMovementSpeedAndYaw(Player* this, f32* outSpeedTarget, s16* outYaw
         *outYawTarget = this->actor.shape.rot.y;
 
         if (this->targetActor != NULL) {
-            if ((play->actorCtx.targetCtx.rotZTick != 0) && !(this->stateFlags2 & PLAYER_STATE2_6)) {
+            if ((play->actorCtx.targetCtx.reticleSpinCounter != 0) && !(this->stateFlags2 & PLAYER_STATE2_6)) {
                 *outYawTarget = Math_Vec3f_Yaw(&this->actor.world.pos, &this->targetActor->focus.pos);
                 return false;
             }
@@ -10236,7 +10236,7 @@ void func_808473D4(PlayState* play, Player* this) {
                         doAction = DO_ACTION_JUMP;
                     } else if ((this->heldItemAction >= PLAYER_IA_SWORD_MASTER) ||
                                ((this->stateFlags2 & PLAYER_STATE2_20) &&
-                                (play->actorCtx.targetCtx.naviActor == NULL))) {
+                                (play->actorCtx.targetCtx.naviHoverActor == NULL))) {
                         doAction = DO_ACTION_PUTAWAY;
                     }
                 }
