@@ -158,6 +158,8 @@ void Camera_LERPCeilVec3f(Vec3f* target, Vec3f* cur, f32 yStepScale, f32 xzStepS
     cur->z = Camera_LERPCeilF(target->z, cur->z, xzStepScale, minDiff);
 }
 
+// TODO: Should ifdef regs, not entire function?
+#ifdef OOT_DEBUG
 void func_80043ABC(Camera* camera) {
     camera->yawUpdateRateInv = 100.0f;
     camera->pitchUpdateRateInv = R_CAM_PITCH_UPDATE_RATE_INV;
@@ -175,6 +177,25 @@ void func_80043B60(Camera* camera) {
     camera->yOffsetUpdateRate = 0.001f;
     camera->fovUpdateRate = 0.001f;
 }
+#else
+void func_80043ABC(Camera* camera) {
+    camera->yawUpdateRateInv = 100.0f;
+    camera->pitchUpdateRateInv = 16.0f;
+    camera->rUpdateRateInv = 20.0f;
+    camera->xzOffsetUpdateRate = CAM_DATA_SCALED(5.0f);
+    camera->yOffsetUpdateRate = CAM_DATA_SCALED(5.0f);
+    camera->fovUpdateRate = CAM_DATA_SCALED(5.0f);
+}
+
+void func_80043B60(Camera* camera) {
+    camera->rUpdateRateInv = 1800.0f;
+    camera->yawUpdateRateInv = 1800.0f;
+    camera->pitchUpdateRateInv = 1800.0f;
+    camera->xzOffsetUpdateRate = 0.001f;
+    camera->yOffsetUpdateRate = 0.001f;
+    camera->fovUpdateRate = 0.001f;
+}
+#endif
 
 Vec3f Camera_Vec3sToVec3f(Vec3s* src) {
     Vec3f dest;
@@ -439,9 +460,13 @@ f32 Camera_GetFloorYLayer(Camera* camera, Vec3f* norm, Vec3f* pos, s32* bgId) {
             break;
         }
     }
+
+#ifdef OOT_DEBUG
     if (i == 0) {
         PRINTF(VT_COL(YELLOW, BLACK) "camera: foward check: too many layer!\n" VT_RST);
     }
+#endif
+
     return floorY;
 }
 
@@ -598,9 +623,16 @@ s16 Camera_GetPitchAdjFromFloorHeightDiffs(Camera* camera, s16 viewYaw, s16 init
     viewForwardsUnitZ = Math_CosS(viewYaw);
 
     playerHeight = Player_GetHeight(camera->player);
+
+#ifdef OOT_DEBUG
     checkOffsetY = CAM_DATA_SCALED(R_CAM_PITCH_FLOOR_CHECK_OFFSET_Y_FAC) * playerHeight;
     nearDist = CAM_DATA_SCALED(R_CAM_PITCH_FLOOR_CHECK_NEAR_DIST_FAC) * playerHeight;
     farDist = CAM_DATA_SCALED(R_CAM_PITCH_FLOOR_CHECK_FAR_DIST_FAC) * playerHeight;
+#else
+    checkOffsetY = playerHeight * 1.2f;
+    nearDist = playerHeight * 1.0f;
+    farDist = playerHeight * 2.5f;
+#endif
 
     playerPos.x = camera->playerPosRot.pos.x;
     playerPos.y = camera->playerGroundY + checkOffsetY;
@@ -644,9 +676,14 @@ s16 Camera_GetPitchAdjFromFloorHeightDiffs(Camera* camera, s16 viewYaw, s16 init
         }
     }
 
+#ifdef OOT_DEBUG
     floorYDiffNear = CAM_DATA_SCALED(R_CAM_PITCH_FLOOR_CHECK_NEAR_WEIGHT) * (sFloorYNear - camera->playerGroundY);
     floorYDiffFar =
         (1.0f - CAM_DATA_SCALED(R_CAM_PITCH_FLOOR_CHECK_NEAR_WEIGHT)) * (sFloorYFar - camera->playerGroundY);
+#else
+    floorYDiffNear = CAM_DATA_SCALED(80) * (sFloorYNear - camera->playerGroundY);
+    floorYDiffFar = (1.0f - CAM_DATA_SCALED(80)) * (sFloorYFar - camera->playerGroundY);
+#endif
 
     pitchNear = CAM_DEG_TO_BINANG(RAD_TO_DEG(Math_FAtan2F(floorYDiffNear, nearDist)));
     pitchFar = CAM_DEG_TO_BINANG(RAD_TO_DEG(Math_FAtan2F(floorYDiffFar, farDist)));
@@ -706,6 +743,7 @@ Vec3f Camera_CalcUpFromPitchYawRoll(s16 pitch, s16 yaw, s16 roll) {
 f32 Camera_ClampLERPScale(Camera* camera, f32 maxLERPScale) {
     f32 ret;
 
+#ifdef OOT_DEBUG
     if (camera->atLERPStepScale < CAM_DATA_SCALED(R_CAM_AT_LERP_STEP_SCALE_MIN)) {
         ret = CAM_DATA_SCALED(R_CAM_AT_LERP_STEP_SCALE_MIN);
     } else if (camera->atLERPStepScale >= maxLERPScale) {
@@ -713,31 +751,46 @@ f32 Camera_ClampLERPScale(Camera* camera, f32 maxLERPScale) {
     } else {
         ret = CAM_DATA_SCALED(R_CAM_AT_LERP_STEP_SCALE_FAC) * camera->atLERPStepScale;
     }
+#else
+    if (camera->atLERPStepScale < CAM_DATA_SCALED(12)) {
+        ret = CAM_DATA_SCALED(12);
+    } else if (camera->atLERPStepScale >= maxLERPScale) {
+        ret = maxLERPScale;
+    } else {
+        ret = CAM_DATA_SCALED(110) * camera->atLERPStepScale;
+    }
+#endif
 
     return ret;
 }
 
 void Camera_CopyDataToRegs(Camera* camera, s16 mode) {
-    CameraModeValue* values;
-    CameraModeValue* valueP;
-    s32 i;
+#ifdef OOT_DEBUG
+    {
+        CameraModeValue* values;
+        CameraModeValue* valueP;
+        s32 i;
 
-    if (PREG(82)) {
-        PRINTF("camera: res: stat (%d/%d/%d)\n", camera->camId, camera->setting, mode);
-    }
-
-    values = sCameraSettings[camera->setting].cameraModes[mode].values;
-
-    for (i = 0; i < sCameraSettings[camera->setting].cameraModes[mode].valueCnt; i++) {
-        valueP = &values[i];
-        PREG(valueP->dataType) = valueP->val;
         if (PREG(82)) {
-            PRINTF("camera: res: PREG(%02d) = %d\n", valueP->dataType, valueP->val);
+            PRINTF("camera: res: stat (%d/%d/%d)\n", camera->camId, camera->setting, mode);
+        }
+
+        values = sCameraSettings[camera->setting].cameraModes[mode].values;
+
+        for (i = 0; i < sCameraSettings[camera->setting].cameraModes[mode].valueCnt; i++) {
+            valueP = &values[i];
+            PREG(valueP->dataType) = valueP->val;
+            if (PREG(82)) {
+                PRINTF("camera: res: PREG(%02d) = %d\n", valueP->dataType, valueP->val);
+            }
         }
     }
+#endif
+
     camera->animState = 0;
 }
 
+#ifdef OOT_DEBUG
 s32 Camera_CopyPREGToModeValues(Camera* camera) {
     CameraModeValue* values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
     CameraModeValue* valueP;
@@ -752,6 +805,7 @@ s32 Camera_CopyPREGToModeValues(Camera* camera) {
     }
     return true;
 }
+#endif
 
 void Camera_UpdateInterface(s16 interfaceField) {
     s16 hudVisibilityMode;
@@ -796,11 +850,15 @@ void Camera_UpdateInterface(s16 interfaceField) {
 
 Vec3f Camera_BGCheckCorner(Vec3f* linePointA, Vec3f* linePointB, CamColChk* pointAColChk, CamColChk* pointBColChk) {
     Vec3f closestPoint;
+    s32 closestPointExists =
+        func_800427B4(pointAColChk->poly, pointBColChk->poly, linePointA, linePointB, &closestPoint);
 
-    if (!func_800427B4(pointAColChk->poly, pointBColChk->poly, linePointA, linePointB, &closestPoint)) {
+#ifdef OOT_DEBUG
+    if (!closestPointExists) {
         PRINTF(VT_COL(YELLOW, BLACK) "camera: corner check no cross point %x %x\n" VT_RST, pointAColChk, pointBColChk);
         return pointAColChk->pos;
     }
+#endif
 
     return closestPoint;
 }
@@ -915,9 +973,14 @@ s32 Camera_CalcAtDefault(Camera* camera, VecGeo* eyeAtDir, f32 yOffset, s16 calc
     playerToAtOffsetTarget.z = 0.f;
 
     if (calcSlopeYAdj) {
+#ifdef OOT_DEBUG
         playerToAtOffsetTarget.y -= OLib_ClampMaxDist(
             Camera_CalcSlopeYAdj(&camera->floorNorm, playerPosRot->rot.y, eyeAtDir->yaw, R_CAM_SLOPE_Y_ADJ_AMOUNT),
             playerHeight);
+#else
+        playerToAtOffsetTarget.y -= OLib_ClampMaxDist(
+            Camera_CalcSlopeYAdj(&camera->floorNorm, playerPosRot->rot.y, eyeAtDir->yaw, 25), playerHeight);
+#endif
     }
 
     Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, camera->yOffsetUpdateRate,
@@ -936,23 +999,32 @@ s32 func_800458D4(Camera* camera, VecGeo* eyeAtDir, f32 yOffset, f32* arg3, s16 
     f32 phi_f2;
     Vec3f playerToAtOffsetTarget;
     Vec3f atTarget;
-    f32 eyeAtAngle;
-    PosRot* playerPosRot = &camera->playerPosRot;
-    f32 deltaY;
     s32 pad[2];
+    f32 deltaY;
+#ifndef OOT_DEBUG
+    Vec3f* eye = &camera->eye;
+    Vec3f* at = &camera->at;
+#endif
+    PosRot* playerPosRot = &camera->playerPosRot;
+    f32 eyeAtAngle;
 
     playerToAtOffsetTarget.y = Player_GetHeight(camera->player) + yOffset;
     playerToAtOffsetTarget.x = 0.0f;
     playerToAtOffsetTarget.z = 0.0f;
 
     if (calcSlopeYAdj) {
+#ifdef OOT_DEBUG
         playerToAtOffsetTarget.y -=
             Camera_CalcSlopeYAdj(&camera->floorNorm, playerPosRot->rot.y, eyeAtDir->yaw, R_CAM_SLOPE_Y_ADJ_AMOUNT);
+#else
+        playerToAtOffsetTarget.y -= Camera_CalcSlopeYAdj(&camera->floorNorm, playerPosRot->rot.y, eyeAtDir->yaw, 25);
+#endif
     }
 
     deltaY = playerPosRot->pos.y - *arg3;
     eyeAtAngle = Math_FAtan2F(deltaY, OLib_Vec3fDistXZ(&camera->at, &camera->eye));
 
+#ifdef OOT_DEBUG
     if (eyeAtAngle > DEG_TO_RAD(OREG(32))) {
         if (1) {}
         phi_f2 = 1.0f - sinf(eyeAtAngle - DEG_TO_RAD(OREG(32)));
@@ -961,10 +1033,25 @@ s32 func_800458D4(Camera* camera, VecGeo* eyeAtDir, f32 yOffset, f32* arg3, s16 
     } else {
         phi_f2 = 1.0f;
     }
+#else
+    if (eyeAtAngle > DEG_TO_RAD(20)) {
+        if (1) {}
+        phi_f2 = 1.0f - sinf(eyeAtAngle - DEG_TO_RAD(20));
+    } else if (eyeAtAngle < DEG_TO_RAD(-10)) {
+        phi_f2 = 1.0f - sinf(DEG_TO_RAD(-10) - eyeAtAngle);
+    } else {
+        phi_f2 = 1.0f;
+    }
+#endif
 
     playerToAtOffsetTarget.y -= deltaY * phi_f2;
+#ifdef OOT_DEBUG
     Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, CAM_DATA_SCALED(OREG(29)),
                          CAM_DATA_SCALED(OREG(30)), 0.1f);
+#else
+    Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, CAM_DATA_SCALED(50), CAM_DATA_SCALED(50),
+                         0.1f);
+#endif
 
     atTarget.x = playerPosRot->pos.x + camera->playerToAtOffset.x;
     atTarget.y = playerPosRot->pos.y + camera->playerToAtOffset.y;
@@ -995,7 +1082,12 @@ s32 func_80045B08(Camera* camera, VecGeo* eyeAtDir, f32 yOffset, s16 arg3) {
         phi_f2 = -Math_CosS(playerPosRot->rot.y - eyeAtDir->yaw);
     }
 
+#ifdef OOT_DEBUG
     playerToAtOffsetTarget.y -= temp_ret * phi_f2 * R_CAM_SLOPE_Y_ADJ_AMOUNT;
+#else
+    playerToAtOffsetTarget.y -= temp_ret * phi_f2 * 25;
+#endif
+
     Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, camera->yOffsetUpdateRate,
                          camera->xzOffsetUpdateRate, 0.1f);
 
@@ -1027,13 +1119,23 @@ s32 Camera_CalcAtForParallel(Camera* camera, VecGeo* arg1, f32 yOffset, f32* arg
     playerToAtOffsetTarget.z = 0.0f;
 
     if (R_CAM_PARALLEL_LOCKON_CALC_SLOPE_Y_ADJ && calcSlopeYAdj) {
+#ifdef OOT_DEBUG
         playerToAtOffsetTarget.y -=
             Camera_CalcSlopeYAdj(&camera->floorNorm, playerPosRot->rot.y, arg1->yaw, R_CAM_SLOPE_Y_ADJ_AMOUNT);
+#else
+        playerToAtOffsetTarget.y -= Camera_CalcSlopeYAdj(&camera->floorNorm, playerPosRot->rot.y, arg1->yaw, 25);
+#endif
     }
 
     if (camera->playerGroundY == camera->playerPosRot.pos.y || camera->player->actor.gravity > -0.1f ||
         camera->player->stateFlags1 & PLAYER_STATE1_21) {
+
+#ifdef OOT_DEBUG
         *arg3 = Camera_LERPCeilF(playerPosRot->pos.y, *arg3, CAM_DATA_SCALED(OREG(43)), 0.1f);
+#else
+        *arg3 = Camera_LERPCeilF(playerPosRot->pos.y, *arg3, 0.4f, 0.1f);
+#endif
+
         phi_f20 = playerPosRot->pos.y - *arg3;
         playerToAtOffsetTarget.y -= phi_f20;
         Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, camera->yOffsetUpdateRate,
@@ -1056,6 +1158,8 @@ s32 Camera_CalcAtForParallel(Camera* camera, VecGeo* arg1, f32 yOffset, f32* arg
         } else {
             phi_f20 = playerPosRot->pos.y - *arg3;
             temp_f2 = Math_FAtan2F(phi_f20, OLib_Vec3fDistXZ(at, eye));
+
+#ifdef OOT_DEBUG
             if (DEG_TO_RAD(OREG(32)) < temp_f2) {
                 phi_f16 = 1 - sinf(temp_f2 - DEG_TO_RAD(OREG(32)));
             } else if (temp_f2 < DEG_TO_RAD(OREG(33))) {
@@ -1063,12 +1167,29 @@ s32 Camera_CalcAtForParallel(Camera* camera, VecGeo* arg1, f32 yOffset, f32* arg
             } else {
                 phi_f16 = 1;
             }
+#else
+            if (DEG_TO_RAD(20) < temp_f2) {
+                phi_f16 = 1 - sinf(temp_f2 - DEG_TO_RAD(20));
+            } else if (temp_f2 < DEG_TO_RAD(-10)) {
+                phi_f16 = 1 - sinf(DEG_TO_RAD(-10) - temp_f2);
+            } else {
+                phi_f16 = 1;
+            }
+#endif
+
             playerToAtOffsetTarget.y -= phi_f20 * phi_f16;
         }
+
+#ifdef OOT_DEBUG
         Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, CAM_DATA_SCALED(OREG(29)),
                              CAM_DATA_SCALED(OREG(30)), 0.1f);
         camera->yOffsetUpdateRate = CAM_DATA_SCALED(OREG(29));
         camera->xzOffsetUpdateRate = CAM_DATA_SCALED(OREG(30));
+#else
+        Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, 0.5f, 0.5f, 0.1f);
+        camera->yOffsetUpdateRate = 0.5f;
+        camera->xzOffsetUpdateRate = 0.5f;
+#endif
     }
     atTarget.x = playerPosRot->pos.x + camera->playerToAtOffset.x;
     atTarget.y = playerPosRot->pos.y + camera->playerToAtOffset.y;
@@ -1102,8 +1223,12 @@ s32 Camera_CalcAtForLockOn(Camera* camera, VecGeo* eyeAtDir, Vec3f* targetPos, f
     playerToAtOffsetTarget.y = playerHeight + yOffset;
     playerToAtOffsetTarget.z = 0.0f;
     if (R_CAM_PARALLEL_LOCKON_CALC_SLOPE_Y_ADJ && (flags & CAM_LOCKON_AT_FLAG_CALC_SLOPE_Y_ADJ)) {
+#ifdef OOT_DEBUG
         playerToAtOffsetTarget.y -=
             Camera_CalcSlopeYAdj(floorNorm, playerPosRot->rot.y, eyeAtDir->yaw, R_CAM_SLOPE_Y_ADJ_AMOUNT);
+#else
+        playerToAtOffsetTarget.y -= Camera_CalcSlopeYAdj(floorNorm, playerPosRot->rot.y, eyeAtDir->yaw, 25);
+#endif
     }
 
     // tmpPos1 is player's head
@@ -1111,6 +1236,8 @@ s32 Camera_CalcAtForLockOn(Camera* camera, VecGeo* eyeAtDir, Vec3f* targetPos, f
     tmpPos1.y += playerHeight;
     *outPlayerToTargetDir = OLib_Vec3fDiffToVecGeo(&tmpPos1, targetPos);
     playerToTargetDir = *outPlayerToTargetDir;
+
+#ifdef OOT_DEBUG
     if (distance < playerToTargetDir.r) {
         playerToTargetDir.r = playerToTargetDir.r * CAM_DATA_SCALED(OREG(38));
     } else {
@@ -1121,6 +1248,18 @@ s32 Camera_CalcAtForLockOn(Camera* camera, VecGeo* eyeAtDir, Vec3f* targetPos, f
                                (playerToTargetDir.r / distance));
         playerToTargetDir.r -= (playerToTargetDir.r * temp_f0_2) * temp_f0_2;
     }
+#else
+    if (distance < playerToTargetDir.r) {
+        playerToTargetDir.r = playerToTargetDir.r * CAM_DATA_SCALED(15);
+    } else {
+        // ratio of player's height off ground to player's height.
+        temp_f0_2 = OLib_ClampMaxDist((playerPosRot->pos.y - camera->playerGroundY) / playerHeight, 1.0f);
+        playerToTargetDir.r =
+            (playerToTargetDir.r * 0.75f) -
+            ((playerToTargetDir.r * (CAM_DATA_SCALED(75) - CAM_DATA_SCALED(15))) * (playerToTargetDir.r / distance));
+        playerToTargetDir.r -= (playerToTargetDir.r * temp_f0_2) * temp_f0_2;
+    }
+#endif
 
     if (flags & CAM_LOCKON_AT_FLAG_OFF_GROUND) {
         playerToTargetDir.r *= 0.2f;
@@ -1140,7 +1279,13 @@ s32 Camera_CalcAtForLockOn(Camera* camera, VecGeo* eyeAtDir, Vec3f* targetPos, f
 
     if (camera->playerGroundY == camera->playerPosRot.pos.y || camera->player->actor.gravity > -0.1f ||
         camera->player->stateFlags1 & PLAYER_STATE1_21) {
+
+#ifdef OOT_DEBUG
         *yPosOffset = Camera_LERPCeilF(playerPosRot->pos.y, *yPosOffset, CAM_DATA_SCALED(OREG(43)), 0.1f);
+#else
+        *yPosOffset = Camera_LERPCeilF(playerPosRot->pos.y, *yPosOffset, 0.4f, 0.1f);
+#endif
+
         yPosDelta = playerPosRot->pos.y - *yPosOffset;
         playerToAtOffsetTarget.y -= yPosDelta;
         Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, camera->yOffsetUpdateRate,
@@ -1164,6 +1309,7 @@ s32 Camera_CalcAtForLockOn(Camera* camera, VecGeo* eyeAtDir, Vec3f* targetPos, f
             yPosDelta = playerPosRot->pos.y - *yPosOffset;
             temp_f0_2 = Math_FAtan2F(yPosDelta, OLib_Vec3fDistXZ(at, &camera->eye));
 
+#ifdef OOT_DEBUG
             if (temp_f0_2 > DEG_TO_RAD(OREG(32))) {
                 phi_f16 = 1.0f - sinf(temp_f0_2 - DEG_TO_RAD(OREG(32)));
             } else if (temp_f0_2 < DEG_TO_RAD(OREG(33))) {
@@ -1171,13 +1317,30 @@ s32 Camera_CalcAtForLockOn(Camera* camera, VecGeo* eyeAtDir, Vec3f* targetPos, f
             } else {
                 phi_f16 = 1.0f;
             }
+#else
+            if (temp_f0_2 > DEG_TO_RAD(20)) {
+                phi_f16 = 1.0f - sinf(temp_f0_2 - DEG_TO_RAD(20));
+            } else if (temp_f0_2 < DEG_TO_RAD(-10)) {
+                phi_f16 = 1.0f - sinf(DEG_TO_RAD(-10) - temp_f0_2);
+            } else {
+                phi_f16 = 1.0f;
+            }
+#endif
+
             playerToAtOffsetTarget.y -= (yPosDelta * phi_f16);
         }
 
+#ifdef OOT_DEBUG
         Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, CAM_DATA_SCALED(OREG(29)),
                              CAM_DATA_SCALED(OREG(30)), 0.1f);
         camera->yOffsetUpdateRate = CAM_DATA_SCALED(OREG(29));
         camera->xzOffsetUpdateRate = CAM_DATA_SCALED(OREG(30));
+#else
+        Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, CAM_DATA_SCALED(50),
+                             CAM_DATA_SCALED(50), 0.1f);
+        camera->yOffsetUpdateRate = CAM_DATA_SCALED(50);
+        camera->xzOffsetUpdateRate = CAM_DATA_SCALED(50);
+#endif
     }
 
     tmpPos1.x = playerPosRot->pos.x + camera->playerToAtOffset.x;
