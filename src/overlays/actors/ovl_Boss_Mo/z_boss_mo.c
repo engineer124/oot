@@ -549,6 +549,9 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
         Math_ApproachF(&this->fwork[MO_TENT_SWING_SIZE_Z], maxSwingSizeZ, 1.0f, swingSizeAccel);
         this->xSwing += (s16)this->fwork[MO_TENT_SWING_RATE_X];
         this->zSwing += (s16)this->fwork[MO_TENT_SWING_RATE_Z];
+
+        //! FAKE:
+        dummy1:;
     }
     switch (this->work[MO_TENT_ACTION_STATE]) {
         case MO_TENT_WAIT:
@@ -570,6 +573,10 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
                     this->timers[0] = 60;
                 }
             }
+
+            //! FAKE:
+            dummy2:;
+
             if (this->timers[0] > 50) {
                 rippleCount = 1;
             } else if (this->timers[0] > 40) {
@@ -644,6 +651,8 @@ void BossMo_Tentacle(BossMo* this, PlayState* play) {
                     }
                 }
             }
+            //! FAKE:
+            dummy3:;
             break;
         case MO_TENT_ATTACK:
             this->actor.flags |= ACTOR_FLAG_24;
@@ -2725,7 +2734,11 @@ void BossMo_DrawTent(Actor* thisx, PlayState* play) {
     u16 texCoordScale;
 
     OPEN_DISPS(play->state.gfxCtx, "../z_boss_mo.c", 6958);
+
+    #if OOT_DEBUG
     if (1) {}
+    #endif
+
     Gfx_SetupDL_25Opa(play->state.gfxCtx);
     gDPSetPrimColor(POLY_OPA_DISP++, 0, 0, 255, 255, 255, (s8)(this->baseAlpha * 1.5f));
     gDPSetEnvColor(POLY_OPA_DISP++, 150, 150, 150, 0);
