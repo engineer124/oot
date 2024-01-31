@@ -9,6 +9,12 @@ s32 Camera_RequestModeImpl(Camera* camera, s16 requestedMode, u8 forceModeChange
 s32 Camera_QRegInit(void);
 s32 Camera_UpdateWater(Camera* camera);
 
+#if OOT_DEBUG
+#define CAM_DEBUG_RELOAD_PREG(camera) if (R_RELOAD_CAM_PARAMS) Camera_CopyPREGToModeValues(camera)
+#else
+#define CAM_DEBUG_RELOAD_PREG(camera) (void)0
+#endif
+
 // Camera will reload its paramData. Usually that means setting the read-only data from what is stored in
 // CameraModeValue arrays. Although sometimes some read-write data is reset as well
 #define RELOAD_PARAMS(camera) (camera->animState == 0 || camera->animState == 10 || camera->animState == 20)
@@ -158,44 +164,23 @@ void Camera_LERPCeilVec3f(Vec3f* target, Vec3f* cur, f32 yStepScale, f32 xzStepS
     cur->z = Camera_LERPCeilF(target->z, cur->z, xzStepScale, minDiff);
 }
 
-// TODO: Should ifdef regs, not entire function?
-#ifdef OOT_DEBUG
 void func_80043ABC(Camera* camera) {
     camera->yawUpdateRateInv = 100.0f;
     camera->pitchUpdateRateInv = R_CAM_PITCH_UPDATE_RATE_INV;
     camera->rUpdateRateInv = R_CAM_R_UPDATE_RATE_INV;
-    camera->xzOffsetUpdateRate = CAM_DATA_SCALED(R_CAM_XZ_OFFSET_UPDATE_RATE);
-    camera->yOffsetUpdateRate = CAM_DATA_SCALED(R_CAM_Y_OFFSET_UPDATE_RATE);
-    camera->fovUpdateRate = CAM_DATA_SCALED(R_CAM_FOV_UPDATE_RATE);
+    camera->xzOffsetUpdateRate = R_CAM_XZ_OFFSET_UPDATE_RATE;
+    camera->yOffsetUpdateRate = R_CAM_Y_OFFSET_UPDATE_RATE;
+    camera->fovUpdateRate = R_CAM_FOV_UPDATE_RATE;
 }
 
 void func_80043B60(Camera* camera) {
-    camera->rUpdateRateInv = OREG(27);
-    camera->yawUpdateRateInv = OREG(27);
-    camera->pitchUpdateRateInv = OREG(27);
+    camera->rUpdateRateInv = R_CAM_OREG_27;
+    camera->yawUpdateRateInv = R_CAM_OREG_27;
+    camera->pitchUpdateRateInv = R_CAM_OREG_27;
     camera->xzOffsetUpdateRate = 0.001f;
     camera->yOffsetUpdateRate = 0.001f;
     camera->fovUpdateRate = 0.001f;
 }
-#else
-void func_80043ABC(Camera* camera) {
-    camera->yawUpdateRateInv = 100.0f;
-    camera->pitchUpdateRateInv = 16.0f;
-    camera->rUpdateRateInv = 20.0f;
-    camera->xzOffsetUpdateRate = CAM_DATA_SCALED(5.0f);
-    camera->yOffsetUpdateRate = CAM_DATA_SCALED(5.0f);
-    camera->fovUpdateRate = CAM_DATA_SCALED(5.0f);
-}
-
-void func_80043B60(Camera* camera) {
-    camera->rUpdateRateInv = 1800.0f;
-    camera->yawUpdateRateInv = 1800.0f;
-    camera->pitchUpdateRateInv = 1800.0f;
-    camera->xzOffsetUpdateRate = 0.001f;
-    camera->yOffsetUpdateRate = 0.001f;
-    camera->fovUpdateRate = 0.001f;
-}
-#endif
 
 Vec3f Camera_Vec3sToVec3f(Vec3s* src) {
     Vec3f dest;
@@ -461,7 +446,7 @@ f32 Camera_GetFloorYLayer(Camera* camera, Vec3f* norm, Vec3f* pos, s32* bgId) {
         }
     }
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
     if (i == 0) {
         PRINTF(VT_COL(YELLOW, BLACK) "camera: foward check: too many layer!\n" VT_RST);
     }
@@ -624,7 +609,7 @@ s16 Camera_GetPitchAdjFromFloorHeightDiffs(Camera* camera, s16 viewYaw, s16 init
 
     playerHeight = Player_GetHeight(camera->player);
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
     checkOffsetY = CAM_DATA_SCALED(R_CAM_PITCH_FLOOR_CHECK_OFFSET_Y_FAC) * playerHeight;
     nearDist = CAM_DATA_SCALED(R_CAM_PITCH_FLOOR_CHECK_NEAR_DIST_FAC) * playerHeight;
     farDist = CAM_DATA_SCALED(R_CAM_PITCH_FLOOR_CHECK_FAR_DIST_FAC) * playerHeight;
@@ -676,7 +661,7 @@ s16 Camera_GetPitchAdjFromFloorHeightDiffs(Camera* camera, s16 viewYaw, s16 init
         }
     }
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
     floorYDiffNear = CAM_DATA_SCALED(R_CAM_PITCH_FLOOR_CHECK_NEAR_WEIGHT) * (sFloorYNear - camera->playerGroundY);
     floorYDiffFar =
         (1.0f - CAM_DATA_SCALED(R_CAM_PITCH_FLOOR_CHECK_NEAR_WEIGHT)) * (sFloorYFar - camera->playerGroundY);
@@ -743,7 +728,7 @@ Vec3f Camera_CalcUpFromPitchYawRoll(s16 pitch, s16 yaw, s16 roll) {
 f32 Camera_ClampLERPScale(Camera* camera, f32 maxLERPScale) {
     f32 ret;
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
     if (camera->atLERPStepScale < CAM_DATA_SCALED(R_CAM_AT_LERP_STEP_SCALE_MIN)) {
         ret = CAM_DATA_SCALED(R_CAM_AT_LERP_STEP_SCALE_MIN);
     } else if (camera->atLERPStepScale >= maxLERPScale) {
@@ -765,7 +750,7 @@ f32 Camera_ClampLERPScale(Camera* camera, f32 maxLERPScale) {
 }
 
 void Camera_CopyDataToRegs(Camera* camera, s16 mode) {
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
     {
         CameraModeValue* values;
         CameraModeValue* valueP;
@@ -790,7 +775,7 @@ void Camera_CopyDataToRegs(Camera* camera, s16 mode) {
     camera->animState = 0;
 }
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
 s32 Camera_CopyPREGToModeValues(Camera* camera) {
     CameraModeValue* values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
     CameraModeValue* valueP;
@@ -853,7 +838,7 @@ Vec3f Camera_BGCheckCorner(Vec3f* linePointA, Vec3f* linePointB, CamColChk* poin
     s32 closestPointExists =
         func_800427B4(pointAColChk->poly, pointBColChk->poly, linePointA, linePointB, &closestPoint);
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
     if (!closestPointExists) {
         PRINTF(VT_COL(YELLOW, BLACK) "camera: corner check no cross point %x %x\n" VT_RST, pointAColChk, pointBColChk);
         return pointAColChk->pos;
@@ -973,7 +958,7 @@ s32 Camera_CalcAtDefault(Camera* camera, VecGeo* eyeAtDir, f32 yOffset, s16 calc
     playerToAtOffsetTarget.z = 0.f;
 
     if (calcSlopeYAdj) {
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
         playerToAtOffsetTarget.y -= OLib_ClampMaxDist(
             Camera_CalcSlopeYAdj(&camera->floorNorm, playerPosRot->rot.y, eyeAtDir->yaw, R_CAM_SLOPE_Y_ADJ_AMOUNT),
             playerHeight);
@@ -1013,7 +998,7 @@ s32 func_800458D4(Camera* camera, VecGeo* eyeAtDir, f32 yOffset, f32* arg3, s16 
     playerToAtOffsetTarget.z = 0.0f;
 
     if (calcSlopeYAdj) {
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
         playerToAtOffsetTarget.y -=
             Camera_CalcSlopeYAdj(&camera->floorNorm, playerPosRot->rot.y, eyeAtDir->yaw, R_CAM_SLOPE_Y_ADJ_AMOUNT);
 #else
@@ -1024,7 +1009,7 @@ s32 func_800458D4(Camera* camera, VecGeo* eyeAtDir, f32 yOffset, f32* arg3, s16 
     deltaY = playerPosRot->pos.y - *arg3;
     eyeAtAngle = Math_FAtan2F(deltaY, OLib_Vec3fDistXZ(&camera->at, &camera->eye));
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
     if (eyeAtAngle > DEG_TO_RAD(OREG(32))) {
         if (1) {}
         phi_f2 = 1.0f - sinf(eyeAtAngle - DEG_TO_RAD(OREG(32)));
@@ -1045,7 +1030,7 @@ s32 func_800458D4(Camera* camera, VecGeo* eyeAtDir, f32 yOffset, f32* arg3, s16 
 #endif
 
     playerToAtOffsetTarget.y -= deltaY * phi_f2;
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
     Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, CAM_DATA_SCALED(OREG(29)),
                          CAM_DATA_SCALED(OREG(30)), 0.1f);
 #else
@@ -1082,7 +1067,7 @@ s32 func_80045B08(Camera* camera, VecGeo* eyeAtDir, f32 yOffset, s16 arg3) {
         phi_f2 = -Math_CosS(playerPosRot->rot.y - eyeAtDir->yaw);
     }
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
     playerToAtOffsetTarget.y -= temp_ret * phi_f2 * R_CAM_SLOPE_Y_ADJ_AMOUNT;
 #else
     playerToAtOffsetTarget.y -= temp_ret * phi_f2 * 25;
@@ -1119,7 +1104,7 @@ s32 Camera_CalcAtForParallel(Camera* camera, VecGeo* arg1, f32 yOffset, f32* arg
     playerToAtOffsetTarget.z = 0.0f;
 
     if (R_CAM_PARALLEL_LOCKON_CALC_SLOPE_Y_ADJ && calcSlopeYAdj) {
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
         playerToAtOffsetTarget.y -=
             Camera_CalcSlopeYAdj(&camera->floorNorm, playerPosRot->rot.y, arg1->yaw, R_CAM_SLOPE_Y_ADJ_AMOUNT);
 #else
@@ -1130,7 +1115,7 @@ s32 Camera_CalcAtForParallel(Camera* camera, VecGeo* arg1, f32 yOffset, f32* arg
     if (camera->playerGroundY == camera->playerPosRot.pos.y || camera->player->actor.gravity > -0.1f ||
         camera->player->stateFlags1 & PLAYER_STATE1_21) {
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
         *arg3 = Camera_LERPCeilF(playerPosRot->pos.y, *arg3, CAM_DATA_SCALED(OREG(43)), 0.1f);
 #else
         *arg3 = Camera_LERPCeilF(playerPosRot->pos.y, *arg3, 0.4f, 0.1f);
@@ -1159,7 +1144,7 @@ s32 Camera_CalcAtForParallel(Camera* camera, VecGeo* arg1, f32 yOffset, f32* arg
             phi_f20 = playerPosRot->pos.y - *arg3;
             temp_f2 = Math_FAtan2F(phi_f20, OLib_Vec3fDistXZ(at, eye));
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
             if (DEG_TO_RAD(OREG(32)) < temp_f2) {
                 phi_f16 = 1 - sinf(temp_f2 - DEG_TO_RAD(OREG(32)));
             } else if (temp_f2 < DEG_TO_RAD(OREG(33))) {
@@ -1180,7 +1165,7 @@ s32 Camera_CalcAtForParallel(Camera* camera, VecGeo* arg1, f32 yOffset, f32* arg
             playerToAtOffsetTarget.y -= phi_f20 * phi_f16;
         }
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
         Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, CAM_DATA_SCALED(OREG(29)),
                              CAM_DATA_SCALED(OREG(30)), 0.1f);
         camera->yOffsetUpdateRate = CAM_DATA_SCALED(OREG(29));
@@ -1223,7 +1208,7 @@ s32 Camera_CalcAtForLockOn(Camera* camera, VecGeo* eyeAtDir, Vec3f* targetPos, f
     playerToAtOffsetTarget.y = playerHeight + yOffset;
     playerToAtOffsetTarget.z = 0.0f;
     if (R_CAM_PARALLEL_LOCKON_CALC_SLOPE_Y_ADJ && (flags & CAM_LOCKON_AT_FLAG_CALC_SLOPE_Y_ADJ)) {
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
         playerToAtOffsetTarget.y -=
             Camera_CalcSlopeYAdj(floorNorm, playerPosRot->rot.y, eyeAtDir->yaw, R_CAM_SLOPE_Y_ADJ_AMOUNT);
 #else
@@ -1237,7 +1222,7 @@ s32 Camera_CalcAtForLockOn(Camera* camera, VecGeo* eyeAtDir, Vec3f* targetPos, f
     *outPlayerToTargetDir = OLib_Vec3fDiffToVecGeo(&tmpPos1, targetPos);
     playerToTargetDir = *outPlayerToTargetDir;
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
     if (distance < playerToTargetDir.r) {
         playerToTargetDir.r = playerToTargetDir.r * CAM_DATA_SCALED(OREG(38));
     } else {
@@ -1280,7 +1265,7 @@ s32 Camera_CalcAtForLockOn(Camera* camera, VecGeo* eyeAtDir, Vec3f* targetPos, f
     if (camera->playerGroundY == camera->playerPosRot.pos.y || camera->player->actor.gravity > -0.1f ||
         camera->player->stateFlags1 & PLAYER_STATE1_21) {
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
         *yPosOffset = Camera_LERPCeilF(playerPosRot->pos.y, *yPosOffset, CAM_DATA_SCALED(OREG(43)), 0.1f);
 #else
         *yPosOffset = Camera_LERPCeilF(playerPosRot->pos.y, *yPosOffset, 0.4f, 0.1f);
@@ -1309,7 +1294,7 @@ s32 Camera_CalcAtForLockOn(Camera* camera, VecGeo* eyeAtDir, Vec3f* targetPos, f
             yPosDelta = playerPosRot->pos.y - *yPosOffset;
             temp_f0_2 = Math_FAtan2F(yPosDelta, OLib_Vec3fDistXZ(at, &camera->eye));
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
             if (temp_f0_2 > DEG_TO_RAD(OREG(32))) {
                 phi_f16 = 1.0f - sinf(temp_f0_2 - DEG_TO_RAD(OREG(32)));
             } else if (temp_f0_2 < DEG_TO_RAD(OREG(33))) {
@@ -1330,7 +1315,7 @@ s32 Camera_CalcAtForLockOn(Camera* camera, VecGeo* eyeAtDir, Vec3f* targetPos, f
             playerToAtOffsetTarget.y -= (yPosDelta * phi_f16);
         }
 
-#ifdef OOT_DEBUG
+#if OOT_DEBUG
         Camera_LERPCeilVec3f(&playerToAtOffsetTarget, &camera->playerToAtOffset, CAM_DATA_SCALED(OREG(29)),
                              CAM_DATA_SCALED(OREG(30)), 0.1f);
         camera->yOffsetUpdateRate = CAM_DATA_SCALED(OREG(29));
@@ -1625,9 +1610,7 @@ s32 Camera_Normal1(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sCameraInterfaceField = roData->interfaceField;
 
@@ -1636,8 +1619,8 @@ s32 Camera_Normal1(Camera* camera) {
 
     switch (camera->animState) {
         case 20:
-            camera->yawUpdateRateInv = OREG(27);
-            camera->pitchUpdateRateInv = OREG(27);
+            camera->yawUpdateRateInv = R_CAM_OREG_27;
+            camera->pitchUpdateRateInv = R_CAM_OREG_27;
             FALLTHROUGH;
         case 0:
         case 10:
@@ -1707,10 +1690,10 @@ s32 Camera_Normal1(Camera* camera) {
 
     camera->pitchUpdateRateInv = Camera_LERPCeilF(R_CAM_PITCH_UPDATE_RATE_INV, camera->pitchUpdateRateInv, sp9C, rate);
     camera->xzOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_XZ_OFFSET_UPDATE_RATE), camera->xzOffsetUpdateRate, spA0, rate);
+        Camera_LERPCeilF(R_CAM_XZ_OFFSET_UPDATE_RATE, camera->xzOffsetUpdateRate, spA0, rate);
     camera->yOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_Y_OFFSET_UPDATE_RATE), camera->yOffsetUpdateRate, sp9C, rate);
-    camera->fovUpdateRate = Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_FOV_UPDATE_RATE), camera->yOffsetUpdateRate,
+        Camera_LERPCeilF(R_CAM_Y_OFFSET_UPDATE_RATE, camera->yOffsetUpdateRate, sp9C, rate);
+    camera->fovUpdateRate = Camera_LERPCeilF(R_CAM_FOV_UPDATE_RATE, camera->yOffsetUpdateRate,
                                              camera->speedRatio * 0.05f, rate);
 
     if (roData->interfaceField & NORMAL1_FLAG_0) {
@@ -1846,9 +1829,7 @@ s32 Camera_Normal2(Camera* camera) {
     yNormal =
         1.0f + CAM_DATA_SCALED(R_CAM_YOFFSET_NORM) - (CAM_DATA_SCALED(R_CAM_YOFFSET_NORM) * (68.0f / playerHeight));
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     if (RELOAD_PARAMS(camera) || R_RELOAD_CAM_PARAMS) {
         CameraModeValue* values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
@@ -1864,9 +1845,7 @@ s32 Camera_Normal2(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sCameraInterfaceField = roData->interfaceField;
 
@@ -1916,10 +1895,10 @@ s32 Camera_Normal2(Camera* camera) {
                                                 CAM_DATA_SCALED(R_CAM_UPDATE_RATE_STEP_SCALE_XZ), 0.1f);
     camera->pitchUpdateRateInv = Camera_LERPCeilF(R_CAM_PITCH_UPDATE_RATE_INV, camera->pitchUpdateRateInv, spA0, 0.1f);
     camera->xzOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_XZ_OFFSET_UPDATE_RATE), camera->xzOffsetUpdateRate, spA4, 0.1f);
+        Camera_LERPCeilF(R_CAM_XZ_OFFSET_UPDATE_RATE, camera->xzOffsetUpdateRate, spA4, 0.1f);
     camera->yOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_Y_OFFSET_UPDATE_RATE), camera->yOffsetUpdateRate, spA0, 0.1f);
-    camera->fovUpdateRate = Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_FOV_UPDATE_RATE), camera->yOffsetUpdateRate,
+        Camera_LERPCeilF(R_CAM_Y_OFFSET_UPDATE_RATE, camera->yOffsetUpdateRate, spA0, 0.1f);
+    camera->fovUpdateRate = Camera_LERPCeilF(R_CAM_FOV_UPDATE_RATE, camera->yOffsetUpdateRate,
                                              camera->speedRatio * 0.05f, 0.1f);
 
     if (!(roData->interfaceField & NORMAL2_FLAG_7)) {
@@ -2027,9 +2006,7 @@ s32 Camera_Normal3(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sp7C = OLib_Vec3fDiffToVecGeo(at, eye);
     sp74 = OLib_Vec3fDiffToVecGeo(at, eyeNext);
@@ -2077,10 +2054,10 @@ s32 Camera_Normal3(Camera* camera) {
     }
 
     camera->xzOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_XZ_OFFSET_UPDATE_RATE), camera->xzOffsetUpdateRate, sp98, 0.1f);
+        Camera_LERPCeilF(R_CAM_XZ_OFFSET_UPDATE_RATE, camera->xzOffsetUpdateRate, sp98, 0.1f);
     camera->yOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_Y_OFFSET_UPDATE_RATE), camera->yOffsetUpdateRate, sp94, 0.1f);
-    camera->fovUpdateRate = Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_FOV_UPDATE_RATE), camera->fovUpdateRate, sp94, 0.1f);
+        Camera_LERPCeilF(R_CAM_Y_OFFSET_UPDATE_RATE, camera->yOffsetUpdateRate, sp94, 0.1f);
+    camera->fovUpdateRate = Camera_LERPCeilF(R_CAM_FOV_UPDATE_RATE, camera->fovUpdateRate, sp94, 0.1f);
 
     t2 = Camera_GetPitchAdjFromFloorHeightDiffs(camera, sp7C.yaw - 0x7FFF, true);
     sp94 = ((1.0f / roData->unk_10) * 0.5f);
@@ -2188,9 +2165,7 @@ s32 Camera_Parallel1(Camera* camera) {
         roData->unk_1C = GET_NEXT_SCALED_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     atToEyeDir = OLib_Vec3fDiffToVecGeo(at, eye);
     atToEyeNextDir = OLib_Vec3fDiffToVecGeo(at, eyeNext);
@@ -2247,10 +2222,10 @@ s32 Camera_Parallel1(Camera* camera) {
     camera->yawUpdateRateInv = Camera_LERPCeilF(roData->unk_08, camera->yawUpdateRateInv, spB8, 0.1f);
     camera->pitchUpdateRateInv = Camera_LERPCeilF(2.0f, camera->pitchUpdateRateInv, spB4, 0.1f);
     camera->xzOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_XZ_OFFSET_UPDATE_RATE), camera->xzOffsetUpdateRate, spB8, 0.1f);
+        Camera_LERPCeilF(R_CAM_XZ_OFFSET_UPDATE_RATE, camera->xzOffsetUpdateRate, spB8, 0.1f);
     camera->yOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_Y_OFFSET_UPDATE_RATE), camera->yOffsetUpdateRate, spB4, 0.1f);
-    camera->fovUpdateRate = Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_FOV_UPDATE_RATE), camera->fovUpdateRate,
+        Camera_LERPCeilF(R_CAM_Y_OFFSET_UPDATE_RATE, camera->yOffsetUpdateRate, spB4, 0.1f);
+    camera->fovUpdateRate = Camera_LERPCeilF(R_CAM_FOV_UPDATE_RATE, camera->fovUpdateRate,
                                              camera->speedRatio * 0.05f, 0.1f);
 
     if (roData->interfaceField & PARALLEL1_FLAG_0) {
@@ -2400,9 +2375,7 @@ s32 Camera_Jump1(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     // playerhead never gets used.
     playerhead = Actor_GetFocus(&camera->player->actor);
@@ -2442,12 +2415,12 @@ s32 Camera_Jump1(Camera* camera) {
     }
 
     camera->xzOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_XZ_OFFSET_UPDATE_RATE), camera->xzOffsetUpdateRate,
+        Camera_LERPCeilF(R_CAM_XZ_OFFSET_UPDATE_RATE, camera->xzOffsetUpdateRate,
                          CAM_DATA_SCALED(R_CAM_UPDATE_RATE_STEP_SCALE_XZ), 0.1f);
-    camera->yOffsetUpdateRate = Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_Y_OFFSET_UPDATE_RATE), camera->yOffsetUpdateRate,
+    camera->yOffsetUpdateRate = Camera_LERPCeilF(R_CAM_Y_OFFSET_UPDATE_RATE, camera->yOffsetUpdateRate,
                                                  CAM_DATA_SCALED(R_CAM_UPDATE_RATE_STEP_SCALE_Y), 0.1f);
     camera->fovUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_FOV_UPDATE_RATE), camera->yOffsetUpdateRate, 0.05f, 0.1f);
+        Camera_LERPCeilF(R_CAM_FOV_UPDATE_RATE, camera->yOffsetUpdateRate, 0.05f, 0.1f);
 
     func_800458D4(camera, &eyeNextAtOffset, roData->atYOffset, &rwData->unk_1C, false);
 
@@ -2561,9 +2534,7 @@ s32 Camera_Jump2(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     atToEyeDir = OLib_Vec3fDiffToVecGeo(at, eye);
     atToEyeNextDir = OLib_Vec3fDiffToVecGeo(at, eyeNext);
@@ -2607,11 +2578,11 @@ s32 Camera_Jump2(Camera* camera) {
     camera->yawUpdateRateInv = Camera_LERPCeilF(roData->yawUpdRateTarget, camera->yawUpdateRateInv, sp90, 0.1f);
     camera->xzOffsetUpdateRate = Camera_LERPCeilF(roData->xzUpdRateTarget, camera->xzOffsetUpdateRate, sp90, 0.1f);
     camera->yOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_Y_OFFSET_UPDATE_RATE), camera->yOffsetUpdateRate, sp8C, 0.1f);
+        Camera_LERPCeilF(R_CAM_Y_OFFSET_UPDATE_RATE, camera->yOffsetUpdateRate, sp8C, 0.1f);
 
-    camera->fovUpdateRate = Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_FOV_UPDATE_RATE), camera->yOffsetUpdateRate,
+    camera->fovUpdateRate = Camera_LERPCeilF(R_CAM_FOV_UPDATE_RATE, camera->yOffsetUpdateRate,
                                              camera->speedRatio * 0.05f, 0.1f);
-    camera->rUpdateRateInv = OREG(27);
+    camera->rUpdateRateInv = R_CAM_OREG_27;
 
     Camera_CalcAtDefault(camera, &atToEyeNextDir, roData->atYOffset, false);
     adjAtToEyeDir = OLib_Vec3fDiffToVecGeo(at, eye);
@@ -2769,7 +2740,7 @@ s32 Camera_Jump3(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
+    if (OOT_DEBUG && R_RELOAD_CAM_PARAMS) {
         prevMode = camera->mode;
         camera->mode = rwData->mode;
         Camera_CopyPREGToModeValues(camera);
@@ -2818,10 +2789,10 @@ s32 Camera_Jump3(Camera* camera) {
     }
 
     camera->xzOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_XZ_OFFSET_UPDATE_RATE), camera->xzOffsetUpdateRate, spC4, 0.1f);
+        Camera_LERPCeilF(R_CAM_XZ_OFFSET_UPDATE_RATE, camera->xzOffsetUpdateRate, spC4, 0.1f);
     camera->yOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_Y_OFFSET_UPDATE_RATE), camera->yOffsetUpdateRate, spC0, 0.1f);
-    camera->fovUpdateRate = Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_FOV_UPDATE_RATE), camera->yOffsetUpdateRate,
+        Camera_LERPCeilF(R_CAM_Y_OFFSET_UPDATE_RATE, camera->yOffsetUpdateRate, spC0, 0.1f);
+    camera->fovUpdateRate = Camera_LERPCeilF(R_CAM_FOV_UPDATE_RATE, camera->yOffsetUpdateRate,
                                              camera->speedRatio * 0.05f, 0.1f);
 
     Camera_CalcAtDefault(camera, &eyeNextAtOffset, roData->yOffset, roData->interfaceField);
@@ -2966,9 +2937,7 @@ s32 Camera_Battle1(Camera* camera) {
         rwData->unk_10 = CAM_DATA_SCALED(OREG(12));
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     distance = roData->distance;
     sp7C = roData->swingPitchInitial;
@@ -3008,7 +2977,7 @@ s32 Camera_Battle1(Camera* camera) {
             Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_BATTLE1_XYZ_OFFSET_UPDATE_RATE_TARGET), camera->yOffsetUpdateRate,
                              CAM_DATA_SCALED(R_CAM_UPDATE_RATE_STEP_SCALE_Y) * camera->speedRatio, 0.1f);
     }
-    camera->fovUpdateRate = Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_FOV_UPDATE_RATE), camera->fovUpdateRate,
+    camera->fovUpdateRate = Camera_LERPCeilF(R_CAM_FOV_UPDATE_RATE, camera->fovUpdateRate,
                                              camera->speedRatio * 0.05f, 0.1f);
     playerHeight += roData->yOffset;
     atToEyeDir = OLib_Vec3fDiffToVecGeo(at, eye);
@@ -3208,9 +3177,7 @@ s32 Camera_Battle4(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     eyeAtOffset = OLib_Vec3fDiffToVecGeo(at, eye);
     eyeNextAtOffset = OLib_Vec3fDiffToVecGeo(at, eyeNext);
@@ -3234,7 +3201,7 @@ s32 Camera_Battle4(Camera* camera) {
     camera->xzOffsetUpdateRate =
         Camera_LERPCeilF(0.025f, camera->xzOffsetUpdateRate, CAM_DATA_SCALED(R_CAM_UPDATE_RATE_STEP_SCALE_XZ), 0.1f);
     camera->yOffsetUpdateRate =
-        Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_Y_OFFSET_UPDATE_RATE), camera->yOffsetUpdateRate,
+        Camera_LERPCeilF(R_CAM_Y_OFFSET_UPDATE_RATE, camera->yOffsetUpdateRate,
                          CAM_DATA_SCALED(R_CAM_UPDATE_RATE_STEP_SCALE_Y) * camera->speedRatio, 0.1f);
     camera->fovUpdateRate = 0.0001f;
     Camera_CalcAtDefault(camera, &eyeNextAtOffset, roData->yOffset, true);
@@ -3326,9 +3293,8 @@ s32 Camera_KeepOn1(Camera* camera) {
         roData->unk_28 = GET_NEXT_SCALED_RO_DATA(values) * playerHeight * yNormal;
         roData->unk_2C = GET_NEXT_SCALED_RO_DATA(values);
     }
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     playerHeight += roData->unk_00;
     spC0 = OLib_Vec3fDiffToVecGeo(at, eye);
@@ -3379,7 +3345,7 @@ s32 Camera_KeepOn1(Camera* camera) {
             camera->yOffsetUpdateRate =
                 Camera_LERPCeilF(1.0f, camera->yOffsetUpdateRate,
                                  CAM_DATA_SCALED(R_CAM_UPDATE_RATE_STEP_SCALE_Y) * camera->speedRatio, 0.1f);
-            camera->fovUpdateRate = Camera_LERPCeilF(CAM_DATA_SCALED(R_CAM_FOV_UPDATE_RATE), camera->fovUpdateRate,
+            camera->fovUpdateRate = Camera_LERPCeilF(R_CAM_FOV_UPDATE_RATE, camera->fovUpdateRate,
                                                      camera->speedRatio * 0.05f, 0.1f);
             goto cont;
         case CAM_VIEW_TARGET_POS:
@@ -3495,7 +3461,7 @@ s32 Camera_KeepOn1(Camera* camera) {
             *eye = *eyeNext;
         }
         sp120 = OLib_Vec3fDistNormalize(eye, at);
-        *eye = Camera_Vec3fTranslateByUnitVector(eye, &sp120, OREG(1));
+        *eye = Camera_Vec3fTranslateByUnitVector(eye, &sp120, R_CAM_OREG_1);
     }
     camera->fov = Camera_LERPCeilF(roData->unk_20, camera->fov, camera->fovUpdateRate, 1.0f);
     camera->roll = Camera_LERPCeilS(0, camera->roll, 0.5f, 0xA);
@@ -3573,9 +3539,7 @@ s32 Camera_KeepOn3(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     playerHeight += roData->yOffset;
     atToEyeDir = OLib_Vec3fDiffToVecGeo(at, eye);
@@ -3869,9 +3833,7 @@ s32 Camera_KeepOn4(Camera* camera) {
         }
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sUpdateCameraDirection = 1;
     sCameraInterfaceField = roData->interfaceField;
@@ -4037,9 +3999,7 @@ s32 Camera_KeepOn0(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
     *eyeNext = Camera_Vec3sToVec3f(&bgCamFuncData->pos);
@@ -4117,9 +4077,8 @@ s32 Camera_Fixed1(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
+
     if (rwData->fov == -1) {
         rwData->fov = roData->fov * 100.0f;
     } else if (rwData->fov <= 360) {
@@ -4203,9 +4162,7 @@ s32 Camera_Fixed2(Camera* camera) {
         }
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sCameraInterfaceField = roData->interfaceField;
 
@@ -4277,9 +4234,7 @@ s32 Camera_Fixed3(Camera* camera) {
         }
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     if (camera->animState == 0) {
         rwData->updDirTimer = 5;
@@ -4353,9 +4308,9 @@ s32 Camera_Fixed4(Camera* camera) {
             rwData->eyeTarget = *eye;
         }
     }
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+
+    CAM_DEBUG_RELOAD_PREG(camera);
+
     sCameraInterfaceField = roData->interfaceField;
     if (camera->animState == 0) {
         camera->animState++;
@@ -4439,7 +4394,11 @@ s32 Camera_Subj3(Camera* camera) {
     }
 
     func_80043ABC(camera);
+
+    #if OOT_DEBUG
     Camera_CopyPREGToModeValues(camera);
+    #endif
+
     values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
     roData->eyeNextYOffset = GET_NEXT_SCALED_RO_DATA(values) * playerHeight;
     roData->eyeDist = GET_NEXT_RO_DATA(values);
@@ -4574,9 +4533,7 @@ s32 Camera_Subj4(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     if (camera->play->view.unk_124 == 0) {
         camera->play->view.unk_124 = camera->camId | 0x50;
@@ -4763,9 +4720,7 @@ s32 Camera_Data4(Camera* camera) {
         *eye = rwData->eyePosRot.pos;
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sCameraInterfaceField = roData->interfaceField;
 
@@ -4832,9 +4787,7 @@ s32 Camera_Unique1(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS != 0) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sUpdateCameraDirection = 1;
 
@@ -4866,7 +4819,7 @@ s32 Camera_Unique1(Camera* camera) {
         Camera_LERPCeilF(0.005f, camera->xzOffsetUpdateRate, R_CAM_UPDATE_RATE_STEP_SCALE_XZ * 0.01f, 0.01f);
     camera->yOffsetUpdateRate =
         Camera_LERPCeilF(0.01f, camera->yOffsetUpdateRate, R_CAM_UPDATE_RATE_STEP_SCALE_Y * 0.01f, 0.01f);
-    camera->fovUpdateRate = Camera_LERPCeilF(R_CAM_FOV_UPDATE_RATE * 0.01f, camera->fovUpdateRate, 0.05f, 0.1f);
+    camera->fovUpdateRate = Camera_LERPCeilF(R_CAM_FOV_UPDATE_RATE, camera->fovUpdateRate, 0.05f, 0.1f);
 
     Camera_CalcAtDefault(camera, &eyeNextAtOffset, roData->yOffset, true);
     sp8C = OLib_Vec3fDiffToVecGeo(at, eyeNext);
@@ -4927,9 +4880,7 @@ s32 Camera_Unique2(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sCameraInterfaceField = roData->interfaceField;
 
@@ -5003,9 +4954,7 @@ s32 Camera_Unique3(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS != 0) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sCameraInterfaceField = roData->interfaceField;
 
@@ -5126,9 +5075,7 @@ s32 Camera_Unique0(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     playerPosWithOffset = playerPosRot->pos;
     playerPosWithOffset.y += yOffset;
@@ -5245,9 +5192,7 @@ s32 Camera_Unique6(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sCameraInterfaceField = roData->interfaceField;
 
@@ -5298,9 +5243,8 @@ s32 Camera_Unique7(Camera* camera) {
         roData->fov = GET_NEXT_RO_DATA(values);
         roData->interfaceField = (s16)GET_NEXT_RO_DATA(values);
     }
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     bgCamFuncData = (BgCamFuncData*)Camera_GetBgCamFuncData(camera);
 
@@ -5379,9 +5323,7 @@ s32 Camera_Unique9(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sCameraInterfaceField = roData->interfaceField;
 
@@ -5984,9 +5926,7 @@ s32 Camera_Demo3(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     eyeAtOffset = OLib_Vec3fDiffToVecGeo(at, eye);
 
@@ -6435,9 +6375,7 @@ s32 Camera_Demo6(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     switch (camera->animState) {
         case 0:
@@ -6539,9 +6477,7 @@ s32 Camera_Demo9(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sCameraInterfaceField = roData->interfaceField;
 
@@ -6664,9 +6600,7 @@ s32 Camera_Special0(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sCameraInterfaceField = roData->interfaceField;
 
@@ -6782,9 +6716,7 @@ s32 Camera_Special5(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     sp64 = OLib_Vec3fDiffToVecGeo(at, eye);
     sp5C = OLib_Vec3fDiffToVecGeo(at, eyeNext);
@@ -6828,7 +6760,7 @@ s32 Camera_Special5(Camera* camera) {
 
     Camera_CalcAtDefault(camera, &sp5C, roData->yOffset, false);
     camera->fov = Camera_LERPCeilF(roData->fovTarget, camera->fov,
-                                   camera->atLERPStepScale * CAM_DATA_SCALED(R_CAM_FOV_UPDATE_RATE), 1.0f);
+                                   camera->atLERPStepScale * R_CAM_FOV_UPDATE_RATE, 1.0f);
     camera->roll = Camera_LERPCeilS(0, camera->roll, 0.5f, 0xA);
     camera->atLERPStepScale = Camera_ClampLERPScale(camera, roData->atMaxLERPScale);
     return true;
@@ -6935,9 +6867,7 @@ s32 Camera_Special6(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     eyeAtOffset = OLib_Vec3fDiffToVecGeo(eye, at);
 
@@ -7051,9 +6981,7 @@ s32 Camera_Special9(Camera* camera) {
         roData->interfaceField = GET_NEXT_RO_DATA(values);
     }
 
-    if (R_RELOAD_CAM_PARAMS) {
-        Camera_CopyPREGToModeValues(camera);
-    }
+    CAM_DEBUG_RELOAD_PREG(camera);
 
     if (doorParams->doorActor != NULL) {
         referencePosRot = Actor_GetWorldPosShapeRot(doorParams->doorActor);
@@ -7249,9 +7177,9 @@ void Camera_Init(Camera* camera, View* view, CollisionContext* colCtx, PlayState
     camera->up.z = 0.0f;
     camera->fov = 60.0f;
     camera->pitchUpdateRateInv = R_CAM_PITCH_UPDATE_RATE_INV;
-    camera->xzOffsetUpdateRate = CAM_DATA_SCALED(R_CAM_XZ_OFFSET_UPDATE_RATE);
-    camera->yOffsetUpdateRate = CAM_DATA_SCALED(R_CAM_Y_OFFSET_UPDATE_RATE);
-    camera->fovUpdateRate = CAM_DATA_SCALED(R_CAM_FOV_UPDATE_RATE);
+    camera->xzOffsetUpdateRate = R_CAM_XZ_OFFSET_UPDATE_RATE;
+    camera->yOffsetUpdateRate = R_CAM_Y_OFFSET_UPDATE_RATE;
+    camera->fovUpdateRate = R_CAM_FOV_UPDATE_RATE;
     sCameraLetterboxSize = 32;
     sCameraHudVisibilityMode = HUD_VISIBILITY_NO_CHANGE;
     camera->stateFlags = 0;
@@ -7374,10 +7302,7 @@ void Camera_InitDataUsingPlayer(Camera* camera, Player* player) {
 }
 
 s16 Camera_ChangeStatus(Camera* camera, s16 status) {
-    CameraModeValue* values;
-    CameraModeValue* valueP;
-    s32 i;
-
+#if OOT_DEBUG
     if (PREG(82)) {
         PRINTF("camera: change camera status: cond %c%c\n", status == CAM_STAT_ACTIVE ? 'o' : 'x',
                camera->status != CAM_STAT_ACTIVE ? 'o' : 'x');
@@ -7388,26 +7313,32 @@ s16 Camera_ChangeStatus(Camera* camera, s16 status) {
     }
 
     if (status == CAM_STAT_ACTIVE && camera->status != CAM_STAT_ACTIVE) {
-        values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
+        CameraModeValue* values = sCameraSettings[camera->setting].cameraModes[camera->mode].values;
+        s32 i;
+
         for (i = 0; i < sCameraSettings[camera->setting].cameraModes[camera->mode].valueCnt; i++) {
-            valueP = &values[i];
+            CameraModeValue* valueP = &values[i];
+
             R_CAM_DATA(valueP->dataType) = valueP->val;
             if (PREG(82)) {
                 PRINTF("camera: change camera status: PREG(%02d) = %d\n", valueP->dataType, valueP->val);
             }
         }
     }
+#endif
+
     camera->status = status;
     return camera->status;
 }
 
+#if OOT_DEBUG
 void Camera_PrintSettings(Camera* camera) {
     char sp58[8];
     char sp50[8];
     char sp48[8];
     s32 i;
 
-    if ((OREG(0) & 1) && (camera->play->activeCamId == camera->camId) && !gDebugCamEnabled) {
+    if ((R_CAM_OREG_0 & 1) && (camera->play->activeCamId == camera->camId) && !gDebugCamEnabled) {
         for (i = 0; i < NUM_CAMS; i++) {
             if (camera->play->cameraPtrs[i] == NULL) {
                 sp58[i] = '-';
@@ -7477,6 +7408,7 @@ void Camera_PrintSettings(Camera* camera) {
         DebugCamera_ScreenTextColored(5, 26, DEBUG_CAM_TEXT_GOLD, sp50);
     }
 }
+#endif
 
 s32 Camera_UpdateWater(Camera* camera) {
     f32 waterY;
@@ -7616,6 +7548,7 @@ s32 Camera_UpdateHotRoom(Camera* camera) {
     return 1;
 }
 
+#if OOT_DEBUG
 s32 Camera_DbgChangeMode(Camera* camera) {
     s32 changeDir = 0;
 
@@ -7644,6 +7577,7 @@ s32 Camera_DbgChangeMode(Camera* camera) {
     }
     return true;
 }
+#endif
 
 void Camera_UpdateDistortion(Camera* camera) {
     static s16 depthPhase = 0x3F0;
@@ -7749,14 +7683,18 @@ Vec3s Camera_Update(Camera* camera) {
 
     player = camera->play->cameraPtrs[CAM_ID_MAIN]->player;
 
+#if OOT_DEBUG
     if (R_DEBUG_CAM_UPDATE) {
         PRINTF("camera: in %x\n", camera);
     }
+#endif
 
     if (camera->status == CAM_STAT_CUT) {
+        #if OOT_DEBUG
         if (R_DEBUG_CAM_UPDATE) {
             PRINTF("camera: cut out %x\n", camera);
         }
+        #endif
         return camera->inputDir;
     }
 
@@ -7767,7 +7705,7 @@ Vec3s Camera_Update(Camera* camera) {
         camera->xzSpeed = playerXZSpeed = OLib_Vec3fDistXZ(&curPlayerPosRot.pos, &camera->playerPosRot.pos);
 
         camera->speedRatio =
-            OLib_ClampMaxDist(playerXZSpeed / (func_8002DCE4(camera->player) * CAM_DATA_SCALED(OREG(8))), 1.0f);
+            OLib_ClampMaxDist(playerXZSpeed / (func_8002DCE4(camera->player) * R_CAM_OREG_8), 1.0f);
         camera->playerPosDelta.x = curPlayerPosRot.pos.x - camera->playerPosRot.pos.x;
         camera->playerPosDelta.y = curPlayerPosRot.pos.y - camera->playerPosRot.pos.y;
         camera->playerPosDelta.z = curPlayerPosRot.pos.z - camera->playerPosRot.pos.z;
@@ -7825,13 +7763,18 @@ Vec3s Camera_Update(Camera* camera) {
             }
         }
     }
+
+#if OOT_DEBUG
     Camera_PrintSettings(camera);
     Camera_DbgChangeMode(camera);
+#endif
 
     if (camera->status == CAM_STAT_WAIT) {
+        #if OOT_DEBUG
         if (R_DEBUG_CAM_UPDATE) {
             PRINTF("camera: wait out %x\n", camera);
         }
+        #endif
         return camera->inputDir;
     }
 
@@ -7839,10 +7782,12 @@ Vec3s Camera_Update(Camera* camera) {
     camera->stateFlags &= ~(CAM_STATE_BLOCK_BG | CAM_STATE_LOCK_MODE);
     camera->stateFlags |= CAM_STATE_CAM_FUNC_FINISH;
 
+#if OOT_DEBUG
     if (R_DEBUG_CAM_UPDATE) {
         PRINTF("camera: engine (%d %d %d) %04x \n", camera->setting, camera->mode,
                sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx, camera->stateFlags);
     }
+#endif
 
     if (sOOBTimer < 200) {
         sCameraFunctions[sCameraSettings[camera->setting].cameraModes[camera->mode].funcIdx](camera);
@@ -7870,6 +7815,7 @@ Vec3s Camera_Update(Camera* camera) {
         }
     }
 
+#if OOT_DEBUG
     if (R_DEBUG_CAM_UPDATE) {
         PRINTF("camera: shrink_and_bitem %x(%d)\n", sCameraInterfaceField, camera->play->transitionMode);
     }
@@ -7902,7 +7848,8 @@ Vec3s Camera_Update(Camera* camera) {
         return D_8015BD80.sub.unk_104A;
     }
 
-    OREG(0) &= ~8;
+    R_CAM_OREG_0 &= ~8;
+#endif
 
     if (camera->status == CAM_STAT_UNK3) {
         return camera->inputDir;
@@ -7961,6 +7908,7 @@ Vec3s Camera_Update(Camera* camera) {
         camera->inputDir.z = 0;
     }
 
+#if OOT_DEBUG
     if (PREG(81)) {
         PRINTF("dir  (%d) %d(%f) %d(%f) 0(0) \n", sUpdateCameraDirection, camera->inputDir.x,
                CAM_BINANG_TO_DEG(camera->inputDir.x), camera->inputDir.y, CAM_BINANG_TO_DEG(camera->inputDir.y));
@@ -7982,6 +7930,7 @@ Vec3s Camera_Update(Camera* camera) {
                    curPlayerPosRot.pos.z, camera->dist);
         }
     }
+#endif
 
     return camera->inputDir;
 }
@@ -8290,7 +8239,6 @@ s32 Camera_RequestSetting(Camera* camera, s16 setting) {
 
 s32 Camera_RequestBgCam(Camera* camera, s32 requestedBgCamIndex) {
     s16 requestedCamSetting;
-    s16 settingChangeSuccessful;
 
     if ((requestedBgCamIndex == -1) || (requestedBgCamIndex == camera->bgCamIndex)) {
         camera->behaviorFlags |= CAM_BEHAVIOR_BG_PROCESSED;
@@ -8300,19 +8248,36 @@ s32 Camera_RequestBgCam(Camera* camera, s32 requestedBgCamIndex) {
     if (!(camera->behaviorFlags & CAM_BEHAVIOR_BG_PROCESSED)) {
         requestedCamSetting = Camera_GetBgCamSetting(camera, requestedBgCamIndex);
         camera->behaviorFlags |= CAM_BEHAVIOR_BG_PROCESSED;
-        settingChangeSuccessful = Camera_RequestSettingImpl(camera, requestedCamSetting,
-                                                            CAM_REQUEST_SETTING_PRESERVE_BG_CAM_INDEX |
-                                                                CAM_REQUEST_SETTING_FORCE_CHANGE) >= 0;
-        if ((settingChangeSuccessful != CAM_SET_NONE) || (sCameraSettings[camera->setting].unk_00 & 0x80000000)) {
+
+#if OOT_DEBUG
+        {
+            s16 settingChangeSuccessful =
+                Camera_RequestSettingImpl(camera, requestedCamSetting,
+                                          CAM_REQUEST_SETTING_PRESERVE_BG_CAM_INDEX |
+                                              CAM_REQUEST_SETTING_FORCE_CHANGE) >= CAM_SET_NONE;
+            if (settingChangeSuccessful || (sCameraSettings[camera->setting].unk_00 & 0x80000000)) {
+                camera->bgCamIndex = requestedBgCamIndex;
+                camera->behaviorFlags |= CAM_BEHAVIOR_BG_SUCCESS;
+                Camera_CopyDataToRegs(camera, camera->mode);
+            } else if (settingChangeSuccessful < -1) {
+                //! @bug: `settingChangeSuccessful` is a bool and is likely checking the wrong value. This can never
+                //! pass.
+                // The actual return of Camera_RequestSettingImpl or bgCamIndex would make more sense.
+                PRINTF(VT_COL(RED, WHITE) "camera: error: illegal camera ID (%d) !! (%d|%d|%d)\n" VT_RST,
+                       requestedBgCamIndex, camera->camId, BGCHECK_SCENE, requestedCamSetting);
+            }
+        }
+#else
+        if ((Camera_RequestSettingImpl(camera, requestedCamSetting,
+                                       CAM_REQUEST_SETTING_PRESERVE_BG_CAM_INDEX | CAM_REQUEST_SETTING_FORCE_CHANGE) >=
+             CAM_SET_NONE) ||
+            (sCameraSettings[camera->setting].unk_00 & 0x80000000)) {
             camera->bgCamIndex = requestedBgCamIndex;
             camera->behaviorFlags |= CAM_BEHAVIOR_BG_SUCCESS;
             Camera_CopyDataToRegs(camera, camera->mode);
-        } else if (settingChangeSuccessful < -1) {
-            //! @bug: `settingChangeSuccessful` is a bool and is likely checking the wrong value. This can never pass.
-            // The actual return of Camera_RequestSettingImpl or bgCamIndex would make more sense.
-            PRINTF(VT_COL(RED, WHITE) "camera: error: illegal camera ID (%d) !! (%d|%d|%d)\n" VT_RST,
-                   requestedBgCamIndex, camera->camId, BGCHECK_SCENE, requestedCamSetting);
         }
+#endif
+
         return 0x80000000 | requestedBgCamIndex;
     }
 
@@ -8320,11 +8285,11 @@ s32 Camera_RequestBgCam(Camera* camera, s32 requestedBgCamIndex) {
 }
 
 Vec3s Camera_GetInputDir(Camera* camera) {
-    if (gDebugCamEnabled) {
+    if (OOT_DEBUG && gDebugCamEnabled) {
         return D_8015BD80.sub.unk_104A;
-    } else {
-        return camera->inputDir;
     }
+
+    return camera->inputDir;
 }
 
 s16 Camera_GetInputDirPitch(Camera* camera) {
@@ -8340,11 +8305,11 @@ s16 Camera_GetInputDirYaw(Camera* camera) {
 }
 
 Vec3s Camera_GetCamDir(Camera* camera) {
-    if (gDebugCamEnabled) {
+    if (OOT_DEBUG && gDebugCamEnabled) {
         return D_8015BD80.sub.unk_104A;
-    } else {
-        return camera->camDir;
     }
+
+    return camera->camDir;
 }
 
 s16 Camera_GetCamDirPitch(Camera* camera) {

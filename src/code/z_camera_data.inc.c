@@ -24,18 +24,62 @@ typedef struct {
     CameraMode* cameraModes;
 } CameraSetting;
 
+#define R_CAM_DATA_OREG_0 0                 // OREG(0)
+#define R_CAM_DATA_OREG_1 1                 // OREG(1)
+#define R_CAM_DATA_XZ_OFFSET_UPDATE_RATE 5  // CAM_DATA_SCALED(OREG(2))
+#define R_CAM_DATA_Y_OFFSET_UPDATE_RATE 5   // CAM_DATA_SCALED(OREG(3))
+#define R_CAM_DATA_FOV_UPDATE_RATE 5        // CAM_DATA_SCALED(OREG(4))
+#define R_CAM_DATA_MAX_PITCH 14500          // OREG(5)
+#define R_CAM_DATA_R_UPDATE_RATE_INV 20     // OREG(6)
+#define R_CAM_DATA_PITCH_UPDATE_RATE_INV 16 // OREG(7)
+#define R_CAM_DATA_OREG_8 150               // CAM_DATA_SCALED(OREG(8))
+
+#if OOT_DEBUG
+#define R_CAM_OREG_0                                OREG(0)
+#define R_CAM_OREG_1                                OREG(1)
+#define R_CAM_XZ_OFFSET_UPDATE_RATE CAM_DATA_SCALED(OREG(2))
+#define R_CAM_Y_OFFSET_UPDATE_RATE  CAM_DATA_SCALED(OREG(3))
+#define R_CAM_FOV_UPDATE_RATE       CAM_DATA_SCALED(OREG(4))
+#define R_CAM_MAX_PITCH                             OREG(5)
+#define R_CAM_R_UPDATE_RATE_INV                     OREG(6)
+#define R_CAM_PITCH_UPDATE_RATE_INV                 OREG(7)
+#define R_CAM_OREG_8                CAM_DATA_SCALED(OREG(8))
+
+#else
+
+#define R_CAM_OREG_0                                R_CAM_DATA_OREG_0
+#define R_CAM_OREG_1                                R_CAM_DATA_OREG_1
+#define R_CAM_XZ_OFFSET_UPDATE_RATE CAM_DATA_SCALED(R_CAM_DATA_XZ_OFFSET_UPDATE_RATE)
+#define R_CAM_Y_OFFSET_UPDATE_RATE  CAM_DATA_SCALED(R_CAM_DATA_Y_OFFSET_UPDATE_RATE)
+#define R_CAM_FOV_UPDATE_RATE       CAM_DATA_SCALED(R_CAM_DATA_FOV_UPDATE_RATE)
+#define R_CAM_MAX_PITCH                             R_CAM_DATA_MAX_PITCH
+#define R_CAM_R_UPDATE_RATE_INV                     R_CAM_DATA_R_UPDATE_RATE_INV
+#define R_CAM_PITCH_UPDATE_RATE_INV                 R_CAM_DATA_PITCH_UPDATE_RATE_INV
+#define R_CAM_OREG_8                CAM_DATA_SCALED(R_CAM_DATA_OREG_8)
+#endif
+
+
+// OREG(27)
+#define R_CAM_DATA_OREG_27 1800
+
+#if OOT_DEBUG
+#define R_CAM_OREG_27 OREG(27)
+#else
+#define R_CAM_OREG_27 R_CAM_DATA_OREG_27
+#endif
+
 /*==================================================================*/
 // Data
 s16 sOREGInit[] = {
-    0,     // OREG(0)
-    1,     // OREG(1)
-    5,     // R_CAM_XZ_OFFSET_UPDATE_RATE
-    5,     // R_CAM_Y_OFFSET_UPDATE_RATE
-    5,     // R_CAM_FOV_UPDATE_RATE
-    14500, // R_CAM_MAX_PITCH
-    20,    // R_CAM_R_UPDATE_RATE_INV
-    16,    // R_CAM_PITCH_UPDATE_RATE_INV
-    150,   // OREG(8)
+    R_CAM_DATA_OREG_0,                // OREG(0)
+    R_CAM_DATA_OREG_1,                // OREG(1)
+    R_CAM_DATA_XZ_OFFSET_UPDATE_RATE, // R_CAM_XZ_OFFSET_UPDATE_RATE
+    R_CAM_DATA_Y_OFFSET_UPDATE_RATE,  // R_CAM_Y_OFFSET_UPDATE_RATE
+    R_CAM_DATA_FOV_UPDATE_RATE,       // R_CAM_FOV_UPDATE_RATE
+    R_CAM_DATA_MAX_PITCH,             // R_CAM_MAX_PITCH
+    R_CAM_DATA_R_UPDATE_RATE_INV,     // R_CAM_R_UPDATE_RATE_INV
+    R_CAM_DATA_PITCH_UPDATE_RATE_INV, // R_CAM_PITCH_UPDATE_RATE_INV
+    R_CAM_DATA_OREG_8,                // OREG(8)
     25,    // R_CAM_SLOPE_Y_ADJ_AMOUNT
     150,   // OREG(10)
     6,     // OREG(11)
@@ -54,7 +98,7 @@ s16 sOREGInit[] = {
     1,     // OREG(24)
     50,    // R_CAM_UPDATE_RATE_STEP_SCALE_XZ
     20,    // R_CAM_UPDATE_RATE_STEP_SCALE_Y
-    1800,  // OREG(27)
+    R_CAM_DATA_OREG_27,  // OREG(27)
     50,    // OREG(28)
     50,    // OREG(29)
     50,    // OREG(30)
