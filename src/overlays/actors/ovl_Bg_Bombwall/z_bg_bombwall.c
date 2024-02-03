@@ -81,18 +81,31 @@ ActorInit Bg_Bombwall_InitVars = {
     /**/ BgBombwall_Draw,
 };
 
+// "Warning : move BG \xc5\xd0\xcf\xbf\xbc\xba\xc7\xd4(%s %d)(arg_data 0x%04x)\n"
+// For single use-case
+#if OOT_DEBUG
+#define DYNA_DEBUG_PRINTF_NO_ID(dyna, file, num)                                                          \
+    if ((dyna)->bgId == BG_ACTOR_MAX) {                                                                   \
+        PRINTF("Warning : move BG \xc5\xd0\xcf\xbf\xbc\xba\xc7\xd4(%s %d)(arg_data 0x%04x)\n", file, num, \
+               (dyna)->actor.params);                                                                     \
+    }
+#else
+#define DYNA_DEBUG_PRINTF_NO_ID(dyna, file, num) (void)0
+#endif
+
+#define DYNAPOLY_INIT_AND_SET_NO_ID(dyn, play, col, colHeader, transformFlags, file, num)      \
+    do {                                                                                       \
+        DynaPolyActor_Init(dyn, transformFlags);                                               \
+        CollisionHeader_GetVirtual(col, &colHeader);                                           \
+        (dyn)->bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &(dyn)->actor, colHeader); \
+        DYNA_DEBUG_PRINTF_NO_ID(dyn, file, num);                                               \
+    } while (0)
+
 void BgBombwall_InitDynapoly(BgBombwall* this, PlayState* play) {
-    s32 pad;
-    s32 pad2;
+    s32 pad[2];
     CollisionHeader* colHeader = NULL;
 
-    DynaPolyActor_Init(&this->dyna, 0);
-    CollisionHeader_GetVirtual(&gBgBombwallCol, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
-
-    // "Warning : move BG login failed"
-    DYNA_DEBUG_PRINTF_NO_ID(&this->dyna, "Warning : move BG 登録失敗(%s %d)(arg_data 0x%04x)\n", "../z_bg_bombwall.c",
-                            243);
+    DYNAPOLY_INIT_AND_SET_NO_ID(&this->dyna, play, &gBgBombwallCol, colHeader, 0, "../z_bg_bombwall.c", 243);
 }
 
 void BgBombwall_RotateVec(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3) {

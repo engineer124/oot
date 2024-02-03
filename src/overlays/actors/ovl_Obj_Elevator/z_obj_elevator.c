@@ -43,16 +43,11 @@ void ObjElevator_SetupAction(ObjElevator* this, ObjElevatorActionFunc actionFunc
     this->actionFunc = actionFunc;
 }
 
-void ObjElevator_InitDynaPoly(ObjElevator* this, PlayState* play, CollisionHeader* collision, s32 flag) {
-    s16 pad1;
+void ObjElevator_InitDynaPoly(ObjElevator* this, PlayState* play, CollisionHeader* collision, s32 transformFlags) {
+    s16 pad;
     CollisionHeader* colHeader = NULL;
 
-    DynaPolyActor_Init(&this->dyna, flag);
-    CollisionHeader_GetVirtual(collision, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
-
-    DYNA_DEBUG_PRINTF(&this->dyna, "Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n",
-                      "../z_obj_elevator.c", 136);
+    DYNAPOLY_INIT_AND_SET(&this->dyna, play, collision, colHeader, transformFlags, "../z_obj_elevator.c", 136);
 }
 
 void ObjElevator_Init(Actor* thisx, PlayState* play) {

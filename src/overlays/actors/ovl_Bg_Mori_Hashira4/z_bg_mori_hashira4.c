@@ -48,18 +48,12 @@ void BgMoriHashira4_SetupAction(BgMoriHashira4* this, BgMoriHashira4ActionFunc a
     this->actionFunc = actionFunc;
 }
 
-void BgMoriHashira4_InitDynaPoly(BgMoriHashira4* this, PlayState* play, CollisionHeader* collision, s32 moveFlag) {
+void BgMoriHashira4_InitDynaPoly(BgMoriHashira4* this, PlayState* play, CollisionHeader* collision,
+                                 s32 transformFlags) {
     s32 pad;
-    CollisionHeader* colHeader;
+    CollisionHeader* colHeader = NULL;
 
-    colHeader = NULL;
-    DynaPolyActor_Init(&this->dyna, moveFlag);
-    CollisionHeader_GetVirtual(collision, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
-
-    // "Warning : move BG login failed"
-    DYNA_DEBUG_PRINTF(&this->dyna, "Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n",
-                      "../z_bg_mori_hashira4.c", 155);
+    DYNAPOLY_INIT_AND_SET(&this->dyna, play, collision, colHeader, transformFlags, "../z_bg_mori_hashira4.c", 155);
 }
 
 void BgMoriHashira4_Init(Actor* thisx, PlayState* play) {

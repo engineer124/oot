@@ -189,17 +189,11 @@ void ObjSwitch_RotateY(Vec3f* dest, Vec3f* src, s16 rotY) {
     dest->z = src->z * c - src->x * s;
 }
 
-void ObjSwitch_InitDynaPoly(ObjSwitch* this, PlayState* play, CollisionHeader* collision, s32 moveFlag) {
+void ObjSwitch_InitDynaPoly(ObjSwitch* this, PlayState* play, CollisionHeader* collision, s32 transformFlags) {
     s32 pad;
     CollisionHeader* colHeader = NULL;
 
-    DynaPolyActor_Init(&this->dyna, moveFlag);
-    CollisionHeader_GetVirtual(collision, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
-
-    // "Warning : move BG registration failure"
-    DYNA_DEBUG_PRINTF(&this->dyna, "Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_obj_switch.c",
-                      531);
+    DYNAPOLY_INIT_AND_SET(&this->dyna, play, collision, colHeader, transformFlags, "../z_obj_switch.c", 531);
 }
 
 void ObjSwitch_InitJntSphCollider(ObjSwitch* this, PlayState* play, ColliderJntSphInit* colliderJntSphInit) {

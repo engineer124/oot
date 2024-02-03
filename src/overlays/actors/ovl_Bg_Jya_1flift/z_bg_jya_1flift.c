@@ -66,16 +66,11 @@ static InitChainEntry sInitChain[] = {
     ICHAIN_F32(uncullZoneDownward, 1200, ICHAIN_STOP),
 };
 
-void BgJya1flift_InitDynaPoly(BgJya1flift* this, PlayState* play, CollisionHeader* collision, s32 moveFlag) {
+void BgJya1flift_InitDynaPoly(BgJya1flift* this, PlayState* play, CollisionHeader* collision, s32 transformFlags) {
     s32 pad;
     CollisionHeader* colHeader = NULL;
 
-    DynaPolyActor_Init(&this->dyna, moveFlag);
-    CollisionHeader_GetVirtual(collision, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
-
-    DYNA_DEBUG_PRINTF(&this->dyna, "Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n",
-                      "../z_bg_jya_1flift.c", 179);
+    DYNAPOLY_INIT_AND_SET(&this->dyna, play, collision, colHeader, transformFlags, "../z_bg_jya_1flift.c", 179);
 }
 
 void BgJya1flift_InitCollision(Actor* thisx, PlayState* play) {

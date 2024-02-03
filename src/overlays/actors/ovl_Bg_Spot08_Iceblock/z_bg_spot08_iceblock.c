@@ -38,17 +38,12 @@ void BgSpot08Iceblock_SetupAction(BgSpot08Iceblock* this, BgSpot08IceblockAction
     this->actionFunc = actionFunc;
 }
 
-void BgSpot08Iceblock_InitDynaPoly(BgSpot08Iceblock* this, PlayState* play, CollisionHeader* collision, s32 flags) {
+void BgSpot08Iceblock_InitDynaPoly(BgSpot08Iceblock* this, PlayState* play, CollisionHeader* collision,
+                                   s32 transformFlags) {
     s32 pad;
     CollisionHeader* colHeader = NULL;
 
-    DynaPolyActor_Init(&this->dyna, flags);
-    CollisionHeader_GetVirtual(collision, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
-
-    // "Warning: move BG registration failed"
-    DYNA_DEBUG_PRINTF(&this->dyna, "Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n",
-                      "../z_bg_spot08_iceblock.c", 0xD9);
+    DYNAPOLY_INIT_AND_SET(&this->dyna, play, collision, colHeader, transformFlags, "../z_bg_spot08_iceblock.c", 217);
 }
 
 // Sets params to 0x10 (medium, nonrotating) if not in the cases listed.

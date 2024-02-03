@@ -115,17 +115,11 @@ void func_808958F0(Vec3f* dest, Vec3f* src, f32 arg2, f32 arg3) {
     dest->z = (src->z * arg3) - (src->x * arg2);
 }
 
-void BgJyaCobra_InitDynaPoly(BgJyaCobra* this, PlayState* play, CollisionHeader* collision, s32 flags) {
+void BgJyaCobra_InitDynaPoly(BgJyaCobra* this, PlayState* play, CollisionHeader* collision, s32 transformFlags) {
     s32 pad;
     CollisionHeader* colHeader = NULL;
 
-    DynaPolyActor_Init(&this->dyna, flags);
-    CollisionHeader_GetVirtual(collision, &colHeader);
-    this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
-
-    // "Warning : move BG Registration Failure"
-    DYNA_DEBUG_PRINTF(&this->dyna, "Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n",
-                      "../z_bg_jya_cobra.c", 247);
+    DYNAPOLY_INIT_AND_SET(&this->dyna, play, collision, colHeader, transformFlags, "../z_bg_jya_cobra.c", 247);
 }
 
 void BgJyaCobra_SpawnRay(BgJyaCobra* this, PlayState* play) {

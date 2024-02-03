@@ -18,25 +18,26 @@ struct DynaPolyActor;
 #define BGCHECK_SUBDIV_OVERLAP 50
 #define BGCHECK_SUBDIV_MIN 150.0f
 
+// "Warning : move BG registration failure"
+// "Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n"
 #if OOT_DEBUG
-#define DYNA_DEBUG_PRINTF(dyna, str1, str2, num)                     \
-    if ((dyna)->bgId == BG_ACTOR_MAX) {                              \
-    s32 pad;                                                         \
-    PRINTF(str1, str2, num, (dyna)->actor.id, (dyna)->actor.params); \
+#define DYNA_DEBUG_PRINTF(dyna, file, num) \
+    if ((dyna)->bgId == BG_ACTOR_MAX) {    \
+    s32 pad;                               \
+    PRINTF("Warning : move BG \xc5\xd0\xcf\xbf\xbc\xba\xc7\xd4(%s %d)(name %d)(arg_data 0x%04x)\n", file, num, (dyna)->actor.id, (dyna)->actor.params); \
     }
 #else
-#define DYNA_DEBUG_PRINTF(dyna, str1, str2, num) (void)0
+#define DYNA_DEBUG_PRINTF(dyna, file, num) (void)0
 #endif
 
-// For single use-case
-#if OOT_DEBUG
-#define DYNA_DEBUG_PRINTF_NO_ID(dyna, str1, str2, num) \
-    if ((dyna)->bgId == BG_ACTOR_MAX) {              \
-    PRINTF(str1, str2, num, (dyna)->actor.params);   \
-    }
-#else
-#define DYNA_DEBUG_PRINTF_NO_ID(dyna, str1, str2, num) (void)0
-#endif
+#define DYNAPOLY_INIT_AND_SET(dyn, play, col, colHeader, transformFlags, file, num)        \
+do {                                                                                       \
+    DynaPolyActor_Init(dyn, transformFlags);                                               \
+    CollisionHeader_GetVirtual(col, &colHeader);                                           \
+    (dyn)->bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &(dyn)->actor, colHeader); \
+    DYNA_DEBUG_PRINTF(dyn, file, num);                                                     \
+} while (0)
+
 
 #define FUNC_80041EA4_RESPAWN 5
 #define FUNC_80041EA4_MOUNT_WALL 6
