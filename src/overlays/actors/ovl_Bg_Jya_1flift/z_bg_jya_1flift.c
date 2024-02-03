@@ -66,20 +66,16 @@ static InitChainEntry sInitChain[] = {
     ICHAIN_F32(uncullZoneDownward, 1200, ICHAIN_STOP),
 };
 
-void BgJya1flift_InitDynapoly(BgJya1flift* this, PlayState* play, CollisionHeader* collision, s32 moveFlag) {
+void BgJya1flift_InitDynaPoly(BgJya1flift* this, PlayState* play, CollisionHeader* collision, s32 moveFlag) {
     s32 pad;
     CollisionHeader* colHeader = NULL;
-    s32 pad2;
 
     DynaPolyActor_Init(&this->dyna, moveFlag);
     CollisionHeader_GetVirtual(collision, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-    if (this->dyna.bgId == BG_ACTOR_MAX) {
-        // "Warning : move BG login failed"
-        PRINTF("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_jya_1flift.c", 179,
-               this->dyna.actor.id, this->dyna.actor.params);
-    }
+    DYNA_DEBUG_PRINTF(&this->dyna, "Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n",
+                      "../z_bg_jya_1flift.c", 179);
 }
 
 void BgJya1flift_InitCollision(Actor* thisx, PlayState* play) {
@@ -99,7 +95,7 @@ void BgJya1flift_Init(Actor* thisx, PlayState* play) {
         Actor_Kill(thisx);
         return;
     }
-    BgJya1flift_InitDynapoly(this, play, &g1fliftCol, 0);
+    BgJya1flift_InitDynaPoly(this, play, &g1fliftCol, 0);
     Actor_ProcessInitChain(thisx, sInitChain);
     BgJya1flift_InitCollision(thisx, play);
     if (Flags_GetSwitch(play, (thisx->params & 0x3F))) {

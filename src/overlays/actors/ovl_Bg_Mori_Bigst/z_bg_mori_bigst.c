@@ -50,20 +50,17 @@ void BgMoriBigst_SetupAction(BgMoriBigst* this, BgMoriBigstActionFunc actionFunc
     this->actionFunc = actionFunc;
 }
 
-void BgMoriBigst_InitDynapoly(BgMoriBigst* this, PlayState* play, CollisionHeader* collision, s32 moveFlag) {
+void BgMoriBigst_InitDynaPoly(BgMoriBigst* this, PlayState* play, CollisionHeader* collision, s32 moveFlag) {
     s32 pad;
     CollisionHeader* colHeader = NULL;
-    s32 pad2;
 
     DynaPolyActor_Init(&this->dyna, moveFlag);
     CollisionHeader_GetVirtual(collision, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-    if (this->dyna.bgId == BG_ACTOR_MAX) {
-        // "Warning : move BG login failed"
-        PRINTF("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_mori_bigst.c", 190,
-               this->dyna.actor.id, this->dyna.actor.params);
-    }
+    // "Warning : move BG login failed"
+    DYNA_DEBUG_PRINTF(&this->dyna, "Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n",
+                      "../z_bg_mori_bigst.c", 190);
 }
 
 void BgMoriBigst_Init(Actor* thisx, PlayState* play) {
@@ -75,7 +72,7 @@ void BgMoriBigst_Init(Actor* thisx, PlayState* play) {
            Flags_GetSwitch(play, (this->dyna.actor.params >> 8) & 0x3F),
            Flags_GetTempClear(play, this->dyna.actor.room), Flags_GetClear(play, this->dyna.actor.room),
            GET_PLAYER(play)->actor.world.pos.y);
-    BgMoriBigst_InitDynapoly(this, play, &gMoriBigstCol, 0);
+    BgMoriBigst_InitDynaPoly(this, play, &gMoriBigstCol, 0);
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
     this->moriTexObjectSlot = Object_GetSlot(&play->objectCtx, OBJECT_MORI_TEX);
     if (this->moriTexObjectSlot < 0) {

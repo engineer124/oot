@@ -90,11 +90,9 @@ void BgBombwall_InitDynapoly(BgBombwall* this, PlayState* play) {
     CollisionHeader_GetVirtual(&gBgBombwallCol, &colHeader);
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-    if (this->dyna.bgId == BG_ACTOR_MAX) {
-        // "Warning : move BG login failed"
-        PRINTF("Warning : move BG 登録失敗(%s %d)(arg_data 0x%04x)\n", "../z_bg_bombwall.c", 243,
-               this->dyna.actor.params);
-    }
+    // "Warning : move BG login failed"
+    DYNA_DEBUG_PRINTF_NO_ID(&this->dyna, "Warning : move BG 登録失敗(%s %d)(arg_data 0x%04x)\n", "../z_bg_bombwall.c",
+                            243);
 }
 
 void BgBombwall_RotateVec(Vec3f* arg0, Vec3f* arg1, f32 arg2, f32 arg3) {

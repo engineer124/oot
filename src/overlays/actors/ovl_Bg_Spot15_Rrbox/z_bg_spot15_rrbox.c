@@ -55,20 +55,17 @@ static Vec3f sBoxGroundCheckPoints[] = {
     { 29.99f, 0.01f, 29.99f },  { 0.0f, 0.01f, 0.0f },
 };
 
-void func_808B3960(BgSpot15Rrbox* this, PlayState* play, CollisionHeader* collision, s32 flags) {
+void BgSpot15Rrbox_InitDynaPoly(BgSpot15Rrbox* this, PlayState* play, CollisionHeader* collision, s32 flags) {
     s32 pad;
     CollisionHeader* colHeader = NULL;
-    u32 pad2;
 
     DynaPolyActor_Init(&this->dyna, flags);
     CollisionHeader_GetVirtual(collision, &colHeader);
 
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
 
-    if (this->dyna.bgId == BG_ACTOR_MAX) {
-        PRINTF("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_bg_spot15_rrbox.c", 171,
-               this->dyna.actor.id, this->dyna.actor.params);
-    }
+    DYNA_DEBUG_PRINTF(&this->dyna, "Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n",
+                      "../z_bg_spot15_rrbox.c", 171);
 }
 
 void BgSpot15Rrbox_RotatePoint(Vec3f* outPos, Vec3f* pos, f32 arg2, f32 arg3) {
@@ -121,7 +118,7 @@ s32 func_808B3AAC(BgSpot15Rrbox* this, PlayState* play) {
 void BgSpot15Rrbox_Init(Actor* thisx, PlayState* play) {
     BgSpot15Rrbox* this = (BgSpot15Rrbox*)thisx;
 
-    func_808B3960(this, play, &gLonLonMilkCrateCol, 0);
+    BgSpot15Rrbox_InitDynaPoly(this, play, &gLonLonMilkCrateCol, 0);
     Actor_ProcessInitChain(&this->dyna.actor, sInitChain);
     func_808B3A34(this);
     if (Flags_GetSwitch(play, (this->dyna.actor.params & 0x3F))) {

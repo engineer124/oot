@@ -136,7 +136,6 @@ void ObjBean_InitCollider(Actor* thisx, PlayState* play) {
 void ObjBean_InitDynaPoly(ObjBean* this, PlayState* play, CollisionHeader* collision, s32 moveFlag) {
     s32 pad;
     CollisionHeader* colHeader;
-    s32 pad2;
 
     colHeader = NULL;
 
@@ -144,10 +143,9 @@ void ObjBean_InitDynaPoly(ObjBean* this, PlayState* play, CollisionHeader* colli
     CollisionHeader_GetVirtual(collision, &colHeader);
 
     this->dyna.bgId = DynaPoly_SetBgActor(play, &play->colCtx.dyna, &this->dyna.actor, colHeader);
-    if (this->dyna.bgId == BG_ACTOR_MAX) {
-        PRINTF("Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_obj_bean.c", 374,
-               this->dyna.actor.id, this->dyna.actor.params);
-    }
+
+    DYNA_DEBUG_PRINTF(&this->dyna, "Warning : move BG 登録失敗(%s %d)(name %d)(arg_data 0x%04x)\n", "../z_obj_bean.c",
+                      374);
 }
 
 void ObjBean_FindFloor(ObjBean* this, PlayState* play) {

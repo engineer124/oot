@@ -18,6 +18,26 @@ struct DynaPolyActor;
 #define BGCHECK_SUBDIV_OVERLAP 50
 #define BGCHECK_SUBDIV_MIN 150.0f
 
+#if OOT_DEBUG
+#define DYNA_DEBUG_PRINTF(dyna, str1, str2, num)                     \
+    if ((dyna)->bgId == BG_ACTOR_MAX) {                              \
+    s32 pad;                                                         \
+    PRINTF(str1, str2, num, (dyna)->actor.id, (dyna)->actor.params); \
+    }
+#else
+#define DYNA_DEBUG_PRINTF(dyna, str1, str2, num) (void)0
+#endif
+
+// For single use-case
+#if OOT_DEBUG
+#define DYNA_DEBUG_PRINTF_NO_ID(dyna, str1, str2, num) \
+    if ((dyna)->bgId == BG_ACTOR_MAX) {              \
+    PRINTF(str1, str2, num, (dyna)->actor.params);   \
+    }
+#else
+#define DYNA_DEBUG_PRINTF_NO_ID(dyna, str1, str2, num) (void)0
+#endif
+
 #define FUNC_80041EA4_RESPAWN 5
 #define FUNC_80041EA4_MOUNT_WALL 6
 #define FUNC_80041EA4_STOP 8
